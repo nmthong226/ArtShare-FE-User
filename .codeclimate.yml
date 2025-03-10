@@ -1,0 +1,26 @@
+plugins:
+  fixme:
+    enabled: true
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+        - javascript
+        - typescript
+
+ratings:
+  paths:
+    - '**.js'
+    - '**.jsx'
+    - '**.ts'
+    - '**.tsx'
+    
+exclude_patterns:
+  - 'node_modules/'
+  - '**/node_modules/'
+  - '**/coverage/'
+  - '**/dist/'
+  - '**/build/'
+  - '**/__tests__/'

@@ -9,7 +9,7 @@ export function LanguageSwitcher() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <div className="flex justify-center items-center space-x-1 bg-gray-100 px-4 rounded-lg w-fit hover:cursor-pointer">
+                <div className="flex justify-center items-center space-x-1 bg-gray-100 hover:bg-gray-200 px-4 rounded-lg w-fit hover:cursor-pointer">
                     <Globe className="w-4 h-4" />
                     <p className="text-sm">{language}</p>
                 </div>

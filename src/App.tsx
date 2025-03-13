@@ -7,38 +7,41 @@ import SignUp from './pages/Authentication/SignUp';
 import { AuthenLayout } from './layouts/public/AuthenLayout';
 import ForgotPassword from './pages/Authentication/ForgotPassword';
 import { ThemeProvider } from './context/ThemeProvider';
+import { LanguageProvider } from './context/LanguageProvider';
 
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <Router>
-        <Layout>
-          <Routes>
-            <Route
-              path="/login"
-              element={
-                <AuthenLayout>
-                  <Login />
-                </AuthenLayout>}
-            />
-            <Route
-              path="/signup"
-              element={
-                <AuthenLayout>
-                  <SignUp />
-                </AuthenLayout>}
-            />
-            <Route
-              path="/forgot-password"
-              element={
-                <AuthenLayout>
-                  <ForgotPassword />
-                </AuthenLayout>}
-            />
-            <Route path="*" element={<Navigate to="/login" />} />
-          </Routes>
-        </Layout>
-      </Router>
+      <LanguageProvider>
+        <Router>
+          <Layout>
+            <Routes>
+              <Route
+                path="/login"
+                element={
+                  <AuthenLayout>
+                    <Login />
+                  </AuthenLayout>}
+              />
+              <Route
+                path="/signup"
+                element={
+                  <AuthenLayout>
+                    <SignUp />
+                  </AuthenLayout>}
+              />
+              <Route
+                path="/forgot-password"
+                element={
+                  <AuthenLayout>
+                    <ForgotPassword />
+                  </AuthenLayout>}
+              />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </Routes>
+          </Layout>
+        </Router>
+      </LanguageProvider>
     </ThemeProvider>
   );
 };

@@ -6,8 +6,8 @@ export function ThemeToggle() {
     const { theme, toggleTheme } = useTheme();
 
     return (
-        <Button variant="ghost" size="icon" onClick={toggleTheme} className="flex bg-gray-100 w-12 h-8">
-            {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+        <Button onClick={toggleTheme} className="flex bg-gray-100 w-10">
+            {theme === "dark" ? <Sun className="w-5 h-5 text-gray-800" /> : <Moon className="w-5 h-5 text-gray-800" />}
         </Button>
     );
 }

@@ -18,7 +18,6 @@ import {
     InputOTPSeparator,
     InputOTPSlot,
 } from "@/components/ui/input-otp"
-import { ThemeToggle } from "@/components/ThemeToggle"
 
 const formSchema = z.object({
     email: z.string().min(2, {
@@ -51,9 +50,6 @@ const ForgotPassword = () => {
 
     return (
         <div className="flex-1 px-10 lg:px-20 py-8">
-            <div className="top-5 right-[5%] absolute">
-                <ThemeToggle />
-            </div>
             <div className="space-y-4">
                 <div className="flex flex-col space-x-3">
                     <h1 className="font-bold text-gray-800 text-2xl xl:text-3xl leading-6">Account Recovery</h1>

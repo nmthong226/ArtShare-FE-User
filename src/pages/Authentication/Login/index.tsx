@@ -28,7 +28,9 @@ const Login = () => {
                         <input type="checkbox" className="mr-2" />
                         Remember me
                     </label>
-                    <a href="#" className="text-blue-600 text-sm">Forgot username or password?</a>
+                    <div className="text-blue-600 text-sm">
+                        <Link to="/forgot-password" className="">Forgot username or password?</Link>
+                    </div>
                 </div>
                 <Button type="submit" className="bg-gray-800 hover:bg-gray-700 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10 font-bold text-white">Login</Button>
             </form>

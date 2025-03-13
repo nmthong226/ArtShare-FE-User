@@ -28,5 +28,5 @@
       ]
     }
   },
-  "include": ["src"]
+  "include": ["src", "**/*.cy.ts","cypress.d.ts"]
 }

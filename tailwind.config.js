@@ -68,9 +68,14 @@ export default {
                     '0%': { opacity: '0' },
                     '100%': { opacity: '1' },
                 },
+                "caret-blink": {
+                    "0%,70%,100%": { opacity: "1" },
+                    "20%,50%": { opacity: "0" },
+                },
             },
             animation: {
                 fadeIn: 'fadeIn 0.5s ease-in-out',
+                "caret-blink": "caret-blink 1.25s ease-out infinite",
             },
             screens: {
                 'xl': '1280px',

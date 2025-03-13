@@ -90,10 +90,6 @@ const IGallery: React.FC = () => {
 
   return (
     <div className="flex w-screen items-center flex-col bg-zinc-50">
-      <div className="py-8 flex flex-col gap-2">
-        <h1 className="text-5xl font-bold text-center">Photo Gallery</h1>
-        <p className="text-center text-gray-600 dark:text-gray-300">A collection of beautiful photos from Unsplash</p>
-      </div>
       <div className="container mx-auto">
         <Gallery photos={uniqueGalleryPhotos} renderImage={CustomImageRenderer as React.ComponentType<RenderImageProps>} />
 

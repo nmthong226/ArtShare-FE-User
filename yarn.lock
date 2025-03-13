@@ -1465,6 +1465,11 @@ commondir@^1.0.1:
   resolved "https://registry.npmjs.org/commondir/-/commondir-1.0.1.tgz#ddd800da0c66127393cca5950ea968a3aaf1253b"
   integrity sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==
 
+compute-scroll-into-view@^3.0.2:
+  version "3.1.1"
+  resolved "https://registry.npmjs.org/compute-scroll-into-view/-/compute-scroll-into-view-3.1.1.tgz#02c3386ec531fb6a9881967388e53e8564f3e9aa"
+  integrity sha512-VRhuHOLoKYOy4UbilLbUzbYg93XLjv2PncJC50EuTWPA3gaja1UjBsUP/D/9/juV3vQFr6XBEzn9KCAHdUvOHw==
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz#d8a96bd77fd68df7793a73036a3ba0d5405d477b"
@@ -3159,6 +3164,13 @@ react-dom@18.3.1:
     loose-envify "^1.1.0"
     scheduler "^0.23.2"
 
+react-horizontal-scrolling-menu@7.1.1:
+  version "7.1.1"
+  resolved "https://registry.npmjs.org/react-horizontal-scrolling-menu/-/react-horizontal-scrolling-menu-7.1.1.tgz#c72491977e2dd1975bc04462753a98725d712a64"
+  integrity sha512-g93/9RM4io8CHoyiZO+KBlBg5k/zlmzYe+d1Wln2XcTG7TKq60gwqR9toyBFnYW8x6Xk2tmvEXi5Y8dE40YkEw==
+  dependencies:
+    smooth-scroll-into-view-if-needed "^2.0.2"
+
 react-infinite-scroll-hook@^5.0.1:
   version "5.0.1"
   resolved "https://registry.npmjs.org/react-infinite-scroll-hook/-/react-infinite-scroll-hook-5.0.1.tgz#bda5a082a8178c586055dc482a04a2d7198d2f9b"
@@ -3180,6 +3192,11 @@ react-layout-masonry@^1.2.0:
   version "1.2.0"
   resolved "https://registry.npmjs.org/react-layout-masonry/-/react-layout-masonry-1.2.0.tgz#675e4032c11715a5b47da2de8e5c59ba0fd72a12"
   integrity sha512-Nauk/lE+1boEDFonOea6zWXq4QduCS3p+bOsH2iYVSqs5RBtn6yyeeJnPN++EAZsrUNT3Blvlac1CcoHlJ98Vg==
+
+react-multi-carousel@^2.8.5:
+  version "2.8.5"
+  resolved "https://registry.npmjs.org/react-multi-carousel/-/react-multi-carousel-2.8.5.tgz#033e35426ee2d2ddd46a5b3967a654cd901a80d1"
+  integrity sha512-C5DAvJkfzR2JK9YixZ3oyF9x6R4LW6nzTpIXrl9Oujxi4uqP9SzVVCjl+JLM3tSdqdjAx/oWZK3dTVBSR73Q+w==
 
 react-photo-gallery@^8.0.0:
   version "8.0.0"
@@ -3355,6 +3372,13 @@ scheduler@^0.23.2:
   dependencies:
     loose-envify "^1.1.0"
 
+scroll-into-view-if-needed@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/scroll-into-view-if-needed/-/scroll-into-view-if-needed-3.1.0.tgz#fa9524518c799b45a2ef6bbffb92bcad0296d01f"
+  integrity sha512-49oNpRjWRvnU8NyGVmUaYG4jtTkNonFZI86MmGRDqBphEK2EXT9gdEUoQPZhuBM8yWHxCWbobltqYO5M4XrUvQ==
+  dependencies:
+    compute-scroll-into-view "^3.0.2"
+
 semver@^6.0.0, semver@^6.3.0, semver@^6.3.1:
   version "6.3.1"
   resolved "https://registry.npmjs.org/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
@@ -3459,6 +3483,13 @@ slice-ansi@^4.0.0:
     ansi-styles "^4.0.0"
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
+
+smooth-scroll-into-view-if-needed@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/smooth-scroll-into-view-if-needed/-/smooth-scroll-into-view-if-needed-2.0.2.tgz#5bd4ebef668474d6618ce8704650082e93068371"
+  integrity sha512-z54WzUSlM+xHHvJu3lMIsh+1d1kA4vaakcAtQvqzeGJ5Ffau7EKjpRrMHh1/OBo5zyU2h30ZYEt77vWmPHqg7Q==
+  dependencies:
+    scroll-into-view-if-needed "^3.1.0"
 
 source-map-js@^1.2.1:
   version "1.2.1"

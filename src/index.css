@@ -4,6 +4,21 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --color-mountain-50: oklch(97.31% 0 0);
+  --color-mountain-100: oklch(92.8% 0 0);
+  --color-mountain-200: oklch(86.07% 0 0);
+  --color-mountain-300: oklch(75.72% 0 0);
+  --color-mountain-400: oklch(69.6% 0 0);
+  --color-mountain-500: oklch(62.01% 0 0);
+  --color-mountain-600: oklch(53.48% 0 0);
+  --color-mountain-700: oklch(45.32% 0 0);
+  --color-mountain-800: oklch(37.53% 0 0);
+  --color-mountain-900: oklch(32.11% 0 0);
+  --color-mountain-950: oklch(26.86% 0 0);
+  --color-mountain-1000: oklch(20.9% 0 0);
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

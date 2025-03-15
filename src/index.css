@@ -1,4 +1,8 @@
-@import "tailwindcss";
+@import "tailwindcss" important;
+@import "@fontsource/roboto/300.css";
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/700.css";
 
 @plugin "tailwindcss-animate";
 
@@ -112,6 +116,18 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-mountain-50: oklch(97.31% 0 0);
+  --color-mountain-100: oklch(92.8% 0 0);
+  --color-mountain-200: oklch(86.07% 0 0);
+  --color-mountain-300: oklch(75.72% 0 0);
+  --color-mountain-400: oklch(69.6% 0 0);
+  --color-mountain-500: oklch(62.01% 0 0);
+  --color-mountain-600: oklch(53.48% 0 0);
+  --color-mountain-700: oklch(45.32% 0 0);
+  --color-mountain-800: oklch(37.53% 0 0);
+  --color-mountain-900: oklch(32.11% 0 0);
+  --color-mountain-950: oklch(26.86% 0 0);
+  --color-mountain-1000: oklch(20.9% 0 0);
 }
 
 @layer base {

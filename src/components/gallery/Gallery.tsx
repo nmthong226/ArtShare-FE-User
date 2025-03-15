@@ -89,17 +89,15 @@ const IGallery: React.FC = () => {
   const uniqueGalleryPhotos = Array.from(new Map(galleryPhotos.map((photo) => [photo.id, photo])).values());
 
   return (
-    <div className="flex w-screen items-center flex-col bg-zinc-50">
-      <div className="container mx-auto">
-        <Gallery photos={uniqueGalleryPhotos} renderImage={CustomImageRenderer as React.ComponentType<RenderImageProps>} />
+    <div className="-mx-0.5">
+      <Gallery photos={uniqueGalleryPhotos} renderImage={CustomImageRenderer as React.ComponentType<RenderImageProps>} />
 
-        {(isLoading || isFetchingNextPage) && (
-          <div className="text-center m-4">
-            <LoadingSpinner />
-          </div>
-        )}
-        {isError && <div className="text-center text-red-500">{(error as Error).message}</div>}
-      </div>
+      {(isLoading || isFetchingNextPage) && (
+        <div className="text-center m-4">
+          <LoadingSpinner />
+        </div>
+      )}
+      {isError && <div className="text-center text-red-500">{(error as Error).message}</div>}
     </div>
   );
 };

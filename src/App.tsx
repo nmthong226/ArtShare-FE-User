@@ -1,7 +1,5 @@
-import React from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import Gallery from "@/components/gallery/Gallery";
-import Categories from "@/components/categories/Categories";
+import ExploreGallery from "@/features/exlore-gallery/ExploreGallery";
 import "./App.css";
 
 function App() {
@@ -9,9 +7,8 @@ function App() {
     <Router>
       <div className="app">
         <Routes>
-          <Route path="/" element={<Navigate to="/categories" />} />
-          <Route path="/gallery" element={<Gallery />} />
-          <Route path="/categories" element={<Categories />} />
+          <Route path="/" element={<Navigate to="/explore/gallery" />} />
+          <Route path="/explore/gallery" element={<ExploreGallery />} />
         </Routes>
       </div>
     </Router>

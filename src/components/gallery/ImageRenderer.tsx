@@ -18,6 +18,7 @@ const ImageRenderer: React.FC<RenderImageProps<GalleryPhoto>> = ({ index, photo,
           console.log(123);
         }}
         alt={imgProps.alt || `Image ${index}`}
+        className="rounded-lg p-0.5"
       />
     </div>
   );

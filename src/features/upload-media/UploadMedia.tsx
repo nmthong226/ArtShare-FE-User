@@ -8,21 +8,41 @@ import {
 
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
 import HeroSection from "./components/HeroSection";
-import { CropIcon, DeleteIcon, FolderOpenIcon } from "lucide-react";
+import { CropIcon, TrashIcon, FolderOpenIcon, DeleteIcon } from "lucide-react";
+
+const MAX_IMAGES = 5;
 
 const UploadMedia: React.FC = () => {
   const [contentHeight, setContentHeight] = useState<number>(0);
   const heroRef = useRef<HTMLDivElement>(null);
-  const [selectedPreviewIndex, setSelectedPreviewIndex] = useState(null);
-  const [artPreviews, setArtPreviews] = useState<string[]>([]);
 
-  const handleFileChange = (event) => {
-    const files = Array.from(event.target.files);
-    const newPreviews = files.map((file) => URL.createObjectURL(file));
+  const [selectedPreviewIndex, setSelectedPreviewIndex] = useState<
+    number | null
+  >(null);
+
+  const [artPreviews, setArtPreviews] = useState<string[]>([]);
+  const [files, setFiles] = useState<FileList | null>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newFiles = event.target.files;
+    if (!newFiles) return;
+
+    // Calculate how many images we can still add
+    const availableSlots = MAX_IMAGES - artPreviews.length;
+    if (availableSlots <= 0) return;
+
+    // Convert FileList to an array and slice only the allowed number of files
+    const newFilesArray = Array.from(newFiles).slice(0, availableSlots);
+
+    // (Optional) If you need to update the files state, you might combine newFilesArray with existing files.
+    // Here, for simplicity, we update files with the new selection.
+    setFiles(newFiles);
+
+    // Generate preview URLs for the allowed files
+    const newPreviews = newFilesArray.map((file) => URL.createObjectURL(file));
     setArtPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
   };
-
-  const handleRemovePreview = (index) => {
+  const handleRemovePreview = (index: number) => {
     setArtPreviews((prevPreviews) =>
       prevPreviews.filter((_, i) => i !== index)
     );
@@ -31,7 +51,7 @@ const UploadMedia: React.FC = () => {
     }
   };
 
-  const handleSelectPreview = (index) => {
+  const handleSelectPreview = (index: number) => {
     setSelectedPreviewIndex(index);
   };
 
@@ -52,6 +72,10 @@ const UploadMedia: React.FC = () => {
     };
   }, []);
 
+  const showUploadButton = artPreviews.length === 0;
+  const hasSelectedImage =
+    selectedPreviewIndex !== null && artPreviews[selectedPreviewIndex];
+
   return (
     <Box className="h-screen w-full">
       <div ref={heroRef}>
@@ -62,47 +86,27 @@ const UploadMedia: React.FC = () => {
         style={{ height: `${contentHeight}px`, overflow: "hidden" }}
       >
         {/* Left side: Upload area */}
-        <Box className="w-1/2 p-6 flex flex-col items-center bg-mountain-900 rounded-md">
+        <Box className="w-1/2 p-6 flex flex-col bg-mountain-900 rounded-md text-white">
           <Box className="w-full text-white sticky top-0">
             <Box className="flex justify-between items-center mb-4">
-              <Typography variant="body2">
-                {artPreviews.length}/{5} images
+              <Typography className="text-sm text-mountain-200">
+                {artPreviews.length}/{MAX_IMAGES} images
               </Typography>
-              {selectedPreviewIndex !== null ? (
-                <Box>
-                  <IconButton size="small">
-                    <CropIcon />
-                  </IconButton>
-                  <Button
-                    variant="contained"
-                    size="small"
-                    sx={{ ml: 1, textTransform: "none" }}
-                  >
-                    Upload
-                  </Button>
-                </Box>
-              ) : (
-                <Box>
-                  <IconButton
-                    onClick={() => handleRemovePreview(selectedPreviewIndex)}
-                    size="small"
-                    sx={{ mr: 1 }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                  <Button
-                    variant="text"
-                    size="small"
-                    sx={{ textTransform: "none" }}
-                  >
-                    Remove image
-                  </Button>
-                </Box>
+              {hasSelectedImage && (
+                <Button
+                  variant="text"
+                  size="small"
+                  startIcon={<DeleteIcon />}
+                  onClick={() => handleRemovePreview(selectedPreviewIndex!)}
+                  sx={{ textTransform: "none", color: "#fff" }}
+                >
+                  Remove image
+                </Button>
               )}
             </Box>
 
             {/* Image Preview */}
-            {artPreviews.length > 0 && (
+            {artPreviews.length > 0 ? (
               <Box className="mb-4">
                 <Avatar
                   src={artPreviews[0]}
@@ -110,28 +114,64 @@ const UploadMedia: React.FC = () => {
                   sx={{ width: "100%", height: 300 }}
                 />
               </Box>
+            ) : (
+              <Box className="mb-4 border border-dashed border-gray-500 flex items-center justify-center h-48">
+                <Typography variant="body2" className="text-mountain-200">
+                  No images yet
+                </Typography>
+              </Box>
             )}
 
-            <Button
-              variant="contained"
-              component="label"
-              startIcon={<CloudUploadIcon />}
-              className="bg-indigo-600 hover:bg-indigo-700 mb-2"
-              sx={{ textTransform: "none" }}
-            >
-              Upload Your Art
-              <input type="file" multiple hidden onChange={handleFileChange} />
-            </Button>
-            <Typography variant="body1" className="text-center">
-              or drag and drop here
-            </Typography>
+            {/* Conditionally render big upload button when no images */}
+
+            {showUploadButton ? (
+              <>
+                <Button
+                  variant="contained"
+                  component="label"
+                  startIcon={<CloudUploadIcon />}
+                  className="bg-violet-600 hover:bg-violet-700 mb-2 normal-case"
+                  sx={{ textTransform: "none" }}
+                >
+                  Upload Your Art
+                  <input
+                    type="file"
+                    multiple
+                    hidden
+                    onChange={handleFileChange}
+                  />
+                </Button>
+
+                <Typography variant="body1" className="text-center">
+                  or drag and drop here
+                </Typography>
+              </>
+            ) : (
+              // When images exist, show the plus icon to add more (if under max)
+
+              artPreviews.length < MAX_IMAGES && (
+                <IconButton
+                  component="label"
+                  className="border border-mountain-200"
+                >
+                  <AddIcon className="text-white" />
+
+                  <input
+                    type="file"
+                    multiple
+                    hidden
+                    onChange={handleFileChange}
+                  />
+                </IconButton>
+              )
+            )}
 
             {/* Art Previews Carousel */}
-            <Box className="flex overflow-x-auto mt-4">
+            <Box className="flex overflow-x-auto mt-4 gap-2 custom-scrollbar">
               {artPreviews.map((preview, index) => (
                 <Box
                   key={index}
-                  className={`mr-2 relative cursor-pointer ${
+                  className={`relative cursor-pointer ${
                     selectedPreviewIndex === index
                       ? "border-2 border-indigo-500"
                       : ""
@@ -155,15 +195,28 @@ const UploadMedia: React.FC = () => {
                   </IconButton>
                 </Box>
               ))}
-              <IconButton component="label">
-                <AddIcon />
-                <input
-                  type="file"
-                  multiple
-                  hidden
-                  onChange={handleFileChange}
-                />
-              </IconButton>
+
+              {/* Box-styled plus icon if under MAX_IMAGES */}
+              {artPreviews.length < MAX_IMAGES && (
+                <Box
+                  className="
+        w-[60px] h-[60px] 
+        flex items-center justify-center 
+        border border-mountain-200 
+        rounded-md text-white 
+        cursor-pointer
+      "
+                  component="label"
+                >
+                  <AddIcon />
+                  <input
+                    type="file"
+                    multiple
+                    hidden
+                    onChange={handleFileChange}
+                  />
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>
@@ -175,7 +228,6 @@ const UploadMedia: React.FC = () => {
           <Box className="w-full flex mt-auto  justify-between pr-4">
             <Button
               variant="outlined"
-              // Outline + text in white, with hover styling:
               className="
                 border-white 
                 text-white 
@@ -186,7 +238,6 @@ const UploadMedia: React.FC = () => {
                 space-x-2
                 rounded-md
               "
-              // Force the border color in case MUI overrides:
               sx={{
                 borderColor: "white",
                 "&:hover": {
@@ -197,7 +248,7 @@ const UploadMedia: React.FC = () => {
               startIcon={
                 <FolderOpenIcon
                   // Purple icon color
-                  className="text-[#9e4bff]"
+                  className="text-violet-600"
                 />
               }
             >
@@ -208,9 +259,8 @@ const UploadMedia: React.FC = () => {
 
             <Button
               variant="contained"
-              // onClick={handleSubmit} // The handleSubmit logic is in UploadForm
               sx={{ textTransform: "none" }}
-              className="bg-indigo-600 hover:bg-indigo-700 rounded-md"
+              className="bg-violet-600 hover:bg-violet-700 rounded-md"
             >
               Submit
             </Button>

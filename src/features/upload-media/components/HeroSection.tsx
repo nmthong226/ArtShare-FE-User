@@ -1,27 +1,39 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import backgroundImg from "../assets/background.png"; // adjust path
+import backgroundImg from "../assets/background.png";
 
 const HeroSection: React.FC = () => {
   return (
     <Box
       sx={{
+        height: "60px",
         backgroundImage: `url(${backgroundImg})`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundPosition: "center",
-        height: "300px",
         display: "flex",
-        alignItems: "center",
+        flexDirection: "column",
         justifyContent: "center",
+        alignItems: "flex-start", // Align text to the left
+        pl: "113px", // Add left padding so text isn't flush to the edge
       }}
     >
-      <Typography variant="h3" className="text-white mb-2">
-          Upload Artwork
-        </Typography>
-        <Typography variant="body1" className="text-white">
-          Show the community your blaze
-        </Typography>
+      <Typography
+        sx={{ fontSize: 16, fontWeight: "bold", color: "white", lineHeight: 1 }}
+      >
+        Upload Artwork
+      </Typography>
+      <Typography
+        sx={{
+          fontSize: 12,
+          fontFamily: "Roboto, sans-serif",
+          fontWeight: 300,
+          color: "white",
+          lineHeight: 1,
+        }}
+      >
+        Show the community your blaze
+      </Typography>
     </Box>
   );
 };

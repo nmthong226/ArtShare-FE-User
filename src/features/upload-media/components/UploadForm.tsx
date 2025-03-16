@@ -2,118 +2,191 @@ import React, { useState } from "react";
 import {
   Box,
   Typography,
-  Button,
   TextField,
   Checkbox,
   FormControlLabel,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
 } from "@mui/material";
 
 interface UploadFormProps {
-  files: FileList | null; // Receive files from parent if needed
+  files: FileList | null;
 }
 
-const UploadForm: React.FC<UploadFormProps> = ({ files }) => {
-  // Form fields
+const mediumOptions = [
+  "Digital 2D",
+  "Digital 3D",
+  "Animation",
+  "Traditional Paint",
+  "AI Generation",
+  "Traditional Ink",
+  "Traditional Sculpture",
+];
+
+const UploadForm: React.FC<UploadFormProps> = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isMature, setIsMature] = useState(false);
-  const [category, setCategory] = useState("");
   const [tags, setTags] = useState("");
+  const [selectedMediums, setSelectedMediums] = useState<string[]>([]);
 
-  // Handle form submission
-  const handleSubmit = () => {
-    // You can send `files` along with the rest of the form data
-    const formData = {
-      title,
-      description,
-      isMature,
-      category,
-      tags,
-      files,
-    };
-    console.log("Form data:", formData);
-
-    // Send formData to your backend or API here
+  const handleMediumChange = (medium: string) => {
+    setSelectedMediums((prev) =>
+      prev.includes(medium)
+        ? prev.filter((m) => m !== medium)
+        : [...prev, medium]
+    );
   };
 
   return (
-    <Box>
-      <Typography variant="h6" className="mb-6">
-        Artwork Details
-      </Typography>
+    <Box className="w-full mx-auto  text-white text-left space-y-3">
+      {/* Artwork Title Box */}
+      <Box className=" bg-mountain-900  space-y-3">
+        <Box className="border-b p-2.5 border-mountain-200 ">
+          <Typography className="font-semibold text-sm text-left text-white">
+            Artwork Title
+          </Typography>
+        </Box>
 
-      {/* Artwork Title */}
-      <TextField
-        label="Artwork Title"
-        variant="outlined"
-        fullWidth
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="mb-4"
-      />
-
-      {/* Artwork Description */}
-      <TextField
-        label="Artwork Description"
-        variant="outlined"
-        fullWidth
-        multiline
-        rows={4}
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        className="mb-4"
-      />
-
-      {/* Mature Content Checkbox */}
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={isMature}
-            onChange={(e) => setIsMature(e.target.checked)}
+        {/* TextField with radius 5px */}
+        <Box className="px-2.5 pb-2.5">
+          <TextField
+            placeholder="What do you call your artwork"
+            variant="outlined"
+            fullWidth
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "5px",
+              },
+              "& .MuiOutlinedInput-input": {
+                padding: "10px",
+              },
+            }}
+            slotProps={{
+              input: {
+                className:
+                  "border-1 bg-mountain-950 text-sm text-white placeholder:text-mountain-400",
+              },
+            }}
           />
-        }
-        label="Mark as Mature Content"
-        className="mb-4"
-      />
+        </Box>
+      </Box>
 
-      {/* Category Selector */}
-      <FormControl fullWidth className="mb-4">
-        <InputLabel id="category-select-label">Category</InputLabel>
-        <Select
-          labelId="category-select-label"
-          value={category}
-          label="Category"
-          onChange={(e) => setCategory(e.target.value as string)}
-        >
-          <MenuItem value="digital">Digital</MenuItem>
-          <MenuItem value="traditional">Traditional</MenuItem>
-          <MenuItem value="sculpture">Sculpture</MenuItem>
-        </Select>
-      </FormControl>
+      {/* Artwork Description Box */}
+      <Box className="bg-mountain-900 rounded-md space-y-2">
+        {/* Heading with bottom border */}
+        <Box className="border-b p-2.5 border-mountain-200">
+          <Typography className="font-semibold text-sm text-left text-white">
+            Artwork Details
+          </Typography>
+        </Box>
 
-      {/* Tags */}
-      <TextField
-        label="Tags (comma separated)"
-        variant="outlined"
-        fullWidth
-        value={tags}
-        onChange={(e) => setTags(e.target.value)}
-        className="mb-6"
-      />
+        <Box className="px-2.5 pb-2.5 space-y-1">
+          <Typography className="text-sm text-left text-mountain-200">
+            Description
+          </Typography>
+          <TextField
+            placeholder="Describe your art work"
+            variant="outlined"
+            fullWidth
+            multiline
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            slotProps={{
+              input: {
+                className:
+                  "bg-mountain-950 border-1  text-sm placeholder:text-sm text-white placeholder:text-mountain-400 text-left",
+              },
+            }}
+          />
+        </Box>
 
-      {/* Submit Button */}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handleSubmit}
-        className="bg-indigo-600 hover:bg-indigo-700"
-      >
-        Upload
-      </Button>
+        {/* Content / Mature Checkbox */}
+        <Box className="px-2.5 pb-2.5 space-y-1">
+          <Typography className="text-sm text-left text-mountain-200">
+            Content
+          </Typography>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={isMature}
+                onChange={(e) => setIsMature(e.target.checked)}
+                className="text-white"
+              />
+            }
+            label={
+              <>
+                <span className="text-white">Has mature content</span>
+                <span className="text-mountain-200">
+                  {" "}
+                  (see our Guidelines for{" "}
+                </span>
+                <a
+                  href="/mature-content"
+                  className="text-violet-600 hover:underline"
+                >
+                  Mature Content
+                </a>
+                <span className="text-mountain-200">)</span>
+              </>
+            }
+            className="text-sm text-left"
+          />
+        </Box>
+      </Box>
+
+      {/* Categorization Box */}
+      <Box className="bg-mountain-900 rounded-md space-y-2">
+        {/* Heading with bottom border */}
+        <Box className="border-b p-2.5 border-mountain-200">
+          <Typography className="font-semibold text-sm text-left text-white">
+            Categorization
+          </Typography>
+        </Box>
+
+        {/* Tags */}
+        <Box className="px-2.5 space-y-1">
+          <Typography className="text-sm text-left text-mountain-200">
+            Tags
+          </Typography>
+          <TextField
+            placeholder="Type your artwork tags"
+            variant="outlined"
+            fullWidth
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            slotProps={{
+              input: {
+                className:
+                  "bg-mountain-950 border-1 text-sm placeholder:text-sm text-white placeholder:text-mountain-400 text-left",
+              },
+            }}
+          />
+        </Box>
+
+        {/* Medium Checkboxes */}
+        <Box className="px-2.5 space-y-1">
+          <Typography className="text-sm text-left text-mountain-200">
+            Medium
+          </Typography>
+          <Box className="flex flex-wrap gap-2">
+            {mediumOptions.map((medium) => (
+              <FormControlLabel
+                key={medium}
+                control={
+                  <Checkbox
+                    checked={selectedMediums.includes(medium)}
+                    onChange={() => handleMediumChange(medium)}
+                    className="text-white "
+                  />
+                }
+                label={medium}
+              />
+            ))}
+          </Box>
+        </Box>
+      </Box>
     </Box>
   );
 };

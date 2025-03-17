@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 const SignUp = () => {
     return (
-        <div className="flex-1 space-y-4 px-10 lg:px-20 py-8">
+        <div className="flex-1 space-y-4 px-10 md:px-0 lg:px-20 py-8">
             <div className="flex flex-col space-x-3">
                 <h1 className="font-bold text-gray-800 text-2xl xl:text-3xl leading-6">Join us!</h1>
                 <p className="mt-2 font-bold text-gray-600 text-xl lg:text-2xl xl:text-3xl text-nowrap">Create an ArtShare account</p>

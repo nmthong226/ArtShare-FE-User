@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 
 const Login = () => {
     return (
-        <div className="flex-1 space-y-4 px-10 lg:px-20 py-8">
+        <div className="flex-1 space-y-4 px-10 md:px-0 lg:px-20 py-8">
             <div className="flex flex-col space-x-3">
                 <h1 className="font-bold text-gray-800 text-2xl xl:text-3xl leading-6">Welcome back!</h1>
                 <p className="mt-2 font-bold text-gray-600 text-2xl xl:text-3xl">Login to your account</p>
@@ -61,7 +61,6 @@ const Login = () => {
                     </Button>
                 </div>
             </div>
-
             <div className="mt-6 text-left">
                 <p className="text-gray-600 text-xs xl:text-sm">Don’t have any accounts?
                     <Link to="/signup" className="ml-2 text-blue-600">Register</Link>

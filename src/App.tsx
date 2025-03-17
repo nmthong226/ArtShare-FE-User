@@ -3,11 +3,25 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Layout } from '@/layouts';
 import React from 'react';
 import Login from '@/pages/Authentication/Login';
-import SignUp from './pages/Authentication/SignUp';
-import { AuthenLayout } from './layouts/public/AuthenLayout';
-import ForgotPassword from './pages/Authentication/ForgotPassword';
-import { ThemeProvider } from './context/ThemeProvider';
-import { LanguageProvider } from './context/LanguageProvider';
+import SignUp from '@/pages/Authentication/SignUp';
+import { AuthenLayout } from '@/layouts/public/AuthenLayout';
+import ForgotPassword from '@/pages/Authentication/ForgotPassword';
+import { ThemeProvider } from '@/context/ThemeProvider';
+import { LanguageProvider } from '@/context/LanguageProvider';
+import AccountActivation from '@/pages/Authentication/Activation';
+import DummyPage from '@/pages/Dummy';
+import InAppLayout from './layouts/public/InAppLayout';
+
+const authRoutes = [
+  { path: "/login", element: <Login /> },
+  { path: "/signup", element: <SignUp /> },
+  { path: "/forgot-password", element: <ForgotPassword /> },
+  { path: "/account-activation", element: <AccountActivation /> },
+];
+
+const inAppRoutes = [
+  { path: "/explore", element: <DummyPage /> }
+]
 
 const App: React.FC = () => {
   return (
@@ -16,27 +30,12 @@ const App: React.FC = () => {
         <Router>
           <Layout>
             <Routes>
-              <Route
-                path="/login"
-                element={
-                  <AuthenLayout>
-                    <Login />
-                  </AuthenLayout>}
-              />
-              <Route
-                path="/signup"
-                element={
-                  <AuthenLayout>
-                    <SignUp />
-                  </AuthenLayout>}
-              />
-              <Route
-                path="/forgot-password"
-                element={
-                  <AuthenLayout>
-                    <ForgotPassword />
-                  </AuthenLayout>}
-              />
+              {authRoutes.map(({ path, element }) => (
+                <Route key={path} path={path} element={<AuthenLayout>{element}</AuthenLayout>} />
+              ))}
+              {inAppRoutes.map(({ path, element }) => (
+                <Route key={path} path={path} element={<InAppLayout>{element}</InAppLayout>} />
+              ))}
               <Route path="*" element={<Navigate to="/login" />} />
             </Routes>
           </Layout>

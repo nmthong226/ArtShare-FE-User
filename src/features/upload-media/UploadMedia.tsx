@@ -8,7 +8,7 @@ import {
 
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
 import HeroSection from "./components/HeroSection";
-import { CropIcon, TrashIcon, FolderOpenIcon, DeleteIcon } from "lucide-react";
+import { CropIcon, TrashIcon, FolderOpenIcon, Trash2Icon } from "lucide-react";
 
 const MAX_IMAGES = 5;
 
@@ -96,7 +96,7 @@ const UploadMedia: React.FC = () => {
                 <Button
                   variant="text"
                   size="small"
-                  startIcon={<DeleteIcon />}
+                  startIcon={<Trash2Icon />}
                   onClick={() => handleRemovePreview(selectedPreviewIndex!)}
                   sx={{ textTransform: "none", color: "#fff" }}
                 >
@@ -124,7 +124,7 @@ const UploadMedia: React.FC = () => {
 
             {/* Conditionally render big upload button when no images */}
 
-            {showUploadButton ? (
+            {showUploadButton && (
               <>
                 <Button
                   variant="contained"
@@ -141,29 +141,10 @@ const UploadMedia: React.FC = () => {
                     onChange={handleFileChange}
                   />
                 </Button>
-
                 <Typography variant="body1" className="text-center">
                   or drag and drop here
                 </Typography>
               </>
-            ) : (
-              // When images exist, show the plus icon to add more (if under max)
-
-              artPreviews.length < MAX_IMAGES && (
-                <IconButton
-                  component="label"
-                  className="border border-mountain-200"
-                >
-                  <AddIcon className="text-white" />
-
-                  <input
-                    type="file"
-                    multiple
-                    hidden
-                    onChange={handleFileChange}
-                  />
-                </IconButton>
-              )
             )}
 
             {/* Art Previews Carousel */}
@@ -196,16 +177,9 @@ const UploadMedia: React.FC = () => {
                 </Box>
               ))}
 
-              {/* Box-styled plus icon if under MAX_IMAGES */}
-              {artPreviews.length < MAX_IMAGES && (
+              {artPreviews.length > 0 && artPreviews.length < MAX_IMAGES && (
                 <Box
-                  className="
-        w-[60px] h-[60px] 
-        flex items-center justify-center 
-        border border-mountain-200 
-        rounded-md text-white 
-        cursor-pointer
-      "
+                  className="w-[60px] h-[60px] flex items-center justify-center border border-mountain-200 rounded-md text-white cursor-pointer"
                   component="label"
                 >
                   <AddIcon />

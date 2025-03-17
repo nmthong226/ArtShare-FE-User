@@ -32,19 +32,18 @@ function CommentSection({ postId }) {
   }
 
   return (
-    <div className="mt-6">
-      <h4 className="text-lg font-semibold mb-4">2 Comments</h4> {/* Or dynamic count */}
-      <div>
+    <>
+    <h4 className="text-lg text-gray-200 font-semibold mb-4 text-left">
+          {comments.length > 1 ? `${comments.length} Comments` : `${comments.length} Comment`}
+      </h4>
+    <div className='text-left bg-neutral-500 p-4 rounded-lg shadow-md mt-4 text-left'>
+      <div className="space-y-3">
         {comments.map(comment => (
           <UserComment key={comment.id} comment={comment} />
         ))}
-        {comments.map(comment => (
-          <UserComment key={comment.id} comment={comment} />
-        ))}
-
       </div>
-        {/*  Add a form for new comments here if needed */}
     </div>
+    </>
   );
 }
 

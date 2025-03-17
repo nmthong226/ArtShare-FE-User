@@ -23,7 +23,7 @@ export const fetchPhotos = (page = 1) =>
   unsplashAPI.get<UnsplashPhoto[]>("/photos", {
     params: {
       page,
-      per_page: 24,
+      per_page: 12,
     },
   });
 

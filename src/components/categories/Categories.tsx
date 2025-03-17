@@ -1,14 +1,21 @@
-import React, { useContext } from "react";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import React, { useContext, useState } from "react";
+import { ChevronRight, ChevronLeft, SearchIcon } from "lucide-react";
 import { ScrollMenu, VisibilityContext, type publicApiType } from "react-horizontal-scrolling-menu";
 import { categoriesData } from "./mocks";
-import { Button } from "@mui/material";
+import { Button, Fade, Paper, Popper } from "@mui/material";
 
 import "react-horizontal-scrolling-menu/dist/styles.css";
 import "./Categories.css";
 
 interface CategoriesProps {
-  onSelectChannel: (channelName: string) => void;
+  onSelectCategory: (CategoryName: string) => void;
+}
+
+interface CategoriesPopperProps {
+  open: boolean;
+  anchorEl: HTMLElement | null;
+  onClose: () => void;
+  onSelectCategory: (channelName: string) => void;
 }
 
 const LeftArrow = () => {
@@ -49,14 +56,14 @@ const RightArrow = () => {
   );
 };
 
-const Categories: React.FC<CategoriesProps> = ({ onSelectChannel }) => {
+export const Categories: React.FC<CategoriesProps> = ({ onSelectCategory }) => {
   return (
     <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} itemClassName="flex-shrink-0 flex items-center">
       {categoriesData.map((category) => (
         <div
           key={category.name}
-          className="max-w-48 flex justify-center items-center hover:bg-gray-100 cursor-pointer rounded-lg p-2"
-          onClick={() => onSelectChannel(category.name)}
+          className="max-w-48 flex justify-center items-center hover:bg-gray-100 cursor-pointer rounded-lg p-2 gap-1"
+          onClick={() => onSelectCategory(category.name)}
         >
           <img src={category.thumbnail} alt={category.name} className="object-cover object-center w-12 aspect-[1/1] rounded-lg" />
           <span className="text-sm text-gray-800">{category.name}</span>
@@ -66,4 +73,50 @@ const Categories: React.FC<CategoriesProps> = ({ onSelectChannel }) => {
   );
 };
 
-export default Categories;
+export const CategoryPopper: React.FC<CategoriesPopperProps> = ({ open, anchorEl, onClose, onSelectCategory }) => {
+  const [searchValue, setSearchValue] = useState<string>("");
+
+  const handleCategoryClick = (categoryName: string) => {
+    onSelectCategory(categoryName);
+    onClose();
+  };
+
+  return (
+    <Popper sx={{ zIndex: 1200 }} open={open} anchorEl={anchorEl} placement="right" transition className="m-4">
+      {({ TransitionProps }) => (
+        <Fade {...TransitionProps} timeout={350}>
+          <Paper className="h-[70vh] overflow-y-auto max-w-72">
+            <div className="sticky top-0 bg-white p-4 w-full">
+              <div className="relative rounded bg-mountain-50 bg-opacity-15 hover:bg-opacity-25 w-full">
+                <div className="absolute inset-y-0 left-0 flex items-center justify-center px-2 pointer-events-none">
+                  <SearchIcon size={16} />
+                </div>
+                <input
+                  type="text"
+                  placeholder="Search in Categorys"
+                  aria-label="search"
+                  onChange={(event) => setSearchValue(event.target.value)}
+                  className="w-full pl-8 p-2 text-inherit transition-width duration-200 border"
+                />
+              </div>
+            </div>
+            <div className="px-4">
+              {categoriesData
+                .filter((category) => category.name.toLowerCase().includes(searchValue.toLowerCase()))
+                .map((category) => (
+                  <div
+                    key={category.name}
+                    className="flex items-center hover:bg-mountain-100 cursor-pointer rounded-lg p-2 gap-1"
+                    onClick={() => handleCategoryClick(category.name)}
+                  >
+                    <img src={category.thumbnail} alt={category.name} className="object-cover object-center w-12 aspect-[1/1] rounded-lg" />
+                    <span className="text-sm text-gray-800 text-wrap">{category.name}</span>
+                  </div>
+                ))}
+            </div>
+          </Paper>
+        </Fade>
+      )}
+    </Popper>
+  );
+};

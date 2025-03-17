@@ -3,10 +3,18 @@ import { useInfiniteQuery } from "react-query";
 import { fetchPhotos } from "./api/unsplashService";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Gallery, { PhotoProps, RenderImageProps } from "react-photo-gallery";
-import CustomImageRenderer from "./ImageRenderer";
+import ImageRenderer from "./ImageRenderer";
 
 export interface GalleryPhoto extends PhotoProps {
   id: string;
+  post: Post;
+}
+
+export interface Post {
+  id: string;
+  title: string;
+  author: string;
+  images: GalleryPhoto[];
 }
 
 const getImageDimensions = (url: string): Promise<{ width: number; height: number }> => {
@@ -33,6 +41,32 @@ const fetchPhotosWithDimensions = async (photoUrls: string[]) => {
   return photosWithDimensions;
 };
 
+const mockPosts = (photos: GalleryPhoto[]): Post[] => {
+  const posts: Post[] = [];
+  let toggleSingleImagePost = true;
+
+  for (let i = 0; i < photos.length; ) {
+    const images = toggleSingleImagePost
+      ? photos.slice(i, i + 1) // Single-image post
+      : photos.slice(i, i + 3); // Multi-image post
+
+    if (images.length > 0) {
+      posts.push({
+        id: `post-${i}`,
+        title: `Post ${posts.length + 1}`,
+        author: `Author ${posts.length + 1}`,
+        images,
+      });
+    }
+
+    i += images.length;
+
+    toggleSingleImagePost = !toggleSingleImagePost;
+  }
+
+  return posts;
+};
+
 const IGallery: React.FC = () => {
   const { data, error, isError, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<GalleryPhoto[], Error>(
     "photos",
@@ -52,6 +86,7 @@ const IGallery: React.FC = () => {
         src: photoDim.url,
         width: photoDim.width,
         height: photoDim.height,
+        post: { id: "", title: "", author: "", images: [] },
       }));
 
       return galleryPhotos;
@@ -80,17 +115,50 @@ const IGallery: React.FC = () => {
       }
     };
 
+    const checkContentHeight = () => {
+      const windowHeight = window.innerHeight;
+      const fullHeight = document.documentElement.offsetHeight;
+
+      if (fullHeight < windowHeight) {
+        if (hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      }
+    };
+
+    const handleResize = () => {
+      checkContentHeight();
+    };
+
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+    checkContentHeight();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   const galleryPhotos = data ? data.pages.flat() : [];
 
   const uniqueGalleryPhotos = Array.from(new Map(galleryPhotos.map((photo) => [photo.id, photo])).values());
 
+  const posts = mockPosts(uniqueGalleryPhotos);
+
   return (
     <div className="-mx-0.5">
-      <Gallery photos={uniqueGalleryPhotos} renderImage={CustomImageRenderer as React.ComponentType<RenderImageProps>} />
+      <Gallery
+        photos={posts.map((post) => ({
+          id: post.images[0].id,
+          src: post.images[0].src,
+          width: post.images[0].width,
+          height: post.images[0].height,
+          alt: post.title,
+          post,
+        }))}
+        renderImage={ImageRenderer as React.ComponentType<RenderImageProps>}
+      />
 
       {(isLoading || isFetchingNextPage) && (
         <div className="text-center m-4">

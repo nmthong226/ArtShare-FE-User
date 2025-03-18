@@ -78,7 +78,8 @@ export default {
                 "caret-blink": "caret-blink 1.25s ease-out infinite",
             },
             screens: {
-                'xl': '1280px',
+                xs : '425px',
+                xl: '1280px',
             }
         }
     },

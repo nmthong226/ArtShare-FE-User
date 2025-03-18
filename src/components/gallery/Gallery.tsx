@@ -1,23 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useInfiniteQuery } from "react-query";
-import { fetchPhotos } from "./api/unsplashService";
+import { fetchPosts } from "./api/unsplashService";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Gallery, { PhotoProps, RenderImageProps } from "react-photo-gallery";
 import ImageRenderer from "./ImageRenderer";
+import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 export interface GalleryPhoto extends PhotoProps {
-  id: string;
-  post: Post;
-}
-
-export interface Post {
-  id: string;
   title: string;
   author: string;
-  images: GalleryPhoto[];
+  postLength: number;
 }
 
-const getImageDimensions = (url: string): Promise<{ width: number; height: number }> => {
+const getMediaDimensions = (url: string): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve({ width: img.width, height: img.height });
@@ -26,68 +21,34 @@ const getImageDimensions = (url: string): Promise<{ width: number; height: numbe
   });
 };
 
-const fetchPhotosWithDimensions = async (photoUrls: string[]) => {
-  const photosWithDimensions = await Promise.all(
-    photoUrls.map(async (url) => {
-      try {
-        const dimensions = await getImageDimensions(url);
-        return { url, ...dimensions };
-      } catch (error) {
-        console.error(`Failed to load dimensions for image ${url}:`, error);
-        return { url, width: 0, height: 0 };
-      }
-    })
-  );
-  return photosWithDimensions;
-};
-
-const mockPosts = (photos: GalleryPhoto[]): Post[] => {
-  const posts: Post[] = [];
-  let toggleSingleImagePost = true;
-
-  for (let i = 0; i < photos.length; ) {
-    const images = toggleSingleImagePost
-      ? photos.slice(i, i + 1) // Single-image post
-      : photos.slice(i, i + 3); // Multi-image post
-
-    if (images.length > 0) {
-      posts.push({
-        id: `post-${i}`,
-        title: `Post ${posts.length + 1}`,
-        author: `Author ${posts.length + 1}`,
-        images,
-      });
-    }
-
-    i += images.length;
-
-    toggleSingleImagePost = !toggleSingleImagePost;
-  }
-
-  return posts;
-};
-
 const IGallery: React.FC = () => {
+  const [filter, setFilter] = useState<string>("for-you");
+
+  const handleFilterChange = (_: React.MouseEvent<HTMLElement>, newFilter: string) => {
+    if (newFilter) {
+      setFilter(newFilter);
+    }
+  };
+
   const { data, error, isError, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<GalleryPhoto[], Error>(
-    "photos",
+    "posts",
     async ({ pageParam = 1 }) => {
-      const response = await fetchPhotos(pageParam);
+      const response = await fetchPosts(filter, pageParam);
 
-      const photosData = response.data.map((photo) => ({
-        id: photo.id,
-        url: photo.urls.regular,
-      }));
-
-      const photoUrls = photosData.map((photo) => photo.url);
-      const photosWithDimensions = await fetchPhotosWithDimensions(photoUrls);
-
-      const galleryPhotos: GalleryPhoto[] = photosWithDimensions.map((photoDim, index) => ({
-        id: photosData[index].id,
-        src: photoDim.url,
-        width: photoDim.width,
-        height: photoDim.height,
-        post: { id: "", title: "", author: "", images: [] },
-      }));
+      const galleryPhotos: GalleryPhoto[] = await Promise.all(
+        response.data.map(async (post) => {
+          const mediaDimensions = await getMediaDimensions(post.medias[0].url);
+          return {
+            key: post.medias[0].url,
+            title: post.title || "Untitled",
+            author: post.user.fullName,
+            src: post.medias[0].url,
+            width: mediaDimensions.width,
+            height: mediaDimensions.height,
+            postLength: post.medias.length,
+          };
+        })
+      );
 
       return galleryPhotos;
     },
@@ -142,23 +103,21 @@ const IGallery: React.FC = () => {
 
   const galleryPhotos = data ? data.pages.flat() : [];
 
-  const uniqueGalleryPhotos = Array.from(new Map(galleryPhotos.map((photo) => [photo.id, photo])).values());
-
-  const posts = mockPosts(uniqueGalleryPhotos);
+  const uniqueGalleryPhotos = Array.from(new Map(galleryPhotos.map((photo) => [photo.key, photo])).values());
 
   return (
     <div className="-mx-0.5">
-      <Gallery
-        photos={posts.map((post) => ({
-          id: post.images[0].id,
-          src: post.images[0].src,
-          width: post.images[0].width,
-          height: post.images[0].height,
-          alt: post.title,
-          post,
-        }))}
-        renderImage={ImageRenderer as React.ComponentType<RenderImageProps>}
-      />
+      <Gallery photos={uniqueGalleryPhotos} renderImage={ImageRenderer as React.ComponentType<RenderImageProps>} />
+      <Paper className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg z-50">
+        <ToggleButtonGroup className="m-1.5 flex gap-2" size="small" value={filter} exclusive onChange={handleFilterChange}>
+          <ToggleButton className="-m-0.5 border-0 py-2 px-4 rounded-full" value="for-you">
+            For you
+          </ToggleButton>
+          <ToggleButton className="-m-0.5 border-0 py-2 px-4 rounded-full" value="following">
+            Following
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Paper>
 
       {(isLoading || isFetchingNextPage) && (
         <div className="text-center m-4">

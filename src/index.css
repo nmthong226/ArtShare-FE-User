@@ -131,15 +131,6 @@
   --color-mountain-1000: oklch(20.9% 0 0);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
-
 body {
   margin: 0;
   padding: 0;

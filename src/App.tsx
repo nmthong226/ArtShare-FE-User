@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import React from 'react';
 
 // Components
-import ProtectedRoute from '@/components/routeManagement/ProtectedRoute';
+// import ProtectedRoute from '@/components/routeManagement/ProtectedRoute';
 
 // Layout
 import RootLayout from '@/layouts';

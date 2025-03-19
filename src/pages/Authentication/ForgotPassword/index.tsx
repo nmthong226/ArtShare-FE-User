@@ -23,6 +23,7 @@ const ForgotPassword = () => {
                     />
                     <Button type="submit" className="bg-gray-800 hover:bg-gray-700 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10 font-bold text-white">Send My Verification Code</Button>
                 </div>
+                <hr className="border-0.5 border-mountain-200 w-full"/>
                 <div className="space-y-2">
                     <label htmlFor="username" className="block font-semibold text-gray-600 text-sm">Step 2: Input The OTP</label>
                     <InputOTP maxLength={4} className="mt-1" onChange={() => { }} disabled>
@@ -46,6 +47,7 @@ const ForgotPassword = () => {
                         Check My OTP
                     </Button>
                 </div>
+                <hr className="border-0.5 border-mountain-200 w-full"/>
                 <div className="space-y-2">
                     <label htmlFor="username" className="block font-semibold text-gray-600 text-sm">Step 3: Choose New Password</label>
                     <Input

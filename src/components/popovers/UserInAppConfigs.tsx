@@ -40,7 +40,7 @@ const UserInAppConfigs = () => {
                 </div>
             </PopoverTrigger>
             <PopoverContent
-                className="bg-mountain-900 mt-4 p-0 py-2 border-mountain-700 w-64"
+                className="dark:bg-mountain-900 mt-4 p-0 py-2 dark:border-mountain-700 w-64"
                 onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
             >

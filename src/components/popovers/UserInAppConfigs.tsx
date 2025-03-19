@@ -3,10 +3,10 @@ import { useState } from 'react'
 
 // Context/hooks
 import { useTheme } from '@/context/ThemeProvider';
+import { useUser } from '@/context/UserProvider';
 
 // Icons
 import { FaReact } from "react-icons/fa";
-import { Switch } from '@/components/ui/switch';
 import { MdDarkMode } from "react-icons/md";
 import { MdLightMode } from "react-icons/md";
 
@@ -17,14 +17,18 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Switch } from '@/components/ui/switch';
 
 
 const UserInAppConfigs = () => {
+    const { user } = useUser();
     const [open, setOpen] = useState(false);
     const { toggleTheme } = useTheme();
 
     const [matureContent, setMatureContent] = useState(false);
     const [aiContent, setAiContent] = useState(false);
+
     return (
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
@@ -32,7 +36,7 @@ const UserInAppConfigs = () => {
                     <Button
                         variant="ghost"
                         title="More"
-                        className="bg-gradient-to-b from-blue-800 to-pink-800 w-8 h-8"
+                        className="flex items-center bg-gradient-to-b from-blue-800 to-pink-800 rounded-full w-8 h-8"
                         onMouseEnter={() => setOpen(true)}
                     >
                         <FaReact className="size-5 text-white" />
@@ -44,6 +48,33 @@ const UserInAppConfigs = () => {
                 onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
             >
+                {!user && (
+                    <>
+                        <div className='flex p-3 py-2 w-full'>
+                            <div className='flex items-end space-x-2'>
+                                <Avatar className='w-10 h-10'>
+                                    <AvatarImage src="https://github.com/shadcn.png" />
+                                    <AvatarFallback>CN</AvatarFallback>
+                                </Avatar>
+                                <div className='flex flex-col'>
+                                    <p className='text-mountain-950 dark:text-mountain-50'>User Sample</p>
+                                    <p className='text-mountain-500 text-xs'>example123@gmail.com</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr className='my-2 border-mountain-100 dark:border-mountain-800 border-t-1' />
+                        <div className='flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
+                            <p className='text-sm'>User Profile</p>
+                        </div>
+                        <div className='md:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
+                            <p className='text-sm'>Message</p>
+                        </div>
+                        <div className='md:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
+                            <p className='text-sm'>Update</p>
+                        </div>
+                        <hr className='my-2 border-mountain-100 dark:border-mountain-800 border-t-1' />
+                    </>
+                )}
                 <div className="flex justify-between items-center hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full h-full">
                     <span className='text-sm'>Theme</span>
                     <div className='flex space-x-2'>
@@ -64,6 +95,17 @@ const UserInAppConfigs = () => {
                     <span className='text-sm'>AI Content</span>
                     <Switch checked={aiContent} onCheckedChange={setAiContent} className='hover:cursor-pointer' />
                 </div>
+                {!user &&
+                    <>
+                        <hr className='my-2 border-mountain-100 dark:border-mountain-800 border-t-1' />
+                        <div className='flex items-center space-x-2 hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
+                            <p className='text-sm'>Help Center</p>
+                        </div>
+                        <div className='flex items-center space-x-2 hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
+                            <p className='text-sm'>Logout</p>
+                        </div>
+                    </>
+                }
             </PopoverContent>
         </Popover>
     )

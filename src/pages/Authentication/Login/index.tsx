@@ -41,21 +41,21 @@ const Login = () => {
             </div>
             <div className="flex flex-col justify-between space-x-4 space-y-4 mt-4">
                 <div className="flex w-full">
-                    <Button variant={"outline"} className="flex justify-center items-center px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-full h-10 font-normal text-sm">
+                    <Button variant={"outline"} className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-full h-10 font-normal text-sm hover:cursor-pointer">
                         <FcGoogle className="size-5" />
                         <span>Continue with Google</span>
                     </Button>
                 </div>
                 <div className="flex justify-between w-full">
-                    <Button variant={"outline"} className="flex justify-center items-center px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm">
+                    <Button variant={"outline"} className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer">
                         <FaFacebookF className="size-5 text-blue-600" />
                         <span>Facebook</span>
                     </Button>
-                    <Button variant={"outline"} className="flex justify-center items-center px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm">
+                    <Button variant={"outline"} className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer">
                         <img src={InstagramIcon} alt="Instagram" className="size-5" />
                         <span>Instagram</span>
                     </Button>
-                    <Button variant={"outline"} className="flex justify-center items-center px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm">
+                    <Button variant={"outline"} className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer">
                         <FaApple className="size-5" />
                         <span>Apple</span>
                     </Button>

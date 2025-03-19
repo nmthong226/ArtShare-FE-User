@@ -1,8 +1,12 @@
 // Core Lib/Frameworks
 import React from 'react'
+import { Link, useLocation } from 'react-router-dom';
 
 // Assets
 import app_logo from '/logo_app_bg.jpg';
+
+// Context
+import { useUser } from '@/context/UserProvider';
 
 // Components
 import { Input } from '@/components/ui/input';
@@ -14,12 +18,12 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet"
-
+import UserInAppConfigs from '@/components/popovers/UserInAppConfigs';
 
 // Icons
 import { FiSearch } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
-import { IoReorderThreeOutline } from "react-icons/io5";
+import { IoMail, IoNotifications, IoReorderThreeOutline } from "react-icons/io5";
 import { MdExplore, MdOutlineExplore } from "react-icons/md";
 import { RiShoppingBag4Line, RiShoppingBag4Fill, RiFolderUploadFill, RiImageAiFill } from "react-icons/ri";
 import { BsFilePersonFill, BsPen } from "react-icons/bs";
@@ -28,12 +32,13 @@ import { RiImageAiLine } from "react-icons/ri";
 import { BsFilePerson } from "react-icons/bs";
 import { MdLibraryBooks, MdOutlineLibraryBooks } from "react-icons/md";
 import { FiLogIn } from "react-icons/fi";
-import UserInAppConfigs from '@/components/popovers/UserInAppConfigs';
-import { Link, useLocation } from 'react-router-dom';
+import { IoMailOutline } from "react-icons/io5";
+import { IoNotificationsOutline } from "react-icons/io5";
 
 
 const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const location = useLocation();
+    const { user } = useUser();
     return (
         <div className='flex flex-col w-full h-full'>
             <nav className='flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16'>
@@ -136,16 +141,37 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                         </div>
                     </div>
                 </div>
-                <div className='flex items-center space-x-2 xl:space-x-4 h-full'>
+                <div className='flex items-center md:space-x-2 xl:space-x-4 h-full'>
+                    {!user ?
+                        (
+                            <>
+                                <Link to="/messages" className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/messages" ? "border-mountain-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
+                                    <div className='hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer'>
+                                        {location.pathname === "/messages" ? (<IoMail className='w-6 h-6' />) : (<IoMailOutline className='w-6 h-6' />)}
+                                        <p className='text-sm'>Messages</p>
+                                    </div>
+                                </Link>
+                                <Link to="/blogs" className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/blogs" ? "border-mountain-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
+                                    <div className='hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer'>
+                                        {location.pathname === "/blogs" ? (<IoNotifications className='w-6 h-6' />) : (<IoNotificationsOutline className='w-6 h-6' />)}
+                                        <p className='text-sm'>Updates</p>
+                                    </div>
+                                </Link>
+                            </>
+                        ) :
+                        (
+                            <>
+                                <Link to='/signup' className='hidden xs:flex justify-center items-center space-x-2 border border-mountain-700 rounded-2xl w-24 xl:w-26 h-9 text-muted-foreground text-sm' >
+                                    <BsPen />
+                                    <p>Sign Up</p>
+                                </Link>
+                                <Link to='/login' className='flex justify-center items-center space-x-2 bg-mountain-700 hover:bg-mountain-600 dark:bg-mountain-200 rounded-2xl w-20 xl:w-26 h-9 text-mountain-100 dark:text-mountain-950 text-sm'>
+                                    <FiLogIn />
+                                    <p>Login</p>
+                                </Link>
+                            </>
+                        )}
                     <UserInAppConfigs />
-                    <Link to='/login' className='flex justify-center items-center space-x-2 bg-mountain-700 hover:bg-mountain-600 dark:bg-mountain-200 rounded-2xl w-20 xl:w-26 h-9 text-mountain-100 dark:text-mountain-950 text-sm'>
-                        <FiLogIn />
-                        <p>Login</p>
-                    </Link>
-                    <Link to='/signup' className='hidden xs:flex justify-center items-center space-x-2 border rounded-2xl w-24 xl:w-26 h-9 text-muted-foreground text-sm' >
-                        <BsPen />
-                        <p>Sign Up</p>
-                    </Link>
                 </div>
             </nav>
             <div className='flex w-full h-full'>

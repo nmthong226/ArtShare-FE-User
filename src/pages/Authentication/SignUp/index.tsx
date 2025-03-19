@@ -16,21 +16,21 @@ const SignUp = () => {
             </div>
             <div className="flex flex-col justify-between space-x-4 space-y-4 mt-4">
                 <div className="flex w-full">
-                    <Button variant={"outline"} className="flex justify-center items-center px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-full h-10 font-normal text-sm">
+                    <Button variant={"outline"} className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-full h-10 font-normal text-sm hover:cursor-pointer">
                         <FcGoogle className="size-5" />
                         <span>Continue with Google</span>
                     </Button>
                 </div>
                 <div className="flex justify-between w-full">
-                    <Button variant={"outline"} className="flex justify-center items-center px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm">
+                    <Button variant={"outline"} className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer">
                         <FaFacebookF className="size-5 text-blue-700" />
                         <span>Facebook</span>
                     </Button>
-                    <Button variant={"outline"} className="flex justify-center items-center px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm">
+                    <Button variant={"outline"} className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer">
                         <img src={InstagramIcon} alt="Instagram" className="size-5" />
                         <span>Instagram</span>
                     </Button>
-                    <Button variant={"outline"} className="flex justify-center items-center px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm">
+                    <Button variant={"outline"} className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer">
                         <FaApple className="size-5" />
                         <span>Apple</span>
                     </Button>
@@ -56,11 +56,11 @@ const SignUp = () => {
                 <Button type="submit" className="bg-mountain-800 hover:bg-mountain-700 dark:bg-gradient-to-r dark:from-blue-800 dark:via-purple-700 dark:to-pink-900 hover:brightness-110 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full h-10 font-bold text-white dark:text-mountain-50 hover:cursor-pointer">Sign Up with Email</Button>
             </form>
             <div className="mt-6 text-left">
-                <p className="text-mountain-600 text-xs xl:text-sm">Already have an account?
+                <p className="text-mountain-600 dark:text-mountain-100 text-xs xl:text-sm">Already have an account?
                     <Link to="/login" className="ml-2 text-indigo-600 dark:text-indigo-300">Login</Link>
                 </p>
             </div>
-            <div className="mt-4 text-[10px] text-mountain-500 xl:text-xs lg:text-left text-center">
+            <div className="mt-4 text-[10px] text-mountain-500 dark:text-mountain-300 xl:text-xs lg:text-left text-center">
                 <p>By logging in to ArtShare, I confirm that I have read and agree to the ArtShare <a href="#" className="text-indigo-600 dark:text-indigo-300">Terms of Service</a>  -  <a href="#" className="text-indigo-600 dark:text-indigo-300">Privacy Policy</a> regarding data usage.</p>
             </div>
         </div>

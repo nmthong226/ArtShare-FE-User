@@ -168,19 +168,19 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     </Link>
                     <hr className='md:hidden flex border-mountain-700 border-t-1 w-full h-1' />
                     <Link to="/submit-media" className='group flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/submit-media" ? "bg-mountain-100 dark:bg-mountain-800" : ""}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/submit-media" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/submit-media" ? < RiFolderUploadFill className='w-6 h-6' /> : <RiFolderUploadLine className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Submit</p>
                     </Link>
                     <Link to="/create-art" className='group flex flex-col justify-center items-center space-y-2 w-full h-16'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/create-art" ? "bg-mountain-100 dark:bg-mountain-800" : ""}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/create-art" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/create-art" ? < RiImageAiFill className='w-6 h-6' /> : <RiImageAiLine className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Create</p>
                     </Link>
                     <Link to="/portfolio" className='group flex flex-col justify-center items-center space-y-2 w-full h-16'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/portfolio" ? "bg-mountain-100 dark:bg-mountain-800" : ""}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/portfolio" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/portfolio" ? < BsFilePersonFill className='w-6 h-6' /> : <BsFilePerson className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Portfolio</p>

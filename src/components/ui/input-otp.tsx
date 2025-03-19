@@ -67,7 +67,7 @@ function InputOTPSlot({
 function InputOTPSeparator({ ...props }: React.ComponentProps<"div">) {
   return (
     <div data-slot="input-otp-separator" role="separator" {...props}>
-      <div className="bg-zinc-900 rounded-full w-1 h-1"></div>
+      <div className="bg-mountain-900 dark:bg-mountain-400 rounded-full w-1 h-1"></div>
     </div>
   )
 }

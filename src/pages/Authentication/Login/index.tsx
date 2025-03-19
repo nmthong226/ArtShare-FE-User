@@ -32,7 +32,7 @@ const Login = () => {
                         <Link to="/forgot-password" className="">Forgot username or password?</Link>
                     </div>
                 </div>
-                <Button type="submit" className="bg-mountain-800 hover:bg-mountain-700 dark:bg-gradient-to-r dark:from-blue-800 dark:via-purple-700 dark:to-pink-900 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full h-10 font-bold text-white dark:text-mountain-50">Login</Button>
+                <Button type="submit" className="bg-mountain-800 hover:bg-mountain-700 dark:bg-gradient-to-r dark:from-blue-800 dark:via-purple-700 dark:to-pink-900 hover:brightness-110 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full h-10 font-bold text-white dark:text-mountain-50 hover:cursor-pointer">Login</Button>
             </form>
             <div className="flex items-center space-x-4 mt-6 text-center">
                 <hr className="border-mountain-900 border-t-1 w-full" />

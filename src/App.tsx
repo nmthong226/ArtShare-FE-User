@@ -2,6 +2,9 @@ import './App.css'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import React from 'react';
 
+// Components
+import ProtectedRoute from '@/components/routeManagement/ProtectedRoute';
+
 // Layout
 import RootLayout from '@/layouts';
 import InAppLayout from '@/layouts/public/InAppLayout';
@@ -23,7 +26,6 @@ import SubmitMedia from './pages/SubmitMedia';
 import ArtGeneration from './pages/ArtGeneration';
 import Portfolio from './pages/Portfolio';
 import { UserProvider } from './context/UserProvider';
-import ProtectedRoute from './components/routeManagement/ProtectedRoute';
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -62,9 +64,10 @@ const App: React.FC = () => {
                   <Route key={path} path={path}
                     element={
                       <InAppLayout>
-                        <ProtectedRoute>
+                        {/* <ProtectedRoute>
                           {element}
-                        </ProtectedRoute>
+                        </ProtectedRoute> */}
+                        {element}
                       </InAppLayout>
                     } />
                 ))}

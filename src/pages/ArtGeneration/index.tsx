@@ -1,8 +1,8 @@
-import React from 'react'
-
 const ArtGeneration = () => {
   return (
-    <div>ArtGeneration</div>
+    <div className='flex bg-mountain-50 dark:bg-mountain-950 w-full h-full'>
+      ArtGeneration
+    </div>
   )
 }
 

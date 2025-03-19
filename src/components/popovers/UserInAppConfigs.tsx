@@ -40,12 +40,12 @@ const UserInAppConfigs = () => {
                 </div>
             </PopoverTrigger>
             <PopoverContent
-                className="dark:bg-mountain-900 mt-4 p-0 py-2 dark:border-mountain-700 w-48"
+                className="bg-mountain-900 mt-4 p-0 py-2 border-mountain-700 w-64"
                 onMouseEnter={() => setOpen(true)}
                 onMouseLeave={() => setOpen(false)}
             >
                 <div className="flex justify-between items-center hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full h-full">
-                    <span className='text-xs'>Theme</span>
+                    <span className='text-sm'>Theme</span>
                     <div className='flex space-x-2'>
                         <Button onClick={toggleTheme} className={`border-2 border-indigo-600 dark:border-mountain-600 dark:bg-mountain-800 rounded-full size-8`} variant={"outline"}>
                             <MdLightMode className='size-5' />
@@ -57,11 +57,11 @@ const UserInAppConfigs = () => {
                 </div>
                 <hr className='my-2 border-mountain-100 dark:border-mountain-800 border-t-1' />
                 <div className="flex justify-between items-center hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full h-full">
-                    <span className='text-xs'>Mature Content</span>
+                    <span className='text-sm'>Mature Content</span>
                     <Switch checked={matureContent} onCheckedChange={setMatureContent} className='hover:cursor-pointer' />
                 </div>
                 <div className="flex justify-between items-center hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full h-full">
-                    <span className='text-xs'>AI Content</span>
+                    <span className='text-sm'>AI Content</span>
                     <Switch checked={aiContent} onCheckedChange={setAiContent} className='hover:cursor-pointer' />
                 </div>
             </PopoverContent>

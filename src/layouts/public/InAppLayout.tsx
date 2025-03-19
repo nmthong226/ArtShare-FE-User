@@ -21,8 +21,8 @@ import { FiSearch } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
 import { IoReorderThreeOutline } from "react-icons/io5";
 import { MdExplore, MdOutlineExplore } from "react-icons/md";
-import { RiShoppingBag4Line, RiShoppingBag4Fill } from "react-icons/ri";
-import { BsPen } from "react-icons/bs";
+import { RiShoppingBag4Line, RiShoppingBag4Fill, RiFolderUploadFill, RiImageAiFill } from "react-icons/ri";
+import { BsFilePersonFill, BsPen } from "react-icons/bs";
 import { RiFolderUploadLine } from "react-icons/ri";
 import { RiImageAiLine } from "react-icons/ri";
 import { BsFilePerson } from "react-icons/bs";
@@ -150,38 +150,38 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </nav>
             <div className='flex w-full h-full'>
                 <aside className='hidden xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-16 h-full'>
-                    <div className='md:hidden flex flex-col justify-center items-center space-y-2 w-full h-16'>
+                    <Link to="/explore" className='md:hidden flex flex-col justify-center items-center space-y-2 w-full h-16'>
                         <MdExplore className='w-6 h-6' />
                         <p className='font-bold text-[10px]'>Explore</p>
-                    </div>
-                    <div className='md:hidden flex flex-col justify-center items-center space-y-2 w-full h-16'>
+                    </Link>
+                    <Link to="/blogs" className='md:hidden flex flex-col justify-center items-center space-y-2 w-full h-16'>
                         <MdOutlineLibraryBooks className='w-6 h-6' />
                         <p className='text-[10px]'>Blogs</p>
-                    </div>
-                    <div className='md:hidden flex flex-col justify-center items-center space-y-2 w-full h-16'>
+                    </Link>
+                    <Link to="/shop" className='md:hidden flex flex-col justify-center items-center space-y-2 w-full h-16'>
                         <RiShoppingBag4Line className='w-6 h-6' />
                         <p className='text-[10px]'>Shop</p>
-                    </div>
-                    <div className='md:hidden flex flex-col justify-center items-center space-y-2 w-full h-16'>
+                    </Link>
+                    <Link to="/search" className='md:hidden flex flex-col justify-center items-center space-y-2 w-full h-16'>
                         <FiSearch className='w-6 h-6' />
                         <p className='text-[10px]'>Search</p>
-                    </div>
+                    </Link>
                     <hr className='md:hidden flex border-mountain-700 border-t-1 w-full h-1' />
                     <Link to="/submit-media" className='group flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer'>
-                        <div className='flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8'>
-                            <RiFolderUploadLine className='w-6 h-6' />
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/submit-media" ? "bg-mountain-100 dark:bg-mountain-800" : ""}`}>
+                            {location.pathname === "/submit-media" ? < RiFolderUploadFill className='w-6 h-6' /> : <RiFolderUploadLine className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Submit</p>
                     </Link>
                     <Link to="/create-art" className='group flex flex-col justify-center items-center space-y-2 w-full h-16'>
-                        <div className='flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8'>
-                            <RiImageAiLine className='w-6 h-6' />
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/create-art" ? "bg-mountain-100 dark:bg-mountain-800" : ""}`}>
+                            {location.pathname === "/create-art" ? < RiImageAiFill className='w-6 h-6' /> : <RiImageAiLine className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Create</p>
                     </Link>
                     <Link to="/portfolio" className='group flex flex-col justify-center items-center space-y-2 w-full h-16'>
-                        <div className='flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8'>
-                            <BsFilePerson className='w-6 h-6' />
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/portfolio" ? "bg-mountain-100 dark:bg-mountain-800" : ""}`}>
+                            {location.pathname === "/portfolio" ? < BsFilePersonFill className='w-6 h-6' /> : <BsFilePerson className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Portfolio</p>
                     </Link>

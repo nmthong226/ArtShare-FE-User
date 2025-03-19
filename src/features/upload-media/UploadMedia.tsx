@@ -9,6 +9,7 @@ import UploadForm from "./components/UploadForm"; // Adjust import path as neede
 import HeroSection from "./components/HeroSection";
 import { FolderOpenIcon, Trash2Icon } from "lucide-react";
 import { Crop as CropIcon } from "@mui/icons-material";
+import CollectionModal from "./components/CollectionModal";
 
 const MAX_IMAGES = 5;
 
@@ -16,6 +17,7 @@ const UploadMedia: React.FC = () => {
   const [contentHeight, setContentHeight] = useState<number>(0);
   const heroRef = useRef<HTMLDivElement>(null);
   const [showThumbnailOptions, setShowThumbnailOptions] = useState(false);
+  const [showCollectionModal, setShowCollectionModal] = useState(false);
 
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState<
     number | null
@@ -101,6 +103,7 @@ const UploadMedia: React.FC = () => {
 
   return (
     <Box className="h-screen w-full">
+      { <CollectionModal open={showCollectionModal} onClose={() => setShowCollectionModal(false) } /> }
       <div ref={heroRef}>
         <HeroSection />
       </div>
@@ -109,10 +112,10 @@ const UploadMedia: React.FC = () => {
         style={{ height: `${contentHeight}px`, overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}
-        <Box className="w-1/2 p-6 flex flex-col bg-mountain-900 rounded-md text-white">
+        <Box className="w-1/2 p-6 flex flex-col bg-mountain-900 rounded-md text-white items-start">
           {/* -- IMAGES SECTION -- */}
-          <Box className="w-full text-white">
-            <Box className="flex justify-between items-center mb-4">
+          <Box className="w-full text-white h-full flex flex-col items-center">
+            <Box className="flex justify-between items-center mb-4 w-full">
               <Typography className="text-sm text-mountain-200">
                 {artPreviews.length}/{MAX_IMAGES} images
               </Typography>
@@ -175,7 +178,7 @@ const UploadMedia: React.FC = () => {
                     }}
                   >
                     <CloudUploadIcon sx={{ color: "#7c3aed", mr: 1 }} />
-                    Upload
+                    Replace image
                     <input
                       type="file"
                       hidden
@@ -189,9 +192,8 @@ const UploadMedia: React.FC = () => {
             {/* Main preview of the first image */}
             {artPreviews.length > 0 ? (
               <Box
-                className="mb-4 bg-mountain-900 rounded"
+                className="mb-4 bg-mountain-900 rounded h-full w-full"
                 sx={{
-                  width: "90%",
                   height: 300,
                   p: 2,
                   display: "flex",
@@ -211,12 +213,14 @@ const UploadMedia: React.FC = () => {
                   sx={{
                     maxWidth: "100%",
                     maxHeight: "100%",
+                    width: "100%",
+                    height: "100%",
                     objectFit: "contain",
                   }}
                 />
               </Box>
             ) : (
-              <Box className="mb-4 border border-dashed border-gray-500 flex items-center justify-center h-48">
+              <Box className="mb-4 border border-dashed border-gray-500 flex items-center justify-center h-48 w-full h-full">
                 <Typography variant="body2" className="text-mountain-200">
                   No images yet
                 </Typography>
@@ -233,7 +237,7 @@ const UploadMedia: React.FC = () => {
                   className="bg-violet-600 hover:bg-violet-700 mb-2 normal-case"
                   sx={{ textTransform: "none" }}
                 >
-                  Upload Your Art
+                  Upload your art
                   <input
                     type="file"
                     multiple
@@ -248,14 +252,14 @@ const UploadMedia: React.FC = () => {
             )}
 
             {/* Art Previews Carousel */}
-            <Box className="flex overflow-x-auto mt-4 gap-2 custom-scrollbar">
+            <Box className="flex gap-2 custom-scrollbar">
               {artPreviews.map((preview, index) => (
                 <Box
                   key={index}
-                  className={`relative cursor-pointer rounded-md ${
+                  className={`relative cursor-pointer rounded-md border-1 ${
                     selectedPreviewIndex === index
-                      ? "border-1 border-mountain-600"
-                      : ""
+                      ? "border-mountain-600"
+                      : "border-transparent"
                   }`}
                   onClick={() => {
                     if (index === 0) {
@@ -322,7 +326,7 @@ const UploadMedia: React.FC = () => {
           <Box className="w-full flex mt-auto justify-between pr-4">
             <Button
               variant="outlined"
-              className="border-white text-white hover:bg-white hover:text-black flex items-center space-x-2 rounded-md"
+              className="border-white text-white hover:bg-white hover:text-black flex items-center rounded-md"
               sx={{
                 borderColor: "white",
                 "&:hover": {
@@ -330,16 +334,19 @@ const UploadMedia: React.FC = () => {
                 },
                 textTransform: "none",
               }}
+              onClick={() => setShowCollectionModal(true)}
               startIcon={<FolderOpenIcon className="text-violet-600" />}
             >
-              <span>Gallery</span>
-              <span>|</span>
-              <span>My Char Design...</span>
+              {/* <span>{"Gallery | My Char Design".substring(0, 13) + "..."}</span> */}
+              <div className="flex gap-8 items-center">
+                <span>{"Collection".substring(0, 13)}</span>
+                <span className="text-mountain-600">Favourites</span>
+              </div>
             </Button>
             <Button
               variant="contained"
               sx={{ textTransform: "none" }}
-              className="bg-violet-600 hover:bg-violet-700 rounded-md"
+              className="bg-violet-600 hover:bg-violet-700 rounded-md ml-auto"
             >
               Submit
             </Button>

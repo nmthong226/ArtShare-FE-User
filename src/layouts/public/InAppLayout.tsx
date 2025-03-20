@@ -111,7 +111,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                             <p className='font-semibold'>Art Share</p>
                         </div>
                         <Link to="/explore" className={`group flex items-center border-b-4 h-full ${location.pathname === "/explore" ? "border-mountain-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
-                            <div className='hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:cursor-pointer'>
+                            <div className='hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg dark:hover:text-mountain-50 hover:cursor-pointer'>
                                 {location.pathname === "/explore" ? (<MdExplore className='w-6 h-6' />) : (<MdOutlineExplore className='w-6 h-6' />)}
                                 <p className='text-sm'>Explore</p>
                             </div>
@@ -151,9 +151,9 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                                         <p className='text-sm'>Messages</p>
                                     </div>
                                 </Link>
-                                <Link to="/updates" className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/blogs" ? "border-mountain-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
+                                <Link to="/updates" className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/updates" ? "border-mountain-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
                                     <div className='flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer'>
-                                        {location.pathname === "/blogs" ? (<IoNotifications className='w-6 h-6' />) : (<IoNotificationsOutline className='w-6 h-6' />)}
+                                        {location.pathname === "/updates" ? (<IoNotifications className='w-6 h-6' />) : (<IoNotificationsOutline className='w-6 h-6' />)}
                                         <p className='text-sm'>Updates</p>
                                     </div>
                                 </Link>
@@ -177,44 +177,44 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div className='flex w-full h-full'>
                 <aside className='hidden xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-16 h-full'>
                     <Link to="/explore" className='group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/explore" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/explore" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/explore" ? < MdExplore className='w-6 h-6' /> : <MdOutlineExplore className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Explore</p>
                     </Link>
                     <Link to="/blogs" className='group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/blogs" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/blogs" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/blogs" ? < MdLibraryBooks className='w-6 h-6' /> : <MdOutlineLibraryBooks className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Blogs</p>
                     </Link>
                     <Link to="/shop" className='group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/shop" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/shop" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/shop" ? < RiShoppingBag4Fill className='w-6 h-6' /> : <RiShoppingBag4Line className='w-6 h-6' />}
                         </div>
-                        <p className='text-[10px]'>Blogs</p>
+                        <p className='text-[10px]'>Shop</p>
                     </Link>
                     <Link to="/search" className='group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/search" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/search" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/search" ? <FiSearch className='w-6 h-6' /> : <FiSearch className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Search</p>
                     </Link>
                     <hr className='md:hidden flex border-mountain-200 dark:border-mountain-700 border-t-1 w-full h-1' />
                     <Link to="/submit-media" className='group flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/submit-media" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/submit-media" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/submit-media" ? < RiFolderUploadFill className='w-6 h-6' /> : <RiFolderUploadLine className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Submit</p>
                     </Link>
                     <Link to="/create-art" className='group flex flex-col justify-center items-center space-y-2 w-full h-16'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/create-art" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/create-art" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/create-art" ? < RiImageAiFill className='w-6 h-6' /> : <RiImageAiLine className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Create</p>
                     </Link>
                     <Link to="/portfolio" className='group flex flex-col justify-center items-center space-y-2 w-full h-16'>
-                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/portfolio" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
+                        <div className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg dark:group-hover:text-mountain-50 group-hover:text-mountain-950 w-[80%] h-8 ${location.pathname === "/portfolio" ? "bg-mountain-100 dark:bg-mountain-800" : "text-mountain-600"}`}>
                             {location.pathname === "/portfolio" ? < BsFilePersonFill className='w-6 h-6' /> : <BsFilePerson className='w-6 h-6' />}
                         </div>
                         <p className='text-[10px]'>Portfolio</p>

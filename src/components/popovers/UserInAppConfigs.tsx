@@ -36,7 +36,7 @@ const UserInAppConfigs = () => {
                     <Button
                         variant="ghost"
                         title="More"
-                        className="flex items-center bg-gradient-to-b from-blue-800 to-pink-800 rounded-full w-8 h-8"
+                        className={`flex items-center bg-gradient-to-b ${!user ? "from-blue-800 to-pink-800" : "from-mountain-800 to-mountain-300"} rounded-full w-8 h-8`}
                         onMouseEnter={() => setOpen(true)}
                     >
                         <FaReact className="size-5 text-white" />
@@ -64,13 +64,21 @@ const UserInAppConfigs = () => {
                         </div>
                         <hr className='my-2 border-mountain-100 dark:border-mountain-800 border-t-1' />
                         <div className='flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
+                            <p className="bg-clip-text bg-gradient-to-r from-blue-800 dark:from-blue-500 to-pink-800 dark:to-pink-500 text-transparent text-sm">
+                                Become Seller
+                            </p>
+                        </div>
+                        <div className='flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
                             <p className='text-sm'>User Profile</p>
                         </div>
-                        <div className='md:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
+                        <div className='xs:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
                             <p className='text-sm'>Message</p>
                         </div>
-                        <div className='md:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
+                        <div className='xs:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
                             <p className='text-sm'>Update</p>
+                        </div>
+                        <div className='flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full'>
+                            <p className='text-sm'>Settings</p>
                         </div>
                         <hr className='my-2 border-mountain-100 dark:border-mountain-800 border-t-1' />
                     </>

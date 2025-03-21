@@ -11,6 +11,7 @@ import InAppLayout from '@/layouts/public/InAppLayout';
 import AuthenLayout from '@/layouts/public/AuthenLayout';
 
 // Pages
+import LandingPage from '@/pages/Home';
 import Login from '@/pages/Authentication/Login';
 import SignUp from '@/pages/Authentication/SignUp';
 import ForgotPassword from '@/pages/Authentication/ForgotPassword';
@@ -18,14 +19,14 @@ import AccountActivation from '@/pages/Authentication/Activation';
 import Explore from '@/pages/Explore';
 import Blogs from '@/pages/Blogs';
 import Shop from '@/pages/Shop';
+import SubmitMedia from '@/pages/SubmitMedia';
+import ArtGeneration from '@/pages/ArtGeneration';
+import Portfolio from '@/pages/Portfolio';
 
 // Context/Provider
 import { ThemeProvider } from '@/context/ThemeProvider';
 import { LanguageProvider } from '@/context/LanguageProvider';
-import SubmitMedia from './pages/SubmitMedia';
-import ArtGeneration from './pages/ArtGeneration';
-import Portfolio from './pages/Portfolio';
-import { UserProvider } from './context/UserProvider';
+import { UserProvider } from '@/context/UserProvider';
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -34,13 +35,13 @@ const authRoutes = [
   { path: "/activate-account/:token", element: <AccountActivation /> },
 ];
 
-const publicRoutes = [
+const InAppPublicRoutes = [
   { path: "/explore", element: <Explore /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/shop", element: <Shop /> },
 ]
 
-const privateRoutes = [
+const InAppPrivateRoutes = [
   { path: "/submit-media", element: <SubmitMedia /> },
   { path: "/create-art", element: <ArtGeneration /> },
   { path: "/portfolio", element: <Portfolio /> },
@@ -57,10 +58,10 @@ const App: React.FC = () => {
                 {authRoutes.map(({ path, element }) => (
                   <Route key={path} path={path} element={<AuthenLayout>{element}</AuthenLayout>} />
                 ))}
-                {publicRoutes.map(({ path, element }) => (
+                {InAppPublicRoutes.map(({ path, element }) => (
                   <Route key={path} path={path} element={<InAppLayout>{element}</InAppLayout>} />
                 ))}
-                {privateRoutes.map(({ path, element }) => (
+                {InAppPrivateRoutes.map(({ path, element }) => (
                   <Route key={path} path={path}
                     element={
                       <InAppLayout>
@@ -71,6 +72,7 @@ const App: React.FC = () => {
                       </InAppLayout>
                     } />
                 ))}
+                <Route path="/" element={<LandingPage />} />
                 <Route path="*" element={<Navigate to="/explore" />} />
               </Routes>
             </RootLayout>

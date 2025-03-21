@@ -1,6 +1,6 @@
 import React from 'react'
-import background from "/back_ground2_v2.png"
-import { ThemeToggle } from '@/components/buttons/ThemeToggle';
+import background from "/back_ground2_v3.png"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 import { LanguageSwitcher } from '@/components/buttons/LanguageSwitcher';
 import { Link, useLocation } from 'react-router-dom';
 import { FaArrowLeft } from "react-icons/fa6";
@@ -22,7 +22,7 @@ const AuthenLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                             <p>Go to Login</p>
                         </Link>
                     }
-                    <div className='flex space-x-2'>
+                    <div className='flex items-center space-x-2'>
                         <ThemeToggle />
                         <LanguageSwitcher />
                     </div>

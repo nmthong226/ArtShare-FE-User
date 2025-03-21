@@ -3,7 +3,7 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom';
 
 // Assets
-import app_logo from '/logo_app_bg.jpg';
+import app_logo from '/logo_app_v_101.png';
 
 // Context
 import { useUser } from '@/context/UserProvider';
@@ -110,19 +110,19 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                             <img src={app_logo} className='rounded-sm w-8 h-8' />
                             <p className='font-semibold'>Art Share</p>
                         </div>
-                        <Link to="/explore" className={`group flex items-center border-b-4 h-full ${location.pathname === "/explore" ? "border-mountain-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
+                        <Link to="/explore" className={`group flex items-center border-b-4 h-full ${location.pathname === "/explore" ? "border-indigo-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
                             <div className='hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg dark:hover:text-mountain-50 hover:cursor-pointer'>
                                 {location.pathname === "/explore" ? (<MdExplore className='w-6 h-6' />) : (<MdOutlineExplore className='w-6 h-6' />)}
                                 <p className='text-sm'>Explore</p>
                             </div>
                         </Link>
-                        <Link to="/blogs" className={`group flex items-center border-b-4 h-full ${location.pathname === "/blogs" ? "border-mountain-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
+                        <Link to="/blogs" className={`group flex items-center border-b-4 h-full ${location.pathname === "/blogs" ? "border-indigo-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
                             <div className='hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer'>
                                 {location.pathname === "/blogs" ? (<MdLibraryBooks className='w-6 h-6' />) : (<MdOutlineLibraryBooks className='w-6 h-6' />)}
                                 <p className='text-sm'>Blogs</p>
                             </div>
                         </Link>
-                        <Link to="/shop" className={`group flex items-center border-b-4 h-full ${location.pathname === "/shop" ? "border-mountain-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
+                        <Link to="/shop" className={`group flex items-center border-b-4 h-full ${location.pathname === "/shop" ? "border-indigo-300 dark:text-mountain-50 text-mountain-950" : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"}`}>
                             <div className='hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer'>
                                 {location.pathname === "/shop" ? (<RiShoppingBag4Fill className='w-6 h-6' />) : (<RiShoppingBag4Line className='w-6 h-6' />)}
                                 <p className='text-sm'>Shop</p>

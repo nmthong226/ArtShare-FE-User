@@ -291,11 +291,13 @@ const UploadMedia: React.FC = () => {
               {artPreviews.map((preview, index) => (
                 <Box
                   key={index}
-                  className={`relative cursor-pointer rounded-md border-1 ${
-                    selectedPreviewIndex === index
-                      ? "border-mountain-600"
-                      : "border-transparent"
-                  }`}
+                  className="relative cursor-pointer rounded-md border-1"
+                  sx={{
+                    borderColor:
+                      selectedPreviewIndex === index
+                        ? "primary.main"
+                        : "transparent",
+                  }}
                   onClick={() => {
                     if (index === 0) {
                       // For the thumbnail item: toggle overlay for crop/upload

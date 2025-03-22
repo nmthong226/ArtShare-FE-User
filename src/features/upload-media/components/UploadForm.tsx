@@ -5,48 +5,63 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
+  MenuItem, 
+  Select,
+  Dialog,
+  Button
 } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search"; 
+import CloseIcon from "@mui/icons-material/Close";
 
-interface UploadFormProps {
-  files: FileList | null;
-}
 
-const mediumOptions = [
-  "Digital 2D",
-  "Digital 3D",
-  "Animation",
-  "Traditional Paint",
-  "AI Generation",
-  "Traditional Ink",
-  "Traditional Sculpture",
+// TODO: Define Art Types : Fetch from API
+const artTypes = [
+  {
+    name: "Abstract",
+    description: "Artwork that focuses on shapes, colors, and forms.",
+    images: [
+      "https://example.com/image1.jpg",
+      "https://example.com/image2.jpg",
+    ],
+  },
+  {
+    name: "Anatomy",
+    description: "Anatomical studies of humans and animals.",
+    images: [
+      "https://example.com/image3.jpg",
+      "https://example.com/image4.jpg",
+    ],
+  },
 ];
 
-const UploadForm: React.FC<UploadFormProps> = () => {
+const UploadForm: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isMature, setIsMature] = useState(false);
   const [tags, setTags] = useState("");
-  const [selectedMediums, setSelectedMediums] = useState<string[]>([]);
+  const [open, setOpen] = useState(false);
+  const [activeArtType, setActiveArtType] = useState(artTypes[0]);
+  const [selectedArtTypes, setSelectedArtTypes] = useState<string[]>([]);
 
-  const handleMediumChange = (medium: string) => {
-    setSelectedMediums((prev) =>
-      prev.includes(medium)
-        ? prev.filter((m) => m !== medium)
-        : [...prev, medium]
-    );
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const handleAddType = (type: { name: string }) => {
+    if (selectedArtTypes.length < 3 && !selectedArtTypes.includes(type.name)) {
+      setSelectedArtTypes([...selectedArtTypes, type.name]);
+    }
   };
 
   return (
-    <Box className="w-full mx-auto  text-white text-left space-y-3">
+    <Box className="w-full mx-auto text-white text-left space-y-3">
       {/* Artwork Title Box */}
-      <Box className=" bg-mountain-900  space-y-3">
-        <Box className="border-b p-2.5 border-mountain-200 ">
+      <Box className=" bg-mountain-900 space-y-3">
+        <Box className="border-b p-2.5 border-mountain-200">
           <Typography className="font-semibold text-sm text-left text-white">
             Artwork Title
           </Typography>
         </Box>
 
-        {/* TextField with radius 5px */}
         <Box className="px-2.5 pb-2.5">
           <TextField
             placeholder="What do you call your artwork"
@@ -86,7 +101,7 @@ const UploadForm: React.FC<UploadFormProps> = () => {
             Description
           </Typography>
           <TextField
-            placeholder="Describe your art work"
+            placeholder="Describe your artwork"
             variant="outlined"
             fullWidth
             multiline
@@ -96,7 +111,7 @@ const UploadForm: React.FC<UploadFormProps> = () => {
             slotProps={{
               input: {
                 className:
-                  "bg-mountain-950 border-1  text-sm placeholder:text-sm text-white placeholder:text-mountain-400 text-left",
+                  "bg-mountain-950 border-1 text-sm placeholder:text-sm text-white placeholder:text-mountain-400 text-left",
               },
             }}
           />
@@ -124,7 +139,7 @@ const UploadForm: React.FC<UploadFormProps> = () => {
                 </span>
                 <a
                   href="/mature-content"
-                  className="text-violet-600 hover:underline"
+                  className="hover:underline"
                 >
                   Mature Content
                 </a>
@@ -151,7 +166,7 @@ const UploadForm: React.FC<UploadFormProps> = () => {
             Tags
           </Typography>
           <TextField
-            placeholder="Type your artwork tags"
+            placeholder="E.g: NoAI, CreatedUsingAI"
             variant="outlined"
             fullWidth
             value={tags}
@@ -165,26 +180,52 @@ const UploadForm: React.FC<UploadFormProps> = () => {
           />
         </Box>
 
-        {/* Medium Checkboxes */}
-        <Box className="px-2.5 space-y-1">
+     {/* Art type */}
+     <Box className="px-2.5 space-y-1">
           <Typography className="text-sm text-left text-mountain-200">
-            Medium
+            How would you categorize this work? (Choose up to 3)
           </Typography>
-          <Box className="flex flex-wrap gap-2">
-            {mediumOptions.map((medium) => (
-              <FormControlLabel
-                key={medium}
-                control={
-                  <Checkbox
-                    checked={selectedMediums.includes(medium)}
-                    onChange={() => handleMediumChange(medium)}
-                    className="text-white "
-                  />
-                }
-                label={medium}
-              />
-            ))}
+          <Box
+            className="relative flex items-center bg-mountain-950 text-white px-3 py-2 rounded-md cursor-pointer"
+            onClick={handleOpen}
+          >
+            <SearchIcon className="text-gray-400 mr-2" />
+            <Typography className="text-sm text-gray-400">
+              {selectedArtTypes.length > 0 ? selectedArtTypes.join(", ") : "Choose art type"}
+            </Typography>
           </Box>
+
+          {/* Dialog for Selection */}
+          <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+            <Box className="bg-mountain-900 text-white p-4 flex">
+              {/* Left Panel - Art Type List */}
+              <Box className="w-1/3 border-r border-gray-700 overflow-y-auto max-h-[400px]">
+                <Typography className="text-xs uppercase mb-2 text-gray-400">
+                  Choose up to 3 Subject Matter
+                </Typography>
+                {artTypes.map((type) => (
+                  <Box
+                    key={type.name}
+                    className="flex justify-between items-center px-3 py-2 rounded-md cursor-pointer hover:bg-mountain-800"
+                    onClick={() => setActiveArtType(type)}
+                  >
+                    <Typography>{type.name}</Typography>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAddType(type);
+                      }}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-xs rounded-md"
+                    >
+                      + Add
+                    </Button>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          </Dialog>
         </Box>
       </Box>
     </Box>

@@ -5,31 +5,31 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
+  Dialog,
+  Button
 } from "@mui/material";
-// import SearchIcon from "@mui/icons-material/Search"; 
-// import CloseIcon from "@mui/icons-material/Close";
-import SubjectSelector from "./SubjectSelector";
+import SearchIcon from "@mui/icons-material/Search"; 
 
 
-// // TODO: Define Art Types : Fetch from API
-// const artTypes = [
-//   {
-//     name: "Abstract",
-//     description: "Artwork that focuses on shapes, colors, and forms.",
-//     images: [
-//       "https://example.com/image1.jpg",
-//       "https://example.com/image2.jpg",
-//     ],
-//   },
-//   {
-//     name: "Anatomy",
-//     description: "Anatomical studies of humans and animals.",
-//     images: [
-//       "https://example.com/image3.jpg",
-//       "https://example.com/image4.jpg",
-//     ],
-//   },
-// ];
+// TODO: Define Art Types : Fetch from API
+const artTypes = [
+  {
+    name: "Abstract",
+    description: "Artwork that focuses on shapes, colors, and forms.",
+    images: [
+      "https://example.com/image1.jpg",
+      "https://example.com/image2.jpg",
+    ],
+  },
+  {
+    name: "Anatomy",
+    description: "Anatomical studies of humans and animals.",
+    images: [
+      "https://example.com/image3.jpg",
+      "https://example.com/image4.jpg",
+    ],
+  },
+];
 
 const UploadForm: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -42,7 +42,7 @@ const UploadForm: React.FC = () => {
       {/* Artwork Title Box */}
       <Box className=" bg-mountain-900 space-y-3">
         <Box className="border-b p-2.5 border-mountain-200">
-          <Typography className="font-semibold text-sm text-left text-white">
+          <Typography className="font-semibold text-base text-left text-white">
             Artwork Title
           </Typography>
         </Box>
@@ -65,7 +65,7 @@ const UploadForm: React.FC = () => {
             slotProps={{
               input: {
                 className:
-                  "border-1 bg-mountain-950 text-sm text-white placeholder:text-mountain-400",
+                  "border-1 bg-mountain-950 text-base text-white placeholder:text-mountain-400",
               },
             }}
           />
@@ -76,13 +76,13 @@ const UploadForm: React.FC = () => {
       <Box className="bg-mountain-900 rounded-md space-y-2">
         {/* Heading with bottom border */}
         <Box className="border-b p-2.5 border-mountain-200">
-          <Typography className="font-semibold text-sm text-left text-white">
+          <Typography className="font-semibold text-base text-left text-white">
             Artwork Details
           </Typography>
         </Box>
 
         <Box className="px-2.5 pb-2.5 space-y-1">
-          <Typography className="text-sm text-left text-mountain-200">
+          <Typography className="text-base text-left text-mountain-200">
             Description
           </Typography>
           <TextField
@@ -96,7 +96,7 @@ const UploadForm: React.FC = () => {
             slotProps={{
               input: {
                 className:
-                  "bg-mountain-950 border-1 text-sm placeholder:text-sm text-white placeholder:text-mountain-400 text-left",
+                  "bg-mountain-950 border-1 text-base placeholder:text-base text-white placeholder:text-mountain-400 text-left",
               },
             }}
           />
@@ -104,7 +104,7 @@ const UploadForm: React.FC = () => {
 
         {/* Content / Mature Checkbox */}
         <Box className="px-2.5 pb-2.5 space-y-1">
-          <Typography className="text-sm text-left text-mountain-200">
+          <Typography className="text-base text-left text-mountain-200">
             Content
           </Typography>
           <FormControlLabel
@@ -131,7 +131,7 @@ const UploadForm: React.FC = () => {
                 <span className="text-mountain-200">)</span>
               </>
             }
-            className="text-sm text-left"
+            className="text-base text-left"
           />
         </Box>
       </Box>
@@ -140,14 +140,14 @@ const UploadForm: React.FC = () => {
       <Box className="bg-mountain-900 rounded-md space-y-2">
         {/* Heading with bottom border */}
         <Box className="border-b p-2.5 border-mountain-200">
-          <Typography className="font-semibold text-sm text-left text-white">
+          <Typography className="font-semibold text-base text-left text-white">
             Categorization
           </Typography>
         </Box>
 
         {/* Tags */}
         <Box className="px-2.5 space-y-1">
-          <Typography className="text-sm text-left text-mountain-200">
+          <Typography className="text-base text-left text-mountain-200">
             Tags
           </Typography>
           <TextField
@@ -159,15 +159,15 @@ const UploadForm: React.FC = () => {
             slotProps={{
               input: {
                 className:
-                  "bg-mountain-950 border-1 text-sm placeholder:text-sm text-white placeholder:text-mountain-400 text-left",
+                  "bg-mountain-950 border-1 text-base placeholder:text-base text-white placeholder:text-mountain-400 text-left",
               },
             }}
           />
         </Box>
 
      {/* Art type */}
-     <Box className="px-2.5 pb-2.5 space-y-1">
-          {/* <Typography className="text-sm text-left text-mountain-200">
+     <Box className="px-2.5 space-y-1">
+          <Typography className="text-base text-left text-mountain-200">
             How would you categorize this work? (Choose up to 3)
           </Typography>
           <Box
@@ -175,7 +175,7 @@ const UploadForm: React.FC = () => {
             onClick={handleOpen}
           >
             <SearchIcon className="text-gray-400 mr-2" />
-            <Typography className="text-sm text-gray-400">
+            <Typography className="text-base text-gray-400">
               {selectedArtTypes.length > 0 ? selectedArtTypes.join(", ") : "Choose art type"}
             </Typography>
           </Box> */}

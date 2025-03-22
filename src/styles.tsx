@@ -14,8 +14,8 @@ export const theme = createTheme({
       styleOverrides: {
         root: {
           // Applies to all buttons
-          '&:hover': {
-            backgroundColor: '#818cf8', // hover color
+          "&:hover": {
+            backgroundColor: "#818cf8", // hover color
           },
         },
       },

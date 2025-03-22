@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import "./App.css";
 import {
   BrowserRouter as Router,
@@ -7,11 +6,6 @@ import {
   Navigate,
 } from "react-router-dom";
 import React from "react";
-=======
-import React from "react";
-import "./App.css";
-import UploadMedia from "@/features/upload-media/UploadMedia.tsx";
->>>>>>> f64b4f5 (feat(upload-art): finish details)
 
 // Components
 // import ProtectedRoute from '@/components/routeManagement/ProtectedRoute';
@@ -57,11 +51,11 @@ const InAppPrivateRoutes = [
   { path: "/submit-media", element: <SubmitMedia /> },
   { path: "/posts/new", element: <UploadMedia /> },
   { path: "/portfolio", element: <Portfolio /> },
+  { path: "/artgen", element: <ArtGeneration /> },
 ];
 
 const App: React.FC = () => {
   return (
-<<<<<<< HEAD
     <UserProvider>
       <ThemeProvider>
         <LanguageProvider>
@@ -104,11 +98,6 @@ const App: React.FC = () => {
         </LanguageProvider>
       </ThemeProvider>
     </UserProvider>
-=======
-    <div className="App bg-mountain-950">
-      <UploadMedia />
-    </div>
->>>>>>> f64b4f5 (feat(upload-art): finish details)
   );
 };
 

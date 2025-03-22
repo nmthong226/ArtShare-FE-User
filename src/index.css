@@ -18,13 +18,10 @@
   --color-mountain-900: oklch(32.11% 0 0);
   --color-mountain-950: oklch(26.86% 0 0);
   --color-mountain-1000: oklch(20.9% 0 0);
-<<<<<<< HEAD
 
   --breakpoint-xs: 30rem;
   --breakpoint-2xl: 100rem;
   --breakpoint-3xl: 120rem;
-=======
->>>>>>> f64b4f5 (feat(upload-art): finish details)
 }
 
 :root {

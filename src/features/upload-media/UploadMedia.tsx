@@ -5,7 +5,7 @@ import {
   Add as AddIcon,
   Close as CloseIcon,
   DeleteOutlineOutlined,
-  FolderOpen as FolderOpenIcon
+  FolderOpen as FolderOpenIcon,
 } from "@mui/icons-material";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
 import HeroSection from "./components/HeroSection";
@@ -104,7 +104,12 @@ const UploadMedia: React.FC = () => {
 
   return (
     <Box className="h-screen w-full">
-      { <CollectionModal open={showCollectionModal} onClose={() => setShowCollectionModal(false) } /> }
+      {
+        <CollectionModal
+          open={showCollectionModal}
+          onClose={() => setShowCollectionModal(false)}
+        />
+      }
       <div ref={heroRef}>
         <HeroSection />
       </div>
@@ -117,16 +122,14 @@ const UploadMedia: React.FC = () => {
           {/* -- IMAGES SECTION -- */}
           <Box className="w-full text-white h-full flex flex-col items-center">
             <Box className="flex justify-between items-center mb-4 w-full">
-              <Typography className="text-sm text-mountain-200">
+              <Typography className="text-base text-mountain-200">
                 {artPreviews.length}/{MAX_IMAGES} images
               </Typography>
               {hasSelectedImage && selectedPreviewIndex !== 0 && (
                 <Button
                   variant="text"
                   size="small"
-                  startIcon={
-                    <DeleteOutlineOutlined  sx={{ fontSize: 18 }}/>
-                  }
+                  startIcon={<DeleteOutlineOutlined sx={{ fontSize: 18 }} />}
                   onClick={() => handleRemovePreview(selectedPreviewIndex!)}
                   sx={{
                     backgroundColor: "transparent",
@@ -160,7 +163,7 @@ const UploadMedia: React.FC = () => {
                       "&:hover": { backgroundColor: "transparent" },
                     }}
                   >
-                    <CropIcon sx={{ color: "#7c3aed", mr: 1 }} />
+                    <CropIcon sx={{ mr: 1 }} />
                     Crop
                   </Button>
                   <Button
@@ -178,7 +181,7 @@ const UploadMedia: React.FC = () => {
                       "&:hover": { backgroundColor: "transparent" },
                     }}
                   >
-                    <CloudUploadIcon sx={{ color: "#7c3aed", mr: 1 }} />
+                    <CloudUploadIcon sx={{ mr: 1 }} />
                     Replace image
                     <input
                       type="file"
@@ -221,24 +224,50 @@ const UploadMedia: React.FC = () => {
                 />
               </Box>
             ) : (
-              <Box className="mb-4 border border-dashed border-gray-500 flex flex-col items-center justify-center h-48 w-full h-full">
+              <Box
+                className="mb-4 border border-dashed border-gray-500 flex flex-col items-center justify-center h-48 w-full h-full"
+                onDragOver={(e) => {
+                  e.preventDefault();
+                }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const droppedFiles = e.dataTransfer.files;
+                  if (droppedFiles && droppedFiles.length > 0) {
+                    // You may want to wrap the dropped files in a synthetic event object
+                    // to use your handleFileChange function, or create a separate handler.
+                    handleFileChange({
+                      target: { files: droppedFiles },
+                    } as React.ChangeEvent<HTMLInputElement>);
+                  }
+                }}
+              >
                 {/* Conditionally render big upload button when no images */}
                 {showUploadButton && (
                   <>
                     <Button
-                      variant="contained"
+                      variant="text"
                       component="label"
-                      startIcon={<CloudUploadIcon />}
-                      className=" mb-2 normal-case"
-                      sx={{ textTransform: "none" }}
+                      size="small"
+                      className="border-mountain-600 mb-2"
+                      sx={{
+                        backgroundColor: "transparent",
+                        color: "white",
+                        borderRadius: "10px",
+                        border: "1px solid",
+                        textTransform: "none",
+                        "&:hover": { backgroundColor: "transparent" },
+                      }}
                     >
-                      Upload your art
                       <input
                         type="file"
                         multiple
                         hidden
                         onChange={handleFileChange}
                       />
+                      <CloudUploadIcon sx={{ mr: 1 }} />
+                      <Typography variant="body1" className="text-center">
+                        Upload your art
+                      </Typography>
                     </Button>
                     <Typography variant="body1" className="text-center">
                       or drag and drop here
@@ -247,8 +276,6 @@ const UploadMedia: React.FC = () => {
                 )}
               </Box>
             )}
-
-           
 
             {/* Art Previews Carousel */}
             <Box className="flex gap-2 custom-scrollbar">
@@ -277,7 +304,19 @@ const UploadMedia: React.FC = () => {
                     sx={{ width: 80, height: 80 }}
                   />
                   {index === 0 && (
-                    <Box className="absolute top-0.25 left-0.25  text-white text-xs px-1 py-0.5 rounded">
+                    <Box
+                      sx={{
+                        backgroundColor: "primary.main",
+                        position: "absolute",
+                        top: "0.25rem",
+                        left: "0.25rem",
+                        color: "black",
+                        fontSize: "0.75rem", // equivalent to text-xs
+                        px: 1,
+                        py: 0.5,
+                        borderRadius: 1,
+                      }}
+                    >
                       Thumbnail
                     </Box>
                   )}
@@ -290,7 +329,7 @@ const UploadMedia: React.FC = () => {
                       size="medium"
                       className="absolute top-0 right-0 bg-gray-600 bg-opacity-70 text-white hover:bg-gray-700"
                     >
-                      <CloseIcon fontSize="medium" />
+                      <CloseIcon fontSize="small" />
                     </IconButton>
                   )}
                 </Box>
@@ -334,7 +373,7 @@ const UploadMedia: React.FC = () => {
                 textTransform: "none",
               }}
               onClick={() => setShowCollectionModal(true)}
-              startIcon={<FolderOpenIcon/>}
+              startIcon={<FolderOpenIcon />}
             >
               {/* <span>{"Gallery | My Char Design".substring(0, 13) + "..."}</span> */}
               <div className="flex gap-8 items-center">

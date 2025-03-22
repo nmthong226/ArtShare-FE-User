@@ -24,7 +24,6 @@ const UploadMedia: React.FC = () => {
     number | null
   >(null);
   const [artPreviews, setArtPreviews] = useState<string[]>([]);
-  const [files, setFiles] = useState<FileList | null>(null);
 
   // Thumbnail states
   const [thumbnail, setThumbnail] = useState<string | null>(null);
@@ -55,7 +54,6 @@ const UploadMedia: React.FC = () => {
 
     // Convert FileList to an array, limit by available slots
     const newFilesArray = Array.from(newFiles).slice(0, availableSlots);
-    setFiles(newFiles);
 
     // Generate preview URLs
     const newPreviews = newFilesArray.map((file) => URL.createObjectURL(file));
@@ -368,7 +366,7 @@ const UploadMedia: React.FC = () => {
         <Box className="flex flex-col w-1/2 gap-y-3">
           {/* Form fields */}
           <Box className="rounded-md custom-scrollbar overflow-y-auto pr-4">
-            <UploadForm files={files} />
+            <UploadForm />
           </Box>
 
           {/* Bottom actions */}

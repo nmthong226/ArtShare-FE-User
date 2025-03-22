@@ -5,8 +5,11 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
+  Chip,
+  IconButton,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
+import { CloseOutlined, ContentCopyOutlined } from "@mui/icons-material";
 // import SearchIcon from "@mui/icons-material/Search";
 // import CloseIcon from "@mui/icons-material/Close";
 
@@ -34,7 +37,27 @@ const UploadForm: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isMature, setIsMature] = useState(false);
-  const [tags, setTags] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState("");
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && inputValue.trim()) {
+      e.preventDefault();
+      if (!tags.includes(inputValue.trim())) {
+        setTags((prevTags) => [...prevTags, inputValue.trim()]);
+      }
+      setInputValue("");
+    }
+
+    // Handle Backspace when input is empty
+    if (e.key === "Backspace" && inputValue === "" && tags.length > 0) {
+      setTags((prevTags) => prevTags.slice(0, -1));
+    }
+  };
+
+  const handleDelete = (tagToDelete: string) => {
+    setTags(tags.filter((tag) => tag !== tagToDelete));
+  };
 
   return (
     <Box className="w-full mx-auto text-white text-left space-y-3">
@@ -146,36 +169,83 @@ const UploadForm: React.FC = () => {
           <Typography className="text-base text-left text-mountain-200">
             Tags
           </Typography>
-          <TextField
-            placeholder="E.g: NoAI, CreatedUsingAI"
-            variant="outlined"
-            fullWidth
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            slotProps={{
-              input: {
-                className:
-                  "bg-mountain-950 border-1 text-base placeholder:text-base text-white placeholder:text-mountain-400 text-left",
-              },
+          <Typography variant="body2" className="mb-1 text-mountain-500">
+            Tags help provide more context about your artwork.{" "}
+            {/* <a href="#" style={{ color: "#3b82f6" }}>
+              Learn more
+            </a> */}
+          </Typography>
+
+          {/* Chip input box */}
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: "6px",
+              px: 1,
+              py: 1,
+              minHeight: 48,
+              border: "1px solid #ffffff",
+              borderRadius: "8px",
+              backgroundColor: "#1f1f1f",
             }}
-          />
+          >
+            {tags.map((tag) => (
+              <Chip
+                key={tag}
+                label={tag}
+                onDelete={() => handleDelete(tag)}
+                sx={{ backgroundColor: "#3a3a3a", color: "white" }}
+              />
+            ))}
+            <Box
+              component="input"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder={inputValue ? "" : "Add tag"}
+              sx={{
+                flex: 1,
+                minWidth: "80px",
+                background: "transparent",
+                border: "none",
+                outline: "none",
+                color: "white",
+                fontSize: "1rem",
+              }}
+            />
+            {/* Right icons inside the box */}
+            <IconButton
+              size="small"
+              sx={{ color: "#ccc" }}
+              onClick={() => {
+                if (tags.length === 0) return;
+                navigator.clipboard.writeText(tags.join(", "));
+                alert("Tags copied to clipboard");
+              }}
+            >
+              <ContentCopyOutlined fontSize="small" />
+            </IconButton>
+            {tags.length >= 2 && (
+              <IconButton
+                size="small"
+                sx={{ color: "#ccc" }}
+                onClick={() => setTags([])}
+              >
+                <CloseOutlined fontSize="small" />
+              </IconButton>
+            )}
+          </Box>
+
+          {/* Helper text below */}
+          <Typography variant="body2" className=" text-mountain-500 mt-0.5">
+            Type a tag and press <strong>Enter</strong> to add it.
+          </Typography>
         </Box>
 
         {/* Art type */}
         <Box className="px-2.5 pb-2.5 space-y-1">
-          {/* <Typography className="text-sm text-left text-mountain-200">
-            How would you categorize this work? (Choose up to 3)
-          </Typography>
-          <Box
-            className="relative flex items-center bg-mountain-950 text-white px-3 py-2 rounded-md cursor-pointer"
-            onClick={handleOpen}
-          >
-            <SearchIcon className="text-gray-400 mr-2" />
-            <Typography className="text-base text-gray-400">
-              {selectedArtTypes.length > 0 ? selectedArtTypes.join(", ") : "Choose art type"}
-            </Typography>
-          </Box> */}
-
           {/* Dialog for Selection */}
           <SubjectSelector />
         </Box>

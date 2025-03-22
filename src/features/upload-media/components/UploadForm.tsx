@@ -5,31 +5,30 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
-  Dialog,
-  Button
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search"; 
+import SubjectSelector from "./SubjectSelector";
+// import SearchIcon from "@mui/icons-material/Search";
+// import CloseIcon from "@mui/icons-material/Close";
 
-
-// TODO: Define Art Types : Fetch from API
-const artTypes = [
-  {
-    name: "Abstract",
-    description: "Artwork that focuses on shapes, colors, and forms.",
-    images: [
-      "https://example.com/image1.jpg",
-      "https://example.com/image2.jpg",
-    ],
-  },
-  {
-    name: "Anatomy",
-    description: "Anatomical studies of humans and animals.",
-    images: [
-      "https://example.com/image3.jpg",
-      "https://example.com/image4.jpg",
-    ],
-  },
-];
+// // TODO: Define Art Types : Fetch from API
+// const artTypes = [
+//   {
+//     name: "Abstract",
+//     description: "Artwork that focuses on shapes, colors, and forms.",
+//     images: [
+//       "https://example.com/image1.jpg",
+//       "https://example.com/image2.jpg",
+//     ],
+//   },
+//   {
+//     name: "Anatomy",
+//     description: "Anatomical studies of humans and animals.",
+//     images: [
+//       "https://example.com/image3.jpg",
+//       "https://example.com/image4.jpg",
+//     ],
+//   },
+// ];
 
 const UploadForm: React.FC = () => {
   const [title, setTitle] = useState("");
@@ -122,10 +121,7 @@ const UploadForm: React.FC = () => {
                   {" "}
                   (see our Guidelines for{" "}
                 </span>
-                <a
-                  href="/mature-content"
-                  className="hover:underline"
-                >
+                <a href="/mature-content" className="hover:underline">
                   Mature Content
                 </a>
                 <span className="text-mountain-200">)</span>
@@ -165,9 +161,9 @@ const UploadForm: React.FC = () => {
           />
         </Box>
 
-     {/* Art type */}
-     <Box className="px-2.5 space-y-1">
-          <Typography className="text-base text-left text-mountain-200">
+        {/* Art type */}
+        <Box className="px-2.5 pb-2.5 space-y-1">
+          {/* <Typography className="text-sm text-left text-mountain-200">
             How would you categorize this work? (Choose up to 3)
           </Typography>
           <Box

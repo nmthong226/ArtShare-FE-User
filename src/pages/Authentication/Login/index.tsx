@@ -20,17 +20,28 @@ const Login = () => {
     e.preventDefault();
     try {
       await loginWithEmail(email, password); // Call the loginWithEmail function from UserProvider
-      // On successful login, redirect to the homepage or another page
-      navigate("/home"); // Replace with the actual route after login
+      console.log("ok");
+      // On successful login, redirect to the explorepage or another page
+      navigate("/explore"); // Replace with the actual route after login
     } catch (error: any) {
-      setError(error.message); // Handle any errors during login
+      let errorMessage = "Something went wrong. Please try again.";
+
+      // Handle Firebase error codes (e.g., wrong email or password)
+      if (error.code === "auth/user-not-found") {
+        errorMessage = "No user found with this email address.";
+      } else if (error.code === "auth/wrong-password") {
+        errorMessage = "Incorrect password. Please try again.";
+      }
+
+      setError(errorMessage); // Set the error message for the user
+      navigate("/login"); // Redirect back to the login page on error
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
-      navigate("/home"); // Redirect after successful login
+      navigate("/explore"); // Redirect after successful login
     } catch (error: any) {
       setError(error.message); // Handle errors from Google login
     }
@@ -39,7 +50,7 @@ const Login = () => {
   const handleFacebookLogin = async () => {
     try {
       await signUpWithFacebook(); // Call Facebook login function from UserProvider
-      navigate("/home"); // Redirect after successful login
+      navigate("/explore"); // Redirect after successful login
     } catch (error: any) {
       setError(error.message); // Handle errors from Facebook login
     }

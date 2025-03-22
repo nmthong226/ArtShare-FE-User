@@ -16,6 +16,7 @@ import {
   sendEmailVerification,
 } from "firebase/auth";
 import { login, signup } from "@/api/authentication/auth"; // Import your backend login and signup functions
+import { useNavigate } from "react-router-dom";
 
 // Sample User Interface
 interface User {
@@ -81,18 +82,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         password
       );
       const user = userCredential.user;
+      console.log(user);
       await sendEmailVerification(user); // Send email verification
       setUser({
         id: user.uid,
-        name: user.displayName || "Unknown",
+        name: user.displayName || "User" + user.uid.slice(0, 5),
         email: user.email || "Unknown",
       });
       const token = await user.getIdToken();
+
       setToken(token);
       // Call backend signup API
       const backendResponse = await signup(email, password, username);
+      return token;
       if (backendResponse.success) {
-        window.location.href = "/verify-email"; // Redirect user after successful sign-up
+        window.location.href = "/activate-account"; // Redirect user after successful sign-up
       } else {
         setError("Error during registration. Please try again.");
       }
@@ -110,10 +114,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         password
       );
       const user = userCredential.user;
-      if (!user.emailVerified) {
-        setError("Please verify your email before proceeding.");
-        return;
+      console.log(user);
+      // Check if the email is verified
+      if (!user?.emailVerified) {
+        setError("Please verify your email before logging in.");
+        return; // Prevent further execution, stay on the login page
       }
+
+      // If email is verified, get the token
       const token = await user.getIdToken();
       setUser({
         id: user.uid,
@@ -121,48 +129,53 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         email: user.email || "Unknown",
       });
       setToken(token);
-      // Call backend login API
+
+      // Call backend login API with the token
       const backendResponse = await login(token);
       if (backendResponse.success) {
-        // Successfully logged in and backend verified token
-        window.location.href = "/home"; // Redirect to home or dashboard
       } else {
         setError("Error during login. Please try again.");
       }
     } catch (error: any) {
-      setError(error.message);
+      // Handle errors from Firebase
+      if (error.code === "auth/user-not-found") {
+        setError("No user found with this email address.");
+      } else if (error.code === "auth/wrong-password") {
+        setError("Incorrect password. Please try again.");
+      } else {
+        setError("An error occurred during login. Please try again.");
+      }
     }
   };
-
   // Google Sign-Up or Login
   const signUpWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
       const userCredential = await signInWithPopup(auth, provider);
+      // call api to check if not exist by email, create user with email
+      // signup nestjs
       const user = userCredential.user;
+      const signupResponse = await signup(
+        user.email!,
+        "",
+        user.displayName || ""
+      );
+      console.log("signupResopnse: ", signupResponse);
       const token = await user.getIdToken();
+      let loginResponse = null;
+      if (signupResponse.success) {
+        loginResponse = await login(token);
+      }
       setUser({
         id: user.uid,
         name: user.displayName || "Unknown",
         email: user.email || "Unknown",
       });
       setToken(token);
+      console.log("token from google: ", token);
       // Call backend login API after Firebase authentication
-      const backendResponse = await login(token);
-      if (backendResponse.success) {
+      if (loginResponse && loginResponse.success) {
         window.location.href = "/home"; // Redirect to home
-      } else {
-        // Handle new user registration
-        const signupResponse = await signup(
-          user.email!,
-          "",
-          user.displayName || ""
-        );
-        if (signupResponse.success) {
-          window.location.href = "/home"; // Redirect to home after registration
-        } else {
-          setError("Error with Google login.");
-        }
       }
     } catch (error: any) {
       setError(error.message);

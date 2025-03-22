@@ -14,7 +14,7 @@ const AccountActivation = () => {
   useEffect(() => {
     if (success) {
       const timer = setTimeout(() => {
-        navigate("/");
+        navigate("/login");
       }, 3000); // Redirect after 3 seconds
       return () => clearTimeout(timer); // Cleanup timeout
     }

@@ -19,8 +19,8 @@ const SignUp = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signUpWithEmail(email, password, username); // Call the signUpWithEmail function from UserProvider
-      navigate("/verify-email"); // Redirect to email verification page
+      const token = await signUpWithEmail(email, password, username); // Get the token
+      navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
     } catch (error: any) {
       setError(error.message); // Handle any errors during signup
     }
@@ -29,7 +29,7 @@ const SignUp = () => {
   const handleGoogleLogin = async () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
-      navigate("/home"); // Redirect after successful login
+      navigate("/explore"); // Redirect after successful login
     } catch (error: any) {
       setError(error.message); // Handle errors from Google login
     }
@@ -106,22 +106,6 @@ const SignUp = () => {
 
       {/* Sign-up Form */}
       <form className="space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <label
-            htmlFor="username"
-            className="block font-semibold text-mountain-600 dark:text-mountain-50 text-sm"
-          >
-            Username
-          </label>
-          <Input
-            type="text"
-            placeholder="Enter your username"
-            className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-        </div>
-
         <div>
           <label
             htmlFor="email"

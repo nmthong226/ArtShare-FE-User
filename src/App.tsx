@@ -31,12 +31,14 @@ import Portfolio from "@/pages/Portfolio";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { LanguageProvider } from "@/context/LanguageProvider";
 import { UserProvider } from "@/context/UserProvider";
+import AuthAction from "./pages/Authentication/HandleCallback";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <SignUp /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/activate-account/:token", element: <AccountActivation /> },
+  { path: "/auth", element: <AuthAction /> }, // This handles the auth action URL with query parameters
 ];
 
 const InAppPublicRoutes = [
@@ -91,7 +93,7 @@ const App: React.FC = () => {
                 ))}
 
                 {/* Fallback Route (catch-all for non-existent routes) */}
-                <Route path="*" element={<Navigate to="/explore" />} />
+                {/* <Route path="*" element={<Navigate to="/explore" />} /> */}
               </Routes>
             </RootLayout>
           </Router>

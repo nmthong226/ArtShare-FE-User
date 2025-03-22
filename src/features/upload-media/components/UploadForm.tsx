@@ -5,52 +5,37 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
-  MenuItem, 
-  Select,
-  Dialog,
-  Button
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search"; 
-import CloseIcon from "@mui/icons-material/Close";
+// import SearchIcon from "@mui/icons-material/Search"; 
+// import CloseIcon from "@mui/icons-material/Close";
+import SubjectSelector from "./SubjectSelector";
 
 
-// TODO: Define Art Types : Fetch from API
-const artTypes = [
-  {
-    name: "Abstract",
-    description: "Artwork that focuses on shapes, colors, and forms.",
-    images: [
-      "https://example.com/image1.jpg",
-      "https://example.com/image2.jpg",
-    ],
-  },
-  {
-    name: "Anatomy",
-    description: "Anatomical studies of humans and animals.",
-    images: [
-      "https://example.com/image3.jpg",
-      "https://example.com/image4.jpg",
-    ],
-  },
-];
+// // TODO: Define Art Types : Fetch from API
+// const artTypes = [
+//   {
+//     name: "Abstract",
+//     description: "Artwork that focuses on shapes, colors, and forms.",
+//     images: [
+//       "https://example.com/image1.jpg",
+//       "https://example.com/image2.jpg",
+//     ],
+//   },
+//   {
+//     name: "Anatomy",
+//     description: "Anatomical studies of humans and animals.",
+//     images: [
+//       "https://example.com/image3.jpg",
+//       "https://example.com/image4.jpg",
+//     ],
+//   },
+// ];
 
 const UploadForm: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isMature, setIsMature] = useState(false);
   const [tags, setTags] = useState("");
-  const [open, setOpen] = useState(false);
-  const [activeArtType, setActiveArtType] = useState(artTypes[0]);
-  const [selectedArtTypes, setSelectedArtTypes] = useState<string[]>([]);
-
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
-  const handleAddType = (type: { name: string }) => {
-    if (selectedArtTypes.length < 3 && !selectedArtTypes.includes(type.name)) {
-      setSelectedArtTypes([...selectedArtTypes, type.name]);
-    }
-  };
 
   return (
     <Box className="w-full mx-auto text-white text-left space-y-3">
@@ -181,8 +166,8 @@ const UploadForm: React.FC = () => {
         </Box>
 
      {/* Art type */}
-     <Box className="px-2.5 space-y-1">
-          <Typography className="text-sm text-left text-mountain-200">
+     <Box className="px-2.5 pb-2.5 space-y-1">
+          {/* <Typography className="text-sm text-left text-mountain-200">
             How would you categorize this work? (Choose up to 3)
           </Typography>
           <Box
@@ -193,39 +178,10 @@ const UploadForm: React.FC = () => {
             <Typography className="text-sm text-gray-400">
               {selectedArtTypes.length > 0 ? selectedArtTypes.join(", ") : "Choose art type"}
             </Typography>
-          </Box>
+          </Box> */}
 
           {/* Dialog for Selection */}
-          <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-            <Box className="bg-mountain-900 text-white p-4 flex">
-              {/* Left Panel - Art Type List */}
-              <Box className="w-1/3 border-r border-gray-700 overflow-y-auto max-h-[400px]">
-                <Typography className="text-xs uppercase mb-2 text-gray-400">
-                  Choose up to 3 Subject Matter
-                </Typography>
-                {artTypes.map((type) => (
-                  <Box
-                    key={type.name}
-                    className="flex justify-between items-center px-3 py-2 rounded-md cursor-pointer hover:bg-mountain-800"
-                    onClick={() => setActiveArtType(type)}
-                  >
-                    <Typography>{type.name}</Typography>
-                    <Button
-                      variant="contained"
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleAddType(type);
-                      }}
-                      className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 text-xs rounded-md"
-                    >
-                      + Add
-                    </Button>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
-          </Dialog>
+          <SubjectSelector />
         </Box>
       </Box>
     </Box>

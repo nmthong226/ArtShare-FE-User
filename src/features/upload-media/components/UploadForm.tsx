@@ -7,9 +7,8 @@ import {
   FormControlLabel,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
-// import SearchIcon from "@mui/icons-material/Search"; 
+// import SearchIcon from "@mui/icons-material/Search";
 // import CloseIcon from "@mui/icons-material/Close";
-
 
 // // TODO: Define Art Types : Fetch from API
 // const artTypes = [
@@ -122,10 +121,7 @@ const UploadForm: React.FC = () => {
                   {" "}
                   (see our Guidelines for{" "}
                 </span>
-                <a
-                  href="/mature-content"
-                  className="hover:underline"
-                >
+                <a href="/mature-content" className="hover:underline">
                   Mature Content
                 </a>
                 <span className="text-mountain-200">)</span>
@@ -165,8 +161,8 @@ const UploadForm: React.FC = () => {
           />
         </Box>
 
-     {/* Art type */}
-     <Box className="px-2.5 pb-2.5 space-y-1">
+        {/* Art type */}
+        <Box className="px-2.5 pb-2.5 space-y-1">
           {/* <Typography className="text-sm text-left text-mountain-200">
             How would you categorize this work? (Choose up to 3)
           </Typography>

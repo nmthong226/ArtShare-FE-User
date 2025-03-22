@@ -66,7 +66,16 @@ const UploadMedia: React.FC = () => {
     }
 
     // Add the new previews to our existing list
-    setArtPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
+    setArtPreviews((prevPreviews) => {
+      const updatedPreviews = [...prevPreviews, ...newPreviews];
+
+      // If this is the first image uploaded, automatically select it
+      if (prevPreviews.length === 0 && newPreviews.length > 0) {
+        setSelectedPreviewIndex(0);
+      }
+
+      return updatedPreviews;
+    });
   };
 
   // Remove image from the previews array

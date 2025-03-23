@@ -121,7 +121,7 @@ const UploadMedia: React.FC = () => {
         <HeroSection />
       </div>
       <Box
-        className="flex p-4 bg-mountain-950 gap-3"
+        className="flex p-4  gap-3"
         style={{ height: `${contentHeight}px`, overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}

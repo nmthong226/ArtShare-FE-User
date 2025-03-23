@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
-import { Button } from "@mui/material";
+import { Button, OutlinedInput, TextField } from "@mui/material";
 
 type Subject = {
   label: string;
@@ -12,13 +12,53 @@ type Subject = {
 const allSubjects: Subject[] = [
   { label: "Abstract" },
   {
-    label: "Anatomy",
+    label: "Anatom3y",
     description: "Anatomical studies of humans and animals.",
     examples: [
-      "https://via.placeholder.com/120?text=Dog",
-      "https://via.placeholder.com/120?text=Eye",
-      "https://via.placeholder.com/120?text=Torso",
-      "https://via.placeholder.com/120?text=Hand",
+      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
+    ],
+  },
+  {
+    label: "Anatomy5",
+    description: "Anatomical studies of humans and animals.",
+    examples: [
+      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
+    ],
+  },
+  {
+    label: "Anatomy1",
+    description: "Anatomical studies of humans and animals.",
+    examples: [
+      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
+    ],
+  },
+  {
+    label: "Anatomy2",
+    description: "Anatomical studies of humans and animals.",
+    examples: [
+      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
+    ],
+  },
+  {
+    label: "Anatomy3",
+    description: "Anatomical studies of humans and animals.",
+    examples: [
+      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
     ],
   },
   {
@@ -45,7 +85,7 @@ const allSubjects: Subject[] = [
 export default function SubjectSelector() {
   const [selected, setSelected] = useState<Subject[]>([]);
   const [search, setSearch] = useState("");
-  const [hovered, setHovered] = useState<Subject | null>(null);
+  const [hovered, setHovered] = useState<Subject>(allSubjects[0]);
 
   const toggleSubject = (subject: Subject) => {
     const exists = selected.some((s) => s.label === subject.label);
@@ -71,7 +111,28 @@ export default function SubjectSelector() {
         How would you categorize this work? (Choose up to 3)
       </p>
       {/* Top Selection Bar */}
-      <div className="flex items-center gap-2 flex-wrap bg-mountain-950 border-1 rounded text-left px-3 py-4 mb-6">
+      <div
+        className={`flex items-center gap-2 flex-wrap bg-mountain-950 rounded text-left mb-6 ${
+          selected.length > 0 ? "px-3 py-2" : ""
+        }`}
+        style={{
+          border: "2px solid #9d9d9d", // default
+          borderRadius: "8px",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.borderColor = "#e7e7e7"; // hover effect
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.borderColor = "#9d9d9d"; // revert
+        }}
+        onFocus={(e) => {
+          e.currentTarget.style.borderColor = "#e7e7e7"; // focus effect
+        }}
+        onBlur={(e) => {
+          e.currentTarget.style.borderColor = "#9d9d9d"; // blur
+        }}
+        tabIndex={-1} // allow focus if needed
+      >
         {selected.map((subject) => (
           <div
             key={subject.label}
@@ -91,29 +152,40 @@ export default function SubjectSelector() {
                 "&:hover": { backgroundColor: "transparent" },
               }}
             >
-              <CloseIcon fontSize="small" sx={{
-                color: "white"
-              }} />
+              <CloseIcon
+                fontSize="small"
+                sx={{
+                  color: "white",
+                }}
+              />
             </Button>
           </div>
         ))}
-        <input
+        <TextField
+          variant="outlined"
+          fullWidth
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Choose art type"
-          className="bg-transparent focus:outline-none flex-1 text-base placeholder:text-base text-white rounded placeholder:text-mountain-400"
+          placeholder={selected.length === 0 ? "Choose art type" : ""}
+          sx={{
+            flex: 1,
+            backgroundColor: "transparent",
+            ".MuiOutlinedInput-notchedOutline": {
+              border: "none", // optional: remove border if it's inside a styled box
+            },
+          }}
         />
       </div>
 
       {/* Main layout */}
       <div className="flex gap-6">
         {/* Left column */}
-        <div className="w-64 border-r border-gray-700 pr-4 h-72 overflow-y-auto custom-scroll">
-          <p className="text-sm text-gray-400 mb-3 sticky top-0 bg-moutain-950 z-2 py-1.5">
-            CHOOSE ANOTHER {remainingSlots} SUBJECT
+        <div className="w-64 border-r border-gray-700 pr-4 h-72 flex flex-col">
+          <p className="text-sm text-gray-400 mb-3 py-1.5">
+            CHOOSE ANOTHER {remainingSlots} ART TYPE
             {remainingSlots !== 1 ? "S" : ""}
           </p>
-          <ul className="space-y-2">
+          <ul className="space-y-2 overflow-y-auto custom-scroll flex-1 pr-1">
             {allSubjects.map((subject) => {
               if (
                 search &&
@@ -126,12 +198,15 @@ export default function SubjectSelector() {
                   key={subject.label}
                   className="flex justify-between items-center text-sm cursor-pointer gap-2"
                   onMouseEnter={() => setHovered(subject)}
-                  onMouseLeave={() => setHovered(null)}
                 >
                   <span>{subject.label}</span>
                   <Button
                     onClick={() => toggleSubject(subject)}
-                    className={`flex items-center gap-1 px-3 py-1 rounded border border-gray-600 text-white hover:bg-[#2a2a2a] bg-[#1e1e1e]`}
+                    className="flex items-center gap-1 px-3 py-1 rounded border border-gray-600 text-white "
+                    sx={{
+                      minWidth: "110px", // 👈 set a fixed or consistent min width
+                      justifyContent: "center", // ensure content is centered
+                    }}
                   >
                     {!selectedStatus ? (
                       <>
@@ -152,33 +227,31 @@ export default function SubjectSelector() {
         </div>
 
         {/* Right preview panel */}
-        {hovered && hovered.description && (
-          <div className="flex-1 !w-80">
-            <div className="bg-[#2a2a2a] border border-gray-700 rounded-lg p-5">
-              <div className="flex justify-between items-center mb-3">
-                <div>
-                  <h3 className="text-xl font-semibold">{hovered.label}</h3>
-                  <p className="text-gray-300 text-sm">{hovered.description}</p>
-                </div>
+        <div className="flex-1 !w-80">
+          <div className="bg-[#2a2a2a] border border-gray-700 rounded-lg p-5">
+            <div className="flex justify-between items-center mb-3">
+              <div>
+                <h3 className="text-xl font-semibold">{hovered.label}</h3>
+                <p className="text-gray-300 text-sm">{hovered.description}</p>
               </div>
-              {hovered.examples && (
-                <>
-                  <p className="text-sm text-gray-400 mb-2">Examples</p>
-                  <div className="flex gap-3 overflow-x-auto">
-                    {hovered.examples.map((url, idx) => (
-                      <img
-                        key={idx}
-                        src={url}
-                        alt={`Example ${idx}`}
-                        className="w-24 h-24 object-cover rounded"
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
             </div>
+            {hovered.examples && (
+              <>
+                <p className="text-sm text-gray-400 mb-2">Examples</p>
+                <div className="flex gap-3 overflow-x-auto">
+                  {hovered.examples.map((url, idx) => (
+                    <img
+                      key={idx}
+                      src={url}
+                      alt={`Example ${idx}`}
+                      className="w-24 h-24 object-cover rounded"
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

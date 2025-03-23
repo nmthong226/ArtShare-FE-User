@@ -62,11 +62,11 @@ const UploadForm: React.FC = () => {
   };
 
   return (
-    <Box className="w-full mx-auto text-white text-left space-y-3">
+    <Box className="w-full mx-auto dark:text-white text-left space-y-3">
       {/* Artwork Title Box */}
-      <Box className=" bg-mountain-900 space-y-3">
-        <Box className="border-b p-2.5 border-mountain-200">
-          <Typography className="font-semibold text-base text-left text-white">
+      <Box className=" dark:bg-mountain-900 space-y-3">
+        <Box className="border-b p-2.5 dark:border-mountain-200">
+          <Typography className="font-semibold text-base text-left dark:text-white">
             Artwork Title
           </Typography>
         </Box>
@@ -86,7 +86,7 @@ const UploadForm: React.FC = () => {
             slotProps={{
               input: {
                 className:
-                  " text-base text-white placeholder:text-mountain-400",
+                  " text-base text-white dark:placeholder:text-mountain-400",
               },
             }}
           />
@@ -94,16 +94,16 @@ const UploadForm: React.FC = () => {
       </Box>
 
       {/* Artwork Description Box */}
-      <Box className="bg-mountain-900 rounded-md space-y-2">
+      <Box className="dark:bg-mountain-900 rounded-md space-y-2">
         {/* Heading with bottom border */}
-        <Box className="border-b p-2.5 border-mountain-200">
-          <Typography className="font-semibold text-base text-left text-white">
+        <Box className="border-b p-2.5 dark:border-mountain-200">
+          <Typography className="font-semibold text-base text-left dark:text-white">
             Artwork Details
           </Typography>
         </Box>
 
         <Box className="px-2.5 pb-2.5 space-y-1">
-          <Typography className="text-base text-left text-mountain-200">
+          <Typography className="text-base text-left dark:text-mountain-200">
             Description
           </Typography>
           <TextField
@@ -117,7 +117,7 @@ const UploadForm: React.FC = () => {
             slotProps={{
               input: {
                 className:
-                  "p-2.5  text-base placeholder:text-base text-white placeholder:text-mountain-400 text-left",
+                  "p-2.5  text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
               },
             }}
           />
@@ -125,7 +125,7 @@ const UploadForm: React.FC = () => {
 
         {/* Content / Mature Checkbox */}
         <Box className="px-2.5 pb-2.5 space-y-1">
-          <Typography className="text-base text-left text-mountain-200">
+          <Typography className="text-base text-left dark:text-mountain-200">
             Content
           </Typography>
           <FormControlLabel
@@ -138,15 +138,15 @@ const UploadForm: React.FC = () => {
             }
             label={
               <>
-                <span className="text-white">Has mature content</span>
-                <span className="text-mountain-200">
+                <span className="dark:text-white">Has mature content</span>
+                <span className="dark:text-mountain-200">
                   {" "}
                   (see our Guidelines for{" "}
                 </span>
                 <a href="/mature-content" className="hover:underline">
                   Mature Content
                 </a>
-                <span className="text-mountain-200">)</span>
+                <span className="dark:text-mountain-200">)</span>
               </>
             }
             className="text-base text-left"
@@ -155,20 +155,20 @@ const UploadForm: React.FC = () => {
       </Box>
 
       {/* Categorization Box */}
-      <Box className="bg-mountain-900 rounded-md space-y-2">
+      <Box className="dark:bg-mountain-900 rounded-md space-y-2">
         {/* Heading with bottom border */}
-        <Box className="border-b p-2.5 border-mountain-200">
-          <Typography className="font-semibold text-base text-left text-white">
+        <Box className="border-b p-2.5 dark:border-mountain-200">
+          <Typography className="font-semibold text-base text-left dark:text-white">
             Categorization
           </Typography>
         </Box>
 
         {/* Tags */}
         <Box className="px-2.5 space-y-1">
-          <Typography className="text-base text-left text-mountain-200">
+          <Typography className="text-base text-left dark:text-mountain-200">
             Tags
           </Typography>
-          <Typography variant="body2" className="mb-1 text-mountain-500">
+          <Typography variant="body2" className="mb-1 dark:text-mountain-500">
             Tags help provide more context about your artwork.{" "}
             {/* <a href="#" style={{ color: "#3b82f6" }}>
               Learn more
@@ -177,7 +177,7 @@ const UploadForm: React.FC = () => {
 
           {/* Chip input box */}
           <Box
-            className="bg-mountain-950 p-2.5"
+            className="dark:bg-mountain-950 p-2.5"
             sx={{
               display: "flex",
               flexWrap: "wrap",
@@ -198,8 +198,7 @@ const UploadForm: React.FC = () => {
                 key={tag}
                 label={tag}
                 onDelete={() => handleDelete(tag)}
-                className="text-base"
-                sx={{ backgroundColor: "#3a3a3a", color: "white" }}
+                className="text-base dark:bg-[#3a3a3a] dark:text-white"
               />
             ))}
             <OutlinedInput
@@ -228,7 +227,7 @@ const UploadForm: React.FC = () => {
             {tags.length > 0 && (
               <IconButton
                 size="small"
-                sx={{ color: "#ccc" }}
+                className="dark:text-[#ccc]"
                 onClick={() => {
                   navigator.clipboard.writeText(tags.join(", "));
                   alert("Tags copied to clipboard");
@@ -241,7 +240,7 @@ const UploadForm: React.FC = () => {
             {tags.length >= 2 && (
               <IconButton
                 size="small"
-                sx={{ color: "#ccc" }}
+                className="dark:text-[#ccc]"
                 onClick={() => setTags([])}
               >
                 <CloseOutlined fontSize="small" />
@@ -250,7 +249,7 @@ const UploadForm: React.FC = () => {
           </Box>
 
           {/* Helper text below */}
-          <Typography variant="body2" className=" text-mountain-500 mt-0.5">
+          <Typography variant="body2" className=" dark:text-mountain-500 mt-0.5">
             Type a tag and press <strong>Enter</strong> to add it.
           </Typography>
         </Box>

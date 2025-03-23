@@ -110,7 +110,7 @@ const UploadMedia: React.FC = () => {
     selectedPreviewIndex !== null && artPreviews[selectedPreviewIndex];
 
   return (
-    <Box className="h-screen w-full">
+    <Box className="h-screen w-full dark:bg-mountain-950">
       {
         <CollectionModal
           open={showCollectionModal}
@@ -125,11 +125,11 @@ const UploadMedia: React.FC = () => {
         style={{ height: `${contentHeight}px`, overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}
-        <Box className="w-1/2 p-6 flex flex-col bg-mountain-900 rounded-md text-white items-start">
+        <Box className="w-1/2 p-6 flex flex-col dark:bg-mountain-900 rounded-md dark:text-white items-start">
           {/* -- IMAGES SECTION -- */}
-          <Box className="w-full text-white h-full flex flex-col items-center">
+          <Box className="w-full dark:text-white h-full flex flex-col items-center">
             <Box className="flex justify-between items-center mb-4 w-full">
-              <Typography className="text-base text-mountain-200">
+              <Typography className="text-base dark:text-mountain-200">
                 {artPreviews.length}/{MAX_IMAGES} images
               </Typography>
               {hasSelectedImage && selectedPreviewIndex !== 0 && (
@@ -138,12 +138,11 @@ const UploadMedia: React.FC = () => {
                   size="small"
                   startIcon={<DeleteOutlineOutlined sx={{ fontSize: 18 }} />}
                   onClick={() => handleRemovePreview(selectedPreviewIndex!)}
+                  className="dark:text-white dark:border-mountain-500"
                   sx={{
                     backgroundColor: "transparent",
-                    color: "white",
                     borderRadius: "10px",
                     border: "1px solid",
-                    borderColor: "mountain-500",
                     textTransform: "none",
                     "&:hover": { backgroundColor: "transparent" },
                   }}
@@ -160,10 +159,9 @@ const UploadMedia: React.FC = () => {
                       e.stopPropagation();
                       handleCropThumbnail();
                     }}
-                    className="border-mountain-600"
+                    className="dark:border-mountain-600 dark:text-white"
                     sx={{
                       backgroundColor: "transparent",
-                      color: "white",
                       borderRadius: "10px",
                       border: "1px solid",
                       textTransform: "none",
@@ -178,10 +176,9 @@ const UploadMedia: React.FC = () => {
                     component="label"
                     size="small"
                     onClick={(e) => e.stopPropagation()}
-                    className="border-mountain-600"
+                    className="dark:border-mountain-600 dark:text-white"
                     sx={{
                       backgroundColor: "transparent",
-                      color: "white",
                       borderRadius: "10px",
                       border: "1px solid white",
                       textTransform: "none",
@@ -203,7 +200,7 @@ const UploadMedia: React.FC = () => {
             {/* Main preview of the first image */}
             {artPreviews.length > 0 ? (
               <Box
-                className="mb-4 bg-mountain-900 rounded h-full w-full"
+                className="mb-4 dark:bg-mountain-900 rounded h-full w-full"
                 sx={{
                   height: 300,
                   p: 2,
@@ -232,7 +229,7 @@ const UploadMedia: React.FC = () => {
               </Box>
             ) : (
               <Box
-                className="mb-4 border border-dashed border-gray-500 flex flex-col items-center justify-center h-48 w-full h-full"
+                className="mb-4 border border-dashed dark:border-gray-500 flex flex-col items-center justify-center h-48 w-full h-full"
                 onDragOver={(e) => {
                   e.preventDefault();
                 }}
@@ -255,10 +252,9 @@ const UploadMedia: React.FC = () => {
                       variant="text"
                       component="label"
                       size="small"
-                      className="border-mountain-600 mb-2"
+                      className="dark:border-mountain-600 mb-2 dark:text-white"
                       sx={{
                         backgroundColor: "transparent",
-                        color: "white",
                         borderRadius: "10px",
                         border: "1px solid",
                         textTransform: "none",
@@ -314,17 +310,17 @@ const UploadMedia: React.FC = () => {
                   />
                   {index === 0 && (
                     <Box
-                      sx={{
-                        backgroundColor: "primary.main",
-                        position: "absolute",
-                        top: "0.25rem",
-                        left: "0.25rem",
-                        color: "black",
-                        fontSize: "0.75rem", // equivalent to text-xs
-                        px: 1,
-                        py: 0.5,
-                        borderRadius: 1,
-                      }}
+                     className="dark:text-black"
+                     sx={{
+                      backgroundColor: "primary.main",
+                      position: "absolute",
+                      top: "0.25rem",
+                      left: "0.25rem",
+                      fontSize: "0.75rem", // equivalent to text-xs
+                      px: 1,
+                      py: 0.5,
+                      borderRadius: 1,
+                    }}
                     >
                       Thumbnail
                     </Box>
@@ -336,7 +332,7 @@ const UploadMedia: React.FC = () => {
                         handleRemovePreview(index);
                       }}
                       size="medium"
-                      className="absolute top-0 right-0 bg-gray-600 bg-opacity-70 text-white hover:bg-gray-700"
+                      className="absolute top-0 right-0 dark:bg-gray-600 bg-opacity-70 dark:text-white dark:hover:bg-gray-700"
                     >
                       <CloseIcon fontSize="small" />
                     </IconButton>
@@ -346,7 +342,7 @@ const UploadMedia: React.FC = () => {
 
               {artPreviews.length > 0 && artPreviews.length < MAX_IMAGES && (
                 <Box
-                  className="w-[80px] h-[80px] flex items-center justify-center border  border-mountain-600 rounded-md text-white cursor-pointer"
+                  className="w-[80px] h-[80px] flex items-center justify-center border  dark:border-mountain-600 rounded-md dark:text-white cursor-pointer"
                   component="label"
                 >
                   <AddIcon fontSize="large" />
@@ -373,21 +369,17 @@ const UploadMedia: React.FC = () => {
           <Box className="w-full flex mt-auto justify-between pr-4">
             <Button
               variant="outlined"
-              className="border-white text-white hover:bg-mountain-800 flex items-center rounded-md"
+              className="dark:border-white dark:text-white dark:hover:bg-mountain-800 flex items-center rounded-md dark:hover:border-white"
               sx={{
-                borderColor: "white",
-                "&:hover": {
-                  borderColor: "white",
-                },
                 textTransform: "none",
               }}
               onClick={() => setShowCollectionModal(true)}
               startIcon={<FolderOpenIcon />}
             >
               {/* <span>{"Gallery | My Char Design".substring(0, 13) + "..."}</span> */}
-              <div className="flex gap-8 items-center">
+              <div className="flex gap-8 items-center dark:text-mountain-600">
                 <span>{"Collection".substring(0, 13)}</span>
-                <span className="text-mountain-600">Favourites</span>
+                <span className="dark:text-mountain-600">Favourites</span>
               </div>
             </Button>
             <Button

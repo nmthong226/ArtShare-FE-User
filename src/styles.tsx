@@ -2,6 +2,7 @@ import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
   palette: {
+    mode: 'dark', // Explicitly set mode to dark
     primary: {
       main: "#a5b4fc",
     },
@@ -11,6 +12,14 @@ export const theme = createTheme({
     mountain: {
       100: "#e7e7e7",
       400: "#9ca3af",
+    },
+    background: {
+      default: "#121212", // Dark background color
+      paper: "#262626", // Darker paper color
+    },
+    text: {
+      primary: "#ffffff", // White text for dark mode
+      secondary: "#9ca3af", // Lighter text color for secondary elements
     },
   },
   components: {
@@ -36,7 +45,7 @@ export const theme = createTheme({
           "& .MuiInputBase-root": {
             backgroundColor: "#262626",
             "& fieldset": {
-              borderColor: "#9d9d9d", // mountain-400
+              borderColor: "#9ca3af", // mountain-400
               borderWidth: "2px",
             },
             "&:hover fieldset": {
@@ -50,9 +59,10 @@ export const theme = createTheme({
           },
           "& .MuiInputBase-input": {
             padding: "10px",
+            color: "#ffffff",
           },
           "& .MuiInputBase-inputMultiline": {
-            padding: "0px", // specifically override <textarea> padding to avoid duplicate padding
+            padding: "0px",
           },
         },
       },
@@ -68,5 +78,33 @@ export const theme = createTheme({
         },
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#262626",
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#262626",
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#262626",
+        },
+      },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#262626",
+        }
+      }
+    }
   },
 });

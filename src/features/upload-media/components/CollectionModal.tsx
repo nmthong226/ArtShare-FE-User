@@ -42,18 +42,18 @@ const CollectionModal: React.FC<CollectionModalProps> = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <div className="bg-mountain-900 text-white flex justify-between items-center">
+      <div className="dark:bg-mountain-900 dark:text-white flex justify-between items-center">
         <DialogTitle className="text-2xl">
           Add art project to collection
         </DialogTitle>
-        <IconButton onClick={onClose} className="text-white">
+        <IconButton onClick={onClose} className="dark:text-white">
           <Close />
         </IconButton>
       </div>
-      <DialogContent className="p-4  text-white">
+      <DialogContent className="p-4  dark:text-white">
         <Button
           variant="contained"
-          className=" !bg-transparent !border-1 !border-gray-500 text-white flex items-center gap-2 normal-case"
+          className=" !bg-transparent !border-1 dark:!border-gray-500 dark:text-white flex items-center gap-2 normal-case"
         >
           <AddCircle className="!text-blue-400" /> Create new collection
         </Button>
@@ -64,7 +64,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({ open, onClose }) => {
             placeholder="Search collections..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-mountain-800 !text-white rounded-md"
+            className="dark:bg-mountain-800 dark:!text-white rounded-md"
             InputProps={{
               startAdornment: <Search className="text-white mx-2" />,
               style: { color: "white" },
@@ -82,7 +82,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({ open, onClose }) => {
                 className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${
                   selectedCollection === col.id
                     ? "bg-blue-500"
-                    : "bg-mountain-800"
+                    : "dark:bg-mountain-800"
                 }`}
                 onClick={() => setSelectedCollection(col.id)}
               >
@@ -93,14 +93,14 @@ const CollectionModal: React.FC<CollectionModalProps> = ({ open, onClose }) => {
                     className="w-12 h-12 rounded-lg"
                   />
                   <div>
-                    <p className="font-medium text-white">{col.name}</p>
-                    <p className="text-sm text-gray-400">
+                    <p className="font-medium dark:text-white">{col.name}</p>
+                    <p className="text-sm dark:text-gray-400">
                       {col.projects} Project{col.projects > 1 ? "s" : ""}
                     </p>
                   </div>
                 </div>
                 {selectedCollection === col.id && (
-                  <CheckCircleOutline className="text-white" />
+                  <CheckCircleOutline className="dark:text-white" />
                 )}
               </div>
             ))}

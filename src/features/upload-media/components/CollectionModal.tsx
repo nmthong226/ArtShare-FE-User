@@ -44,7 +44,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({ open, onClose }) => {
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <div className="bg-mountain-900 text-white flex justify-between items-center">
         <DialogTitle className="text-2xl">
-          Add project to collection
+          Add art project to collection
         </DialogTitle>
         <IconButton onClick={onClose} className="text-white">
           <Close />

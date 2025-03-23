@@ -29,6 +29,7 @@
     "boring-avatars": "^1.11.2",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "javascript-time-ago": "^2.5.11",
     "lucide-react": "^0.477.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -39,6 +40,7 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^7.3.0",
     "react-show-more-text": "^1.7.1",
+    "react-time-ago": "^7.3.3",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.14",
     "tailwindcss-animate": "^1.0.7"

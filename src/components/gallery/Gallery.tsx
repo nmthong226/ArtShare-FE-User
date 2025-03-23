@@ -110,10 +110,10 @@ const IGallery: React.FC = () => {
       <Gallery photos={uniqueGalleryPhotos} renderImage={ImageRenderer as React.ComponentType<RenderImageProps>} />
       <Paper className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg z-50">
         <ToggleButtonGroup className="m-1.5 flex gap-2" size="small" value={filter} exclusive onChange={handleFilterChange}>
-          <ToggleButton className="-m-0.5 border-0 py-2 px-4 rounded-full" value="for-you">
+          <ToggleButton color="primary" className="-m-0.5 border-0 py-2 px-4 rounded-full" value="for-you">
             For you
           </ToggleButton>
-          <ToggleButton className="-m-0.5 border-0 py-2 px-4 rounded-full" value="following">
+          <ToggleButton color="primary" className="-m-0.5 border-0 py-2 px-4 rounded-full" value="following">
             Following
           </ToggleButton>
         </ToggleButtonGroup>

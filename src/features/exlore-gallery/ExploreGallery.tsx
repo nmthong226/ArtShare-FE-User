@@ -24,12 +24,16 @@ const ExploreGallery: React.FC = () => {
     <div className="">
       <div className=" sticky top-0 bg-white z-50 px-4">
         <div className="categories-bar flex items-center gap-6 w-full">
-          <Button className="spread-btn aspect-[1/1] min-w-auto p-2" variant="outlined" disableElevation onClick={handleToggleCP()}>
+          <Button className="spread-btn aspect-[1/1] min-w-auto p-2 rounded-lg" variant="outlined" disableElevation onClick={handleToggleCP()}>
             <Ellipsis className="text-mountain-800" />
           </Button>
           <CategoryPopper open={openCP} anchorEl={anchorElCP} onClose={() => setOpenCP(false)} onSelectCategory={handleCategoryChange} />
-          <Button className="all-channels-btn flex gap-2 flex-shrink-0" variant="outlined" onClick={() => handleCategoryChange("All Channels")}>
-            <Button variant="outlined" disableRipple className="aspect-[1/1] min-w-auto p-2">
+          <Button
+            className="all-channels-btn flex gap-2 flex-shrink-0 rounded-lg p-2"
+            variant="outlined"
+            onClick={() => handleCategoryChange("All Channels")}
+          >
+            <Button variant="outlined" disableRipple className="aspect-[1/1] min-w-auto p-2 rounded-lg">
               <LoaderPinwheel />
             </Button>
             <span className="flex-shrink-0">All Channels</span>

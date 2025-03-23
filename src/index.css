@@ -136,4 +136,13 @@ body {
   height: 100%;
   width: 100%;
   font-family: "Roboto", sans-serif;
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
 }

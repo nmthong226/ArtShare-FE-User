@@ -66,7 +66,7 @@ export const Categories: React.FC<CategoriesProps> = ({ onSelectCategory }) => {
           onClick={() => onSelectCategory(category.name)}
         >
           <img src={category.thumbnail} alt={category.name} className="object-cover object-center w-12 aspect-[1/1] rounded-lg" />
-          <span className="text-sm text-gray-800">{category.name}</span>
+          <span className="text-sm text-gray-800 line-clamp-2">{category.name}</span>
         </div>
       ))}
     </ScrollMenu>
@@ -96,7 +96,7 @@ export const CategoryPopper: React.FC<CategoriesPopperProps> = ({ open, anchorEl
                   placeholder="Search in Categorys"
                   aria-label="search"
                   onChange={(event) => setSearchValue(event.target.value)}
-                  className="w-full pl-8 p-2 text-inherit transition-width duration-200 border"
+                  className="w-full pl-8 p-2 text-inherit transition-width duration-200 border rounded"
                 />
               </div>
             </div>

@@ -7,6 +7,7 @@ import {
   FormControlLabel,
   Chip,
   IconButton,
+  OutlinedInput,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
 import { CloseOutlined, ContentCopyOutlined } from "@mui/icons-material";
@@ -39,6 +40,7 @@ const UploadForm: React.FC = () => {
   const [isMature, setIsMature] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
+  const [isChipInputFocused, setIsChipInputFocused] = useState(false);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue.trim()) {
@@ -80,14 +82,11 @@ const UploadForm: React.FC = () => {
               "& .MuiOutlinedInput-root": {
                 borderRadius: "5px",
               },
-              "& .MuiOutlinedInput-input": {
-                padding: "10px",
-              },
             }}
             slotProps={{
               input: {
                 className:
-                  "border-1 bg-mountain-950 text-base text-white placeholder:text-mountain-400",
+                  " text-base text-white placeholder:text-mountain-400",
               },
             }}
           />
@@ -118,7 +117,7 @@ const UploadForm: React.FC = () => {
             slotProps={{
               input: {
                 className:
-                  "bg-mountain-950 border-1 text-base placeholder:text-base text-white placeholder:text-mountain-400 text-left",
+                  "p-2.5  text-base placeholder:text-base text-white placeholder:text-mountain-400 text-left",
               },
             }}
           />
@@ -178,6 +177,7 @@ const UploadForm: React.FC = () => {
 
           {/* Chip input box */}
           <Box
+            className="bg-mountain-950 p-2.5"
             sx={{
               display: "flex",
               flexWrap: "wrap",
@@ -186,9 +186,11 @@ const UploadForm: React.FC = () => {
               px: 1,
               py: 1,
               minHeight: 48,
-              border: "1px solid #ffffff",
+              border: "1px solid",
+              borderColor: isChipInputFocused ? "mountain.100" : "mountain.400",
               borderRadius: "8px",
-              backgroundColor: "#1f1f1f",
+              transition: "border-color 0.2s ease-in-out",
+              borderWidth: "2px",
             }}
           >
             {tags.map((tag) => (
@@ -196,37 +198,46 @@ const UploadForm: React.FC = () => {
                 key={tag}
                 label={tag}
                 onDelete={() => handleDelete(tag)}
+                className="text-base"
                 sx={{ backgroundColor: "#3a3a3a", color: "white" }}
               />
             ))}
-            <Box
-              component="input"
+            <OutlinedInput
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={inputValue ? "" : "Add tag"}
+              onFocus={() => setIsChipInputFocused(true)}
+              onBlur={() => setIsChipInputFocused(false)}
+              placeholder={tags.length === 0 ? "Add tag" : ""}
               sx={{
                 flex: 1,
                 minWidth: "80px",
-                background: "transparent",
-                border: "none",
-                outline: "none",
-                color: "white",
-                fontSize: "1rem",
+                backgroundColor: "transparent",
+                ".MuiOutlinedInput-notchedOutline": {
+                  border: "none", // optional: remove border if it's inside a styled box
+                },
+                padding: 0, // remove internal spacing
+                "& input": {
+                  padding: 0, // remove padding inside the input element
+                },
               }}
-            />
-            {/* Right icons inside the box */}
-            <IconButton
               size="small"
-              sx={{ color: "#ccc" }}
-              onClick={() => {
-                if (tags.length === 0) return;
-                navigator.clipboard.writeText(tags.join(", "));
-                alert("Tags copied to clipboard");
-              }}
-            >
-              <ContentCopyOutlined fontSize="small" />
-            </IconButton>
+            />
+
+            {/* Right icons inside the box */}
+            {tags.length > 0 && (
+              <IconButton
+                size="small"
+                sx={{ color: "#ccc" }}
+                onClick={() => {
+                  navigator.clipboard.writeText(tags.join(", "));
+                  alert("Tags copied to clipboard");
+                }}
+              >
+                <ContentCopyOutlined fontSize="small" />
+              </IconButton>
+            )}
+
             {tags.length >= 2 && (
               <IconButton
                 size="small"

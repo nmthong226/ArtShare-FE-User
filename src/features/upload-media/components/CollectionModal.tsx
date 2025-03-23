@@ -7,7 +7,12 @@ import {
   Button,
   IconButton,
 } from "@mui/material";
-import { AddCircle, CheckCircleOutline, Close, Search } from "@mui/icons-material";
+import {
+  AddCircle,
+  CheckCircleOutline,
+  Close,
+  Search,
+} from "@mui/icons-material";
 
 interface Collection {
   id: number;
@@ -23,9 +28,16 @@ interface CollectionModalProps {
 
 const CollectionModal: React.FC<CollectionModalProps> = ({ open, onClose }) => {
   const [search, setSearch] = useState<string>("");
-  const [selectedCollection, setSelectedCollection] = useState<number | null>(null);
+  const [selectedCollection, setSelectedCollection] = useState<number | null>(
+    null
+  );
   const collections: Collection[] = [
-    { id: 0, name: "Favourite Collection", projects: 1, image: "https://via.placeholder.com/40" },
+    {
+      id: 0,
+      name: "Favourite Collection",
+      projects: 1,
+      image: "https://via.placeholder.com/40",
+    },
   ];
 
   return (
@@ -38,7 +50,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({ open, onClose }) => {
           <Close />
         </IconButton>
       </div>
-      <DialogContent className="p-4 bg-mountain-950 text-white">
+      <DialogContent className="p-4  text-white">
         <Button
           variant="contained"
           className=" !bg-transparent !border-1 !border-gray-500 text-white flex items-center gap-2 normal-case"
@@ -54,9 +66,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({ open, onClose }) => {
             onChange={(e) => setSearch(e.target.value)}
             className="bg-mountain-800 !text-white rounded-md"
             InputProps={{
-              startAdornment: (
-                <Search className="text-white mx-2" />
-              ),
+              startAdornment: <Search className="text-white mx-2" />,
               style: { color: "white" },
             }}
           />
@@ -69,7 +79,11 @@ const CollectionModal: React.FC<CollectionModalProps> = ({ open, onClose }) => {
             .map((col) => (
               <div
                 key={col.id}
-                className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${selectedCollection === col.id ? 'bg-blue-500' : 'bg-mountain-800'}`}
+                className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition-all ${
+                  selectedCollection === col.id
+                    ? "bg-blue-500"
+                    : "bg-mountain-800"
+                }`}
                 onClick={() => setSelectedCollection(col.id)}
               >
                 <div className="flex items-center space-x-3">

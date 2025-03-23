@@ -228,7 +228,7 @@ export default function SubjectSelector() {
 
         {/* Right preview panel */}
         <div className="flex-1 !w-80">
-          <div className="bg-[#2a2a2a] border border-gray-700 rounded-lg p-5">
+          <div className="bg-mountain-950 border border-indigo-300 rounded-lg p-5 h-full">
             <div className="flex justify-between items-center mb-3">
               <div>
                 <h3 className="text-xl font-semibold">{hovered.label}</h3>

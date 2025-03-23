@@ -196,13 +196,13 @@ export default function SubjectSelector() {
               return (
                 <li
                   key={subject.label}
-                  className="flex justify-between items-center text-sm cursor-pointer gap-2"
+                  className="flex justify-between items-center text-sm cursor-pointer gap-2 px-2 py-2 rounded hover:bg-mountain-800 transition"
                   onMouseEnter={() => setHovered(subject)}
                 >
                   <span>{subject.label}</span>
                   <Button
                     onClick={() => toggleSubject(subject)}
-                    className="flex items-center gap-1 px-3 py-1 rounded border border-gray-600 text-white "
+                    className="flex items-center gap-1 px-3 py-1 rounded border border-gray-600 text-white hover:bg-mountain-900 bg-mountain-950 "
                     sx={{
                       minWidth: "110px", // 👈 set a fixed or consistent min width
                       justifyContent: "center", // ensure content is centered
@@ -210,7 +210,7 @@ export default function SubjectSelector() {
                   >
                     {!selectedStatus ? (
                       <>
-                        <AddIcon fontSize="small" className="text-blue-400" />
+                        <AddIcon fontSize="small" className="text-blue-600" />
                         <span className="text-sm">Add</span>
                       </>
                     ) : (

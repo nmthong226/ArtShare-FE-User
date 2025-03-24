@@ -29,8 +29,14 @@ interface UserContextType {
   user: User | null;
   token: string | null;
   error: string | null;
-  loginWithEmail: (email: string, password: string) => void;
-  signUpWithEmail: (email: string, password: string, username: string) => void;
+  // Updated to return a Promise<string> (token)
+  signUpWithEmail: (
+    email: string,
+    password: string,
+    username: string
+  ) => Promise<string>;
+  // Updated to return a Promise<string> (token)
+  loginWithEmail: (email: string, password: string) => Promise<string>;
   logout: () => void;
   signUpWithGoogle: () => void;
   loginWithGoogle: () => void;
@@ -74,39 +80,37 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     email: string,
     password: string,
     username: string
-  ) => {
+  ): Promise<string> => {
     try {
+      // Create user with Firebase
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password
       );
       const user = userCredential.user;
-      console.log(user);
-      await sendEmailVerification(user); // Send email verification
-      setUser({
-        id: user.uid,
-        name: user.displayName || "User" + user.uid.slice(0, 5),
-        email: user.email || "Unknown",
-      });
-      const token = await user.getIdToken();
 
-      setToken(token);
       // Call backend signup API
       const backendResponse = await signup(email, password, username);
-      return token;
-      if (backendResponse.success) {
-        window.location.href = "/activate-account"; // Redirect user after successful sign-up
-      } else {
-        setError("Error during registration. Please try again.");
+      if (!backendResponse) {
+        throw new Error("Error during registration. Please try again.");
       }
+
+      // Retrieve and set the token
+      const token = await user.getIdToken();
+      setToken(token);
+
+      // Return the token for further processing (e.g., navigation)
+      return token;
     } catch (error: any) {
       setError(error.message);
+      throw error; // Rethrow the error so the caller can handle it
     }
   };
-
-  // Login with Email and Password
-  const loginWithEmail = async (email: string, password: string) => {
+  const loginWithEmail = async (
+    email: string,
+    password: string
+  ): Promise<string> => {
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
@@ -114,14 +118,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         password
       );
       const user = userCredential.user;
-      console.log(user);
-      // Check if the email is verified
       if (!user?.emailVerified) {
-        setError("Please verify your email before logging in.");
-        return; // Prevent further execution, stay on the login page
+        const errMsg = "Please verify your email before logging in.";
+        setError(errMsg);
+        throw new Error(errMsg);
       }
-
-      // If email is verified, get the token
       const token = await user.getIdToken();
       setUser({
         id: user.uid,
@@ -129,24 +130,20 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         email: user.email || "Unknown",
       });
       setToken(token);
-
-      // Call backend login API with the token
       const backendResponse = await login(token);
-      if (backendResponse.success) {
+      if (backendResponse) {
+        return token;
       } else {
-        setError("Error during login. Please try again.");
+        const errMsg = "Error during login. Please try again.";
+        setError(errMsg);
+        throw new Error(errMsg);
       }
     } catch (error: any) {
-      // Handle errors from Firebase
-      if (error.code === "auth/user-not-found") {
-        setError("No user found with this email address.");
-      } else if (error.code === "auth/wrong-password") {
-        setError("Incorrect password. Please try again.");
-      } else {
-        setError("An error occurred during login. Please try again.");
-      }
+      setError(error.message);
+      throw error;
     }
   };
+
   // Google Sign-Up or Login
   const signUpWithGoogle = async () => {
     const provider = new GoogleAuthProvider();

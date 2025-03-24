@@ -22,6 +22,7 @@ const SignUp = () => {
       const token = await signUpWithEmail(email, password, username); // Get the token
       navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
     } catch (error: any) {
+      console.log(error);
       setError(error.message); // Handle any errors during signup
     }
   };

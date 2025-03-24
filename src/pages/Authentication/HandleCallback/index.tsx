@@ -5,6 +5,7 @@ import {
   verifyPasswordResetCode,
   confirmPasswordReset,
   sendEmailVerification,
+  applyActionCode,
 } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 
@@ -38,18 +39,18 @@ const AuthAction = () => {
             setError("Invalid or expired reset code.");
           });
       } else if (modeFromUrl === "verifyEmail") {
-        // Verify the email verification code
-        verifyPasswordResetCode(auth, oobCodeFromUrl)
-          .then((email) => {
-            setEmail(email); // Store the user's email for email verification
-            // Call Firebase method to verify the email
-            sendEmailVerification(auth.currentUser!).then(() => {
-              setMessage("Email verified successfully!");
-              setError(null); // Clear any previous errors
-              navigate("/login"); // Redirect to login after email is verified
-            });
+        console.log("Verify Email Mode");
+        // Use applyActionCode to verify the email
+        applyActionCode(auth, oobCodeFromUrl)
+          .then(() => {
+            // Optionally, reload the user to update emailVerified status:
+            // await auth.currentUser?.reload();
+            setMessage("Email verified successfully!");
+            setError(null);
+            navigate("/login"); // Redirect to login after successful email verification
           })
           .catch((error) => {
+            console.log(error);
             setError("Invalid or expired verification code.");
           });
       }

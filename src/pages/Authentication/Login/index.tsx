@@ -10,31 +10,32 @@ import { useUser } from "@/context/UserProvider"; // Import the UserProvider hoo
 import { login } from "@/api/authentication/auth"; // Import the login API function
 
 const Login = () => {
-  const { loginWithEmail, signUpWithGoogle, signUpWithFacebook, setError } =
-    useUser(); // Using the UserProvider context
+  const { loginWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Using the UserProvider context
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const navigate = useNavigate(); // To navigate after login
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await loginWithEmail(email, password); // Call the loginWithEmail function from UserProvider
-      console.log("ok");
-      // On successful login, redirect to the explorepage or another page
-      navigate("/explore"); // Replace with the actual route after login
+      // On successful login, redirect to the explore page or another page
+      navigate("/explore");
     } catch (error: any) {
+      console.log(error);
+      // If an error occurs, set the error message so it's visible to the user.
       let errorMessage = "Something went wrong. Please try again.";
-
-      // Handle Firebase error codes (e.g., wrong email or password)
       if (error.code === "auth/user-not-found") {
         errorMessage = "No user found with this email address.";
       } else if (error.code === "auth/wrong-password") {
         errorMessage = "Incorrect password. Please try again.";
+      } else if (error.code === "auth/email-not-verified") {
+        errorMessage = "Please verify your email before logging in.";
       }
-
-      setError(errorMessage); // Set the error message for the user
-      navigate("/login"); // Redirect back to the login page on error
+      setError(errorMessage);
+      // Optionally, you can remain on the login page so the user can correct their input.
     }
   };
 
@@ -43,7 +44,7 @@ const Login = () => {
       await signUpWithGoogle(); // Call Google login function from UserProvider
       navigate("/explore"); // Redirect after successful login
     } catch (error: any) {
-      setError(error.message); // Handle errors from Google login
+      setError(error.message);
     }
   };
 
@@ -52,7 +53,7 @@ const Login = () => {
       await signUpWithFacebook(); // Call Facebook login function from UserProvider
       navigate("/explore"); // Redirect after successful login
     } catch (error: any) {
-      setError(error.message); // Handle errors from Facebook login
+      setError(error.message);
     }
   };
 
@@ -116,6 +117,16 @@ const Login = () => {
           Login
         </Button>
       </form>
+
+      {/* Display error and success messages */}
+      {error && (
+        <p className="text-red-600 dark:text-red-400 text-sm mt-4">{error}</p>
+      )}
+      {message && (
+        <p className="text-green-600 dark:text-green-400 text-sm mt-4">
+          {message}
+        </p>
+      )}
 
       <div className="flex items-center space-x-4 mt-6 text-center">
         <hr className="border-mountain-900 border-t-1 w-full" />

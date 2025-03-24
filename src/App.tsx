@@ -93,7 +93,7 @@ const App: React.FC = () => {
                 ))}
 
                 {/* Fallback Route (catch-all for non-existent routes) */}
-                {/* <Route path="*" element={<Navigate to="/explore" />} /> */}
+                <Route path="*" element={<Navigate to="/explore" />} />
               </Routes>
             </RootLayout>
           </Router>

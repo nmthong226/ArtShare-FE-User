@@ -42,7 +42,7 @@ const AccountActivation = () => {
   if (success) {
     return (
       <div className="flex justify-center items-center min-h-screen font-bold text-green-600 text-lg">
-        ✅ Email successfully verified! Redirecting to Home...
+        ✅ Email successfully sent! Please check your inbox.
       </div>
     );
   }

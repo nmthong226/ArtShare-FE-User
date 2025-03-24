@@ -168,7 +168,7 @@ const LandingPage = () => {
       <Element name="section2" className='flex flex-col justify-center space-y-12 bg-white my-4 sm:my-0 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-8 lg:px-16 xl:px-24 w-full h-fit sm:min-h-[900px] lg:min-h-[800px]'>
         <div className='flex flex-col justify-center items-center space-y-3 lg:space-y-5'>
           <p className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>POWERFUL FEATURES</p>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-xl sm:text-3xl lg:text-4xl'>Everything You Need to Achieve More</p>
+          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-lg xs:text-xl sm:text-3xl lg:text-4xl'>Everything You Need to Achieve More</p>
           <p className='flex w-[80%] xl:w-[50%] text-mountain-800 text-base lg:text-lg text-center'>Art Share is a creative platform for artists to showcase their work, connect with a vibrant community, and find inspiration through shared creativity.</p>
         </div>
         <div className='gap-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full'>
@@ -326,7 +326,7 @@ const LandingPage = () => {
           />
         </div>
       </Element>
-      <div className='flex justify-center w-full min-h-20'>
+      <div className='flex justify-center items-center w-full min-h-20'>
         <NavLink to='section0' smooth={true} duration={500} className='flex justify-center items-center bg-mountain-50 shadow-md border rounded-full w-12 h-12 hover:scale-120 transition duration-300 hover:cursor-pointer'>
           <IoArrowUp />
         </NavLink>

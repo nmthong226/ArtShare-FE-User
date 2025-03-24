@@ -1,15 +1,27 @@
 import { Button, CardContent, Divider } from "@mui/material";
 import { HeartIcon, Eye, MessageSquareText, Bookmark, EllipsisVertical } from "lucide-react";
 import ShowMoreText from "react-show-more-text";
-import { ElementType } from "react";
+import { ElementType, useState } from "react";
 import ReactTimeAgo from "react-time-ago";
 import { Post } from "@/types";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
+import { SavePostDialog } from "./SavePostDialog";
 
 const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 const PostInfo = ({ postData }: { postData: Post }) => {
   const { postCommentsRef } = useFocusContext();
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState("username@gmail.com");
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (value: string) => {
+    setOpen(false);
+    setSelectedValue(value);
+  };
 
   const handleFocusCommentInput = () => {
     if (postCommentsRef.current) {
@@ -63,9 +75,9 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               <HeartIcon />
               <span className="text-sm normal-case font-normal">Like</span>
             </Button>
-            <Button className="flex gap-1 -mx-2 px-2 py-2" title="Bookmark">
+            <Button className="flex gap-1 -mx-2 px-2 py-2" title="Save" onClick={handleClickOpen}>
               <Bookmark />
-              <span className="text-sm normal-case font-normal">Bookmark</span>
+              <span className="text-sm normal-case font-normal">Save</span>
             </Button>
             <Button className="flex gap-1 -mx-2 px-2 py-2" title="Comment" onClick={handleFocusCommentInput}>
               <MessageSquareText />
@@ -76,6 +88,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             </Button>
           </div>
         </CardContent>
+        <SavePostDialog selectedValue={selectedValue} open={open} onClose={handleClose} />
       </div>
     )
   );

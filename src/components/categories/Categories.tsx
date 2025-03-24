@@ -25,7 +25,7 @@ const LeftArrow = () => {
     <div className="flex items-center">
       <Button
         variant="contained"
-        color="secondary"
+        color="primary"
         disableElevation
         disabled={isFirstItemVisible}
         className="min-w-auto aspect-[1/1] p-0.5 rounded-full"
@@ -44,7 +44,7 @@ const RightArrow = () => {
     <div className="flex items-center">
       <Button
         variant="contained"
-        color="secondary"
+        color="primary"
         disableElevation
         disabled={isLastItemVisible}
         className="min-w-auto aspect-[1/1] p-0.5 rounded-full"
@@ -57,15 +57,24 @@ const RightArrow = () => {
 };
 
 export const Categories: React.FC<CategoriesProps> = ({ onSelectCategory }) => {
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  const handleCategoryClick = (categoryName: string) => {
+    setSelectedCategory(categoryName);
+    onSelectCategory(categoryName);
+  };
+
   return (
-    <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} itemClassName="flex-shrink-0 flex items-center">
+    <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow} itemClassName="flex-shrink-0 flex items-center mx-1">
       {categoriesData.map((category) => (
         <div
           key={category.name}
-          className="max-w-48 flex justify-center items-center hover:bg-gray-100 cursor-pointer rounded-lg p-2 gap-1"
-          onClick={() => onSelectCategory(category.name)}
+          className={`max-w-48 flex justify-center items-center ${
+            selectedCategory === category.name ? "bg-mountain-200" : "hover:bg-mountain-200"
+          } cursor-pointer rounded-lg p-2 gap-2`}
+          onClick={() => handleCategoryClick(category.name)}
         >
-          <img src={category.thumbnail} alt={category.name} className="object-cover object-center w-12 aspect-[1/1] rounded-lg" />
+          <img src={category.thumbnail} alt={category.name} className="object-cover object-center w-12 aspect-[1/1] rounded-lg border" />
           <span className="text-sm text-gray-800 line-clamp-2">{category.name}</span>
         </div>
       ))}

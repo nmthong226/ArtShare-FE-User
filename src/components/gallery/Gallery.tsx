@@ -63,41 +63,63 @@ const IGallery: React.FC = () => {
   );
 
   useEffect(() => {
-    const handleScroll = () => {
+    const debounce = <T extends unknown[]>(func: (...args: T) => void, delay: number): ((...args: T) => void) => {
+      let timeoutId: number | null = null;
+
+      return (...args: T) => {
+        if (timeoutId !== null) {
+          clearTimeout(timeoutId);
+        }
+        timeoutId = window.setTimeout(() => func(...args), delay);
+      };
+    };
+
+    const handleScroll = debounce(() => {
       const scrollThreshold = 100;
-      const scrolledFromTop = document.documentElement.scrollTop;
-      const windowHeight = window.innerHeight;
-      const fullHeight = document.documentElement.offsetHeight;
+      const galleryArea = document.querySelector(".gallery-area");
 
-      if (windowHeight + scrolledFromTop >= fullHeight - scrollThreshold) {
-        if (hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
+      if (galleryArea instanceof HTMLElement) {
+        const scrolledFromTop = galleryArea.scrollTop;
+        const galleryHeight = galleryArea.offsetHeight;
+        const scrollableHeight = galleryArea.scrollHeight;
+
+        if (galleryHeight + scrolledFromTop >= scrollableHeight - scrollThreshold) {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
         }
+      } else {
+        console.warn("Element with class 'gallery-area' not found or is not an HTMLElement.");
       }
-    };
+    }, 10);
 
-    const checkContentHeight = () => {
-      const windowHeight = window.innerHeight;
-      const fullHeight = document.documentElement.offsetHeight;
+    const checkContentHeight = debounce(() => {
+      const galleryArea = document.querySelector(".gallery-area");
 
-      if (fullHeight < windowHeight) {
-        if (hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
+      if (galleryArea instanceof HTMLElement) {
+        const galleryHeight = galleryArea.offsetHeight;
+        const windowHeight = window.innerHeight;
+
+        console.log("Gallery Height:", galleryHeight);
+        console.log("Window Height:", windowHeight);
+
+        if (galleryHeight < windowHeight) {
+          if (hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
+          }
         }
+      } else {
+        console.warn("Element with class 'gallery-area' is not an HTMLElement or was not found.");
       }
-    };
-
-    const handleResize = () => {
-      checkContentHeight();
-    };
+    }, 200);
 
     window.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", checkContentHeight);
     checkContentHeight();
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", checkContentHeight);
     };
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
@@ -110,10 +132,10 @@ const IGallery: React.FC = () => {
       <Gallery photos={uniqueGalleryPhotos} renderImage={ImageRenderer as React.ComponentType<RenderImageProps>} />
       <Paper className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg z-50">
         <ToggleButtonGroup className="m-1.5 flex gap-2" size="small" value={filter} exclusive onChange={handleFilterChange}>
-          <ToggleButton color="primary" className="-m-0.5 border-0 py-2 px-4 rounded-full" value="for-you">
+          <ToggleButton color="primary" className="-m-0.5 border-0 py-2 px-4 rounded-full normal-case" value="for-you">
             For you
           </ToggleButton>
-          <ToggleButton color="primary" className="-m-0.5 border-0 py-2 px-4 rounded-full" value="following">
+          <ToggleButton color="primary" className="-m-0.5 border-0 py-2 px-4 rounded-full normal-case" value="following">
             Following
           </ToggleButton>
         </ToggleButtonGroup>

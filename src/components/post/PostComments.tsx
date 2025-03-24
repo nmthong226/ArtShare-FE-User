@@ -21,7 +21,7 @@ const PostComments = forwardRef(() => {
     <div className="flex flex-col gap-1">
       <div className="text-sm font-bold">2 COMMENTS</div>
       <div className="rounded-2xl shadow flex flex-col bg-white">
-        <div className="overflow-y-scroll flex flex-col gap-6 p-4 md:max-h-[256px] lg:max-h-[384px] xl:max-h-[448px] border-b">
+        <div className="overflow-y-scroll flex flex-col gap-6 p-4 max-h-[448px] md:max-h-[256px] lg:max-h-[384px] xl:max-h-[448px] border-b">
           {count.map(() => (
             <div className="flex gap-2">
               <div>

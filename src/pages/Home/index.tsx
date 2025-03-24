@@ -9,12 +9,15 @@ const user1 = 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80
 const user2 = 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 const user3 = 'https://i.imgur.com/kaDy9hV.jpeg';
 
+// Libs
+import { Link as NavLink, Element } from 'react-scroll';
+
 // Icons
 import { IoMdArrowRoundForward } from "react-icons/io";
 import { SiSocialblade } from "react-icons/si";
 import { IoMdColorPalette } from "react-icons/io";
 import { FaUserFriends } from "react-icons/fa";
-import { IoHeart } from "react-icons/io5";
+import { IoArrowUp, IoHeart } from "react-icons/io5";
 import { RiImageAiLine } from 'react-icons/ri';
 import { FaRegCompass } from "react-icons/fa";
 import { MdSettingsAccessibility } from "react-icons/md";
@@ -104,29 +107,35 @@ const LandingPage = () => {
   return (
     <div className="flex flex-col bg-white w-full h-screen">
       {/* Header */}
-      <nav className="flex justify-between items-center bg-white px-4 md:px-8 lg:px-16 xl:px-24 py-5 w-full h-20">
+      <Element name='section0' className="flex justify-between items-center bg-white px-4 md:px-8 lg:px-16 xl:px-24 py-5 w-full h-20">
         <div className='flex items-center space-x-2'>
           <img src={app_logo} className="shadow rounded-sm w-8 md:w-10 h-8 md:h-10" />
           <p className="bg-clip-text bg-gradient-to-r from-blue-800 via-indigo-800 to-purple-800 font-bold text-transparent text-base md:text-xl">Art Share</p>
         </div>
         <div className='flex items-center space-x-4 md:space-x-8 font-semibold'>
-          <div className='text-mountain-950'>Features</div>
-          <div className='text-mountain-950'>Benefits</div>
-          <div className='text-mountain-950'>Testimonials</div>
-          <div className='text-mountain-950'>Pricing</div>
-          <Link to="/login" className='bg-gradient-to-r from-blue-800 via-indigo-800 to-purple-800 p-1 md:p-2 px-4 md:px-6 rounded-full text-mountain-50 text-sm md:text-base'>Get Started</Link>
+          <NavLink to="section2" smooth={true} duration={500} className='max-sm:hidden text-mountain-950 hover:text-indigo-600 hover:cursor-pointer'>Features</NavLink>
+          <NavLink to="section3" smooth={true} duration={500} className='max-sm:hidden text-mountain-950 hover:text-indigo-600 hover:cursor-pointer'>Testimonials</NavLink>
+          <NavLink to="section4" smooth={true} duration={500} className='max-sm:hidden text-mountain-950 hover:text-indigo-600 hover:cursor-pointer'>Pricing</NavLink>
+          <Link to="/login" className='bg-gradient-to-r from-blue-800 via-indigo-800 to-purple-800 hover:brightness-110 p-1 md:p-2 px-4 md:px-6 rounded-full text-mountain-50 text-sm md:text-base hover:cursor-pointer'>Get Started</Link>
         </div>
-      </nav>
+      </Element>
+      <div className="sm:hidden -bottom-1 z-50 fixed flex justify-center items-center bg-white/70 py-5 w-full h-20">
+        <div className='flex justify-between items-center md:space-x-8 bg-white px-4 border rounded-full w-[90%] h-12 font-semibold'>
+          <NavLink to="section2" smooth={true} duration={500} className='text-mountain-950 hover:text-indigo-600 hover:cursor-pointer'>Features</NavLink>
+          <NavLink to="section3" smooth={true} duration={500} className='text-mountain-950 hover:text-indigo-600 hover:cursor-pointer'>Testimonials</NavLink>
+          <NavLink to="section4" smooth={true} duration={500} className='text-mountain-950 hover:text-indigo-600 hover:cursor-pointer'>Pricing</NavLink>
+        </div>
+      </div>
       {/* Hero Section */}
-      <div className='flex justify-between items-center gap-x-4 bg-mountain-50 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-10 lg:px-16 xl:px-24 w-full min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]'>
-        <div className='flex flex-col space-y-4 lg:space-y-6 xl:space-y-8 w-[50%]'>
+      <Element name='section1' className='flex sm:flex-row flex-col justify-between items-center gap-x-4 bg-mountain-50 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-10 lg:px-16 xl:px-24 w-full sm:min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]'>
+        <div className='flex flex-col space-y-4 lg:space-y-6 xl:space-y-8 my-4 sm:my-0 w-full sm:w-[50%]'>
           <div className='flex flex-col xl:space-y-2'>
             <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>Create, Share, Inspire</p>
             <p className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-bold text-transparent text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>Art Without Limits</p>
           </div>
           <p className='text-mountain-800 text-xs md:text-sm lg:text-lg xl:text-xl'>Art Share is a creative platform for artists to showcase their work, connect with a vibrant community, and find inspiration through shared creativity.</p>
           <div className='flex space-x-4'>
-            <Link to="/login" className='flex justify-center items-center bg-gradient-to-r from-blue-800 via-indigo-800 to-purple-800 p-1 lg:p-3 px-6 rounded-full text-mountain-50'>
+            <Link to="/login" className='flex justify-center items-center bg-gradient-to-r from-blue-800 via-indigo-800 to-purple-800 p-1 lg:p-3 px-4 lg:px-6 rounded-full text-mountain-50 hover:cursor-pointer'>
               <p className='mr-2 text-sm md:text-base'>Start For Free</p>
               <IoMdArrowRoundForward className='text-white' />
             </Link>
@@ -136,15 +145,15 @@ const LandingPage = () => {
             <div className="flex -space-x-1 overflow-hidden">
               <img className="inline-block rounded-full ring-2 ring-white size-6 md:size-8" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
               <img className="inline-block rounded-full ring-2 ring-white size-6 md:size-8" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
-              <img className="hidden md:inline-block rounded-full ring-2 ring-white size-8" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt="" />
-              <img className="hidden lg:inline-block rounded-full ring-2 ring-white size-8" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+              <img className="sm:hidden inline-block md:inline-block rounded-full ring-2 ring-white size-6 lg:size-8" src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" alt="" />
+              <img className="sm:hidden inline-block lg:inline-block rounded-full ring-2 ring-white size-6 lg:size-8" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
             </div>
             <p className='text-mountain-600 text-xs lg:text-base'>Joined by <span className='font-bold'>5000+</span> Art Enthusiasts & Artists</p>
           </div>
         </div>
-        <div className='relative flex justify-end w-[50%]'>
+        <div className='relative flex sm:justify-end w-full sm:w-[50%]'>
           <img src={illustrate} className='flex shadow-md border-10 border-white rounded-xl w-[540px] h-fit' />
-          <div className='-right-6 lg:-right-12 -bottom-4 lg:-bottom-6 absolute flex items-center space-x-2 bg-white shadow-md px-4 rounded-lg w-48 lg:w-64 h-16 lg:h-24'>
+          <div className='right-0 md:-right-6 lg:-right-12 -bottom-4 lg:-bottom-6 absolute flex items-center space-x-2 bg-white shadow-md px-4 rounded-lg w-48 lg:w-64 h-16 lg:h-24'>
             <div className='flex justify-center items-center bg-indigo-100 rounded-full w-10 lg:w-14 h-10 lg:h-14'>
               <SiSocialblade className='size-4 lg:size-6 text-indigo-700' />
             </div>
@@ -154,15 +163,15 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Element>
       {/* Core Features */}
-      <div className='flex flex-col justify-center space-y-12 bg-white p-8 lg:p-12 xl:p-20 px-10 lg:px-16 xl:px-24 w-full min-h-[900px] lg:min-h-[800px]'>
-        <div className='flex flex-col justify-center items-center space-y-5'>
+      <Element name="section2" className='flex flex-col justify-center space-y-12 bg-white my-4 sm:my-0 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-8 lg:px-16 xl:px-24 w-full h-fit sm:min-h-[900px] lg:min-h-[800px]'>
+        <div className='flex flex-col justify-center items-center space-y-3 lg:space-y-5'>
           <p className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>POWERFUL FEATURES</p>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-3xl lg:text-4xl'>Everything You Need to Achieve More</p>
+          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-xl sm:text-3xl lg:text-4xl'>Everything You Need to Achieve More</p>
           <p className='flex w-[80%] xl:w-[50%] text-mountain-800 text-base lg:text-lg text-center'>Art Share is a creative platform for artists to showcase their work, connect with a vibrant community, and find inspiration through shared creativity.</p>
         </div>
-        <div className='gap-8 grid grid-cols-2 lg:grid-cols-3 w-full'>
+        <div className='gap-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full'>
           <div className='flex flex-col'>
             <div className='flex items-center space-x-2 xl:space-x-4 bg-gradient-to-r from-blue-500 to-blue-700 px-2 xl:px-5 py-5 rounded-t-lg w-full'>
               <div className='flex justify-center items-center bg-white/20 rounded-lg w-10 h-10'>
@@ -230,14 +239,14 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Element>
       {/* Testimonials */}
-      <div className='flex flex-col justify-center space-y-12 bg-mountain-50 p-8 lg:p-12 xl:p-20 px-10 lg:px-16 xl:px-24 w-full min-h-[500px] xl:min-h-[600px]'>
-        <div className='flex flex-col justify-center items-center space-y-6'>
+      <Element name="section3" className='flex flex-col justify-center space-y-12 bg-mountain-50 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-8 lg:px-16 xl:px-24 w-full h-fit sm:min-h-[400px] md:min-h-[500px] xl:min-h-[600px]'>
+        <div className='flex flex-col justify-center items-center space-y-3 lg:space-y-5'>
           <p className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>SUCCESS STORIES</p>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-3xl lg:text-4xl'>What Our Users Say</p>
+          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-xl sm:text-3xl lg:text-4xl'>What Our Users Say</p>
         </div>
-        <div className='gap-8 grid grid-cols-3 w-full'>
+        <div className='gap-8 grid grid-cols-1 sm:grid-cols-3 w-full'>
           <div className='flex flex-col shadow-md rounded-lg'>
             <div className='flex items-center space-x-4 bg-gradient-to-r from-blue-500 to-indigo-500 px-5 py-1.5 rounded-t-lg w-full' />
             <div className='flex flex-col justify-between space-y-4 bg-white px-5 py-5 text-mountain-700'>
@@ -299,15 +308,15 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Element>
       {/* Pricing */}
-      <div className='flex flex-col justify-center bg-white p-8 lg:p-12 xl:p-20 px-10 lg:px-16 xl:px-24 w-full min-h-[1300px] xl:min-h-[900px]'>
-        <div className='flex flex-col justify-center items-center space-y-5'>
+      <Element name="section4" className='flex flex-col justify-center bg-white p-8 lg:p-12 xl:p-20 px-10 lg:px-16 xl:px-24 w-full h-fit md:min-h-[1300px] xl:min-h-[900px]'>
+        <div className='flex flex-col justify-center items-center space-y-3 lg:space-y-5'>
           <p className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>PRICING PLANS</p>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-3xl lg:text-4xl'>Choose The Right Plan For You</p>
+          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-xl sm:text-3xl lg:text-4xl'>Choose The Right Plan For You</p>
           <p className='flex justify-center items-center w-full text-mountain-800 text-base lg:text-lg text-center'>Flexible options to suit individuals, just pick the one that fuels your creativity!</p>
         </div>
-        <div className="relative flex justify-between items-center w-full scale-90">
+        <div className="relative flex justify-between items-center w-full">
           <div className="-z-10 absolute inset-0">
             <div className="bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:35px_35px] opacity-30 w-full h-full [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
           </div>
@@ -316,25 +325,30 @@ const LandingPage = () => {
             tiers={TIERS}
           />
         </div>
+      </Element>
+      <div className='flex justify-center w-full min-h-20'>
+        <NavLink to='section0' smooth={true} duration={500} className='flex justify-center items-center bg-mountain-50 shadow-md border rounded-full w-12 h-12 hover:scale-120 transition duration-300 hover:cursor-pointer'>
+          <IoArrowUp />
+        </NavLink>
       </div>
       {/* Footer */}
-      <div className='flex flex-col justify-center bg-mountain-950 w-full min-h-[240px]'>
-        <div className='flex justify-between items-end px-24 py-6'>
+      <div className='flex flex-col justify-center bg-mountain-950 w-full min-h-[300px] sm:min-h-[240px]'>
+        <div className='flex sm:flex-row flex-col sm:justify-between sm:items-end px-10 lg:px-16 xl:px-24 py-6'>
           <div className='flex flex-col space-y-2'>
             <div className='flex items-center space-x-2'>
               <img src={app_logo} className="shadow rounded-sm w-10 h-10" />
               <p className="bg-clip-text bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 font-bold text-transparent text-xl">Art Share</p>
             </div>
-            <p className='text-mountain-300'>A creative platform for artists to showcase, connect, and find inspiration.</p>
+            <p className='text-mountain-300 text-sm lg:text-base line-clamp-1'>A creative platform for artists to showcase, connect, and find inspiration.</p>
           </div>
           <div className='flex flex-col space-y-4'>
-            <div className='flex space-x-8'>
-              <div className='font-semibold text-mountain-50'>Features</div>
-              <div className='font-semibold text-mountain-50'>Benefits</div>
-              <div className='font-semibold text-mountain-50'>Testimonials</div>
-              <div className='font-semibold text-mountain-50'>Pricing</div>
+            <div className='flex space-x-4 lg:space-x-8'>
+              <div className='font-semibold text-mountain-50 text-sm lg:text-base'>Features</div>
+              <div className='font-semibold text-mountain-50 text-sm lg:text-base'>Benefits</div>
+              <div className='font-semibold text-mountain-50 text-sm lg:text-base'>Testimonials</div>
+              <div className='font-semibold text-mountain-50 text-sm lg:text-base'>Pricing</div>
             </div>
-            <div className='flex justify-end space-x-4'>
+            <div className='flex sm:justify-end space-x-4'>
               <div className='flex justify-center items-center border rounded-lg w-8 h-8'>
                 <FaFacebookF className='size-4 text-white' />
               </div>
@@ -347,9 +361,9 @@ const LandingPage = () => {
             </div>
           </div>
         </div>
-        <div className='flex justify-between items-end px-24 py-6 border-mountain-700 border-t-2'>
+        <div className='flex sm:flex-row flex-col sm:justify-between sm:items-end px-10 lg:px-16 xl:px-24 py-6 border-mountain-700 border-t-2'>
           <p className='text-mountain-50 text-sm'>© 2025 Copyright. All rights reserved.</p>
-          <div className='flex space-x-8'>
+          <div className='flex space-x-4 sm:space-x-8'>
             <Link to="/" className='text-mountain-50 text-sm underline'>Terms and Conditions</Link>
             <Link to="/" className='text-mountain-50 text-sm underline'>Privacy Policy</Link>
           </div>

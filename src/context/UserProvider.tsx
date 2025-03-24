@@ -20,6 +20,7 @@ interface UserContextType {
   user: User | null;
   token: string | null;
   error: string | null;
+  loading: boolean | null;
   // Updated to return a Promise<string> (token)
   signUpWithEmail: (
     email: string,
@@ -44,24 +45,36 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true); // Add loading state
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
-      if (firebaseUser) {
-        const userData: User = {
-          id: firebaseUser.uid,
-          name: firebaseUser.displayName || "Unknown",
-          email: firebaseUser.email || "Unknown",
-        };
-        setUser(userData);
-        firebaseUser.getIdToken().then((idToken) => {
-          setToken(idToken);
-        });
-      } else {
-        setUser(null);
-        setToken(null);
+    const unsubscribe = auth.onAuthStateChanged(
+      async (firebaseUser) => {
+        if (firebaseUser) {
+          try {
+            const userData: User = {
+              id: firebaseUser.uid,
+              name: firebaseUser.displayName || "Unknown",
+              email: firebaseUser.email || "Unknown",
+            };
+            setUser(userData);
+
+            const idToken = await firebaseUser.getIdToken();
+            setToken(idToken);
+          } catch (err) {
+            setError("Failed to retrieve user token.");
+          }
+        } else {
+          setUser(null);
+          setToken(null);
+        }
+        setLoading(false); // Authentication check completed
+      },
+      (err) => {
+        setError(err.message);
+        setLoading(false);
       }
-    });
+    );
 
     return () => unsubscribe();
   }, []);
@@ -222,6 +235,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         user,
         token,
         error,
+        loading,
         loginWithEmail,
         signUpWithEmail,
         logout,

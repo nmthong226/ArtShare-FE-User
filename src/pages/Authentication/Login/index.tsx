@@ -7,14 +7,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/context/UserProvider"; // Import the UserProvider hook
-import { login } from "@/api/authentication/auth"; // Import the login API function
+// import { login } from "@/api/authentication/auth"; // Import the login API function
 
 const Login = () => {
   const { loginWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Using the UserProvider context
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message] = useState<string | null>(null);
   const navigate = useNavigate(); // To navigate after login
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -81,7 +81,7 @@ const Login = () => {
           <Input
             type="text"
             placeholder="Enter your username or email"
-            className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full h-10"
+            className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:ring-indigo-500 w-full h-10"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -96,7 +96,7 @@ const Login = () => {
           <Input
             type="password"
             placeholder="Enter your password"
-            className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full h-10"
+            className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:ring-indigo-500 w-full h-10"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -112,7 +112,7 @@ const Login = () => {
         </div>
         <Button
           type="submit"
-          className="bg-mountain-800 hover:bg-mountain-700 dark:bg-gradient-to-r dark:from-blue-800 dark:via-purple-700 dark:to-pink-900 hover:brightness-110 py-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full h-10 font-bold text-white dark:text-mountain-50 hover:cursor-pointer"
+          className="bg-mountain-800 hover:bg-mountain-700 dark:bg-gradient-to-r dark:from-blue-800 dark:via-purple-700 dark:to-pink-900 hover:brightness-110 py-3 rounded-lg focus:ring-indigo-500 w-full h-10 font-bold text-white dark:text-mountain-50 hover:cursor-pointer"
         >
           Login
         </Button>
@@ -138,7 +138,7 @@ const Login = () => {
         <div className="flex w-full">
           <Button
             variant={"outline"}
-            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-full h-10 font-normal text-sm hover:cursor-pointer"
+            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg w-full h-10 font-normal text-sm hover:cursor-pointer"
             onClick={handleGoogleLogin}
           >
             <FcGoogle className="size-5" />
@@ -148,7 +148,7 @@ const Login = () => {
         <div className="flex justify-between w-full">
           <Button
             variant={"outline"}
-            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer"
+            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg w-[32%] h-10 font-normal text-sm hover:cursor-pointer"
             onClick={handleFacebookLogin}
           >
             <FaFacebookF className="size-5 text-blue-600" />
@@ -156,14 +156,14 @@ const Login = () => {
           </Button>
           <Button
             variant={"outline"}
-            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer"
+            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg w-[32%] h-10 font-normal text-sm hover:cursor-pointer"
           >
             <img src={InstagramIcon} alt="Instagram" className="size-5" />
             <span>Instagram</span>
           </Button>
           <Button
             variant={"outline"}
-            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer"
+            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg w-[32%] h-10 font-normal text-sm hover:cursor-pointer"
           >
             <FaApple className="size-5" />
             <span>Apple</span>

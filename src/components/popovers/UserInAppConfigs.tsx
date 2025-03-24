@@ -18,23 +18,29 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton"
 
 const UserInAppConfigs = () => {
-  const { user, logout } = useUser(); // Get user and logout function from UserProvider
+  const { user, loading, logout } = useUser(); // Get user and logout function from UserProvider
   const [open, setOpen] = useState(false);
   const { toggleTheme } = useTheme();
 
   const [matureContent, setMatureContent] = useState(false);
   const [aiContent, setAiContent] = useState(false);
 
-  // Only show the config options when the user is logged in
-  if (!user) {
-    return null; // Return nothing if the user is not logged in
-  }
-
   const handleLogout = () => {
-    logout(); // Call logout function from UserProvider
+    setOpen(false); // Close modal immediately
+    // Wait for 300ms before calling logout to allow UI transition
+    setTimeout(() => {
+      logout(); // Call logout function from UserProvider
+    }, 300);
   };
+
+  if (loading) return (
+    <>
+      <Skeleton className="dark:bg-mountain-900 rounded-full w-8 h-8" />
+    </>
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -43,11 +49,10 @@ const UserInAppConfigs = () => {
           <Button
             variant="ghost"
             title="More"
-            className={`flex items-center bg-gradient-to-b ${
-              user
-                ? "from-blue-800 to-pink-800"
-                : "from-mountain-800 to-mountain-300 "
-            } rounded-full w-8 h-8`}
+            className={`flex items-center bg-gradient-to-b ${user
+              ? "from-blue-800 to-pink-800"
+              : "from-mountain-800 to-mountain-300 "
+              } rounded-full w-8 h-8`}
             onMouseEnter={() => setOpen(true)}
           >
             <FaReact className="size-5 text-white" />
@@ -78,21 +83,21 @@ const UserInAppConfigs = () => {
               </div>
             </div>
             <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
-            <div className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full">
+            <div className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer">
               <p className="bg-clip-text bg-gradient-to-r from-blue-800 dark:from-blue-500 to-pink-800 dark:to-pink-500 text-transparent text-sm">
                 Become Seller
               </p>
             </div>
-            <div className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full">
+            <div className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer">
               <p className="text-sm">User Profile</p>
             </div>
-            <div className="xs:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full">
+            <div className="xs:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer">
               <p className="text-sm">Message</p>
             </div>
-            <div className="xs:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full">
+            <div className="xs:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer">
               <p className="text-sm">Update</p>
             </div>
-            <div className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full">
+            <div className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer">
               <p className="text-sm">Settings</p>
             </div>
             <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
@@ -105,14 +110,14 @@ const UserInAppConfigs = () => {
           <div className="flex space-x-2">
             <Button
               onClick={toggleTheme}
-              className={`border-2 border-indigo-600 dark:border-mountain-600 dark:bg-mountain-800 rounded-full size-8`}
+              className={`border-2 border-indigo-600 hover:cursor-pointer dark:border-mountain-600 dark:bg-mountain-800 rounded-full size-8`}
               variant={"outline"}
             >
               <MdLightMode className="size-5" />
             </Button>
             <Button
               onClick={toggleTheme}
-              className={`rounded-full dark:border-2 dark:border-indigo-600 dark:bg-mountain-800 size-8`}
+              className={`rounded-full dark:border-2 hover:cursor-pointer dark:border-indigo-600 dark:bg-mountain-800 size-8`}
               variant={"outline"}
             >
               <MdDarkMode className="size-5" />
@@ -146,7 +151,7 @@ const UserInAppConfigs = () => {
           <>
             <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
             <div
-              className="flex items-center space-x-2 hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full"
+              className="flex items-center space-x-2 hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer"
               onClick={handleLogout}
             >
               <p className="text-sm">Logout</p>
@@ -155,14 +160,12 @@ const UserInAppConfigs = () => {
         )}
 
         {/* Show these options only if the user is not logged in */}
-        {!user && (
-          <>
-            <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
-            <div className="flex items-center space-x-2 hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full">
-              <p className="text-sm">Help Center</p>
-            </div>
-          </>
-        )}
+        <>
+          <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
+          <div className="flex items-center space-x-2 hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full">
+            <p className="text-sm">Help Center</p>
+          </div>
+        </>
       </PopoverContent>
     </Popover>
   );

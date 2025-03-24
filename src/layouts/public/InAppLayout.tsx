@@ -1,5 +1,5 @@
 // Core Lib/Frameworks
-import React, { useEffect } from "react";
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
 // Assets
@@ -19,6 +19,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import UserInAppConfigs from "@/components/popovers/UserInAppConfigs";
+import { Skeleton } from "@/components/ui/skeleton"
 
 // Icons
 import { FiSearch } from "react-icons/fi";
@@ -44,24 +45,56 @@ import { FiLogIn } from "react-icons/fi";
 import { IoMailOutline } from "react-icons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
 
-const UserButton: React.FC<{user: User}> = ({ user }) => {
+const UserButton: React.FC<{ user?: User | null; loading?: boolean }> = ({ user, loading }) => {
   const location = useLocation();
 
-  // Ensure user data is fully loaded before rendering UI
-  if (user === undefined) {
-    return null; // Prevents flickering before user state resolves
+  // Show a loading indicator while checking authentication
+  if (loading) {
+    return (
+      <>
+        <Skeleton
+          className="flex justify-center items-center space-x-2 dark:bg-mountain-900 rounded-2xl w-20 xl:w-26 h-9"
+        >
+        </Skeleton>
+        <Skeleton
+          className="flex justify-center items-center space-x-2 dark:bg-mountain-900 rounded-2xl w-20 xl:w-26 h-9"
+        >
+        </Skeleton>
+      </>
+    )
   }
 
-  return user ? (
+  // Show Sign Up and Login for non-logged-in users
+  if (!user || Object.keys(user).length === 0) {
+    return (
+      <>
+        <Link
+          to="/signup"
+          className="hidden xs:flex justify-center items-center space-x-2 border border-mountain-700 rounded-2xl w-24 xl:w-26 h-9 text-muted-foreground text-sm"
+        >
+          <BsPen />
+          <p>Sign Up</p>
+        </Link>
+        <Link
+          to="/login"
+          className="flex justify-center items-center space-x-2 bg-mountain-700 hover:bg-mountain-600 dark:bg-mountain-200 rounded-2xl w-20 xl:w-26 h-9 text-mountain-100 dark:text-mountain-950 text-sm"
+        >
+          <FiLogIn />
+          <p>Login</p>
+        </Link>
+      </>
+    );
+  }
+
+  // Show Messages and Updates for logged-in users
+  return (
     <>
-      {/* Show Messages and Updates for logged-in users */}
       <Link
         to="/messages"
-        className={`hidden xs:flex group items-center border-b-4 h-full ${
-          location.pathname === "/messages"
+        className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/messages"
             ? "border-mountain-300 dark:text-mountain-50 text-mountain-950"
             : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
-        }`}
+          }`}
       >
         <div className="flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
           {location.pathname === "/messages" ? (
@@ -74,11 +107,10 @@ const UserButton: React.FC<{user: User}> = ({ user }) => {
       </Link>
       <Link
         to="/updates"
-        className={`hidden xs:flex group items-center border-b-4 h-full ${
-          location.pathname === "/updates"
+        className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/updates"
             ? "border-mountain-300 dark:text-mountain-50 text-mountain-950"
             : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
-        }`}
+          }`}
       >
         <div className="flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
           {location.pathname === "/updates" ? (
@@ -90,31 +122,14 @@ const UserButton: React.FC<{user: User}> = ({ user }) => {
         </div>
       </Link>
     </>
-  ) : (
-    <>
-      {/* Show Sign Up and Login for non-logged-in users */}
-      <Link
-        to="/signup"
-        className="hidden xs:flex justify-center items-center space-x-2 border border-mountain-700 rounded-2xl w-24 xl:w-26 h-9 text-muted-foreground text-sm"
-      >
-        <BsPen />
-        <p>Sign Up</p>
-      </Link>
-      <Link
-        to="/login"
-        className="flex justify-center items-center space-x-2 bg-mountain-700 hover:bg-mountain-600 dark:bg-mountain-200 rounded-2xl w-20 xl:w-26 h-9 text-mountain-100 dark:text-mountain-950 text-sm"
-      >
-        <FiLogIn />
-        <p>Login</p>
-      </Link>
-    </>
   );
 };
 
 
+
 const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-  const { user } = useUser();
+  const { user, loading } = useUser();
   return (
     <div className="flex flex-col w-full h-full">
       <nav className="flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16">
@@ -257,11 +272,9 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </div>
         <div
-          className={`flex items-center ${user ? "space-x-2 md:space-x-0" : "md:space-x-2"
-            } xl:space-x-4 h-full`}
+          className={`flex items-center space-x-2 md:space-x-2 xl:space-x-4 h-full`}
         >
-          <UserButton user={user!}/>
-          {/* UserInAppConfigs component */}
+          <UserButton user={user!} loading={loading!} />
           <UserInAppConfigs />
         </div>
       </nav>

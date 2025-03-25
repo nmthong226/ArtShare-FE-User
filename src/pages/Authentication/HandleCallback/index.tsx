@@ -4,10 +4,10 @@ import { auth } from "@/firebase"; // Firebase auth instance
 import {
   verifyPasswordResetCode,
   confirmPasswordReset,
-  sendEmailVerification,
   applyActionCode,
 } from "firebase/auth";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const AuthAction = () => {
   const location = useLocation(); // Access the URL parameters (e.g., mode, oobCode)
@@ -35,8 +35,8 @@ const AuthAction = () => {
           .then((email) => {
             setEmail(email); // Store the user's email for password reset
           })
-          .catch((error) => {
-            setError("Invalid or expired reset code.");
+          .catch((e) => {
+            if (e) setError("Invalid or expired reset code.", );
           });
       } else if (modeFromUrl === "verifyEmail") {
         console.log("Verify Email Mode");
@@ -95,7 +95,6 @@ const AuthAction = () => {
             : "Email successfully verified! Please check your inbox."}
         </p>
       </div>
-
       {/* Reset Password Form */}
       {mode === "resetPassword" && oobCode && (
         <div className="space-y-4">
@@ -106,9 +105,10 @@ const AuthAction = () => {
             >
               New Password
             </label>
-            <input
+            <Input
               type="password"
               id="password"
+              placeholder="Choose Your New Password"
               className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -124,26 +124,28 @@ const AuthAction = () => {
           </div>
         </div>
       )}
-
       {/* Success and Error Messages */}
       {error && (
-        <p className="text-red-600 dark:text-red-400 text-sm mt-4">{error}</p>
+        <p className="mt-4 text-red-600 dark:text-red-400 text-sm">{error}</p>
       )}
       {message && (
-        <p className="text-green-600 dark:text-green-400 text-sm mt-4">
+        <p className="mt-4 text-green-600 dark:text-green-400 text-sm">
           {message}
         </p>
       )}
-
       {mode === "verifyEmail" && email && (
         <div>
           {message && (
-            <p className="text-green-600 dark:text-green-400 text-sm mt-4">
+            <p className="mt-4 text-green-600 dark:text-green-400 text-sm">
               {message}
             </p>
           )}
         </div>
       )}
+      <p className="text-indigo-600 dark:text-indigo-300 text-sm">
+        If you need any help, don't hesitate to go to the
+        <span className="ml-1 font-bold">Help Center</span>
+      </p>
     </div>
   );
 };

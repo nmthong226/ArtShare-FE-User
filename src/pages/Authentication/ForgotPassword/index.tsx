@@ -51,7 +51,7 @@ const ForgotPassword = () => {
             htmlFor="email"
             className="block font-semibold text-mountain-600 dark:text-mountain-50 text-sm"
           >
-            Step 1: Enter Your Email
+            Enter Your Email
           </label>
           <Input
             placeholder="Input Your Email"
@@ -69,7 +69,6 @@ const ForgotPassword = () => {
             {loading ? "Sending..." : "Send My Verification Code"}
           </Button>
         </div>
-
         {/* Error or success message */}
         {error && (
           <p className="mt-4 text-red-600 dark:text-red-400 text-sm">{error}</p>

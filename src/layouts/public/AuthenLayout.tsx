@@ -7,7 +7,7 @@ import { FaArrowLeft } from "react-icons/fa6";
 
 const AuthenLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     let params = useLocation();
-    const showReturnToLogin = params.pathname === "/forgot-password" || params.pathname === "/email-activation";
+    const showReturnToLogin = params.pathname === "/forgot-password" || params.pathname === "/email-activation" || location.pathname.includes("auth");
     return (
         <div className="flex justify-center items-center gap-x-4 bg-white dark:bg-mountain-950 shadow-xl w-full h-full overflow-hidden">
             <div className="hidden md:flex justify-center items-center w-[60%] h-full">
@@ -17,7 +17,7 @@ const AuthenLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
                 <div className={`top-5 right-0 w-full md:w-[40%] absolute flex items-center space-x-2 px-10 md:px-1 lg:px-10 xl:px-20 ${showReturnToLogin ? 'justify-between' : 'justify-end'}`}>
                     {
                         showReturnToLogin &&
-                        <Link to="/login" className='flex items-center space-x-2 bg-mountain-100 dark:bg-mountain-800 p-2 px-4 rounded-2xl text-xs lg:text-sm'>
+                        <Link to="/login" className='flex items-center space-x-2 bg-mountain-100 dark:bg-mountain-800 px-4 rounded-2xl h-8 text-xs lg:text-sm'>
                             <FaArrowLeft className='w-4 h-4'/>
                             <p>Go to Login</p>
                         </Link>

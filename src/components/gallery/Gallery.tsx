@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import { useInfiniteQuery } from "react-query";
 import { fetchPosts } from "./api/unsplashService";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import Gallery, { PhotoProps, RenderImageProps } from "react-photo-gallery";
-import ImageRenderer from "./ImageRenderer";
+import { Photo, RowsPhotoAlbum } from "react-photo-album";
+import { ImageRenderer } from "./ImageRenderer";
 import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import "react-photo-album/rows.css";
 
-export interface GalleryPhoto extends PhotoProps {
+export interface GalleryPhoto extends Photo {
   title: string;
   author: string;
   postLength: number;
@@ -127,8 +128,9 @@ const IGallery: React.FC = () => {
   const uniqueGalleryPhotos = Array.from(new Map(galleryPhotos.map((photo) => [photo.key, photo])).values());
 
   return (
-    <div className="-mx-0.5">
-      <Gallery photos={uniqueGalleryPhotos} renderImage={ImageRenderer as React.ComponentType<RenderImageProps>} />
+    <div className="">
+      <RowsPhotoAlbum photos={uniqueGalleryPhotos} render={{ image: ImageRenderer }} />
+
       <Paper className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg z-50">
         <ToggleButtonGroup className="m-1.5 flex gap-2" size="small" value={filter} exclusive onChange={handleFilterChange}>
           <ToggleButton color="primary" className="-m-0.5 border-0 py-2 px-4 rounded-full normal-case" value="for-you">

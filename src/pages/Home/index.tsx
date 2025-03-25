@@ -11,6 +11,7 @@ const user3 = 'https://i.imgur.com/kaDy9hV.jpeg';
 
 // Libs
 import { Link as NavLink, Element } from 'react-scroll';
+import { motion } from "framer-motion"
 
 // Icons
 import { IoMdArrowRoundForward } from "react-icons/io";
@@ -129,19 +130,37 @@ const LandingPage = () => {
       {/* Hero Section */}
       <Element name='section1' className='flex sm:flex-row flex-col justify-between items-center gap-x-4 bg-mountain-50 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-10 lg:px-16 xl:px-24 w-full sm:min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]'>
         <div className='flex flex-col space-y-4 lg:space-y-6 xl:space-y-8 my-4 sm:my-0 w-full sm:w-[50%]'>
-          <div className='flex flex-col xl:space-y-2'>
+          <motion.div
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className='flex flex-col xl:space-y-2'>
             <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>Create, Share, Inspire</p>
             <p className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-bold text-transparent text-2xl md:text-3xl lg:text-4xl xl:text-5xl'>Art Without Limits</p>
-          </div>
-          <p className='text-mountain-800 text-xs md:text-sm lg:text-lg xl:text-xl'>Art Share is a creative platform for artists to showcase their work, connect with a vibrant community, and find inspiration through shared creativity.</p>
-          <div className='flex space-x-4'>
+          </motion.div>
+          <motion.p
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className='text-mountain-800 text-xs md:text-sm lg:text-lg xl:text-xl'>
+            Art Share is a creative platform for artists to showcase their work, connect with a vibrant community, and find inspiration through shared creativity.
+          </motion.p>
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className='flex space-x-4'>
             <Link to="/login" className='flex justify-center items-center bg-gradient-to-r from-blue-800 via-indigo-800 to-purple-800 p-1 lg:p-3 px-4 lg:px-6 rounded-full text-mountain-50 hover:cursor-pointer'>
               <p className='mr-2 text-sm md:text-base'>Start For Free</p>
               <IoMdArrowRoundForward className='text-white' />
             </Link>
             <Link to="/" className='bg-white shadow p-1 lg:p-3 px-6 border rounded-full text-mountain-950 text-sm md:text-base'>Learn More</Link>
-          </div>
-          <div className='flex items-center space-x-2 lg:space-x-4'>
+          </motion.div>
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className='flex items-center space-x-2 lg:space-x-4'>
             <div className="flex -space-x-1 overflow-hidden">
               <img className="inline-block rounded-full ring-2 ring-white size-6 md:size-8" src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
               <img className="inline-block rounded-full ring-2 ring-white size-6 md:size-8" src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
@@ -149,9 +168,13 @@ const LandingPage = () => {
               <img className="sm:hidden inline-block lg:inline-block rounded-full ring-2 ring-white size-6 lg:size-8" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
             </div>
             <p className='text-mountain-600 text-xs lg:text-base'>Joined by <span className='font-bold'>5000+</span> Art Enthusiasts & Artists</p>
-          </div>
+          </motion.div>
         </div>
-        <div className='relative flex sm:justify-end w-full sm:w-[50%]'>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8 }}
+          className='relative flex sm:justify-end w-full sm:w-[50%]'>
           <img src={illustrate} className='flex shadow-md border-10 border-white rounded-xl w-[540px] h-fit' />
           <div className='right-0 md:-right-6 lg:-right-12 -bottom-4 lg:-bottom-6 absolute flex items-center space-x-2 bg-white shadow-md px-4 rounded-lg w-48 lg:w-64 h-16 lg:h-24'>
             <div className='flex justify-center items-center bg-indigo-100 rounded-full w-10 lg:w-14 h-10 lg:h-14'>
@@ -162,17 +185,39 @@ const LandingPage = () => {
               <p className='font-bold text-mountain-900 text-sm lg:text-lg'>+27% This Week</p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </Element>
       {/* Core Features */}
       <Element name="section2" className='flex flex-col justify-center space-y-12 bg-white my-4 sm:my-0 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-8 lg:px-16 xl:px-24 w-full h-fit sm:min-h-[900px] lg:min-h-[800px]'>
         <div className='flex flex-col justify-center items-center space-y-3 lg:space-y-5'>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>POWERFUL FEATURES</p>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-lg xs:text-xl sm:text-3xl lg:text-4xl'>Everything You Need to Achieve More</p>
-          <p className='flex w-[80%] xl:w-[50%] text-mountain-800 text-base lg:text-lg text-center'>Art Share is a creative platform for artists to showcase their work, connect with a vibrant community, and find inspiration through shared creativity.</p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>
+            POWERFUL FEATURES
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-lg xs:text-xl sm:text-3xl lg:text-4xl'>
+            Everything You Need to Achieve More
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className='flex w-[80%] xl:w-[50%] text-mountain-800 text-base lg:text-lg text-center'>
+            Art Share is a creative platform for artists to showcase their work, connect with a vibrant community, and find inspiration through shared creativity.
+          </motion.p>
         </div>
         <div className='gap-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full'>
-          <div className='flex flex-col'>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1 }}
+            className='flex flex-col'>
             <div className='flex items-center space-x-2 xl:space-x-4 bg-gradient-to-r from-blue-500 to-blue-700 px-2 xl:px-5 py-5 rounded-t-lg w-full'>
               <div className='flex justify-center items-center bg-white/20 rounded-lg w-10 h-10'>
                 <IoMdColorPalette className='size-6 text-white' />
@@ -182,8 +227,12 @@ const LandingPage = () => {
             <div className='flex bg-white shadow-lg px-2 xl:px-5 py-5 rounded-b-lg text-mountain-700'>
               <p className='line-clamp-2'>Upload and present your artwork in high quality, making it easy to share your creativity.</p>
             </div>
-          </div>
-          <div className='flex flex-col'>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.2 }}
+            className='flex flex-col'>
             <div className='flex items-center space-x-2 xl:space-x-4 bg-gradient-to-r from-indigo-500 to-indigo-700 px-2 xl:px-5 py-5 rounded-t-lg w-full'>
               <div className='flex justify-center items-center bg-white/20 rounded-lg w-10 h-10'>
                 <FaUserFriends className='size-6 text-white' />
@@ -193,8 +242,12 @@ const LandingPage = () => {
             <div className='flex bg-white shadow-lg px-2 xl:px-5 py-5 rounded-b-lg text-mountain-700'>
               <p className='line-clamp-2'>Follow, interact, and collaborate with a vibrant community of creators across different art styles.</p>
             </div>
-          </div>
-          <div className='flex flex-col'>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.4 }}
+            className='flex flex-col'>
             <div className='flex items-center space-x-2 xl:space-x-4 bg-gradient-to-r from-purple-500 to-purple-700 px-2 xl:px-5 py-5 rounded-t-lg w-full'>
               <div className='flex justify-center items-center bg-white/20 rounded-lg w-10 h-10'>
                 <IoHeart className='size-6 text-white' />
@@ -204,8 +257,12 @@ const LandingPage = () => {
             <div className='flex bg-white shadow-lg px-2 xl:px-5 py-5 rounded-b-lg text-mountain-700'>
               <p className='line-clamp-2'>Receive likes, comments, and feedback to grow your presence and get discovered by more art lovers.</p>
             </div>
-          </div>
-          <div className='flex flex-col'>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.6 }}
+            className='flex flex-col'>
             <div className='flex items-center space-x-2 xl:space-x-4 bg-gradient-to-r from-sky-500 to-sky-700 px-2 xl:px-5 py-5 rounded-t-lg w-full'>
               <div className='flex justify-center items-center bg-white/20 rounded-lg w-10 h-10'>
                 <RiImageAiLine className='size-6 text-white' />
@@ -215,8 +272,12 @@ const LandingPage = () => {
             <div className='flex bg-white shadow-lg px-2 xl:px-5 py-5 rounded-b-lg text-mountain-700'>
               <p className='line-clamp-2'>Transform your ideas into stunning digital masterpieces with powerful AI-powered tools.</p>
             </div>
-          </div>
-          <div className='flex flex-col'>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.8 }}
+            className='flex flex-col'>
             <div className='flex items-center space-x-2 xl:space-x-4 bg-gradient-to-r from-cyan-500 to-cyan-700 px-2 xl:px-5 py-5 rounded-t-lg w-full'>
               <div className='flex justify-center items-center bg-white/20 rounded-lg w-10 h-10'>
                 <FaRegCompass className='size-6 text-white' />
@@ -226,8 +287,12 @@ const LandingPage = () => {
             <div className='flex bg-white shadow-lg px-2 xl:px-5 py-5 rounded-b-lg text-mountain-700'>
               <p className='line-clamp-2'>Browse trending artworks, explore diverse styles, and find inspiration from a global community.</p>
             </div>
-          </div>
-          <div className='flex flex-col'>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 2 }}
+            className='flex flex-col'>
             <div className='flex items-center space-x-2 xl:space-x-4 bg-gradient-to-r from-teal-500 to-teal-700 px-2 xl:px-5 py-5 rounded-t-lg w-full xl'>
               <div className='flex justify-center items-center bg-white/20 rounded-lg w-10 h-10'>
                 <MdSettingsAccessibility className='size-6 text-white' />
@@ -237,17 +302,33 @@ const LandingPage = () => {
             <div className='flex bg-white shadow-lg px-2 xl:px-5 py-5 rounded-b-lg text-mountain-700'>
               <p className='line-clamp-2'>Browse trending artworks, explore diverse styles, and find inspiration from a global community.</p>
             </div>
-          </div>
+          </motion.div>
         </div>
       </Element>
       {/* Testimonials */}
       <Element name="section3" className='flex flex-col justify-center space-y-12 bg-mountain-50 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-8 lg:px-16 xl:px-24 w-full h-fit sm:min-h-[400px] md:min-h-[500px] xl:min-h-[600px]'>
         <div className='flex flex-col justify-center items-center space-y-3 lg:space-y-5'>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>SUCCESS STORIES</p>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-xl sm:text-3xl lg:text-4xl'>What Our Users Say</p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>
+            SUCCESS STORIES
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-xl sm:text-3xl lg:text-4xl'>
+            What Our Users Say
+          </motion.p>
         </div>
         <div className='gap-8 grid grid-cols-1 sm:grid-cols-3 w-full'>
-          <div className='flex flex-col shadow-md rounded-lg'>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.8 }}
+            className='flex flex-col shadow-md rounded-lg'>
             <div className='flex items-center space-x-4 bg-gradient-to-r from-blue-500 to-indigo-500 px-5 py-1.5 rounded-t-lg w-full' />
             <div className='flex flex-col justify-between space-y-4 bg-white px-5 py-5 text-mountain-700'>
               <p className='line-clamp-2'>Sharing my art and connecting with other creators is so easy! The AI feature is great to explore new ideas.</p>
@@ -266,8 +347,12 @@ const LandingPage = () => {
               <IoStar className='text-yellow-400' />
               <IoStar className='text-yellow-400' />
             </div>
-          </div>
-          <div className='flex flex-col shadow-md rounded-lg'>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1 }}
+            className='flex flex-col shadow-md rounded-lg'>
             <div className='flex items-center space-x-4 bg-gradient-to-r from-indigo-500 to-purple-500 px-5 py-1.5 rounded-t-lg w-full' />
             <div className='flex flex-col justify-between space-y-4 bg-white px-5 py-5 text-mountain-700'>
               <p className='line-clamp-2'>A good platform for art inspiration! The community is supportive, I love seeing diverse artworks.</p>
@@ -286,8 +371,12 @@ const LandingPage = () => {
               <IoStar className='text-yellow-400' />
               <IoStar className='text-yellow-400' />
             </div>
-          </div>
-          <div className='flex flex-col shadow-md rounded-lg'>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 1.2 }}
+            className='flex flex-col shadow-md rounded-lg'>
             <div className='flex items-center space-x-4 bg-gradient-to-r from-purple-500 to-pink-500 px-5 py-1.5 rounded-t-lg w-full' />
             <div className='flex flex-col justify-between space-y-4 bg-white px-5 py-5 text-mountain-700'>
               <p className='line-clamp-2'>Art Share makes showcasing my work effortless! The design is sleek, and I’ve gained great exposure.</p>
@@ -306,15 +395,33 @@ const LandingPage = () => {
               <IoStar className='text-yellow-400' />
               <IoStar className='text-yellow-400' />
             </div>
-          </div>
+          </motion.div>
         </div>
       </Element>
       {/* Pricing */}
       <Element name="section4" className='flex flex-col justify-center bg-white p-8 lg:p-12 xl:p-20 px-10 lg:px-16 xl:px-24 w-full h-fit md:min-h-[1300px] xl:min-h-[900px]'>
         <div className='flex flex-col justify-center items-center space-y-3 lg:space-y-5'>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>PRICING PLANS</p>
-          <p className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-xl sm:text-3xl lg:text-4xl'>Choose The Right Plan For You</p>
-          <p className='flex justify-center items-center w-full text-mountain-800 text-base lg:text-lg text-center'>Flexible options to suit individuals, just pick the one that fuels your creativity!</p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className='bg-clip-text bg-gradient-to-r from-blue-700 to-purple-800 font-semibold text-transparent'>
+            PRICING PLANS
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className='bg-clip-text bg-gradient-to-r from-blue-950 via-blue-900 to-blue-800 font-bold text-transparent text-xl sm:text-3xl lg:text-4xl'>
+            Choose The Right Plan For You
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className='flex justify-center items-center w-full text-mountain-800 text-base lg:text-lg text-center'>
+            Flexible options to suit individuals, just pick the one that fuels your creativity!
+          </motion.p>
         </div>
         <div className="relative flex justify-between items-center w-full">
           <div className="-z-10 absolute inset-0">

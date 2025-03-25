@@ -19,12 +19,13 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton"
+import { useNavigate } from "react-router-dom";
 
 const UserInAppConfigs = () => {
   const { user, loading, logout } = useUser(); // Get user and logout function from UserProvider
   const [open, setOpen] = useState(false);
   const { toggleTheme } = useTheme();
-
+  const navigate = useNavigate();
   const [matureContent, setMatureContent] = useState(false);
   const [aiContent, setAiContent] = useState(false);
 
@@ -34,6 +35,7 @@ const UserInAppConfigs = () => {
     setTimeout(() => {
       logout(); // Call logout function from UserProvider
     }, 300);
+    navigate("/explore");
   };
 
   if (loading) return (
@@ -145,7 +147,13 @@ const UserInAppConfigs = () => {
             className="hover:cursor-pointer"
           />
         </div>
-
+        {/* Show these options only if the user is not logged in */}
+        <>
+          <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
+          <div className="flex items-center space-x-2 hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full">
+            <p className="text-sm">Help Center</p>
+          </div>
+        </>
         {/* Show these options only if the user is logged in */}
         {user && (
           <>
@@ -158,14 +166,6 @@ const UserInAppConfigs = () => {
             </div>
           </>
         )}
-
-        {/* Show these options only if the user is not logged in */}
-        <>
-          <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
-          <div className="flex items-center space-x-2 hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full">
-            <p className="text-sm">Help Center</p>
-          </div>
-        </>
       </PopoverContent>
     </Popover>
   );

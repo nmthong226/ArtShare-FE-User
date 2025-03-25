@@ -6,7 +6,7 @@ import NumberFlow from "@number-flow/react"
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { motion } from "framer-motion";
 
 export interface PricingTier {
   name: string
@@ -29,9 +29,12 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
   const isPopular = tier.popular
 
   return (
-    <Card
+    <motion.div
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 1.2 }}
       className={cn(
-        "relative flex flex-col gap-8 overflow-hidden p-6",
+        "relative flex flex-col gap-8 overflow-hidden p-6 rounded-lg border border-mountain-300",
         isHighlighted
           ? "bg-gradient-to-b from-blue-800 to-purple-800 text-white"
           : "bg-background text-foreground",
@@ -96,7 +99,7 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
         {tier.cta}
         <ArrowRight className="ml-2 w-4 h-4" />
       </Button>
-    </Card>
+    </motion.div>
   )
 }
 

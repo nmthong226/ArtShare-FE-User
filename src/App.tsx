@@ -8,7 +8,7 @@ import {
 import React from "react";
 
 // Components
-import ProtectedRoute from "@/components/routeManagement/ProtectedRoute"; // Import ProtectedRoute
+import ProtectedRoute from "@/components/ProtectedItems/ProtectedRoute"; // Import ProtectedRoute
 
 // Layout
 import RootLayout from "@/layouts";
@@ -95,6 +95,7 @@ const App: React.FC = () => {
 
                 {/* Fallback Route (catch-all for non-existent routes) */}
                 <Route path="*" element={<Navigate to="/explore" />} />
+                <Route path="/" element={<LandingPage />} />
               </Routes>
             </RootLayout>
           </Router>

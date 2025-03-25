@@ -34,7 +34,7 @@ const mockPosts = (photos: string[]): Post[] => {
       posts.push({
         id: i,
         title: `Post ${posts.length + 1}`,
-        user: { fullName: `Author ${posts.length + 1}`, username: `author-${posts.length + 1}`, profilePictureUrl: "" },
+        user: { userId: i, fullName: `Author ${posts.length + 1}`, username: `author-${posts.length + 1}`, profilePictureUrl: "" },
         medias: images.map((url) => ({ url, mediaType: MediaType.IMAGE, creatorId: i, downloads: 0, createdAt: new Date() })),
         categories: [],
         is_published: true,

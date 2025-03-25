@@ -15,8 +15,9 @@ const Post: React.FC = () => {
     data: postData,
     isLoading,
     error,
-  } = useQuery("postData", async () => {
+  } = useQuery(["postData", postId], async () => {
     const response = await fetchPost(parseInt(postId!));
+    console.log("fetchPost", response.data);
     return response.data;
   });
 

@@ -12,15 +12,13 @@ const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 const PostInfo = ({ postData }: { postData: Post }) => {
   const { postCommentsRef } = useFocusContext();
   const [open, setOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState("username@gmail.com");
 
   const handleClickOpen = () => {
     setOpen(true);
   };
 
-  const handleClose = (value: string) => {
+  const handleClose = () => {
     setOpen(false);
-    setSelectedValue(value);
   };
 
   const handleFocusCommentInput = () => {
@@ -88,7 +86,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             </Button>
           </div>
         </CardContent>
-        <SavePostDialog selectedValue={selectedValue} open={open} onClose={handleClose} />
+        <SavePostDialog postId={postData.id} open={open} onClose={handleClose} />
       </div>
     )
   );

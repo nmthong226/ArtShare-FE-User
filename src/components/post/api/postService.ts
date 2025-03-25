@@ -78,6 +78,7 @@ export const fetchPost = async (postId: number) => {
 
 export const fetchPosts = async (artistUsername: string, page: number, pageSize: number = 10) => {
   // return await axios.get<Post[]>(`?username${artistUsername}?page=${page}?pageSize=${pageSize}`);
-  const count = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  return { data: count.map(() => postData) };
+  return {
+    data: Array.from({ length: 9 }).map(() => postData),
+  };
 };

@@ -1,11 +1,13 @@
 import React, { useContext, useState } from "react";
-import { ChevronRight, ChevronLeft, SearchIcon } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import { ScrollMenu, VisibilityContext, type publicApiType } from "react-horizontal-scrolling-menu";
 import { categoriesData } from "./mocks";
-import { Button, Fade, Paper, Popper } from "@mui/material";
+import { Button, Fade, Input, Paper, Popper } from "@mui/material";
 
 import "react-horizontal-scrolling-menu/dist/styles.css";
 import "./Categories.css";
+import { FiSearch } from "react-icons/fi";
+import { TiDeleteOutline } from "react-icons/ti";
 
 interface CategoriesProps {
   onSelectCategory: (CategoryName: string) => void;
@@ -83,7 +85,7 @@ export const Categories: React.FC<CategoriesProps> = ({ onSelectCategory }) => {
 };
 
 export const CategoryPopper: React.FC<CategoriesPopperProps> = ({ open, anchorEl, onClose, onSelectCategory }) => {
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleCategoryClick = (categoryName: string) => {
     onSelectCategory(categoryName);
@@ -94,24 +96,23 @@ export const CategoryPopper: React.FC<CategoriesPopperProps> = ({ open, anchorEl
     <Popper sx={{ zIndex: 1200 }} open={open} anchorEl={anchorEl} placement="right" transition className="m-4">
       {({ TransitionProps }) => (
         <Fade {...TransitionProps} timeout={350}>
-          <Paper className="h-[70vh] overflow-y-auto max-w-72">
+          <Paper className="h-[70vh] overflow-y-auto w-72">
             <div className="sticky top-0 bg-white p-4 w-full">
-              <div className="relative rounded bg-mountain-50 bg-opacity-15 hover:bg-opacity-25 w-full">
-                <div className="absolute inset-y-0 left-0 flex items-center justify-center px-2 pointer-events-none">
-                  <SearchIcon size={16} />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Search in Categorys"
-                  aria-label="search"
-                  onChange={(event) => setSearchValue(event.target.value)}
-                  className="w-full pl-8 p-2 text-inherit transition-width duration-200 border rounded"
+              <div className="relative flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl h-10 text-mountain-500 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-mountain-400">
+                <FiSearch className="left-2 absolute w-5 h-5" />
+                <Input
+                  className="shadow-inner pr-8 pl-8 border-1 border-mountain-500 rounded-2xl w-full h-full"
+                  placeholder="Search"
+                  disableUnderline
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
+                <TiDeleteOutline className="right-2 absolute w-5 h-5" onClick={() => setSearchQuery("")} />
               </div>
             </div>
             <div className="px-4">
               {categoriesData
-                .filter((category) => category.name.toLowerCase().includes(searchValue.toLowerCase()))
+                .filter((category) => category.name.toLowerCase().includes(searchQuery.toLowerCase()))
                 .map((category) => (
                   <div
                     key={category.name}

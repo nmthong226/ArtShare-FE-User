@@ -78,7 +78,7 @@ const App: React.FC = () => {
                   />
                 ))}
                 <Route path="/" element={<LandingPage />} />
-                <Route path="*" element={<Navigate to="/explore" />} />
+                <Route path="*" element={<Navigate to="/gallery" />} />
               </Routes>
             </RootLayout>
           </Router>

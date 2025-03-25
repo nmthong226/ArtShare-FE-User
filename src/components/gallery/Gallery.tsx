@@ -10,6 +10,7 @@ export interface GalleryPhoto extends PhotoProps {
   title: string;
   author: string;
   postLength: number;
+  postId: number;
 }
 
 const getMediaDimensions = (url: string): Promise<{ width: number; height: number }> => {
@@ -46,6 +47,7 @@ const IGallery: React.FC = () => {
             width: mediaDimensions.width,
             height: mediaDimensions.height,
             postLength: post.medias.length,
+            postId: post.id,
           };
         })
       );
@@ -99,9 +101,6 @@ const IGallery: React.FC = () => {
       if (galleryArea instanceof HTMLElement) {
         const galleryHeight = galleryArea.offsetHeight;
         const windowHeight = window.innerHeight;
-
-        console.log("Gallery Height:", galleryHeight);
-        console.log("Window Height:", windowHeight);
 
         if (galleryHeight < windowHeight) {
           if (hasNextPage && !isFetchingNextPage) {

@@ -31,6 +31,7 @@ import { IoNotificationsOutline } from "react-icons/io5";
 const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const { user } = useUser();
+
   return (
     <div className="flex flex-col w-full h-full">
       <nav className="sticky top-0 z-50 flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16">

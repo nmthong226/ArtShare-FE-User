@@ -3,12 +3,12 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
 } from "react-router-dom";
 import React from "react";
 
 // Components
-import ProtectedRoute from "@/components/ProtectedItems/ProtectedRoute"; // Import ProtectedRoute
+import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
+import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute";
 
 // Layout
 import RootLayout from "@/layouts";
@@ -38,8 +38,11 @@ const authRoutes = [
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <SignUp /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
-  { path: "/activate-account/:token", element: <AccountActivation /> },
   { path: "/auth", element: <AuthAction /> }, // This handles the auth action URL with query parameters
+];
+
+const privateAuthRoute = [
+  { path: "/activate-account/:token", element: <AccountActivation /> },
 ];
 
 const InAppPublicRoutes = [
@@ -70,7 +73,20 @@ const App: React.FC = () => {
                     element={<AuthenLayout>{element}</AuthenLayout>}
                   />
                 ))}
-
+                {/* Private Auth Routes */}
+                {privateAuthRoute.map(({ path, element }) => (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={
+                      <ProtectedAuthRoute>
+                        <AuthenLayout>
+                          {element}
+                        </AuthenLayout>
+                      </ProtectedAuthRoute>
+                    }
+                  />
+                ))}
                 {/* Public In-App Routes (Accessible by anyone) */}
                 {InAppPublicRoutes.map(({ path, element }) => (
                   <Route
@@ -86,15 +102,13 @@ const App: React.FC = () => {
                     key={path}
                     path={path}
                     element={
-                      <ProtectedRoute>
+                      <ProtectedInAppRoute>
                         <InAppLayout>{element}</InAppLayout>
-                      </ProtectedRoute>
+                      </ProtectedInAppRoute>
                     }
                   />
                 ))}
-
                 {/* Fallback Route (catch-all for non-existent routes) */}
-                <Route path="*" element={<Navigate to="/explore" />} />
                 <Route path="/" element={<LandingPage />} />
               </Routes>
             </RootLayout>

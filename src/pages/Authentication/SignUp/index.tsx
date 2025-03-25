@@ -13,13 +13,14 @@ const SignUp = () => {
     useUser(); // Use UserProvider context
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+  const [username] = useState("");
   const navigate = useNavigate(); // To navigate after signup
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       const token = await signUpWithEmail(email, password, username); // Get the token
+      localStorage.setItem("user_verify", token);
       navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
     } catch (error: any) {
       console.log(error);

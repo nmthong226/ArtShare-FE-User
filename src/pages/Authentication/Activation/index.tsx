@@ -66,7 +66,7 @@ const AccountActivation = () => {
             Your Email Is:
           </label>
           <Input
-            value={auth.currentUser?.email || "No email"}
+            value={auth.currentUser?.email!}
             className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10 disabled:font-bold disabled:text-mountain-950 dark:disabled:text-mountain-100"
             disabled
           />

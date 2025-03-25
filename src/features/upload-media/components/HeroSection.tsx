@@ -21,7 +21,7 @@ const HeroSection: React.FC = () => {
       <Typography
         sx={{ fontSize: 16, fontWeight: "bold", color: "white", lineHeight: 1 }}
       >
-        Upload Artwork
+        Upload Your Work
       </Typography>
       <Typography
         sx={{

@@ -8,9 +8,12 @@ import {
   Chip,
   IconButton,
   OutlinedInput,
+  FormHelperText,
+  FormControl,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
 import { CloseOutlined, ContentCopyOutlined } from "@mui/icons-material";
+import { ImageUpIcon } from "lucide-react";
 // import SearchIcon from "@mui/icons-material/Search";
 // import CloseIcon from "@mui/icons-material/Close";
 
@@ -34,7 +37,12 @@ import { CloseOutlined, ContentCopyOutlined } from "@mui/icons-material";
 //   },
 // ];
 
-const UploadForm: React.FC = () => {
+const UploadForm: React.FC<{
+  isImageUpload: boolean;
+  thumbnail: string | null;
+  onThumbnailChange: (url: string) => void;
+  isSubmitted: boolean;
+}> = ({ isImageUpload, thumbnail, onThumbnailChange, isSubmitted }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isMature, setIsMature] = useState(false);
@@ -67,11 +75,11 @@ const UploadForm: React.FC = () => {
       <Box className=" dark:bg-mountain-900 space-y-3">
         <Box className="border-b p-2.5 dark:border-mountain-200">
           <Typography className="font-semibold text-base text-left dark:text-white">
-            Artwork Title
+            Title
           </Typography>
         </Box>
 
-        <Box className="px-2.5 pb-2.5">
+        <FormControl fullWidth error={isSubmitted && !title.trim()}>
           <TextField
             placeholder="What do you call your artwork"
             variant="outlined"
@@ -86,11 +94,14 @@ const UploadForm: React.FC = () => {
             slotProps={{
               input: {
                 className:
-                  " text-base text-white dark:placeholder:text-mountain-400",
+                  "text-base text-white dark:placeholder:text-mountain-400",
               },
             }}
           />
-        </Box>
+          {isSubmitted && !title.trim() && (
+            <FormHelperText>Title is required</FormHelperText>
+          )}
+        </FormControl>
       </Box>
 
       {/* Artwork Description Box */}
@@ -98,7 +109,7 @@ const UploadForm: React.FC = () => {
         {/* Heading with bottom border */}
         <Box className="border-b p-2.5 dark:border-mountain-200">
           <Typography className="font-semibold text-base text-left dark:text-white">
-            Artwork Details
+            Details
           </Typography>
         </Box>
 
@@ -107,7 +118,7 @@ const UploadForm: React.FC = () => {
             Description
           </Typography>
           <TextField
-            placeholder="Describe your artwork"
+            placeholder="Describe your work"
             variant="outlined"
             fullWidth
             multiline
@@ -158,6 +169,43 @@ const UploadForm: React.FC = () => {
           />
         </Box>
       </Box>
+
+      {!isImageUpload && (
+        <Box className="px-2.5 space-y-2">
+          <Typography className="text-base text-left dark:text-mountain-200">
+            Thumbnail
+          </Typography>
+          <Typography variant="body2" className="mb-1 dark:text-mountain-500">
+            Set a thumbnail that stands out for your video.
+          </Typography>
+          <Box
+            className="border border-dashed border-gray-500 rounded flex flex-col items-center justify-center h-32"
+            component="label"
+          >
+            {thumbnail ? (
+              <img
+                src={thumbnail}
+                alt="Thumbnail"
+                className="h-full object-contain"
+              />
+            ) : (
+              <>
+                <ImageUpIcon className="text-4xl text-gray-400" />
+                <Typography>Upload file</Typography>
+              </>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) onThumbnailChange(URL.createObjectURL(file));
+              }}
+            />
+          </Box>
+        </Box>
+      )}
 
       {/* Categorization Box */}
       <Box className="dark:bg-mountain-900 rounded-md space-y-2">
@@ -265,7 +313,11 @@ const UploadForm: React.FC = () => {
         {/* Art type */}
         <Box className="px-2.5 pb-2.5 space-y-1">
           {/* Dialog for Selection */}
-          <SubjectSelector />
+          {isImageUpload && (
+            <Box className="px-2.5 pb-2.5 space-y-1">
+              <SubjectSelector />
+            </Box>
+          )}
         </Box>
       </Box>
     </Box>

@@ -1,18 +1,16 @@
-import * as React from "react"
-import { PricingCard, type PricingTier } from "@/components/ui/pricing-card"
-import { Tab } from "@/components/ui/pricing-tab"
-import { motion } from "motion/react"
+import * as React from "react";
+import { PricingCard, type PricingTier } from "@/components/ui/pricing-card";
+import { Tab } from "@/components/ui/pricing-tab";
 
 interface PricingSectionProps {
-  tiers: PricingTier[]
-  frequencies: string[]
+  tiers: PricingTier[];
+  frequencies: string[];
 }
 
-export function PricingSection({
-  tiers,
-  frequencies,
-}: PricingSectionProps) {
-  const [selectedFrequency, setSelectedFrequency] = React.useState(frequencies[0])
+export function PricingSection({ tiers, frequencies }: PricingSectionProps) {
+  const [selectedFrequency, setSelectedFrequency] = React.useState(
+    frequencies[0]
+  );
 
   return (
     <section className="flex flex-col items-center gap-10 py-10 w-full">
@@ -39,5 +37,5 @@ export function PricingSection({
         ))}
       </div>
     </section>
-  )
+  );
 }

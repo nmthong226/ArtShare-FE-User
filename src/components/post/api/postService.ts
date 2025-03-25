@@ -32,6 +32,7 @@ const mediaData: Media[] = [
 ];
 
 const userData: User = {
+  userId: 1,
   username: "michael_guimont",
   fullName: "Michael Guimont",
   profilePictureUrl: "example.com/profile.jpg",
@@ -72,12 +73,12 @@ const api = axios.create({
 });
 
 export const fetchPost = async (postId: number) => {
-  // return await axios.get<Post>(`?postId=${postId}`);
+  // return await api.get<Post>(`?postId=${postId}`);
   return { data: postData };
 };
 
 export const fetchPosts = async (artistUsername: string, page: number, pageSize: number = 10) => {
-  // return await axios.get<Post[]>(`?username${artistUsername}?page=${page}?pageSize=${pageSize}`);
+  // return await api.get<Post[]>(`?username${artistUsername}?page=${page}?pageSize=${pageSize}`);
   return {
     data: Array.from({ length: 9 }).map(() => postData),
   };

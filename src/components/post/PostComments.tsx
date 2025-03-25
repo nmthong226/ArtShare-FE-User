@@ -1,4 +1,4 @@
-import React, { useRef, forwardRef, useImperativeHandle } from "react";
+import { useRef, forwardRef, useImperativeHandle } from "react";
 import { Button, IconButton, TextareaAutosize } from "@mui/material";
 import { HeartIcon, Ellipsis, Dot, Clock, SendHorizontal } from "lucide-react";
 import Avatar from "boring-avatars";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import { Button, TextField } from "@mui/material";
@@ -106,13 +106,13 @@ export default function SubjectSelector() {
   const remainingSlots = 3 - selected.length;
 
   return (
-    <div className="dark:bg-mountain-900 dark:text-white font-sans">
-      <p className="dark:text-mountain-200 mb-1">
+    <div className="font-sans bg-white text-black dark:bg-mountain-900 dark:text-white">
+      <p className="mb-1 text-sm text-gray-800 dark:text-mountain-200">
         How would you categorize this work? (Choose up to 3)
       </p>
       {/* Top Selection Bar */}
       <div
-        className={`flex items-center gap-2 flex-wrap dark:bg-mountain-950 rounded text-left mb-6 ${
+        className={`flex items-center gap-2 flex-wrap dark:bg-mountain-950 bg-gray-100 dark:border-gray-600  border-gray-300 rounded text-left mb-6 ${
           selected.length > 0 ? "px-3 py-2" : ""
         }`}
         style={{
@@ -136,25 +136,23 @@ export default function SubjectSelector() {
         {selected.map((subject) => (
           <div
             key={subject.label}
-            className="flex items-center gap-2 px-3 py-2 dark:bg-mountain-800 rounded text-sm"
+            className="flex items-center gap-2 px-3 py-2 rounded text-sm bg-gray-200 dark:bg-mountain-800"
           >
             <span>{subject.label}</span>
             <Button
               onClick={() => toggleSubject(subject)}
               variant="text"
-              className="ml-1 !min-w-0 dark:text-white"
+              className="ml-1 !min-w-0"
               component="label"
               size="small"
               sx={{
                 backgroundColor: "transparent",
+                color: "inherit",
                 padding: "0px",
                 "&:hover": { backgroundColor: "transparent" },
               }}
             >
-              <CloseIcon
-                fontSize="small"
-                className="dark:text-white"
-              />
+              <CloseIcon fontSize="small" className="text-inherit" />
             </Button>
           </div>
         ))}
@@ -177,8 +175,8 @@ export default function SubjectSelector() {
       {/* Main layout */}
       <div className="flex gap-6">
         {/* Left column */}
-        <div className="w-64 border-r dark:border-gray-700 pr-4 h-72 flex flex-col">
-          <p className="text-sm dark:text-gray-400 mb-3 py-1.5">
+        <div className="w-64 border-r border-gray-300 dark:border-gray-700 pr-4 h-72 flex flex-col">
+          <p className="text-sm text-gray-700 dark:text-gray-400 mb-3 py-1.5">
             CHOOSE ANOTHER {remainingSlots} ART TYPE
             {remainingSlots !== 1 ? "S" : ""}
           </p>
@@ -193,21 +191,17 @@ export default function SubjectSelector() {
               return (
                 <li
                   key={subject.label}
-                  className="flex justify-between items-center text-sm cursor-pointer gap-2 px-2 py-2 rounded dark:hover:bg-mountain-800 transition"
+                  className="flex justify-between items-center text-sm cursor-pointer gap-2 px-2 py-2 rounded hover:bg-gray-100 dark:hover:bg-mountain-800 transition"
                   onMouseEnter={() => setHovered(subject)}
                 >
                   <span>{subject.label}</span>
                   <Button
                     onClick={() => toggleSubject(subject)}
-                    className="flex items-center gap-1 px-3 py-1 rounded border dark:border-gray-600 dark:text-white dark:hover:bg-mountain-900 dark:bg-mountain-950 "
-                    sx={{
-                      minWidth: "110px", // 👈 set a fixed or consistent min width
-                      justifyContent: "center", // ensure content is centered
-                    }}
+                    className="flex items-center gap-1 px-3 py-1 rounded border text-sm min-w-[110px] justify-center border-gray-300 dark:border-gray-600 text-black dark:text-white bg-white dark:bg-mountain-950 hover:bg-gray-100 dark:hover:bg-mountain-900 "
                   >
                     {!selectedStatus ? (
                       <>
-                        <AddIcon fontSize="small" className="text-blue-600" />
+                        <AddIcon fontSize="small" className="text-indigo-500" />
                         <span className="text-sm">Add</span>
                       </>
                     ) : (
@@ -225,16 +219,20 @@ export default function SubjectSelector() {
 
         {/* Right preview panel */}
         <div className="flex-1 !w-80">
-          <div className="dark:bg-mountain-950 border border-indigo-300 rounded-lg p-5 h-full">
+          <div className="bg-gray-100 dark:bg-mountain-950 border border-indigo-300 rounded-lg p-5 h-full">
             <div className="flex justify-between items-center mb-3">
               <div>
                 <h3 className="text-xl font-semibold">{hovered.label}</h3>
-                <p className="dark:text-gray-300 text-sm">{hovered.description}</p>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
+                  {hovered.description}
+                </p>
               </div>
             </div>
             {hovered.examples && (
               <>
-                <p className="text-sm dark:text-gray-400 mb-2">Examples</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                  Examples
+                </p>
                 <div className="flex gap-3 overflow-x-auto">
                   {hovered.examples.map((url, idx) => (
                     <img

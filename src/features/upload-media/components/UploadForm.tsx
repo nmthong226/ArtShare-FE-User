@@ -133,7 +133,12 @@ const UploadForm: React.FC = () => {
               <Checkbox
                 checked={isMature}
                 onChange={(e) => setIsMature(e.target.checked)}
-                className="text-white"
+                sx={{
+                  color: "#6b7280",
+                  "&.Mui-checked": {
+                    color: "#a5b4fc",
+                  },
+                }}
               />
             }
             label={
@@ -249,7 +254,10 @@ const UploadForm: React.FC = () => {
           </Box>
 
           {/* Helper text below */}
-          <Typography variant="body2" className=" dark:text-mountain-500 mt-0.5">
+          <Typography
+            variant="body2"
+            className=" dark:text-mountain-500 mt-0.5"
+          >
             Type a tag and press <strong>Enter</strong> to add it.
           </Typography>
         </Box>

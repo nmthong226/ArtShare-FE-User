@@ -51,7 +51,7 @@ const ProtectedSidebarItem = ({ path, iconActive, iconInactive, label, user }: P
                 </div>
                 <DialogContent className="flex flex-col dark:bg-mountain-900 w-[400px]">
                     <DialogHeader>
-                        <DialogTitle>Oops! You’re Not Logged In</DialogTitle>
+                        <DialogTitle className="text-mountain-950 dark:text-mountain-50">Oops! You’re Not Logged In</DialogTitle>
                         <DialogDescription>
                             You need to be logged in to access this feature. Please sign in or create an account to continue.
                         </DialogDescription>

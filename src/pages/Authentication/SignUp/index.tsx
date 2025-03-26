@@ -65,7 +65,7 @@ const SignUp = () => {
         <div className="flex w-full">
           <Button
             variant={"outline"}
-            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-full h-10 font-normal text-sm hover:cursor-pointer"
+            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-full h-10 font-normal text-mountain-950 dark:text-mountain-50 text-sm hover:cursor-pointer"
             onClick={handleGoogleLogin}
           >
             <FcGoogle className="size-5" />
@@ -77,7 +77,7 @@ const SignUp = () => {
         <div className="flex justify-between w-full">
           <Button
             variant={"outline"}
-            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer"
+            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-mountain-950 dark:text-mountain-50 text-sm hover:cursor-pointer"
             onClick={handleFacebookLogin}
           >
             <FaFacebookF className="size-5 text-blue-700" />
@@ -85,14 +85,14 @@ const SignUp = () => {
           </Button>
           <Button
             variant={"outline"}
-            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer"
+            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-mountain-950 dark:text-mountain-50 text-sm hover:cursor-pointer"
           >
             <img src={InstagramIcon} alt="Instagram" className="size-5" />
             <span>Instagram</span>
           </Button>
           <Button
             variant={"outline"}
-            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-sm hover:cursor-pointer"
+            className="flex justify-center items-center hover:brightness-115 px-4 py-3 border border-mountain-950 dark:border-mountain-700 rounded-lg focus:outline-none focus:ring-2 w-[32%] h-10 font-normal text-mountain-950 dark:text-mountain-50 text-sm hover:cursor-pointer"
           >
             <FaApple className="size-5" />
             <span>Apple</span>
@@ -118,12 +118,11 @@ const SignUp = () => {
           <Input
             type="email"
             placeholder="Enter your email"
-            className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10"
+            className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10 text-mountain-950 dark:text-mountain-50"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
-
         <div>
           <label
             htmlFor="password"
@@ -134,7 +133,7 @@ const SignUp = () => {
           <Input
             type="password"
             placeholder="Enter your password"
-            className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10"
+            className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10 text-mountain-950 dark:text-mountain-50"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />

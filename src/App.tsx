@@ -16,23 +16,23 @@ import InAppLayout from "@/layouts/public/InAppLayout";
 import AuthenLayout from "@/layouts/public/AuthenLayout";
 
 // Pages
-import LandingPage from '@/pages/Home';
-import Login from '@/pages/Authentication/Login';
-import SignUp from '@/pages/Authentication/SignUp';
-import ForgotPassword from '@/pages/Authentication/ForgotPassword';
-import AccountActivation from '@/pages/Authentication/Activation';
-import Explore from '@/pages/Explore';
-import Blogs from '@/pages/Blogs';
-import Shop from '@/pages/Shop';
-import SubmitMedia from '@/pages/SubmitMedia';
-import ArtGeneration from '@/pages/ArtGeneration';
-import Portfolio from '@/pages/Portfolio';
+import LandingPage from "@/pages/Home";
+import Login from "@/pages/Authentication/Login";
+import SignUp from "@/pages/Authentication/SignUp";
+import ForgotPassword from "@/pages/Authentication/ForgotPassword";
+import AccountActivation from "@/pages/Authentication/Activation";
+import Explore from "@/pages/Explore";
+import Blogs from "@/pages/Blogs";
+import Shop from "@/pages/Shop";
+import ArtGeneration from "@/pages/ArtGeneration";
+import Portfolio from "@/pages/Portfolio";
 
 // Context/Provider
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { LanguageProvider } from "@/context/LanguageProvider";
 import { UserProvider } from "@/context/UserProvider";
 import AuthAction from "./pages/Authentication/HandleCallback";
+import UploadMedia from "./features/upload-media/UploadMedia";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -52,10 +52,10 @@ const InAppPublicRoutes = [
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/submit-media", element: <SubmitMedia /> },
-  { path: "/create-art", element: <ArtGeneration /> },
+  { path: "/posts/new", element: <UploadMedia /> },
   { path: "/portfolio", element: <Portfolio /> },
-];
+  { path: "/artgen", element: <ArtGeneration /> },
+];;
 
 const App: React.FC = () => {
   return (

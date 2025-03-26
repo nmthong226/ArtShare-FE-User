@@ -150,7 +150,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   <div className="flex justify-between w-full">
                     <div className="flex items-center space-x-2 lg:space-x-2 pr-4 border-r-mountain-300 md:border-r-1 dark:border-r-mountain-700 w-full text-nowrap">
                       <img src={app_logo} className="rounded-sm w-8 h-8" />
-                      <p className="font-semibold">Art Share</p>
+                      <p className="font-semibold text-mountain-950 dark:text-mountain-50">Art Share</p>
                     </div>
                     <Link
                       to="/signup"
@@ -201,12 +201,12 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </SheetContent>
           </Sheet>
           <div className="hidden sm:flex justify-center items-center w-16 h-16">
-            <IoReorderThreeOutline className="w-6 h-6" />
+            <IoReorderThreeOutline className="w-6 h-6 text-mountain-950 dark:text-mountain-50" />
           </div>
           <div className="flex items-center space-x-1 lg:space-x-2 xl:space-x-4 h-full">
             <div className="flex items-center space-x-1 lg:space-x-2 pr-4 border-r-mountain-300 md:border-r-1 dark:border-r-mountain-700 text-nowrap">
               <img src={app_logo} className="rounded-sm w-8 h-8" />
-              <p className="font-semibold">Art Share</p>
+              <p className="font-semibold text-mountain-950 dark:text-mountain-50">Art Share</p>
             </div>
             <Link
               to="/explore"

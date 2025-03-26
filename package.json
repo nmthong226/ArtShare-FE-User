@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "cy-open": "cypress open",
-    "cy-open-unit": "cypress open --component --browser chrome",
+   "cy-open-unit": "vite --mode test & cypress open --component --browser chrome",
     "cy-run-unit": "cypress run --component",
     "preview": "vite preview"
   },

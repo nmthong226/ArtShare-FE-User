@@ -7,7 +7,8 @@ import istanbul from "vite-plugin-istanbul";
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   // Load .env file tương ứng với mode (ví dụ: .env.test)
-  const env = loadEnv(mode, process.cwd(), '');
+  const env = loadEnv(process.env.MODE || mode, process.cwd(), '');
+
 
   // Log thử để chắc chắn biến được load (có thể xoá sau khi kiểm tra)
   console.log("🧪 Loaded VITE_FIREBASE_API_KEY:", env.VITE_FIREBASE_API_KEY);

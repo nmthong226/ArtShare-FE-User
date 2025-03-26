@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "cy-open": "cypress open",
    "cy-open-unit": "vite --mode test & cypress open --component --browser chrome",
-    "cy-run-unit": "cypress run --component",
+    "cy-run-unit": "cross-env MODE=test cypress run --component",
     "preview": "vite preview"
   },
   "dependencies": {

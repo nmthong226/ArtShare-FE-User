@@ -95,7 +95,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const user = userCredential.user;
 
       // Call backend signup API
-      const backendResponse = await signup(email, password, username);
+      const backendResponse = await signup(user.uid, email, password, username);
       if (!backendResponse) {
         throw new Error("Error during registration. Please try again.");
       }
@@ -157,6 +157,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       // signup nestjs
       const user = userCredential.user;
       const signupResponse = await signup(
+        user.uid,
         user.email!,
         "",
         user.displayName || ""
@@ -203,6 +204,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       } else {
         // Handle new user registration
         const signupResponse = await signup(
+          user.uid,
           user.email!,
           "",
           user.displayName || ""

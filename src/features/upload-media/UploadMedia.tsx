@@ -229,8 +229,8 @@ const UploadMedia: React.FC = () => {
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(true)}
-              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 text-white transition-all duration-300
-          ${isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950" : "bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900"}`}
+              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 transition-all duration-300
+          ${isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-mountain-50" : "bg-gradient-to-r from-mountain-950 via-mountain-900 to-mountain-1000 text-mountain-300"}`}
               sx={{
                 borderRadius: "2px",
                 textTransform: "none",
@@ -246,8 +246,8 @@ const UploadMedia: React.FC = () => {
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(false)}
-              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 text-white transition-all duration-300
-          ${!isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950" : "bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900"}`}
+              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2  transition-all duration-300
+          ${!isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-mountain-50" : "bg-gradient-to-r from-mountain-950 via-mountain-900 to-mountain-1000 text-mountain-300"}`}
               sx={{
                 borderRadius: "2px",
                 textTransform: "none",

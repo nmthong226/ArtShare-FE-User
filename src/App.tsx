@@ -1,9 +1,15 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import React from "react";
 
 // Components
-// import ProtectedRoute from '@/components/routeManagement/ProtectedRoute';
+import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
+import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute";
 
 // Layout
 import RootLayout from "@/layouts";
@@ -20,7 +26,7 @@ import Gallery from "./pages/Gallery";
 import Blogs from "./pages/Blogs";
 import Post from "./pages/Post";
 import Shop from "@/pages/Shop";
-import SubmitMedia from "@/pages/SubmitMedia";
+// import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/pages/ArtGeneration";
 import Portfolio from "@/pages/Portfolio";
 
@@ -28,11 +34,17 @@ import Portfolio from "@/pages/Portfolio";
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
+import AuthAction from "./pages/Authentication/HandleCallback";
+import UploadMedia from "./features/upload-media/UploadMedia";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <SignUp /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
+  { path: "/auth", element: <AuthAction /> }, // This handles the auth action URL with query parameters
+];
+
+const privateAuthRoute = [
   { path: "/activate-account/:token", element: <AccountActivation /> },
 ];
 
@@ -44,9 +56,9 @@ const InAppPublicRoutes = [
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/submit-media", element: <SubmitMedia /> },
-  { path: "/create-art", element: <ArtGeneration /> },
+  { path: "/posts/new", element: <UploadMedia /> },
   { path: "/portfolio", element: <Portfolio /> },
+  { path: "/artgen", element: <ArtGeneration /> },
 ];
 
 const App: React.FC = () => {
@@ -57,26 +69,48 @@ const App: React.FC = () => {
           <Router>
             <RootLayout>
               <Routes>
+                {/* Public Auth Routes */}
                 {authRoutes.map(({ path, element }) => (
-                  <Route key={path} path={path} element={<AuthenLayout>{element}</AuthenLayout>} />
+                  <Route
+                    key={path}
+                    path={path}
+                    element={<AuthenLayout>{element}</AuthenLayout>}
+                  />
                 ))}
+                {/* Private Auth Routes */}
+                {privateAuthRoute.map(({ path, element }) => (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={
+                      <ProtectedAuthRoute>
+                        <AuthenLayout>{element}</AuthenLayout>
+                      </ProtectedAuthRoute>
+                    }
+                  />
+                ))}
+                {/* Public In-App Routes (Accessible by anyone) */}
                 {InAppPublicRoutes.map(({ path, element }) => (
-                  <Route key={path} path={path} element={<InAppLayout>{element}</InAppLayout>} />
+                  <Route
+                    key={path}
+                    path={path}
+                    element={<InAppLayout>{element}</InAppLayout>}
+                  />
                 ))}
+
+                {/* Private In-App Routes (Only accessible by logged-in users) */}
                 {InAppPrivateRoutes.map(({ path, element }) => (
                   <Route
                     key={path}
                     path={path}
                     element={
-                      <InAppLayout>
-                        {/* <ProtectedRoute>
-                          {element}
-                        </ProtectedRoute> */}
-                        {element}
-                      </InAppLayout>
+                      <ProtectedInAppRoute>
+                        <InAppLayout>{element}</InAppLayout>
+                      </ProtectedInAppRoute>
                     }
                   />
                 ))}
+                {/* Fallback Route (catch-all for non-existent routes) */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="*" element={<Navigate to="/gallery" />} />
               </Routes>

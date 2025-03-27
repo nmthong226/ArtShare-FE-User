@@ -3,7 +3,7 @@ import PostAssets from "@/components/post/PostAssets";
 import PostArtist from "@/components/post/PostArtist";
 import PostComments from "@/components/post/PostComments";
 import { fetchPost } from "@/components/post/api/postService";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import PostTags from "@/components/post/PostTags";
 import PostMoreByArtist from "@/components/post/PostMoreByArtist";
@@ -15,10 +15,13 @@ const Post: React.FC = () => {
     data: postData,
     isLoading,
     error,
-  } = useQuery(["postData", postId], async () => {
-    const response = await fetchPost(parseInt(postId!));
-    console.log("fetchPost", response.data);
-    return response.data;
+  } = useQuery({
+    queryKey: ["postData", postId],
+    queryFn: async () => {
+      const response = await fetchPost(parseInt(postId!));
+      console.log("fetchPost", response.data);
+      return response.data;
+    },
   });
 
   if (isLoading) {

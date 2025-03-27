@@ -1,12 +1,17 @@
-import { Category, Post, User } from "@/types";
-import { Media, MediaType } from "@/types/media";
+import { MEDIA_TYPE } from "@/constants";
+import { Category, Post, User, Media } from "@/types";
 import axios from "axios";
 
 const BACK_END_URL = import.meta.env.VITE_BACKEND_URL;
 
+// enum MEDIA_TYPE {
+//   IMAGE = "image",
+//   VIDEO = "video",
+// }
+
 const mediaData: Media[] = [
   {
-    mediaType: MediaType.IMAGE,
+    mediaType: MEDIA_TYPE.IMAGE,
     description: "Poster illustration",
     url: "https://images.unsplash.com/photo-1742275346989-2d696fa2c9b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NjU0NTh8MHwxfGFsbHw0OXx8fHx8fHx8MTc0MjYzNjg1MHw&ixlib=rb-4.0.3&q=80&w=1080",
     creatorId: 1,
@@ -14,7 +19,7 @@ const mediaData: Media[] = [
     createdAt: new Date(),
   },
   {
-    mediaType: MediaType.IMAGE,
+    mediaType: MEDIA_TYPE.IMAGE,
     description: "Poster illustration",
     url: "https://images.unsplash.com/photo-1742414348816-fe5f76446808?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NjU0NTh8MHwxfGFsbHwxM3x8fHx8fHx8MTc0MjYxMTQ2MHw&ixlib=rb-4.0.3&q=80&w=1080",
     creatorId: 1,
@@ -22,7 +27,7 @@ const mediaData: Media[] = [
     createdAt: new Date(),
   },
   {
-    mediaType: MediaType.IMAGE,
+    mediaType: MEDIA_TYPE.IMAGE,
     description: "Poster illustration",
     url: "https://images.unsplash.com/photo-1742470523391-891944f4155f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NjU0NTh8MHwxfGFsbHwxNHx8fHx8fHx8MTc0MjYxMTQ2MHw&ixlib=rb-4.0.3&q=80&w=1080",
     creatorId: 1,
@@ -77,7 +82,11 @@ export const fetchPost = async (postId: number) => {
   return { data: postData };
 };
 
-export const fetchPosts = async (artistUsername: string, page: number, pageSize: number = 10) => {
+export const fetchPosts = async (
+  artistUsername: string,
+  page: number,
+  pageSize: number = 10
+) => {
   // return await api.get<Post[]>(`?username${artistUsername}?page=${page}?pageSize=${pageSize}`);
   return {
     data: Array.from({ length: 9 }).map(() => postData),

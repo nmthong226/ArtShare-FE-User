@@ -25,7 +25,7 @@ const Gallery: React.FC = () => {
       <div className=" sticky top-16 bg-mountain-50 z-50 p-4 flex flex-col gap-4">
         <div className="categories-bar flex items-center gap-6 w-full ">
           <Button className="spread-btn aspect-[1/1] min-w-auto p-2 rounded-lg" variant="contained" disableElevation onClick={handleToggleCP()}>
-            <Ellipsis className="text-white" />
+            <Ellipsis/>
           </Button>
           <CategoryPopper open={openCP} anchorEl={anchorElCP} onClose={() => setOpenCP(false)} onSelectCategory={handleCategoryChange} />
           <Button

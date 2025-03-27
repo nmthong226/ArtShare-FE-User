@@ -1,5 +1,5 @@
 import { Post } from "@/types";
-import { MediaType } from "@/types/media";
+import { MEDIA_TYPE } from "@/constants";
 import axios from "axios";
 
 const ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY as string;
@@ -34,8 +34,19 @@ const mockPosts = (photos: string[]): Post[] => {
       posts.push({
         id: i,
         title: `Post ${posts.length + 1}`,
-        user: { userId: i, fullName: `Author ${posts.length + 1}`, username: `author-${posts.length + 1}`, profilePictureUrl: "" },
-        medias: images.map((url) => ({ url, mediaType: MediaType.IMAGE, creatorId: i, downloads: 0, createdAt: new Date() })),
+        user: {
+          userId: i,
+          fullName: `Author ${posts.length + 1}`,
+          username: `author-${posts.length + 1}`,
+          profilePictureUrl: "",
+        },
+        medias: images.map((url) => ({
+          url,
+          mediaType: MEDIA_TYPE.IMAGE,
+          creatorId: i,
+          downloads: 0,
+          createdAt: new Date(),
+        })),
         categories: [],
         is_published: true,
         is_private: false,
@@ -63,7 +74,8 @@ export const fetchPhotos = (page = 1) =>
   });
 
 export const fetchPosts = async (filter: string, page: number) => {
-  const endpoint = filter === "for-you" ? "/posts/trending" : "/posts/following";
+  const endpoint =
+    filter === "for-you" ? "/posts/trending" : "/posts/following";
   console.log("fetchPosts", endpoint);
   // return await axios.get<Post[]>(`${endpoint}`);
 
@@ -72,4 +84,5 @@ export const fetchPosts = async (filter: string, page: number) => {
   return { data: mockPosts(photos) };
 };
 
-export const fetchPhotoById = (id: string) => unsplashAPI.get<UnsplashPhoto>(`/photos/${id}`);
+export const fetchPhotoById = (id: string) =>
+  unsplashAPI.get<UnsplashPhoto>(`/photos/${id}`);

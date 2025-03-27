@@ -1,9 +1,9 @@
-const DummyPage = () => {
+const ErrorPage = () => {
     return (
         <div className='flex bg-mountain-50 dark:bg-mountain-950 w-full h-full'>
-            DummyPage
+            ErrorPage
         </div>
     )
 }
 
-export default DummyPage
+export default ErrorPage

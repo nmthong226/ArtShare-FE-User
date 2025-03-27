@@ -1,4 +1,3 @@
-import * as React from "react"
 import { motion } from "framer-motion"
 
 import { cn } from "@/lib/utils"
@@ -26,12 +25,12 @@ export function Tab({
         discount && "flex items-center justify-center gap-2.5"
       )}
     >
-      <span className="relative z-10">{text}</span>
+      <span className="z-10 relative">{text}</span>
       {selected && (
         <motion.span
           layoutId="tab"
           transition={{ type: "spring", duration: 0.4 }}
-          className="absolute inset-0 z-0 rounded-full bg-background shadow-sm"
+          className="z-0 absolute inset-0 bg-background shadow-sm rounded-full"
         />
       )}
       {discount && (

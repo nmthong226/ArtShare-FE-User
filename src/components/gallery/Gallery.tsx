@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useInfiniteQuery } from "react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchPosts } from "./api/unsplashService";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Photo, RowsPhotoAlbum } from "react-photo-album";
@@ -14,7 +14,9 @@ export interface GalleryPhoto extends Photo {
   postId: number;
 }
 
-const getMediaDimensions = (url: string): Promise<{ width: number; height: number }> => {
+const getMediaDimensions = (
+  url: string
+): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve({ width: img.width, height: img.height });
@@ -26,18 +28,28 @@ const getMediaDimensions = (url: string): Promise<{ width: number; height: numbe
 const IGallery: React.FC = () => {
   const [filter, setFilter] = useState<string>("for-you");
 
-  const handleFilterChange = (_: React.MouseEvent<HTMLElement>, newFilter: string) => {
+  const handleFilterChange = (
+    _: React.MouseEvent<HTMLElement>,
+    newFilter: string
+  ) => {
     if (newFilter) {
       setFilter(newFilter);
     }
   };
 
-  const { data, error, isError, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<GalleryPhoto[], Error>(
-    "posts",
-    async ({ pageParam = 1 }) => {
+  const {
+    data,
+    error,
+    isError,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["posts", filter],
+    queryFn: async ({ pageParam = 1 }) => {
       const response = await fetchPosts(filter, pageParam);
-
-      const galleryPhotos: GalleryPhoto[] = await Promise.all(
+      const galleryPhotos = await Promise.all(
         response.data.map(async (post) => {
           const mediaDimensions = await getMediaDimensions(post.medias[0].url);
           return {
@@ -52,21 +64,18 @@ const IGallery: React.FC = () => {
           };
         })
       );
-
       return galleryPhotos;
     },
-    {
-      getNextPageParam: (lastPage, pages) => {
-        if (lastPage.length > 0) {
-          return pages.length + 1;
-        }
-        return undefined;
-      },
-    }
-  );
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length > 0 ? pages.length + 1 : undefined,
+  });
 
   useEffect(() => {
-    const debounce = <T extends unknown[]>(func: (...args: T) => void, delay: number): ((...args: T) => void) => {
+    const debounce = <T extends unknown[]>(
+      func: (...args: T) => void,
+      delay: number
+    ): ((...args: T) => void) => {
       let timeoutId: number | null = null;
 
       return (...args: T) => {
@@ -86,13 +95,18 @@ const IGallery: React.FC = () => {
         const galleryHeight = galleryArea.offsetHeight;
         const scrollableHeight = galleryArea.scrollHeight;
 
-        if (galleryHeight + scrolledFromTop >= scrollableHeight - scrollThreshold) {
+        if (
+          galleryHeight + scrolledFromTop >=
+          scrollableHeight - scrollThreshold
+        ) {
           if (hasNextPage && !isFetchingNextPage) {
             fetchNextPage();
           }
         }
       } else {
-        console.warn("Element with class 'gallery-area' not found or is not an HTMLElement.");
+        console.warn(
+          "Element with class 'gallery-area' not found or is not an HTMLElement."
+        );
       }
     }, 10);
 
@@ -109,7 +123,9 @@ const IGallery: React.FC = () => {
           }
         }
       } else {
-        console.warn("Element with class 'gallery-area' is not an HTMLElement or was not found.");
+        console.warn(
+          "Element with class 'gallery-area' is not an HTMLElement or was not found."
+        );
       }
     }, 200);
 
@@ -125,18 +141,37 @@ const IGallery: React.FC = () => {
 
   const galleryPhotos = data ? data.pages.flat() : [];
 
-  const uniqueGalleryPhotos = Array.from(new Map(galleryPhotos.map((photo) => [photo.key, photo])).values());
+  const uniqueGalleryPhotos = Array.from(
+    new Map(galleryPhotos.map((photo) => [photo.key, photo])).values()
+  );
 
   return (
     <div className="">
-      <RowsPhotoAlbum photos={uniqueGalleryPhotos} render={{ image: ImageRenderer }} />
+      <RowsPhotoAlbum
+        photos={uniqueGalleryPhotos}
+        render={{ image: ImageRenderer }}
+      />
 
       <Paper className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg z-50">
-        <ToggleButtonGroup className="m-1.5 flex gap-2" size="small" value={filter} exclusive onChange={handleFilterChange}>
-          <ToggleButton color="primary" className="-m-0.5 border-0 py-2 px-4 rounded-full normal-case" value="for-you">
+        <ToggleButtonGroup
+          className="m-1.5 flex gap-2"
+          size="small"
+          value={filter}
+          exclusive
+          onChange={handleFilterChange}
+        >
+          <ToggleButton
+            color="primary"
+            className="-m-0.5 border-0 py-2 px-4 rounded-full normal-case"
+            value="for-you"
+          >
             For you
           </ToggleButton>
-          <ToggleButton color="primary" className="-m-0.5 border-0 py-2 px-4 rounded-full normal-case" value="following">
+          <ToggleButton
+            color="primary"
+            className="-m-0.5 border-0 py-2 px-4 rounded-full normal-case"
+            value="following"
+          >
             Following
           </ToggleButton>
         </ToggleButtonGroup>
@@ -147,7 +182,11 @@ const IGallery: React.FC = () => {
           <LoadingSpinner />
         </div>
       )}
-      {isError && <div className="text-center text-red-500">{(error as Error).message}</div>}
+      {isError && (
+        <div className="text-center text-red-500">
+          {(error as Error).message}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,9 +1,5 @@
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from "react";
 
 // Components
@@ -26,7 +22,7 @@ import Blogs from "@/pages/Blogs";
 import Shop from "@/pages/Shop";
 import ArtGeneration from "@/pages/ArtGeneration";
 import Portfolio from "@/pages/Portfolio";
-
+import MatureContentPage from "./pages/MatureContent/MatureContent";
 // Context/Provider
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { LanguageProvider } from "@/context/LanguageProvider";
@@ -55,7 +51,7 @@ const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
   { path: "/portfolio", element: <Portfolio /> },
   { path: "/artgen", element: <ArtGeneration /> },
-];;
+];
 
 const App: React.FC = () => {
   return (
@@ -80,9 +76,7 @@ const App: React.FC = () => {
                     path={path}
                     element={
                       <ProtectedAuthRoute>
-                        <AuthenLayout>
-                          {element}
-                        </AuthenLayout>
+                        <AuthenLayout>{element}</AuthenLayout>
                       </ProtectedAuthRoute>
                     }
                   />
@@ -95,8 +89,8 @@ const App: React.FC = () => {
                     element={<InAppLayout>{element}</InAppLayout>}
                   />
                 ))}
+                <Route path="/mature-content" element={<MatureContentPage />} />
 
-                {/* Private In-App Routes (Only accessible by logged-in users) */}
                 {InAppPrivateRoutes.map(({ path, element }) => (
                   <Route
                     key={path}

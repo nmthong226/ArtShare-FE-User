@@ -132,7 +132,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const { user, loading } = useUser();
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex flex-col w-full h-full overflow-hidden">
       <nav className="flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16">
         <div className="flex items-center h-full">
           <Sheet>
@@ -360,7 +360,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <hr className="md:hidden flex border-mountain-200 dark:border-mountain-700 border-t-1 w-full h-1" />
           {/* Private Features */}
           <ProtectedSidebarItem
-            path="/submit-media"
+            path="/posts/new"
             iconActive={<RiFolderUploadFill className="w-6 h-6" />}
             iconInactive={<RiFolderUploadLine className="w-6 h-6" />}
             label="Submit"

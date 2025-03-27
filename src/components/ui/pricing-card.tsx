@@ -37,8 +37,8 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
         "relative flex flex-col gap-8 overflow-hidden p-6 rounded-lg border border-mountain-300",
         isHighlighted
           ? "bg-gradient-to-b from-blue-800 to-purple-800 text-white"
-          : "bg-background text-foreground",
-        isPopular && "border-2 border-indigo-600"
+          : "bg-white ",
+        isPopular && "border-2 border-indigo-600 "
       )}
     >
       {isHighlighted && <HighlightedBackground />}
@@ -47,7 +47,7 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
       <h2 className="flex items-center gap-3 font-medium text-xl capitalize">
         {tier.name}
         {isPopular && (
-          <Badge variant="secondary" className="z-10 mt-1">
+          <Badge variant="secondary" className="z-10 bg-indigo-50 mt-1 text-mountain-950">
             🔥 Most Popular
           </Badge>
         )}
@@ -82,7 +82,7 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
               key={index}
               className={cn(
                 "flex items-center gap-2 text-sm font-medium",
-                isHighlighted ? "text-background" : "text-muted-foreground"
+                isHighlighted ? "text-mountain-200" : "text-muted-foreground"
               )}
             >
               <BadgeCheck className="w-4 h-4" />
@@ -94,7 +94,7 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
 
       <Button
         variant={isHighlighted ? "secondary" : "default"}
-        className="w-full"
+        className="bg-mountain-950 w-full text-mountain-50"
       >
         {tier.cta}
         <ArrowRight className="ml-2 w-4 h-4" />

@@ -15,7 +15,7 @@ const HeroSection: React.FC = () => {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "flex-start", // Align text to the left
-        pl: "113px", // Add left padding so text isn't flush to the edge
+        pl: "125px", // Add left padding so text isn't flush to the edge
       }}
     >
       <Typography

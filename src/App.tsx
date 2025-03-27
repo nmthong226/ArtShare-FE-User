@@ -49,6 +49,7 @@ const InAppPublicRoutes = [
 
 const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
+  { path: "/create-art", element: <ArtGeneration /> },
   { path: "/portfolio", element: <Portfolio /> },
   { path: "/artgen", element: <ArtGeneration /> },
 ];

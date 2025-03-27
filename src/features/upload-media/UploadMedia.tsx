@@ -7,6 +7,8 @@ import {
   DeleteOutlineOutlined,
   FolderOpen as FolderOpenIcon,
 } from "@mui/icons-material";
+import { IoVideocam } from "react-icons/io5";
+import { IoMdImage } from "react-icons/io";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
 import HeroSection from "./components/HeroSection";
 import { Crop as CropIcon } from "@mui/icons-material";
@@ -206,30 +208,66 @@ const UploadMedia: React.FC = () => {
     selectedPreviewIndex !== null && artPreviews[selectedPreviewIndex];
 
   return (
-    <Box className="h-screen w-full  dark:bg-mountain-950">
+    <Box className="w-full h-full">
       {
         <CollectionModal
           open={showCollectionModal}
           onClose={() => setShowCollectionModal(false)}
         />
       }
-      <div ref={heroRef}>
+      {/* <div ref={heroRef}>
         <HeroSection />
-      </div>
+      </div> */}
       <Box
-        className="flex p-4  gap-3"
-        style={{ height: `${contentHeight}px`, overflow: "hidden" }}
+        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem)]"
+        style={{ overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}
-        <Box className="w-1/2 p-6 flex flex-col dark:bg-mountain-900 bg-mountain-100 rounded-md text-gray-900 dark:text-white items-start">
+        <Box className="flex flex-col items-start bg-mountain-100 dark:bg-mountain-900 p-6 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
+          <div className="flex gap-x-1 w-full h-14">
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => setIsImageUpload(true)}
+              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 transition-all duration-300
+          ${isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-mountain-50" : "bg-gradient-to-r from-mountain-950 via-mountain-900 to-mountain-1000 text-mountain-300"}`}
+              sx={{
+                borderRadius: "2px",
+                textTransform: "none",
+                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+              }}
+            >
+              <IoMdImage className="mr-2 w-8 h-8" />
+              <p className="text-sm">
+                Upload Image <span className="text-mountain-300">( .png, .jpg, .jpeg, ... )</span>
+              </p>
+            </Button>
+            <Button
+              variant="text"
+              size="small"
+              onClick={() => setIsImageUpload(false)}
+              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2  transition-all duration-300
+          ${!isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-mountain-50" : "bg-gradient-to-r from-mountain-950 via-mountain-900 to-mountain-1000 text-mountain-300"}`}
+              sx={{
+                borderRadius: "2px",
+                textTransform: "none",
+                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+              }}
+            >
+              <IoVideocam className="mr-2 w-8 h-8" />
+              <p className="text-sm">
+                Upload Video <span className="text-mountain-300">( .mp4, .avi, .mov, ... )</span>
+              </p>
+            </Button>
+          </div>
+          <hr className="my-4 border-mountain-700 border-t-1 w-full"/>
           {isImageUpload ? (
             // -------- IMAGE UPLOAD FLOW --------
-
-            <Box className="w-full text-gray-900 dark:text-white h-full flex flex-col items-center">
-              <Box className="flex justify-between items-center mb-4 w-full">
-                <Typography className="text-base text-gray-900 dark:text-mountain-200">
+            <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
+              <Box className="flex justify-between items-center w-full">
+                {/* <Typography className="text-gray-900 dark:text-mountain-200 text-base">
                   {artPreviews.length}/{MAX_IMAGES} images
-                </Typography>
+                </Typography> */}
                 {hasSelectedImage && selectedPreviewIndex !== 0 && (
                   <Button
                     variant="text"
@@ -301,7 +339,7 @@ const UploadMedia: React.FC = () => {
               {/* Main preview of the first image */}
               {artPreviews.length > 0 ? (
                 <Box
-                  className="mb-4 bg-mountain-900 rounded h-full w-full"
+                  className="bg-mountain-900 mb-4 rounded w-full h-full"
                   sx={{
                     height: 300,
                     p: 2,
@@ -315,7 +353,7 @@ const UploadMedia: React.FC = () => {
                     <video
                       src={artPreviews[0]}
                       controls
-                      className="w-full h-full rounded"
+                      className="rounded w-full h-full"
                       style={{ objectFit: "contain" }}
                     />
                   ) : (
@@ -326,13 +364,13 @@ const UploadMedia: React.FC = () => {
                           : artPreviews[0]
                       }
                       alt="Preview"
-                      className="w-full h-full object-contain"
+                      className="w-full max-h-96 object-contain"
                     />
                   )}
                 </Box>
               ) : (
                 <Box
-                  className="mb-4 border border-dashed border-gray-500 flex flex-col items-center justify-center h-48 w-full h-full"
+                  className="flex flex-col justify-center items-center mb-4 border border-gray-500 border-dashed w-full h-full"
                   onDragOver={(e) => {
                     e.preventDefault();
                   }}
@@ -355,7 +393,7 @@ const UploadMedia: React.FC = () => {
                         variant="text"
                         component="label"
                         size="small"
-                        className="border-mountain-600 mb-2"
+                        className="mb-2 border-mountain-600"
                         sx={{
                           backgroundColor: "transparent",
                           color: "white",
@@ -383,13 +421,12 @@ const UploadMedia: React.FC = () => {
                   )}
                 </Box>
               )}
-
               {/* Art Previews Carousel */}
               <Box className="flex gap-2 custom-scrollbar">
                 {artPreviews.map((preview, index) => (
                   <Box
                     key={index}
-                    className="relative cursor-pointer rounded-md border-1"
+                    className="relative border-1 rounded-md cursor-pointer"
                     sx={{
                       borderColor:
                         selectedPreviewIndex === index
@@ -409,7 +446,7 @@ const UploadMedia: React.FC = () => {
                   >
                     <Avatar
                       src={preview}
-                      className="rounded-md "
+                      className="rounded-md"
                       sx={{ width: 80, height: 80 }}
                     />
                     {index === 0 && (
@@ -436,7 +473,7 @@ const UploadMedia: React.FC = () => {
                           handleRemovePreview(index);
                         }}
                         size="medium"
-                        className="absolute top-0 right-0 bg-gray-600 bg-opacity-70 text-gray-900 dark:text-white hover:bg-gray-700"
+                        className="top-0 right-0 absolute bg-gray-600 hover:bg-gray-700 bg-opacity-70 text-gray-900 dark:text-white"
                       >
                         <CloseIcon fontSize="small" />
                       </IconButton>
@@ -446,7 +483,7 @@ const UploadMedia: React.FC = () => {
 
                 {artPreviews.length > 0 && artPreviews.length < MAX_IMAGES && (
                   <Box
-                    className="w-[80px] h-[80px] flex items-center justify-center border  border-mountain-600 rounded-md text-gray-900 dark:text-white cursor-pointer"
+                    className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
                     component="label"
                   >
                     <AddIcon fontSize="large" />
@@ -462,10 +499,10 @@ const UploadMedia: React.FC = () => {
             </Box>
           ) : (
             // -------- VIDEO UPLOAD FLOW --------
-            <Box className="w-full h-full flex flex-col gap-4">
+            <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
               {/* VIDEO player */}
               <Box
-                className="rounded bg-black"
+                className="bg-black rounded"
                 sx={{
                   height: 300,
                   width: "100%",
@@ -479,11 +516,11 @@ const UploadMedia: React.FC = () => {
                   <video
                     src={artPreviews[0]}
                     controls
-                    className="w-full h-full object-contain rounded"
+                    className="rounded w-full h-full object-contain"
                   />
                 ) : (
                   <Box
-                    className="border border-dashed border-gray-500 flex flex-col items-center justify-center h-full w-full"
+                    className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
                     onDragOver={(e) => e.preventDefault()}
                     onDrop={(e) => {
                       e.preventDefault();
@@ -498,7 +535,7 @@ const UploadMedia: React.FC = () => {
                     <Button
                       variant="text"
                       component="label"
-                      className="border-mountain-600 mb-2"
+                      className="mb-2 border-mountain-600"
                       sx={{
                         backgroundColor: "transparent",
                         color: "white",
@@ -525,7 +562,7 @@ const UploadMedia: React.FC = () => {
                 <Box className="mt-4">
                   <Typography
                     variant="body2"
-                    className="mb-2 dark:text-white font-semibold text-base"
+                    className="mb-2 font-semibold dark:text-white text-base"
                   >
                     Thumbnail
                   </Typography>
@@ -555,15 +592,15 @@ const UploadMedia: React.FC = () => {
         </Box>
 
         {/* RIGHT COLUMN: FORM FIELDS & ACTIONS */}
-        <Box className="flex flex-col w-1/2 gap-y-3">
-          <Box className="mb-2">
+        <Box className="flex flex-col space-y-3 w-[40%]">
+          {/* <Box className="mb-2">
             <UploadToggle
               isImageUpload={isImageUpload}
               onToggle={() => setIsImageUpload((prev) => !prev)}
             />
-          </Box>
+          </Box> */}
           {/* Form fields */}
-          <Box className="rounded-md custom-scrollbar overflow-y-auto pr-4">
+          <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
             <UploadForm
               isImageUpload={isImageUpload}
               thumbnail={thumbnail}
@@ -572,11 +609,13 @@ const UploadMedia: React.FC = () => {
             />
           </Box>
 
+          <hr className="border-mountain-300 dark:border-mountain-700 border-t-1 w-full" />
+
           {/* Bottom actions */}
-          <Box className="w-full flex mt-auto justify-between pr-4">
+          <Box className="flex justify-between mt-auto pr-4 w-full">
             <Button
               variant="outlined"
-              className="border-white text-gray-900 dark:text-white hover:bg-mountain-800 flex items-center rounded-md"
+              className="flex items-center hover:bg-mountain-800 border-white rounded-md text-gray-900 dark:text-white"
               sx={{
                 borderColor: "white",
                 "&:hover": {
@@ -588,7 +627,7 @@ const UploadMedia: React.FC = () => {
               startIcon={<FolderOpenIcon />}
             >
               {/* <span>{"Gallery | My Char Design".substring(0, 13) + "..."}</span> */}
-              <div className="flex gap-8 items-center">
+              <div className="flex items-center gap-8">
                 <span>{"Collection".substring(0, 13)}</span>
                 <span className="text-mountain-600">Favourites</span>
               </div>
@@ -596,12 +635,13 @@ const UploadMedia: React.FC = () => {
             <Button
               variant="contained"
               sx={{ textTransform: "none" }}
-              className=" rounded-md ml-auto"
+              className="ml-auto rounded-md"
               onClick={handleSubmit}
             >
               Submit
             </Button>
           </Box>
+
         </Box>
       </Box>
     </Box>

@@ -53,8 +53,8 @@ const InAppPublicRoutes = [
 
 const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
+  { path: "/create-art", element: <ArtGeneration /> },
   { path: "/portfolio", element: <Portfolio /> },
-  { path: "/artgen", element: <ArtGeneration /> },
 ];;
 
 const App: React.FC = () => {
@@ -95,7 +95,6 @@ const App: React.FC = () => {
                     element={<InAppLayout>{element}</InAppLayout>}
                   />
                 ))}
-
                 {/* Private In-App Routes (Only accessible by logged-in users) */}
                 {InAppPrivateRoutes.map(({ path, element }) => (
                   <Route

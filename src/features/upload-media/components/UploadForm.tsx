@@ -70,16 +70,16 @@ const UploadForm: React.FC<{
   };
 
   return (
-    <Box className="w-full mx-auto dark:text-white text-left space-y-3">
+    <Box className="space-y-3 mx-auto w-full dark:text-white text-left">
       {/* Artwork Title Box */}
-      <Box className=" dark:bg-mountain-900 space-y-3">
-        <Box className="border-b p-2.5 dark:border-mountain-200">
-          <Typography className="font-semibold text-base text-left dark:text-white">
+      <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
+        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+          <Typography className="font-semibold dark:text-white text-base text-left">
             Title
           </Typography>
         </Box>
 
-        <FormControl fullWidth error={isSubmitted && !title.trim()}>
+        <FormControl fullWidth error={isSubmitted && !title.trim()} className="space-y-1 px-2.5 pb-2.5">
           <TextField
             placeholder="What do you call your artwork"
             variant="outlined"
@@ -105,16 +105,16 @@ const UploadForm: React.FC<{
       </Box>
 
       {/* Artwork Description Box */}
-      <Box className="dark:bg-mountain-900 rounded-md space-y-2">
+      <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}
-        <Box className="border-b p-2.5 dark:border-mountain-200">
-          <Typography className="font-semibold text-base text-left dark:text-white">
+        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+          <Typography className="font-semibold dark:text-white text-base text-left">
             Details
           </Typography>
         </Box>
 
-        <Box className="px-2.5 pb-2.5 space-y-1">
-          <Typography className="text-base text-left dark:text-mountain-200">
+        <Box className="space-y-1 px-2.5 pb-2.5">
+          <Typography className="dark:text-mountain-200 text-base text-left">
             Description
           </Typography>
           <TextField
@@ -128,15 +128,15 @@ const UploadForm: React.FC<{
             slotProps={{
               input: {
                 className:
-                  "p-2.5  text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
+                  "p-2.5 text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
               },
             }}
           />
         </Box>
 
         {/* Content / Mature Checkbox */}
-        <Box className="px-2.5 pb-2.5 space-y-1">
-          <Typography className="text-base text-left dark:text-mountain-200">
+        <Box className="px-2.5 pb-2.5">
+          <Typography className="dark:text-mountain-200 text-base text-left">
             Content
           </Typography>
           <FormControlLabel
@@ -171,15 +171,15 @@ const UploadForm: React.FC<{
       </Box>
 
       {!isImageUpload && (
-        <Box className="px-2.5 space-y-2">
-          <Typography className="text-base text-left dark:text-mountain-200">
+        <Box className="space-y-2 px-2.5">
+          <Typography className="dark:text-mountain-200 text-base text-left">
             Thumbnail
           </Typography>
           <Typography variant="body2" className="mb-1 dark:text-mountain-500">
             Set a thumbnail that stands out for your video.
           </Typography>
           <Box
-            className="border border-dashed border-gray-500 rounded flex flex-col items-center justify-center h-32"
+            className="flex flex-col justify-center items-center border border-gray-500 border-dashed rounded h-32"
             component="label"
           >
             {thumbnail ? (
@@ -190,7 +190,7 @@ const UploadForm: React.FC<{
               />
             ) : (
               <>
-                <ImageUpIcon className="text-4xl text-gray-400" />
+                <ImageUpIcon className="text-gray-400 text-4xl" />
                 <Typography>Upload file</Typography>
               </>
             )}
@@ -208,17 +208,17 @@ const UploadForm: React.FC<{
       )}
 
       {/* Categorization Box */}
-      <Box className="dark:bg-mountain-900 rounded-md space-y-2">
+      <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}
-        <Box className="border-b p-2.5 dark:border-mountain-200">
-          <Typography className="font-semibold text-base text-left dark:text-white">
+        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+          <Typography className="font-semibold dark:text-white text-base text-left">
             Categorization
           </Typography>
         </Box>
 
         {/* Tags */}
-        <Box className="px-2.5 space-y-1">
-          <Typography className="text-base text-left dark:text-mountain-200">
+        <Box className="space-y-1 px-2.5">
+          <Typography className="dark:text-mountain-200 text-base text-left">
             Tags
           </Typography>
           <Typography variant="body2" className="mb-1 dark:text-mountain-500">
@@ -251,7 +251,7 @@ const UploadForm: React.FC<{
                 key={tag}
                 label={tag}
                 onDelete={() => handleDelete(tag)}
-                className="text-base dark:bg-[#3a3a3a] dark:text-white"
+                className="dark:bg-[#3a3a3a] dark:text-white text-base"
               />
             ))}
             <OutlinedInput
@@ -304,17 +304,17 @@ const UploadForm: React.FC<{
           {/* Helper text below */}
           <Typography
             variant="body2"
-            className=" dark:text-mountain-500 mt-0.5"
+            className="mt-0.5 dark:text-mountain-500"
           >
             Type a tag and press <strong>Enter</strong> to add it.
           </Typography>
         </Box>
 
         {/* Art type */}
-        <Box className="px-2.5 pb-2.5 space-y-1">
+        <Box className="flex flex-col space-y-1 px-2.5 pb-2.5 w-full">
           {/* Dialog for Selection */}
           {isImageUpload && (
-            <Box className="px-2.5 pb-2.5 space-y-1">
+            <Box className="space-y-1 px-2.5 pb-2.5">
               <SubjectSelector />
             </Box>
           )}

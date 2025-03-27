@@ -112,7 +112,7 @@ const Login = () => {
         </div>
         <Button
           type="submit"
-          className="bg-mountain-800 hover:bg-mountain-700 dark:bg-gradient-to-r dark:from-blue-800 dark:via-purple-700 dark:to-pink-900 hover:brightness-110 py-3 rounded-lg focus:ring-indigo-500 w-full h-10 font-bold text-mountain-950 dark:text-mountain-50 hover:cursor-pointer"
+          className="bg-mountain-800 hover:bg-mountain-700 dark:bg-gradient-to-r dark:from-blue-800 dark:via-purple-700 dark:to-pink-900 hover:brightness-110 py-3 rounded-lg focus:ring-indigo-500 w-full h-10 font-bold text-mountain-50 hover:cursor-pointer"
         >
           Login
         </Button>

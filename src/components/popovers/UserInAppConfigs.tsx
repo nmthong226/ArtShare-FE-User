@@ -24,7 +24,7 @@ import { useNavigate } from "react-router-dom";
 const UserInAppConfigs = () => {
   const { user, loading, logout } = useUser(); // Get user and logout function from UserProvider
   const [open, setOpen] = useState(false);
-  const { toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [matureContent, setMatureContent] = useState(false);
   const [aiContent, setAiContent] = useState(false);
@@ -62,7 +62,7 @@ const UserInAppConfigs = () => {
         </div>
       </PopoverTrigger>
       <PopoverContent
-        className="dark:bg-mountain-900 mt-4 p-0 py-2 dark:border-mountain-700 w-64"
+        className="dark:bg-mountain-900 mt-4 p-0 py-2 border-mountain-100 dark:border-mountain-700 w-64"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
       >
@@ -112,14 +112,14 @@ const UserInAppConfigs = () => {
           <div className="flex space-x-2">
             <Button
               onClick={toggleTheme}
-              className={`border-2 border-indigo-600 hover:cursor-pointer dark:border-mountain-600 dark:bg-mountain-800 rounded-full size-8`}
+              className={`${theme === 'light' ? "border-indigo-600" : "border-mountain-300 dark:border-mountain-800"} rounded-full dark:border-2 hover:cursor-pointer  dark:bg-mountain-800 size-8`}
               variant={"outline"}
             >
               <MdLightMode className="size-5" />
             </Button>
             <Button
               onClick={toggleTheme}
-              className={`rounded-full dark:border-2 hover:cursor-pointer dark:border-indigo-600 dark:bg-mountain-800 size-8`}
+              className={`${theme === 'dark' ? "dark:border-indigo-600" : "border-mountain-300 dark:border-mountain-800"} rounded-full dark:border-2 hover:cursor-pointer  dark:bg-mountain-800 size-8`}
               variant={"outline"}
             >
               <MdDarkMode className="size-5" />

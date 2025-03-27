@@ -256,13 +256,13 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <p className="text-sm">Shop</p>
               </div>
             </Link>
-            <div className="hidden relative lg:flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl lg:w-72 xl:w-96 h-10 text-mountain-500 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-mountain-400">
+            <div className="hidden relative lg:flex items-center bg-mountain-50 dark:bg-gradient-to-r dark:from-mountain-1000 dark:to-mountain-950 rounded-2xl lg:w-72 xl:w-96 h-10 text-mountain-500 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-mountain-400">
               <FiSearch className="left-2 absolute w-5 h-5" />
               <Input
-                className="shadow-inner pr-8 pl-8 border-1 rounded-2xl"
+                className="shadow-inner pr-8 pl-8 border-1 border-mountain-300 dark:border-mountain-700 rounded-2xl"
                 placeholder="Search"
               />
-              <TiDeleteOutline className="right-2 absolute w-5 h-5" />
+              <TiDeleteOutline className="hidden right-2 absolute w-5 h-5" />
             </div>
             <div className="lg:hidden flex items-center border-white dark:border-mountain-950 border-b-4 h-full">
               <div className="hidden md:flex items-center space-x-1:lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg text-mountain-500 hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer lg">
@@ -280,7 +280,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </nav>
       <div className="flex w-full h-full">
-        <aside className="hidden xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-16 h-full">
+        <aside className="hidden xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-[4%] h-full">
           {/* Explore */}
           <Link
             to="/explore"
@@ -361,27 +361,27 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           {/* Private Features */}
           <ProtectedSidebarItem
             path="/posts/new"
-            iconActive={<RiFolderUploadFill className="w-6 h-6" />}
+            iconActive={<RiFolderUploadFill className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />}
             iconInactive={<RiFolderUploadLine className="w-6 h-6" />}
             label="Submit"
             user={user}
           />
           <ProtectedSidebarItem
             path="/create-art"
-            iconActive={<RiImageAiFill className="w-6 h-6" />}
+            iconActive={<RiImageAiFill className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />}
             iconInactive={<RiImageAiLine className="w-6 h-6" />}
             label="Create"
             user={user}
           />
           <ProtectedSidebarItem
             path="/portfolio"
-            iconActive={<BsFilePersonFill className="w-6 h-6" />}
+            iconActive={<BsFilePersonFill className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />}
             iconInactive={<BsFilePerson className="w-6 h-6" />}
             label="Portfolio"
             user={user}
           />
         </aside>
-        {children}
+        <div className="dark:bg-gradient-to-b dark:from-mountain-1000 dark:to-mountain-950 w-[96%] h-[calc(100vh-4rem)]">{children}</div>
       </div>
     </div>
   );

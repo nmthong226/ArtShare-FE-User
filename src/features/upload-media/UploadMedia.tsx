@@ -208,7 +208,7 @@ const UploadMedia: React.FC = () => {
     selectedPreviewIndex !== null && artPreviews[selectedPreviewIndex];
 
   return (
-    <Box className="dark:bg-mountain-950 w-full h-full">
+    <Box className="w-full h-full">
       {
         <CollectionModal
           open={showCollectionModal}

@@ -6,7 +6,7 @@ import { FaApple } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/context/UserProvider"; // Import the UserProvider hook
+import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
 // import { login } from "@/api/authentication/auth"; // Import the login API function
 
 const Login = () => {

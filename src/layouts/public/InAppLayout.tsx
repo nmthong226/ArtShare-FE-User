@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import app_logo from '/logo_app_v_101.png';
 
 // Context
-import { useUser } from "@/context/UserProvider";
+import { useUser } from "@/contexts/UserProvider";
 
 // Components
 import { Input } from "@/components/ui/input";
@@ -19,7 +19,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import UserInAppConfigs from "@/components/popovers/UserInAppConfigs";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 // Icons
 import { FiSearch } from "react-icons/fi";
@@ -46,23 +46,20 @@ import { IoMailOutline } from "react-icons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
 import ProtectedSidebarItem from "@/components/ProtectedItems/ProtectedSidebarItem";
 
-const UserFunctionality: React.FC<{ user?: User | null; loading?: boolean }> = ({ user, loading }) => {
+const UserFunctionality: React.FC<{
+  user?: User | null;
+  loading?: boolean;
+}> = ({ user, loading }) => {
   const location = useLocation();
 
   // Show a loading indicator while checking authentication
   if (loading) {
     return (
       <>
-        <Skeleton
-          className="flex justify-center items-center space-x-2 dark:bg-mountain-900 rounded-2xl w-20 xl:w-26 h-9"
-        >
-        </Skeleton>
-        <Skeleton
-          className="flex justify-center items-center space-x-2 dark:bg-mountain-900 rounded-2xl w-20 xl:w-26 h-9"
-        >
-        </Skeleton>
+        <Skeleton className="flex justify-center items-center space-x-2 dark:bg-mountain-900 rounded-2xl w-20 xl:w-26 h-9"></Skeleton>
+        <Skeleton className="flex justify-center items-center space-x-2 dark:bg-mountain-900 rounded-2xl w-20 xl:w-26 h-9"></Skeleton>
       </>
-    )
+    );
   }
 
   // Show Sign Up and Login for non-logged-in users
@@ -92,10 +89,11 @@ const UserFunctionality: React.FC<{ user?: User | null; loading?: boolean }> = (
     <>
       <Link
         to="/messages"
-        className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/messages"
-          ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-          : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
-          }`}
+        className={`hidden xs:flex group items-center border-b-4 h-full ${
+          location.pathname === "/messages"
+            ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+            : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+        }`}
       >
         <div className="flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
           {location.pathname === "/messages" ? (
@@ -108,10 +106,11 @@ const UserFunctionality: React.FC<{ user?: User | null; loading?: boolean }> = (
       </Link>
       <Link
         to="/updates"
-        className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/updates"
-          ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-          : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
-          }`}
+        className={`hidden xs:flex group items-center border-b-4 h-full ${
+          location.pathname === "/updates"
+            ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+            : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+        }`}
       >
         <div className="flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
           {location.pathname === "/updates" ? (
@@ -132,8 +131,8 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const { user, loading } = useUser();
   return (
-    <div className="flex flex-col w-full h-full overflow-hidden">
-      <nav className="flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16">
+    <div className="flex flex-col w-full h-full">
+      <nav className="top-0 z-50 sticky flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16">
         <div className="flex items-center h-full">
           <Sheet>
             <SheetTrigger>
@@ -150,7 +149,9 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   <div className="flex justify-between w-full">
                     <div className="flex items-center space-x-2 lg:space-x-2 pr-4 border-r-mountain-300 md:border-r-1 dark:border-r-mountain-700 w-full text-nowrap">
                       <img src={app_logo} className="rounded-sm w-8 h-8" />
-                      <p className="font-semibold text-mountain-950 dark:text-mountain-50">Art Share</p>
+                      <p className="font-semibold text-mountain-950 dark:text-mountain-50">
+                        Art Share
+                      </p>
                     </div>
                     <Link
                       to="/signup"
@@ -206,14 +207,17 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <div className="flex items-center space-x-1 lg:space-x-2 xl:space-x-4 h-full">
             <div className="flex items-center space-x-1 lg:space-x-2 pr-4 border-r-mountain-300 md:border-r-1 dark:border-r-mountain-700 text-nowrap">
               <img src={app_logo} className="rounded-sm w-8 h-8" />
-              <p className="font-semibold text-mountain-950 dark:text-mountain-50">Art Share</p>
+              <p className="font-semibold text-mountain-950 dark:text-mountain-50">
+                Art Share
+              </p>
             </div>
             <Link
               to="/explore"
-              className={`group flex items-center border-b-4 h-full ${location.pathname === "/explore"
-                ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
-                }`}
+              className={`group flex items-center border-b-4 h-full ${
+                location.pathname === "/explore"
+                  ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+                  : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+              }`}
             >
               <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg dark:hover:text-mountain-50 hover:cursor-pointer">
                 {location.pathname === "/explore" ? (
@@ -226,10 +230,11 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </Link>
             <Link
               to="/blogs"
-              className={`group flex items-center border-b-4 h-full ${location.pathname === "/blogs"
-                ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
-                }`}
+              className={`group flex items-center border-b-4 h-full ${
+                location.pathname === "/blogs"
+                  ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+                  : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+              }`}
             >
               <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
                 {location.pathname === "/blogs" ? (
@@ -242,10 +247,11 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             </Link>
             <Link
               to="/shop"
-              className={`group flex items-center border-b-4 h-full ${location.pathname === "/shop"
-                ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
-                }`}
+              className={`group flex items-center border-b-4 h-full ${
+                location.pathname === "/shop"
+                  ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+                  : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+              }`}
             >
               <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
                 {location.pathname === "/shop" ? (
@@ -280,17 +286,18 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </nav>
       <div className="flex w-full h-full">
-        <aside className="hidden xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-[4%] h-full">
+        <aside className="hidden top-16 sticky xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 w-[4%] h-full">
           {/* Explore */}
           <Link
             to="/explore"
             className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
           >
             <div
-              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/explore"
-                ? "bg-mountain-100 dark:bg-mountain-800"
-                : "text-mountain-600"
-                }`}
+              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${
+                location.pathname === "/explore"
+                  ? "bg-mountain-100 dark:bg-mountain-800"
+                  : "text-mountain-600"
+              }`}
             >
               {location.pathname === "/explore" ? (
                 <MdExplore className="w-6 h-6" />
@@ -306,10 +313,11 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
           >
             <div
-              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/blogs"
-                ? "bg-mountain-100 dark:bg-mountain-800"
-                : "text-mountain-600"
-                }`}
+              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${
+                location.pathname === "/blogs"
+                  ? "bg-mountain-100 dark:bg-mountain-800"
+                  : "text-mountain-600"
+              }`}
             >
               {location.pathname === "/blogs" ? (
                 <MdLibraryBooks className="w-6 h-6" />
@@ -325,10 +333,11 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
           >
             <div
-              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/shop"
-                ? "bg-mountain-100 dark:bg-mountain-800"
-                : "text-mountain-600"
-                }`}
+              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${
+                location.pathname === "/shop"
+                  ? "bg-mountain-100 dark:bg-mountain-800"
+                  : "text-mountain-600"
+              }`}
             >
               {location.pathname === "/shop" ? (
                 <RiShoppingBag4Fill className="w-6 h-6" />
@@ -344,10 +353,11 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
           >
             <div
-              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/search"
-                ? "bg-mountain-100 dark:bg-mountain-800"
-                : "text-mountain-600"
-                }`}
+              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${
+                location.pathname === "/search"
+                  ? "bg-mountain-100 dark:bg-mountain-800"
+                  : "text-mountain-600"
+              }`}
             >
               {location.pathname === "/search" ? (
                 <FiSearch className="w-6 h-6" />
@@ -381,7 +391,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             user={user}
           />
         </aside>
-        <div className="dark:bg-gradient-to-b dark:from-mountain-1000 dark:to-mountain-950 w-[96%] h-[calc(100vh-4rem)]">{children}</div>
+        <div className="dark:bg-gradient-to-b dark:from-mountain-1000 dark:to-mountain-950 border-l-1 border-l-mountain-100 dark:border-l-mountain-700 w-[96%] h-full">{children}</div>
       </div>
     </div>
   );

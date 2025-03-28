@@ -1,8 +1,9 @@
+// Core
 import { useState } from "react";
 
 // Context/hooks
-import { useTheme } from "@/context/ThemeProvider";
-import { useUser } from "@/context/UserProvider";
+import { useTheme } from "@/contexts/ThemeProvider";
+import { useUser } from "@/contexts/UserProvider";
 
 // Icons
 import { FaReact } from "react-icons/fa";
@@ -38,11 +39,12 @@ const UserInAppConfigs = () => {
     navigate("/explore");
   };
 
-  if (loading) return (
-    <>
-      <Skeleton className="dark:bg-mountain-900 rounded-full w-8 h-8" />
-    </>
-  );
+  if (loading)
+    return (
+      <>
+        <Skeleton className="dark:bg-mountain-900 rounded-full w-8 h-8" />
+      </>
+    );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -132,20 +134,12 @@ const UserInAppConfigs = () => {
         {/* Content Settings */}
         <div className="flex justify-between items-center hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full h-full">
           <span className="text-sm">Mature Content</span>
-          <Switch
-            checked={matureContent}
-            onCheckedChange={setMatureContent}
-            className="hover:cursor-pointer"
-          />
+          <Switch checked={matureContent} onCheckedChange={setMatureContent} className="hover:cursor-pointer" />
         </div>
 
         <div className="flex justify-between items-center hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full h-full">
           <span className="text-sm">AI Content</span>
-          <Switch
-            checked={aiContent}
-            onCheckedChange={setAiContent}
-            className="hover:cursor-pointer"
-          />
+          <Switch checked={aiContent} onCheckedChange={setAiContent} className="hover:cursor-pointer" />
         </div>
         {/* Show these options only if the user is not logged in */}
         <>

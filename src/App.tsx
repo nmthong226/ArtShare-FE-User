@@ -21,18 +21,20 @@ import Login from "@/pages/Authentication/Login";
 import SignUp from "@/pages/Authentication/SignUp";
 import ForgotPassword from "@/pages/Authentication/ForgotPassword";
 import AccountActivation from "@/pages/Authentication/Activation";
-import Explore from "@/pages/Explore";
-import Blogs from "@/pages/Blogs";
+import Gallery from "./pages/Gallery";
+import Blogs from "./pages/Blogs";
 import Shop from "@/pages/Shop";
+// import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/pages/ArtGeneration";
 import Portfolio from "@/pages/Portfolio";
 
 // Context/Provider
-import { ThemeProvider } from "@/context/ThemeProvider";
-import { LanguageProvider } from "@/context/LanguageProvider";
-import { UserProvider } from "@/context/UserProvider";
+import { ThemeProvider } from "@/contexts/ThemeProvider";
+import { LanguageProvider } from "@/contexts/LanguageProvider";
+import { UserProvider } from "@/contexts/UserProvider";
 import AuthAction from "./pages/Authentication/HandleCallback";
 import UploadMedia from "./features/upload-media/UploadMedia";
+import Post from "./pages/Post";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -46,7 +48,8 @@ const privateAuthRoute = [
 ];
 
 const InAppPublicRoutes = [
-  { path: "/explore", element: <Explore /> },
+  { path: "/explore", element: <Gallery /> },
+  { path: "/posts/:postId", element: <Post /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/shop", element: <Shop /> },
 ];
@@ -55,7 +58,8 @@ const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
   { path: "/create-art", element: <ArtGeneration /> },
   { path: "/portfolio", element: <Portfolio /> },
-];;
+  { path: "/artgen", element: <ArtGeneration /> },
+];
 
 const App: React.FC = () => {
   return (

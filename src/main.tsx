@@ -2,30 +2,37 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StyledEngineProvider } from "@mui/material/styles";
-import { ThemeProvider } from "@/context/ThemeProvider"; // Your custom theme context
-import { AppThemeProvider } from "./context/AppThemeProvider.tsx";
+import { ThemeProvider } from "@/contexts/ThemeProvider"; // Your custom theme context
+import { AppThemeProvider } from "./contexts/AppThemeProvider.tsx";
+import { FocusProvider } from "./contexts/focus/FocusProvider.tsx";
 import "./index.css";
 import App from "./App.tsx";
-import { SnackbarProvider } from "./context/SnackbarProvider.tsx";
+import { SnackbarProvider } from "./contexts/SnackbarProvider.tsx";
+
+import TimeAgo from "javascript-time-ago";
+
+import en from "javascript-time-ago/locale/en";
+import vi from "javascript-time-ago/locale/vi";
+
+TimeAgo.addDefaultLocale(en);
+TimeAgo.addLocale(vi);
 
 const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <StyledEngineProvider injectFirst>
-      <ThemeProvider>
-        {" "}
-        {/* Provides theme state and toggle function */}
-        <AppThemeProvider>
-          {" "}
-          {/* Dynamically applies MUI theme */}
-          <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AppThemeProvider>
             <SnackbarProvider>
-              <App />
+              <FocusProvider>
+                <App />
+              </FocusProvider>
             </SnackbarProvider>
-          </QueryClientProvider>
-        </AppThemeProvider>
-      </ThemeProvider>
+          </AppThemeProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </StyledEngineProvider>
   </StrictMode>
 );

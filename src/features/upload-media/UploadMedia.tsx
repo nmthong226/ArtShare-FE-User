@@ -15,7 +15,7 @@ import { Crop as CropIcon } from "@mui/icons-material";
 import CollectionModal from "./components/CollectionModal";
 import UploadToggle from "./components/UploadToggle.";
 import ThumbnailCard from "./components/ThumbnailCard";
-import { useSnackbar } from "@/context/SnackbarProvider";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
 
 const MAX_IMAGES = 5;
 

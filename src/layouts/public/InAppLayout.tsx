@@ -90,8 +90,8 @@ const UserFunctionality: React.FC<{
       <Link
         to="/messages"
         className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/messages"
-            ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-            : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+          ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+          : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
           }`}
       >
         <div className="flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
@@ -106,8 +106,8 @@ const UserFunctionality: React.FC<{
       <Link
         to="/updates"
         className={`hidden xs:flex group items-center border-b-4 h-full ${location.pathname === "/updates"
-            ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-            : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+          ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+          : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
           }`}
       >
         <div className="flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
@@ -212,8 +212,8 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <Link
               to="/explore"
               className={`group flex items-center border-b-4 h-full ${location.pathname === "/explore"
-                  ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                  : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+                ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+                : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
                 }`}
             >
               <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg dark:hover:text-mountain-50 hover:cursor-pointer">
@@ -228,8 +228,8 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <Link
               to="/blogs"
               className={`group flex items-center border-b-4 h-full ${location.pathname === "/blogs"
-                  ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                  : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+                ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+                : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
                 }`}
             >
               <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
@@ -244,8 +244,8 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <Link
               to="/shop"
               className={`group flex items-center border-b-4 h-full ${location.pathname === "/shop"
-                  ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                  : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+                ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+                : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
                 }`}
             >
               <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
@@ -288,10 +288,10 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
           >
             <div
-              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/explore"
-                  ? "bg-mountain-100 dark:bg-mountain-800"
-                  : "text-mountain-600"
-                }`}
+              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/explore"
+                ? "dark:text-mountain-50 text-mountain-950 bg-mountain-100 dark:bg-mountain-800"
+                : "dark:text-mountain-600 text-mountain-400"
+                } dark:group-hover:text-mountain-50 group-hover:text-mountain-950`}
             >
               {location.pathname === "/explore" ? (
                 <MdExplore className="w-6 h-6" />
@@ -308,8 +308,8 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           >
             <div
               className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/blogs"
-                  ? "bg-mountain-100 dark:bg-mountain-800"
-                  : "text-mountain-600"
+                ? "bg-mountain-100 dark:bg-mountain-800"
+                : "text-mountain-600"
                 }`}
             >
               {location.pathname === "/blogs" ? (
@@ -327,8 +327,8 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           >
             <div
               className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${location.pathname === "/shop"
-                  ? "bg-mountain-100 dark:bg-mountain-800"
-                  : "text-mountain-600"
+                ? "bg-mountain-100 dark:bg-mountain-800"
+                : "text-mountain-600"
                 }`}
             >
               {location.pathname === "/shop" ? (
@@ -346,8 +346,8 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           >
             <div
               className={`flex justify-center items-center dark:group-hover:bg-mountain-800 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/search"
-                  ? "bg-mountain-100 dark:bg-mountain-800"
-                  : "text-mountain-600"
+                ? "bg-mountain-100 dark:bg-mountain-800"
+                : "text-mountain-600"
                 }`}
             >
               {location.pathname === "/search" ? (

@@ -43,7 +43,7 @@ const RightArrow = () => {
     const visibility = useContext<publicApiType>(VisibilityContext);
     const isLastItemVisible = visibility.useIsVisible("last", false);
     return (
-        <div className="flex items-center">
+        <div className="flex items-center shadow-2xl">
             <Button
                 variant="contained"
                 color="primary"
@@ -71,12 +71,12 @@ export const Categories: React.FC<CategoriesProps> = ({ onSelectCategory }) => {
             {categoriesData.map((category) => (
                 <div
                     key={category.name}
-                    className={`max-w-48 flex justify-center items-center ${selectedCategory === category.name ? "bg-mountain-200" : "hover:bg-mountain-200"
+                    className={`max-w-48 flex justify-center items-center ${selectedCategory === category.name ? "bg-mountain-100 dark:bg-mountain-900" : "hover:bg-mountain-100 dark:hover:bg-mountain-900"
                         } cursor-pointer rounded-lg p-2 gap-2`}
                     onClick={() => handleCategoryClick(category.name)}
                 >
                     <img src={category.thumbnail} alt={category.name} className="border rounded-lg w-12 object-center object-cover aspect-[1/1]" />
-                    <span className="text-gray-800 text-sm line-clamp-2">{category.name}</span>
+                    <span className="text-mountain-800 dark:text-mountain-300 text-sm line-clamp-2">{category.name}</span>
                 </div>
             ))}
         </ScrollMenu>
@@ -92,15 +92,15 @@ export const CategoryPopper: React.FC<CategoriesPopperProps> = ({ open, anchorEl
     };
 
     return (
-        <Popper sx={{ zIndex: 1200 }} open={open} anchorEl={anchorEl} placement="right" transition className="m-4">
+        <Popper sx={{ zIndex: 1200 }} open={open} anchorEl={anchorEl} placement="bottom" transition className="mt-4 ml-18">
             {({ TransitionProps }) => (
                 <Fade {...TransitionProps} timeout={350}>
-                    <Paper className="w-72 h-[70vh] overflow-y-auto">
-                        <div className="top-0 sticky bg-white p-4 w-full">
+                    <Paper className="dark:bg-mountain-950 w-72 h-[70vh] overflow-y-auto custom-scrollbar">
+                        <div className="top-0 sticky bg-mountain-50 dark:bg-mountain-950 p-4 w-full">
                             <div className="relative flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl h-10 text-mountain-500 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-mountain-400">
                                 <FiSearch className="left-2 absolute w-5 h-5" />
                                 <Input
-                                    className="shadow-inner pr-8 pl-8 border-1 border-mountain-500 rounded-2xl w-full h-full"
+                                    className="shadow-inner pr-8 pl-8 border-1 border-mountain-500 rounded-2xl w-full h-full text-mountain-950 dark:text-mountain-50"
                                     placeholder="Search"
                                     disableUnderline
                                     value={searchQuery}
@@ -115,11 +115,11 @@ export const CategoryPopper: React.FC<CategoriesPopperProps> = ({ open, anchorEl
                                 .map((category) => (
                                     <div
                                         key={category.name}
-                                        className="flex items-center gap-1 hover:bg-mountain-100 p-2 rounded-lg cursor-pointer"
+                                        className="flex items-center gap-1 hover:bg-mountain-100 dark:hover:bg-mountain-800 p-2 rounded-lg cursor-pointer"
                                         onClick={() => handleCategoryClick(category.name)}
                                     >
                                         <img src={category.thumbnail} alt={category.name} className="rounded-lg w-12 object-center object-cover aspect-[1/1]" />
-                                        <span className="text-gray-800 text-sm text-wrap">{category.name}</span>
+                                        <span className="text-mountain-800 dark:text-mountain-100 text-sm text-wrap">{category.name}</span>
                                     </div>
                                 ))}
                         </div>

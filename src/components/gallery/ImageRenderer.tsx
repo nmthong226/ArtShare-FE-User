@@ -19,7 +19,7 @@ export const ImageRenderer = (_: unknown, context: RenderPhotoContext<GalleryPho
                     {...photo}
                     srcSet={Array.isArray(photo.srcSet) ? photo.srcSet.join(", ") : photo.srcSet}
                     alt={photo.alt || `Image ${index}`}
-                    className="rounded-lg w-full h-full object-cover"
+                    className="rounded-sm w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 flex flex-col justify-end items-start bg-gradient-to-b from-transparent via-transparent to-black/70 opacity-0 group-hover:opacity-100 m-0.5 p-4 rounded-lg text-white transition-opacity duration-300">
                     {photo.postLength > 1 && (

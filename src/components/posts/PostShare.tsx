@@ -17,11 +17,11 @@ const socialNetWorks = [
 
 const PostShare: React.FC = () => {
   return (
-    <div className="flex flex-col bg-white px-4 py-6 rounded-2xl gap-4">
+    <div className="flex flex-col gap-4 bg-white px-4 py-6 rounded-2xl">
       <div className="font-bold text-xl">Share</div>
-      <div className="flex bg-white rounded-2xl gap-2  flex-wrap">
+      <div className="flex flex-wrap gap-2 bg-white rounded-2xl">
         {socialNetWorks.map((socialNetWork) => (
-          <div className="text-xs px-2 py-1 rounded flex items-center justify-center gap-2 flex-col ">
+          <div className="flex flex-col justify-center items-center gap-2 px-2 py-1 rounded text-xs">
             {socialNetWork.icon}
             {socialNetWork.name}
           </div>

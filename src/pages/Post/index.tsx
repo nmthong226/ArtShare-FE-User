@@ -1,13 +1,13 @@
-import PostInfo from "@/components/post/PostInfo";
-import PostAssets from "@/components/post/PostAssets";
-import PostArtist from "@/components/post/PostArtist";
-import PostComments from "@/components/post/PostComments";
-import { fetchPost } from "@/components/post/api/postService";
+import PostInfo from "@/components/posts/PostInfo";
+import PostAssets from "@/components/posts/PostAssets";
+import PostArtist from "@/components/posts/PostArtist";
+import PostComments from "@/components/posts/PostComments";
+import { fetchPost } from "@/components/posts/api/postService";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import PostTags from "@/components/post/PostTags";
-import PostMoreByArtist from "@/components/post/PostMoreByArtist";
-import PostShare from "@/components/post/PostShare";
+import PostTags from "@/components/posts/PostTags";
+import PostMoreByArtist from "@/components/posts/PostMoreByArtist";
+import PostShare from "@/components/posts/PostShare";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -45,17 +45,17 @@ const Post: React.FC = () => {
   };
 
   return (
-    <div className="flex-grow h-[calc(100vh-4rem)] bg-mountain-50 overflow-y-scroll no-scrollbar gap-4 p-4">
-      <div className="flex md:hidden flex-col gap-4">
+    <div className="flex-grow gap-4 bg-mountain-50 p-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
+      <div className="md:hidden flex flex-col gap-4">
         <PostArtist artist={postData!.user} />
         <PostAssets medias={postData!.medias} />
         <PostContent />
       </div>
       <div className="hidden md:flex flex-row gap-4 h-full">
-        <div className="h-full overflow-y-scroll no-scrollbar flex-grow">
+        <div className="flex-grow h-full overflow-y-scroll no-scrollbar">
           <PostAssets medias={postData!.medias} />
         </div>
-        <div className="sm:w-[256px] md:w-[384px] lg:w-[448px] py-0 overflow-y-scroll no-scrollbar flex-shrink-0">
+        <div className="flex-shrink-0 py-0 sm:w-[256px] md:w-[384px] lg:w-[448px] overflow-y-scroll no-scrollbar">
           <PostArtist artist={postData!.user} />
           <PostContent />
         </div>

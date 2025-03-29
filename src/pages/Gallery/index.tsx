@@ -37,10 +37,10 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="">
-      <div className=" sticky top-16 bg-mountain-50 z-50 p-4 flex flex-col gap-4">
+     <div className="top-16 z-50 sticky flex flex-col gap-4 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950 p-4">
         <div className="categories-bar flex items-center gap-6 w-full ">
           <Button
-            className="spread-btn aspect-[1/1] min-w-auto p-2 rounded-lg"
+            className="flex flex-shrink-0 gap-2 aspect-[1/1] min-w-auto dark:bg-mountain-900 shadow-none p-2 rounded-lg font-normal text-mountain-800 dark:text-mountain-50 normal-case all-channels-btn"
             variant="contained"
             disableElevation
             onClick={handleToggleCP()}
@@ -54,7 +54,7 @@ const Gallery: React.FC = () => {
             onSave={(categories) => setSelectedCategories(categories)}
             selectedData={selectedCategories}
             data={categoriesData}
-            placement="right-start"
+            placement="bottom-end"
             renderItem="category"
           />
           <Button

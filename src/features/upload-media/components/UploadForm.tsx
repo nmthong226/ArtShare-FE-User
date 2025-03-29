@@ -94,7 +94,7 @@ const UploadForm: React.FC<{
   };
 
   return (
-    <Box className="space-y-3 mx-auto w-full dark:text-white text-left">
+    <Box className="w-full mx-auto dark:text-white text-left space-y-3">
       {/* Artwork Title Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">

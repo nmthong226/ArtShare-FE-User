@@ -197,7 +197,7 @@ export const DataPopper: React.FC<DataPopperProps> = ({
       anchorEl={anchorEl}
       placement={placement}
       transition
-      className="mx-4"
+      className="mr-4 mt-4"
     >
       {({ TransitionProps }) => (
         <Fade {...TransitionProps} timeout={350}>

@@ -29,8 +29,8 @@ const PostInfo = ({ postData }: { postData: Post }) => {
 
   return (
     postData && (
-      <div className="p-4 rounded-2xl shadow overflow-none bg-white md:rounded-t-none">
-        <CardContent className="flex flex-col gap-4 p-0 ">
+      <div className="bg-white shadow p-4 rounded-2xl md:rounded-t-none overflow-none">
+        <CardContent className="flex flex-col gap-4 p-0">
           <div className="flex flex-col gap-2">
             <div className="font-bold text-xl">{postData.title}</div>
             <AnyShowMoreText
@@ -44,7 +44,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             >
               {postData.description}
             </AnyShowMoreText>
-            <div className="italic text-xs">
+            <div className="text-xs italic">
               Posted <ReactTimeAgo date={postData.created_at} />
             </div>
           </div>
@@ -68,20 +68,20 @@ const PostInfo = ({ postData }: { postData: Post }) => {
 
           <Divider className="border" />
 
-          <div className="flex justify-between -my-1.5 ">
+          <div className="flex justify-between -my-1.5">
             <Button className="flex gap-1 -mx-2 px-2 py-2" title="Like">
               <HeartIcon />
-              <span className="text-sm normal-case font-normal">Like</span>
+              <span className="font-normal text-sm normal-case">Like</span>
             </Button>
             <Button className="flex gap-1 -mx-2 px-2 py-2" title="Save" onClick={handleClickOpen}>
               <Bookmark />
-              <span className="text-sm normal-case font-normal">Save</span>
+              <span className="font-normal text-sm normal-case">Save</span>
             </Button>
             <Button className="flex gap-1 -mx-2 px-2 py-2" title="Comment" onClick={handleFocusCommentInput}>
               <MessageSquareText />
-              <span className="text-sm normal-case font-normal">Comment</span>
+              <span className="font-normal text-sm normal-case">Comment</span>
             </Button>
-            <Button className="aspect-[1/1] min-w-auto">
+            <Button className="min-w-auto aspect-[1/1]">
               <EllipsisVertical />
             </Button>
           </div>

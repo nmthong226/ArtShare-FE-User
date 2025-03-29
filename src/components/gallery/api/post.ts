@@ -81,28 +81,28 @@ export const fetchPosts = async (
   filter?: string[],
   pageSize: number = 12
 ): Promise<Post[]> => {
-  try {
-    if (query || filter && filter.length > 0) {
-      console.log(`/posts/search?q=${query}&page=${page}&page_size=${pageSize}`)
-      const response = await api.get<Post[]>(
-        `/posts/search?q=${query}&page=${page}&page_size=${pageSize}`
-      );
-      return response.data;
-    } else {
-      console.log(`/posts/${tab}?page=${page}&page_size=${pageSize}`)
-      const response = await api.get<Post[]>(
-        `/posts/${tab}?page=${page}&page_size=${pageSize}`
-      );
-      return response.data;
-    }
-  } catch (error) {
-    console.error("Error fetching posts:", error);
-    return [];
-  }
+  // try {
+  //   if (query || filter && filter.length > 0) {
+  //     console.log(`/posts/search?q=${query}&page=${page}&page_size=${pageSize}`)
+  //     const response = await api.get<Post[]>(
+  //       `/posts/search?q=${query}&page=${page}&page_size=${pageSize}`
+  //     );
+  //     return response.data;
+  //   } else {
+  //     console.log(`/posts/${tab}?page=${page}&page_size=${pageSize}`)
+  //     const response = await api.get<Post[]>(
+  //       `/posts/${tab}?page=${page}&page_size=${pageSize}`
+  //     );
+  //     return response.data;
+  //   }
+  // } catch (error) {
+  //   console.error("Error fetching posts:", error);
+  //   return [];
+  // }
 
-  // const response = await fetchPhotos(page);
-  // const photos = response.data.map((photo) => photo.urls.regular);
-  // return { data: mockPosts(photos) };
+  const response = await fetchPhotos(page);
+  const photos = response.data.map((photo) => photo.urls.regular);
+  return mockPosts(photos) ;
 };
 
 export const fetchPhotoById = (id: string) =>

@@ -9,7 +9,7 @@ const AuthenLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     let params = useLocation();
     const showReturnToLogin = params.pathname === "/forgot-password" || params.pathname === "/email-activation" || location.pathname.includes("auth");
     return (
-        <div className="flex justify-center items-center gap-x-4 bg-white dark:bg-mountain-950 shadow-xl w-full h-full overflow-hidden">
+        <div className="flex justify-center items-center gap-x-4 bg-white dark:bg-mountain-950 shadow-xl w-full h-screen overflow-hidden">
             <div className="hidden md:flex justify-center items-center w-[60%] h-full">
                 <img src={background} className="w-full h-full object-cover" />
             </div>

@@ -51,6 +51,7 @@ import { FiLogIn } from "react-icons/fi";
 import { IoMailOutline } from "react-icons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
 import ProtectedSidebarItem from "@/components/ProtectedItems/ProtectedSidebarItem";
+import ExploreNavigation from "@/components/popovers/ExploreNavigation";
 
 const UserFunctionality: React.FC<{
   user?: User | null;
@@ -228,23 +229,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   Art Share
                 </p>
               </div>
-              <Link
-                to="/explore"
-                className={`group flex items-center border-b-4 h-full ${
-                  location.pathname === "/explore"
-                    ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                    : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
-                }`}
-              >
-                <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg dark:hover:text-mountain-50 hover:cursor-pointer">
-                  {location.pathname === "/explore" ? (
-                    <MdExplore className="w-6 h-6" />
-                  ) : (
-                    <MdOutlineExplore className="w-6 h-6" />
-                  )}
-                  <p className="text-sm">Explore</p>
-                </div>
-              </Link>
+              <ExploreNavigation />
               <Link
                 to="/blogs"
                 className={`group flex items-center border-b-4 h-full ${
@@ -318,26 +303,37 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </nav>
         <div className="flex w-full h-full">
-          <aside className="sticky top-16 z-50 hidden xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-16 h-full">
+          <aside className="flex-shrink-0 sticky top-16 z-50 hidden xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-16 h-[calc(100vh-4rem)]">
             {/* Explore */}
             <Link
               to="/explore"
               className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
             >
               <div
-                className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 dark:group-hover:text-mountain-50 group-hover:text-mountain-950 rounded-lg w-[80%] h-8 ${
-                  location.pathname === "/explore"
-                    ? "bg-mountain-100 dark:bg-mountain-800"
-                    : "text-mountain-600"
-                }`}
+                className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${
+                  location.pathname === "/gallery" ||
+                  location.pathname === "/short"
+                    ? "dark:text-mountain-50 text-mountain-950 bg-mountain-100 dark:bg-mountain-800"
+                    : "dark:text-mountain-600 text-mountain-400"
+                } dark:group-hover:text-mountain-50 group-hover:text-mountain-950`}
               >
-                {location.pathname === "/explore" ? (
+                {location.pathname === "/gallery" ||
+                location.pathname === "/short" ? (
                   <MdExplore className="w-6 h-6" />
                 ) : (
                   <MdOutlineExplore className="w-6 h-6" />
                 )}
               </div>
-              <p className="text-[10px]">Explore</p>
+              <p
+                className={`${
+                  location.pathname === "/gallery" ||
+                  location.pathname === "/short"
+                    ? "dark:text-mountain-50"
+                    : "text-mountain-600 dark:text-mountain-500"
+                } text-[10px] dark:group-hover:text-mountain-50`}
+              >
+                Explore
+              </p>
             </Link>
             {/* Blogs */}
             <Link
@@ -423,7 +419,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               user={user}
             />
           </aside>
-          <div className="w-[calc(100vw-4rem)] min-h-[calc(100vh-4rem)] bg-mountain-50">
+          <div className="w-[calc(100vw-5rem)] min-h-[calc(100vh-4rem)] bg-mountain-50">
             {children}
           </div>
         </div>

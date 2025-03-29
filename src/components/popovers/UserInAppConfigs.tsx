@@ -11,11 +11,15 @@ import { MdDarkMode } from "react-icons/md";
 import { MdLightMode } from "react-icons/md";
 
 // Components
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@/components/ui/skeleton"
 import { useNavigate } from "react-router-dom";
 
 const UserInAppConfigs = () => {
@@ -49,9 +53,10 @@ const UserInAppConfigs = () => {
           <Button
             variant="ghost"
             title="More"
-            className={`flex items-center bg-gradient-to-b ${
-              user ? "from-blue-800 to-pink-800" : "from-mountain-800 to-mountain-300 "
-            } rounded-full w-8 h-8`}
+            className={`flex items-center bg-gradient-to-b ${user
+              ? "from-blue-800 to-pink-800"
+              : "from-mountain-800 to-mountain-300 "
+              } rounded-full w-8 h-8`}
             onMouseEnter={() => setOpen(true)}
           >
             <FaReact className="size-5 text-white" />
@@ -72,8 +77,12 @@ const UserInAppConfigs = () => {
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col">
-                  <p className="text-mountain-950 dark:text-mountain-50">{user.name || "User Sample"}</p>
-                  <p className="text-mountain-500 text-xs">{user.email || "example123@gmail.com"}</p>
+                  <p className="text-mountain-950 dark:text-mountain-50">
+                    {user.name || "User Sample"}
+                  </p>
+                  <p className="text-mountain-500 text-xs">
+                    {user.email || "example123@gmail.com"}
+                  </p>
                 </div>
               </div>
             </div>

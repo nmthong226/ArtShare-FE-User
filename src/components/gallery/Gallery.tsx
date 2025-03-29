@@ -148,13 +148,14 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
     <div className="">
       <RowsPhotoAlbum
         spacing={8}
+        targetRowHeight={256}
         photos={uniqueGalleryPhotos}
         render={{ image: ImageRenderer }}
       />
 
-      <Paper className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-white rounded-full shadow-lg z-50">
+      <Paper className="bottom-4 left-1/2 z-50 fixed bg-white shadow-lg rounded-full -translate-x-1/2 transform">
         <ToggleButtonGroup
-          className="m-1.5 flex gap-2"
+          className="flex gap-2 m-1.5"
           size="small"
           value={tab}
           exclusive
@@ -162,14 +163,14 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
         >
           <ToggleButton
             color="primary"
-            className="-m-0.5 border-0 py-2 px-4 rounded-full normal-case"
+            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case"
             value="for-you"
           >
             For you
           </ToggleButton>
           <ToggleButton
             color="primary"
-            className="-m-0.5 border-0 py-2 px-4 rounded-full normal-case"
+            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case"
             value="following"
           >
             Following
@@ -178,12 +179,12 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
       </Paper>
 
       {(isLoading || isFetchingNextPage) && (
-        <div className="text-center m-4">
+        <div className="m-4 text-center">
           <LoadingSpinner />
         </div>
       )}
       {isError && (
-        <div className="text-center text-red-500">
+        <div className="text-red-500 text-center">
           {(error as Error).message}
         </div>
       )}

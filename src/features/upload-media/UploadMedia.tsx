@@ -229,46 +229,59 @@ const UploadMedia: React.FC = () => {
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(true)}
-              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 text-white transition-all duration-300
-          ${
-            isImageUpload
-              ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950"
-              : "bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900"
-          }`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
+                isImageUpload
+                  ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-white"
+                  : "bg-gray-900 text-gray-500 opacity-50"
+              }`}
               sx={{
+                borderColor: isImageUpload ? "#4F46E5" : "#4B5563",
                 borderRadius: "2px",
                 textTransform: "none",
-                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                "&:hover": {
+                  backgroundColor: isImageUpload ? undefined : "#374151", // darker gray
+                },
               }}
             >
               <IoMdImage className="mr-2 w-8 h-8" />
               <p className="text-sm">
-                Upload Image{" "}
-                <span className="text-mountain-300">
+                Upload image{" "}
+                <span
+                  className={`${
+                    isImageUpload ? "text-mountain-300" : "text-gray-600"
+                  }`}
+                >
                   ( .png, .jpg, .jpeg, ... )
                 </span>
               </p>
             </Button>
+
             <Button
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(false)}
-              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 text-white transition-all duration-300
-          ${
-            !isImageUpload
-              ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950"
-              : "bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900"
-          }`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
+                !isImageUpload
+                  ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-white"
+                  : "bg-gray-900 text-gray-500 opacity-50"
+              }`}
               sx={{
+                borderColor: !isImageUpload ? "#4F46E5" : "#4B5563",
                 borderRadius: "2px",
                 textTransform: "none",
-                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                "&:hover": {
+                  backgroundColor: !isImageUpload ? undefined : "#374151",
+                },
               }}
             >
               <IoVideocam className="mr-2 w-8 h-8" />
               <p className="text-sm">
-                Upload Video{" "}
-                <span className="text-mountain-300">
+                Upload video{" "}
+                <span
+                  className={`${
+                    !isImageUpload ? "text-mountain-300" : "text-gray-600"
+                  }`}
+                >
                   ( .mp4, .avi, .mov, ... )
                 </span>
               </p>

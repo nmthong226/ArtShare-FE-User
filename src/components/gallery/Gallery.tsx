@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchPosts } from "./api/unsplashService";
+import { fetchPosts } from "./api/post";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Photo, RowsPhotoAlbum } from "react-photo-album";
 import { ImageRenderer } from "./ImageRenderer";
 import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import "react-photo-album/rows.css";
-
 export interface GalleryPhoto extends Photo {
   title: string;
   author: string;
@@ -25,15 +24,15 @@ const getMediaDimensions = (
   });
 };
 
-const IGallery: React.FC = () => {
-  const [filter, setFilter] = useState<string>("for-you");
+const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
+  const [tab, setTab] = useState<string>("for-you");
 
   const handleFilterChange = (
     _: React.MouseEvent<HTMLElement>,
     newFilter: string
   ) => {
     if (newFilter) {
-      setFilter(newFilter);
+      setTab(newFilter);
     }
   };
 
@@ -46,11 +45,11 @@ const IGallery: React.FC = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["posts", filter],
+    queryKey: ["posts", tab, query, filter],
     queryFn: async ({ pageParam = 1 }) => {
-      const response = await fetchPosts(filter, pageParam);
+      const posts = await fetchPosts(pageParam, tab, query, filter);
       const galleryPhotos = await Promise.all(
-        response.data.map(async (post) => {
+        posts.map(async (post) => {
           const mediaDimensions = await getMediaDimensions(post.medias[0].url);
           return {
             key: post.medias[0].url,
@@ -148,6 +147,8 @@ const IGallery: React.FC = () => {
   return (
     <div className="">
       <RowsPhotoAlbum
+        spacing={8}
+        targetRowHeight={256}
         photos={uniqueGalleryPhotos}
         render={{ image: ImageRenderer }}
       />
@@ -156,7 +157,7 @@ const IGallery: React.FC = () => {
         <ToggleButtonGroup
           className="flex gap-2 m-1.5"
           size="small"
-          value={filter}
+          value={tab}
           exclusive
           onChange={handleFilterChange}
         >

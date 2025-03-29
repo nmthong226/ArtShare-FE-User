@@ -6,6 +6,7 @@ import {
   Close as CloseIcon,
   DeleteOutlineOutlined,
   FolderOpen as FolderOpenIcon,
+  SetMealOutlined,
 } from "@mui/icons-material";
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
@@ -32,6 +33,10 @@ const UploadMedia: React.FC = () => {
   // Thumbnail states
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [description, setDescription] = useState("");
+
+  const [imageFiles, setImageFiles] = useState<FileList | undefined>(undefined);
+  const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
 
   const THUMBNAIL_HINT =
     "Recommended: 720x1280 (vertical), less than 2MB, JPG/PNG/GIF format, 9:16 ratio";
@@ -70,74 +75,25 @@ const UploadMedia: React.FC = () => {
 
     const allMedia = [...artPreviews, ...videoPreviews];
 
+    const formData = new FormData();
+
+    // Append form data fields
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("cate_ids", JSON.stringify([1, 2]));
+    formData.append("images", new Blob([imageFiles]));
+
     console.log("Submitting media:", allMedia);
   };
-  // When user uploads new images
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleImageFilesChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const newFiles = event.target.files;
     if (!newFiles || newFiles.length === 0) return;
 
-    const firstFile = newFiles[0];
-    const fileNameWithoutExt = firstFile.name.replace(/\.[^/.]+$/, "");
+    setImageFiles(newFiles);
 
-    // Set title if it's empty
-    if (!title) {
-      setTitle(fileNameWithoutExt);
-    }
-
-    // --- VIDEO MODE ---
-    if (!isImageUpload) {
-      if (!firstFile.type.startsWith("video/")) return;
-
-      const videoURL = URL.createObjectURL(firstFile);
-      const videoElement = document.createElement("video");
-      videoElement.preload = "metadata";
-
-      videoElement.onloadedmetadata = () => {
-        const duration = videoElement.duration;
-        const width = videoElement.videoWidth;
-        const height = videoElement.videoHeight;
-
-        // Duration check (15s–60s)
-        if (duration < 15 || duration > 60) {
-          showSnackbar("Video must be between 15 and 60 seconds.", "error");
-          URL.revokeObjectURL(videoURL);
-          return;
-        }
-
-        // Aspect ratio check for Shorts (9:16 ≈ 0.5625)
-        const ratio = width / height;
-        const isShortRatio = ratio <= 0.58; // Allow some tolerance
-
-        if (!isShortRatio) {
-          showSnackbar(
-            "Recommended format is vertical (9:16) like YouTube Shorts.",
-            "info"
-          );
-        }
-
-        setArtPreviews([videoURL]);
-        extractThumbnail(firstFile);
-
-        videoElement.currentTime = 0;
-        videoElement.onseeked = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          if (ctx) {
-            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            const imageUrl = canvas.toDataURL("image/png");
-            setThumbnail(imageUrl);
-          }
-        };
-      };
-
-      videoElement.src = videoURL;
-      return;
-    }
-
-    // --- IMAGE MODE ---
     const availableSlots = MAX_IMAGES - artPreviews.length;
     if (availableSlots <= 0) return;
 
@@ -157,6 +113,60 @@ const UploadMedia: React.FC = () => {
 
       return updatedPreviews;
     });
+  };
+
+  const handleVideoFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newFiles = event.target.files;
+    if (!newFiles || newFiles.length === 0) return;
+    const videoFile = newFiles[0];
+
+    const videoURL = URL.createObjectURL(videoFile);
+    const videoElement = document.createElement("video");
+    videoElement.preload = "metadata";
+
+    videoElement.onloadedmetadata = () => {
+      const duration = videoElement.duration;
+      const width = videoElement.videoWidth;
+      const height = videoElement.videoHeight;
+
+      // Duration check (15s–60s)
+      if (duration < 15 || duration > 60) {
+        showSnackbar("Video must be between 15 and 60 seconds.", "error");
+        URL.revokeObjectURL(videoURL);
+        return;
+      }
+
+      // Aspect ratio check for Shorts (9:16 ≈ 0.5625)
+      const ratio = width / height;
+      const isShortRatio = ratio <= 0.58; // Allow some tolerance
+
+      if (!isShortRatio) {
+        showSnackbar(
+          "Recommended format is vertical (9:16) like YouTube Shorts.",
+          "info"
+        );
+      }
+
+      setArtPreviews([videoURL]);
+      extractThumbnail(videoFile);
+
+      videoElement.currentTime = 0;
+      videoElement.onseeked = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+          const imageUrl = canvas.toDataURL("image/png");
+          setThumbnail(imageUrl);
+        }
+      };
+    };
+
+    videoElement.src = videoURL;
   };
 
   // Remove image from the previews array
@@ -396,7 +406,7 @@ const UploadMedia: React.FC = () => {
                     if (droppedFiles && droppedFiles.length > 0) {
                       // You may want to wrap the dropped files in a synthetic event object
                       // to use your handleFileChange function, or create a separate handler.
-                      handleFileChange({
+                      handleImageFilesChange({
                         target: { files: droppedFiles },
                       } as React.ChangeEvent<HTMLInputElement>);
                     }
@@ -424,7 +434,7 @@ const UploadMedia: React.FC = () => {
                           multiple
                           accept="image/*"
                           hidden
-                          onChange={handleFileChange}
+                          onChange={handleImageFilesChange}
                         />
 
                         <CloudUploadIcon sx={{ mr: 1 }} />
@@ -509,7 +519,7 @@ const UploadMedia: React.FC = () => {
                       type="file"
                       multiple
                       hidden
-                      onChange={handleFileChange}
+                      onChange={handleImageFilesChange}
                     />
                   </Box>
                 )}
@@ -531,7 +541,7 @@ const UploadMedia: React.FC = () => {
                 e.preventDefault();
                 const droppedFiles = e.dataTransfer.files;
                 if (droppedFiles?.[0]) {
-                  handleFileChange({
+                  handleImageFilesChange({
                     target: { files: droppedFiles },
                   } as React.ChangeEvent<HTMLInputElement>);
                 }
@@ -563,7 +573,7 @@ const UploadMedia: React.FC = () => {
                       type="file"
                       accept="video/*"
                       hidden
-                      onChange={handleFileChange}
+                      onChange={handleVideoFileChange}
                     />
                     <CloudUploadIcon sx={{ mr: 1 }} />
                     <Typography variant="body1" className="text-center">
@@ -596,6 +606,8 @@ const UploadMedia: React.FC = () => {
               isSubmitted={isSubmitted}
               title={title}
               setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
             />
           </Box>
 

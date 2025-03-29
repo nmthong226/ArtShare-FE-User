@@ -128,6 +128,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(errMsg);
       }
       const token = await user.getIdToken();
+      localStorage.setItem("accessToken", token);
       setUser({
         id: user.uid,
         name: user.displayName || "Unknown",

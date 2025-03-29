@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@achmadk/react-loading-overlay": "^3.0.5",
     "@cypress/react": "^9.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",

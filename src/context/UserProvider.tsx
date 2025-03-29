@@ -128,6 +128,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(errMsg);
       }
       const token = await user.getIdToken();
+      localStorage.setItem("accessToken", token);
       setUser({
         id: user.uid,
         name: user.displayName || "Unknown",
@@ -175,6 +176,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       });
       setToken(token);
       console.log("token from google: ", token);
+      localStorage.setItem("accessToken", token);
       // Call backend login API after Firebase authentication
       if (loginResponse && loginResponse.success) {
         window.location.href = "/home"; // Redirect to home

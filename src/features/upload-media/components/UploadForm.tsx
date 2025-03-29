@@ -48,6 +48,8 @@ const UploadForm: React.FC<{
   isSubmitted: boolean;
   title: string;
   setTitle: (value: string) => void;
+  description: string;
+  setDescription: (value: string) => void;
 }> = ({
   isImageUpload,
   thumbnail,
@@ -55,15 +57,17 @@ const UploadForm: React.FC<{
   isSubmitted,
   title,
   setTitle,
+  description,
+  setDescription,
 }) => {
-  const [description, setDescription] = useState("");
+  // const [description, setDescription] = useState("");
   const [isMature, setIsMature] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isChipInputFocused, setIsChipInputFocused] = useState(false);
   const [titleError, setTitleError] = useState(false);
 
-  const handleTitleChange = (e) => {
+  const handleTitleChange = (e: { target: { value: string } }) => {
     setTitle(e.target.value);
     if (isSubmitted) {
       setTitleError(e.target.value.trim() === "");

@@ -1,0 +1,41 @@
+import axios, { AxiosError, AxiosResponse } from "axios";
+
+interface ApiResponse {
+  data: any;
+}
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_BE_URL || "http://localhost:3000/",
+  timeout: 10000,
+});
+
+api.defaults.headers.common["Content-Type"] = "application/json";
+
+api.interceptors.request.use(
+  (config) => {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
+    return config;
+  },
+  (error: AxiosError) => {
+    return Promise.reject(error);
+  }
+);
+
+api.interceptors.response.use(
+  (response: AxiosResponse<ApiResponse>) => {
+    return response;
+  },
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default api;

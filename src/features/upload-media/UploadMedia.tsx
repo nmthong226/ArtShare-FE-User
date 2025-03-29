@@ -207,6 +207,10 @@ const UploadMedia: React.FC = () => {
   const hasSelectedImage =
     selectedPreviewIndex !== null && artPreviews[selectedPreviewIndex];
 
+  const isMediaValid = isImageUpload
+    ? artPreviews.length > 0
+    : artPreviews.length > 0 && thumbnail !== null;
+
   return (
     <Box className="dark:bg-mountain-950 w-full h-full">
       {
@@ -666,6 +670,7 @@ const UploadMedia: React.FC = () => {
               sx={{ textTransform: "none" }}
               className="ml-auto rounded-md"
               onClick={handleSubmit}
+              disabled={!isMediaValid}
             >
               Submit
             </Button>

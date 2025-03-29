@@ -45,6 +45,7 @@ import { FiLogIn } from "react-icons/fi";
 import { IoMailOutline } from "react-icons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
 import ProtectedSidebarItem from "@/components/ProtectedItems/ProtectedSidebarItem";
+import ExploreNavigation from "@/components/popovers/ExploreNavigation";
 
 const UserFunctionality: React.FC<{
   user?: User | null;
@@ -209,30 +210,15 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 Art Share
               </p>
             </div>
-            <Link
-              to="/explore"
-              className={`group flex items-center border-b-4 h-full ${location.pathname === "/explore"
-                ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
-                }`}
-            >
-              <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg dark:hover:text-mountain-50 hover:cursor-pointer">
-                {location.pathname === "/explore" ? (
-                  <MdExplore className="w-6 h-6" />
-                ) : (
-                  <MdOutlineExplore className="w-6 h-6" />
-                )}
-                <p className="text-sm">Explore</p>
-              </div>
-            </Link>
+            <ExploreNavigation />
             <Link
               to="/blogs"
               className={`group flex items-center border-b-4 h-full ${location.pathname === "/blogs"
                 ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+                : "dark:border-mountain-950 hover:border-indigo-300 dark:hover:border-indigo-300 border-white dark:text-mountain-500 text-mountain-700"
                 }`}
             >
-              <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
+              <div className="hidden md:flex items-center space-x-1 lg:space-x-2 dark:group-hover:bg-mountain-1000 group-hover:bg-mountain-100 mt-1 p-2 rounded-lg dark:group-hover:text-mountain-50 group-hover:text-mountain-800 hover:cursor-pointer">
                 {location.pathname === "/blogs" ? (
                   <MdLibraryBooks className="w-6 h-6" />
                 ) : (
@@ -245,10 +231,10 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               to="/shop"
               className={`group flex items-center border-b-4 h-full ${location.pathname === "/shop"
                 ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
-                : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+                : "dark:border-mountain-950 hover:border-indigo-300 dark:hover:border-indigo-300 border-white dark:text-mountain-500 text-mountain-700"
                 }`}
             >
-              <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
+              <div className="hidden md:flex items-center space-x-1 lg:space-x-2 dark:group-hover:bg-mountain-1000 group-hover:bg-mountain-100 mt-1 p-2 rounded-lg dark:group-hover:text-mountain-50 group-hover:text-mountain-800 hover:cursor-pointer">
                 {location.pathname === "/shop" ? (
                   <RiShoppingBag4Fill className="w-6 h-6" />
                 ) : (
@@ -288,18 +274,25 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
           >
             <div
-              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/explore"
+              className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === "/gallery" || location.pathname === "/short"
                 ? "dark:text-mountain-50 text-mountain-950 bg-mountain-100 dark:bg-mountain-800"
                 : "dark:text-mountain-600 text-mountain-400"
                 } dark:group-hover:text-mountain-50 group-hover:text-mountain-950`}
             >
-              {location.pathname === "/explore" ? (
+              {location.pathname === "/gallery" || location.pathname === "/short" ? (
                 <MdExplore className="w-6 h-6" />
               ) : (
                 <MdOutlineExplore className="w-6 h-6" />
               )}
             </div>
-            <p className="text-[10px]">Explore</p>
+            <p
+              className={`${location.pathname === "/gallery" || location.pathname === "/short"
+                ? "dark:text-mountain-50"
+                : "text-mountain-600 dark:text-mountain-500"
+                } text-[10px] dark:group-hover:text-mountain-50`}
+            >
+              Explore
+            </p>
           </Link>
           {/* Blogs */}
           <Link
@@ -318,7 +311,14 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <MdOutlineLibraryBooks className="w-6 h-6" />
               )}
             </div>
-            <p className="text-[10px]">Blogs</p>
+            <p
+              className={`${location.pathname === "/blogs"
+                ? "dark:text-mountain-50"
+                : "text-mountain-600 dark:text-mountain-500"
+                } text-[10px] dark:group-hover:text-mountain-50`}
+            >
+              Blogs
+            </p>
           </Link>
           {/* Shop */}
           <Link
@@ -337,7 +337,14 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <RiShoppingBag4Line className="w-6 h-6" />
               )}
             </div>
-            <p className="text-[10px]">Shop</p>
+            <p
+              className={`${location.pathname === "/shop"
+                ? "dark:text-mountain-50"
+                : "text-mountain-600 dark:text-mountain-500"
+                } text-[10px] dark:group-hover:text-mountain-50`}
+            >
+              Shop
+            </p>
           </Link>
           {/* Search */}
           <Link
@@ -356,7 +363,12 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <FiSearch className="w-6 h-6" />
               )}
             </div>
-            <p className="text-[10px]">Search</p>
+            <p
+              className={`${location.pathname === "/search"
+                ? "dark:text-mountain-50"
+                : "text-mountain-600 dark:text-mountain-500"
+                } text-[10px] dark:group-hover:text-mountain-50`}
+            >Search</p>
           </Link>
           <hr className="md:hidden flex border-mountain-200 dark:border-mountain-700 border-t-1 w-full h-1" />
           {/* Private Features */}

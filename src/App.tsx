@@ -15,7 +15,7 @@ import RootLayout from "@/layouts";
 import InAppLayout from "@/layouts/public/InAppLayout";
 import AuthenLayout from "@/layouts/public/AuthenLayout";
 
-// Pages
+// Pages / Features
 import LandingPage from "@/pages/Home";
 import Login from "@/pages/Authentication/Login";
 import SignUp from "@/pages/Authentication/SignUp";
@@ -27,14 +27,15 @@ import Shop from "@/pages/Shop";
 // import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/pages/ArtGeneration";
 import Portfolio from "@/pages/Portfolio";
+import AuthAction from "@/pages/Authentication/HandleCallback";
+import Post from "@/pages/Post";
+import Short from "@/pages/Short";
+import UploadMedia from "@/features/upload-media/UploadMedia";
 
 // Context/Provider
 import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
-import AuthAction from "./pages/Authentication/HandleCallback";
-import UploadMedia from "./features/upload-media/UploadMedia";
-import Post from "./pages/Post";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -48,7 +49,8 @@ const privateAuthRoute = [
 ];
 
 const InAppPublicRoutes = [
-  { path: "/explore", element: <Gallery /> },
+  { path: "/gallery", element: <Gallery /> },
+  { path: "/short", element: <Short /> },
   { path: "/posts/:postId", element: <Post /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/shop", element: <Shop /> },

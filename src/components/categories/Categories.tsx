@@ -95,9 +95,9 @@ export const CategoryPopper: React.FC<CategoriesPopperProps> = ({ open, anchorEl
         <Popper sx={{ zIndex: 1200 }} open={open} anchorEl={anchorEl} placement="bottom" transition className="mt-4 ml-18">
             {({ TransitionProps }) => (
                 <Fade {...TransitionProps} timeout={350}>
-                    <Paper className="dark:bg-mountain-950 w-72 h-[70vh] overflow-y-auto custom-scrollbar">
+                    <Paper className="bg-white dark:bg-mountain-950 w-72 h-[70vh] overflow-y-auto custom-scrollbar">
                         <div className="top-0 sticky bg-mountain-50 dark:bg-mountain-950 p-4 w-full">
-                            <div className="relative flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl h-10 text-mountain-500 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-mountain-400">
+                            <div className="relative flex items-center bg-white dark:bg-mountain-1000 rounded-2xl h-10 text-mountain-500 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-mountain-400">
                                 <FiSearch className="left-2 absolute w-5 h-5" />
                                 <Input
                                     className="shadow-inner pr-8 pl-8 border-1 border-mountain-500 rounded-2xl w-full h-full text-mountain-950 dark:text-mountain-50"

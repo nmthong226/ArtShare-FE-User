@@ -1,6 +1,6 @@
 interface User {
   id: string;
-  username: string;
+  name: string;
   email: string;
   password_hash: string;
   full_name?: string;

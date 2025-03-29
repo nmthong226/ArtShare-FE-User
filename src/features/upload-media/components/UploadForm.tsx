@@ -251,16 +251,14 @@ const UploadForm: React.FC<{
           </Typography>
         </Box>
 
-        {/* Tags */}
-        <Box className="space-y-1 px-2.5">
+        {/* Tags: Commented since we may need this in the future*/}
+        {/* <Box className="space-y-1 px-2.5">
           <Typography className="dark:text-mountain-200 text-base text-left">
             Tags
           </Typography>
           <Typography variant="body2" className="mb-1 dark:text-mountain-500">
             Tags help provide more context about your artwork.{" "}
-            {/* <a href="#" style={{ color: "#3b82f6" }}>
-              Learn more
-            </a> */}
+           
           </Typography>
 
           <FormControl fullWidth variant="outlined">
@@ -340,10 +338,10 @@ const UploadForm: React.FC<{
               Type a tag and press <strong>Enter</strong> to add it.
             </FormHelperText>
           </FormControl>
-        </Box>
+        </Box> */}
 
         {/* Art type */}
-        <Box className="flex flex-col space-y-1 px-2.5 pb-2.5 w-full">
+        <Box className="flex flex-col space-y-1  pb-2.5 w-full">
           {/* Dialog for Selection */}
           {isImageUpload && (
             <Box className="space-y-1 px-2.5 pb-2.5">

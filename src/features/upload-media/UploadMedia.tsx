@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Box, Typography, Button, IconButton, Avatar } from "@mui/material";
 import {
   CloudUpload as CloudUploadIcon,
@@ -10,17 +10,14 @@ import {
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
-import HeroSection from "./components/HeroSection";
 import { Crop as CropIcon } from "@mui/icons-material";
 import CollectionModal from "./components/CollectionModal";
-import UploadToggle from "./components/UploadToggle.";
 import ThumbnailCard from "./components/ThumbnailCard";
 import { useSnackbar } from "@/context/SnackbarProvider";
 
 const MAX_IMAGES = 5;
 
 const UploadMedia: React.FC = () => {
-  const [contentHeight, setContentHeight] = useState<number>(0);
   const heroRef = useRef<HTMLDivElement>(null);
   const [showThumbnailOptions, setShowThumbnailOptions] = useState(false);
   const [showCollectionModal, setShowCollectionModal] = useState(false);
@@ -29,6 +26,7 @@ const UploadMedia: React.FC = () => {
     number | null
   >(null);
   const [artPreviews, setArtPreviews] = useState<string[]>([]);
+  const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
   const [title, setTitle] = useState("");
   const { showSnackbar } = useSnackbar();
   // Thumbnail states
@@ -37,21 +35,6 @@ const UploadMedia: React.FC = () => {
 
   const THUMBNAIL_HINT =
     "Recommended: 720x1280 (vertical), less than 2MB, JPG/PNG/GIF format, 9:16 ratio";
-
-  useEffect(() => {
-    const calculateHeight = () => {
-      if (heroRef.current) {
-        const heroHeight = heroRef.current.getBoundingClientRect().height;
-        const availableHeight = window.innerHeight - heroHeight;
-        setContentHeight(availableHeight);
-      }
-    };
-    calculateHeight();
-    window.addEventListener("resize", calculateHeight);
-    return () => {
-      window.removeEventListener("resize", calculateHeight);
-    };
-  }, []);
 
   const extractThumbnail = (videoFile: File) => {
     const video = document.createElement("video");
@@ -85,7 +68,9 @@ const UploadMedia: React.FC = () => {
       return;
     }
 
-    // Continue with submission...
+    const allMedia = [...artPreviews, ...videoPreviews];
+
+    console.log("Submitting media:", allMedia);
   };
   // When user uploads new images
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -437,9 +422,11 @@ const UploadMedia: React.FC = () => {
                         <input
                           type="file"
                           multiple
+                          accept="image/*"
                           hidden
                           onChange={handleFileChange}
                         />
+
                         <CloudUploadIcon sx={{ mr: 1 }} />
                         <Typography variant="body1" className="text-center">
                           Upload your art
@@ -530,93 +517,63 @@ const UploadMedia: React.FC = () => {
             </Box>
           ) : (
             // -------- VIDEO UPLOAD FLOW --------
-            <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
-              {/* VIDEO player */}
-              <Box
-                className="bg-black rounded"
-                sx={{
-                  height: 300,
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  overflow: "hidden",
-                }}
-              >
-                {artPreviews.length > 0 ? (
-                  <video
-                    src={artPreviews[0]}
-                    controls
-                    className="rounded w-full h-full object-contain"
-                  />
-                ) : (
-                  <Box
-                    className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const droppedFiles = e.dataTransfer.files;
-                      if (droppedFiles?.[0]) {
-                        handleFileChange({
-                          target: { files: droppedFiles },
-                        } as React.ChangeEvent<HTMLInputElement>);
-                      }
+            <Box
+              className="relative w-full border border-gray-500 border-dashed rounded-md flex flex-col"
+              sx={{
+                aspectRatio: "9 / 16", // Optional: keeps a vertical shape for empty state
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const droppedFiles = e.dataTransfer.files;
+                if (droppedFiles?.[0]) {
+                  handleFileChange({
+                    target: { files: droppedFiles },
+                  } as React.ChangeEvent<HTMLInputElement>);
+                }
+              }}
+            >
+              {artPreviews.length > 0 ? (
+                <video
+                  src={artPreviews[0]}
+                  controls
+                  className="rounded w-full h-full object-contain"
+                />
+              ) : (
+                <>
+                  <Button
+                    variant="text"
+                    component="label"
+                    size="small"
+                    className="mb-2 border-mountain-600"
+                    sx={{
+                      backgroundColor: "transparent",
+                      color: "white",
+                      borderRadius: "10px",
+                      border: "1px solid",
+                      textTransform: "none",
+                      "&:hover": { backgroundColor: "transparent" },
                     }}
                   >
-                    <Button
-                      variant="text"
-                      component="label"
-                      className="mb-2 border-mountain-600"
-                      sx={{
-                        backgroundColor: "transparent",
-                        color: "white",
-                        borderRadius: "10px",
-                        border: "1px solid",
-                        textTransform: "none",
-                        "&:hover": { backgroundColor: "transparent" },
-                      }}
-                    >
-                      <input
-                        type="file"
-                        accept="video/*"
-                        hidden
-                        onChange={handleFileChange}
-                      />
-                      <CloudUploadIcon sx={{ mr: 1 }} />
-                      <Typography>Upload your video</Typography>
-                    </Button>
-                    <Typography>or drag and drop here</Typography>
-                  </Box>
-                )}
-              </Box>
-              {!isImageUpload && artPreviews.length > 0 && (
-                <Box className="mt-4">
-                  <Typography
-                    variant="body2"
-                    className="mb-2 font-semibold dark:text-white text-base"
-                  >
-                    Thumbnail
+                    <input
+                      type="file"
+                      accept="video/*"
+                      hidden
+                      onChange={handleFileChange}
+                    />
+                    <CloudUploadIcon sx={{ mr: 1 }} />
+                    <Typography variant="body1" className="text-center">
+                      Upload your video
+                    </Typography>
+                  </Button>
+                  <Typography variant="body1" className="text-center">
+                    or drag and drop here
                   </Typography>
-
-                  <ThumbnailCard
-                    thumbnail={thumbnail || undefined}
-                    onUpload={handleThumbnailUpload}
-                    onChange={() =>
-                      document.getElementById("thumbnail-upload")?.click()
-                    }
-                    onDownload={() => {
-                      if (thumbnail) {
-                        const a = document.createElement("a");
-                        a.href = thumbnail;
-                        a.download = "thumbnail.png";
-                        a.click();
-                      }
-                    }}
-                  />
-                  <Typography variant="caption" color="gray">
-                    {THUMBNAIL_HINT}
-                  </Typography>
-                </Box>
+                </>
               )}
             </Box>
           )}

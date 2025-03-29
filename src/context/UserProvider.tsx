@@ -102,6 +102,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       // Retrieve and set the token
       const token = await user.getIdToken();
+      localStorage.setItem("accessToken", token);
       setToken(token);
 
       // Return the token for further processing (e.g., navigation)
@@ -175,6 +176,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         email: user.email || "Unknown",
       });
       setToken(token);
+      localStorage.setItem("accessToken", token);
       console.log("token from google: ", token);
       // Call backend login API after Firebase authentication
       if (loginResponse && loginResponse.success) {

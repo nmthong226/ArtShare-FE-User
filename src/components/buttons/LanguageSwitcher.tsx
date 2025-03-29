@@ -1,4 +1,4 @@
-import { useLanguage } from "@/context/LanguageProvider";
+import { useLanguage } from "@/contexts/LanguageProvider";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Globe } from "lucide-react";
 

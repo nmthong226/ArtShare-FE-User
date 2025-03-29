@@ -15,24 +15,27 @@ import RootLayout from "@/layouts";
 import InAppLayout from "@/layouts/public/InAppLayout";
 import AuthenLayout from "@/layouts/public/AuthenLayout";
 
-// Pages
+// Pages / Features
 import LandingPage from "@/pages/Home";
 import Login from "@/pages/Authentication/Login";
 import SignUp from "@/pages/Authentication/SignUp";
 import ForgotPassword from "@/pages/Authentication/ForgotPassword";
 import AccountActivation from "@/pages/Authentication/Activation";
-import Explore from "@/pages/Explore";
-import Blogs from "@/pages/Blogs";
+import Gallery from "./pages/Gallery";
+import Blogs from "./pages/Blogs";
 import Shop from "@/pages/Shop";
+// import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/pages/ArtGeneration";
 import Portfolio from "@/pages/Portfolio";
+import AuthAction from "@/pages/Authentication/HandleCallback";
+import Post from "@/pages/Post";
+import Short from "@/pages/Short";
+import UploadMedia from "@/features/upload-media/UploadMedia";
 
 // Context/Provider
-import { ThemeProvider } from "@/context/ThemeProvider";
-import { LanguageProvider } from "@/context/LanguageProvider";
-import { UserProvider } from "@/context/UserProvider";
-import AuthAction from "./pages/Authentication/HandleCallback";
-import UploadMedia from "./features/upload-media/UploadMedia";
+import { ThemeProvider } from "@/contexts/ThemeProvider";
+import { LanguageProvider } from "@/contexts/LanguageProvider";
+import { UserProvider } from "@/contexts/UserProvider";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -46,16 +49,19 @@ const privateAuthRoute = [
 ];
 
 const InAppPublicRoutes = [
-  { path: "/explore", element: <Explore /> },
+  { path: "/gallery", element: <Gallery /> },
+  { path: "/short", element: <Short /> },
+  { path: "/posts/:postId", element: <Post /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/shop", element: <Shop /> },
 ];
 
 const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
+  { path: "/create-art", element: <ArtGeneration /> },
   { path: "/portfolio", element: <Portfolio /> },
   { path: "/artgen", element: <ArtGeneration /> },
-];;
+];
 
 const App: React.FC = () => {
   return (
@@ -95,7 +101,6 @@ const App: React.FC = () => {
                     element={<InAppLayout>{element}</InAppLayout>}
                   />
                 ))}
-
                 {/* Private In-App Routes (Only accessible by logged-in users) */}
                 {InAppPrivateRoutes.map(({ path, element }) => (
                   <Route

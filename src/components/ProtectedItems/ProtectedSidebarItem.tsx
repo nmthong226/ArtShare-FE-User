@@ -15,11 +15,12 @@ const ProtectedSidebarItem = ({ path, iconActive, iconInactive, label, user }: P
     const navigate = useNavigate();
     const [showDialog, setShowDialog] = useState(false);
 
-    const handleNavigation = () => {
+    const handleNavigation = (pageName: string) => {
         if (typeof user === "undefined") return; // Ensure user check runs first
         if (!user) {
             setShowDialog(true); // Only show dialog if user doesn't exist
         } else {
+            document.title = `ArtShare - ${pageName}`
             navigate(path);
         }
     };
@@ -30,12 +31,12 @@ const ProtectedSidebarItem = ({ path, iconActive, iconInactive, label, user }: P
             <Dialog open={showDialog} onOpenChange={setShowDialog}>
                 <div
                     className="group flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
-                    onClick={handleNavigation}
+                    onClick={() => handleNavigation(label)}
                 >
                     <div
                         className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${location.pathname === path
-                            ? "bg-mountain-100 dark:bg-mountain-800"
-                            : "text-mountain-600"
+                            ? "dark:text-mountain-50 text-mountain-950 bg-mountain-100 dark:bg-mountain-800"
+                            : "dark:text-mountain-600 text-mountain-400"
                             } dark:group-hover:text-mountain-50 group-hover:text-mountain-950`}
                     >
                         {location.pathname === path ? iconActive : iconInactive}

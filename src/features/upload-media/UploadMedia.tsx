@@ -230,7 +230,11 @@ const UploadMedia: React.FC = () => {
               size="small"
               onClick={() => setIsImageUpload(true)}
               className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 text-white transition-all duration-300
-          ${isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950" : "bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900"}`}
+          ${
+            isImageUpload
+              ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950"
+              : "bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900"
+          }`}
               sx={{
                 borderRadius: "2px",
                 textTransform: "none",
@@ -239,7 +243,10 @@ const UploadMedia: React.FC = () => {
             >
               <IoMdImage className="mr-2 w-8 h-8" />
               <p className="text-sm">
-                Upload Image <span className="text-mountain-300">( .png, .jpg, .jpeg, ... )</span>
+                Upload Image{" "}
+                <span className="text-mountain-300">
+                  ( .png, .jpg, .jpeg, ... )
+                </span>
               </p>
             </Button>
             <Button
@@ -247,7 +254,11 @@ const UploadMedia: React.FC = () => {
               size="small"
               onClick={() => setIsImageUpload(false)}
               className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 text-white transition-all duration-300
-          ${!isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950" : "bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900"}`}
+          ${
+            !isImageUpload
+              ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950"
+              : "bg-gradient-to-r from-slate-800 via-slate-700 to-slate-900"
+          }`}
               sx={{
                 borderRadius: "2px",
                 textTransform: "none",
@@ -256,11 +267,14 @@ const UploadMedia: React.FC = () => {
             >
               <IoVideocam className="mr-2 w-8 h-8" />
               <p className="text-sm">
-                Upload Video <span className="text-mountain-300">( .mp4, .avi, .mov, ... )</span>
+                Upload Video{" "}
+                <span className="text-mountain-300">
+                  ( .mp4, .avi, .mov, ... )
+                </span>
               </p>
             </Button>
           </div>
-          <hr className="my-4 border-mountain-700 border-t-1 w-full"/>
+          <hr className="my-4 border-mountain-700 border-t-1 w-full" />
           {isImageUpload ? (
             // -------- IMAGE UPLOAD FLOW --------
             <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
@@ -606,6 +620,8 @@ const UploadMedia: React.FC = () => {
               thumbnail={thumbnail}
               onThumbnailChange={setThumbnail}
               isSubmitted={isSubmitted}
+              title={title}
+              setTitle={setTitle}
             />
           </Box>
 
@@ -641,7 +657,6 @@ const UploadMedia: React.FC = () => {
               Submit
             </Button>
           </Box>
-
         </Box>
       </Box>
     </Box>

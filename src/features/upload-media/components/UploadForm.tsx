@@ -12,7 +12,11 @@ import {
   FormControl,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
-import { CloseOutlined, ContentCopyOutlined } from "@mui/icons-material";
+import {
+  CloseOutlined,
+  ContentCopyOutlined,
+  ErrorOutlineOutlined,
+} from "@mui/icons-material";
 import { ImageUpIcon } from "lucide-react";
 // import SearchIcon from "@mui/icons-material/Search";
 // import CloseIcon from "@mui/icons-material/Close";
@@ -42,13 +46,29 @@ const UploadForm: React.FC<{
   thumbnail: string | null;
   onThumbnailChange: (url: string) => void;
   isSubmitted: boolean;
-}> = ({ isImageUpload, thumbnail, onThumbnailChange, isSubmitted }) => {
-  const [title, setTitle] = useState("");
+  title: string;
+  setTitle: (value: string) => void;
+}> = ({
+  isImageUpload,
+  thumbnail,
+  onThumbnailChange,
+  isSubmitted,
+  title,
+  setTitle,
+}) => {
   const [description, setDescription] = useState("");
   const [isMature, setIsMature] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isChipInputFocused, setIsChipInputFocused] = useState(false);
+  const [titleError, setTitleError] = useState(false);
+
+  const handleTitleChange = (e) => {
+    setTitle(e.target.value);
+    if (isSubmitted) {
+      setTitleError(e.target.value.trim() === "");
+    }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue.trim()) {
@@ -79,13 +99,17 @@ const UploadForm: React.FC<{
           </Typography>
         </Box>
 
-        <FormControl fullWidth error={isSubmitted && !title.trim()} className="space-y-1 px-2.5 pb-2.5">
+        <FormControl
+          fullWidth
+          error={isSubmitted && !title.trim()}
+          className="space-y-1 px-2.5 pb-2.5"
+        >
           <TextField
             placeholder="What do you call your artwork"
             variant="outlined"
-            fullWidth
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            error={isSubmitted && !title.trim()}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "5px",
@@ -99,7 +123,18 @@ const UploadForm: React.FC<{
             }}
           />
           {isSubmitted && !title.trim() && (
-            <FormHelperText>Title is required</FormHelperText>
+            <FormHelperText>
+              <ErrorOutlineOutlined
+                fontSize="small"
+                sx={{
+                  verticalAlign: "middle",
+                  marginRight: "0.5em",
+                  fontSize: "1.5em",
+                  color: "red",
+                }}
+              />
+              Title is required
+            </FormHelperText>
           )}
         </FormControl>
       </Box>
@@ -228,86 +263,83 @@ const UploadForm: React.FC<{
             </a> */}
           </Typography>
 
-          {/* Chip input box */}
-          <Box
-            className="dark:bg-mountain-950 p-2.5"
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              gap: "6px",
-              px: 1,
-              py: 1,
-              minHeight: 48,
-              border: "1px solid",
-              borderColor: isChipInputFocused ? "mountain.100" : "mountain.400",
-              borderRadius: "8px",
-              transition: "border-color 0.2s ease-in-out",
-              borderWidth: "2px",
-            }}
-          >
-            {tags.map((tag) => (
-              <Chip
-                key={tag}
-                label={tag}
-                onDelete={() => handleDelete(tag)}
-                className="dark:bg-[#3a3a3a] dark:text-white text-base"
-              />
-            ))}
-            <OutlinedInput
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              onFocus={() => setIsChipInputFocused(true)}
-              onBlur={() => setIsChipInputFocused(false)}
-              placeholder={tags.length === 0 ? "Add tag" : ""}
+          <FormControl fullWidth variant="outlined">
+            <Box
+              className="dark:bg-mountain-950 p-2.5"
               sx={{
-                flex: 1,
-                minWidth: "80px",
-                backgroundColor: "transparent",
-                ".MuiOutlinedInput-notchedOutline": {
-                  border: "none", // optional: remove border if it's inside a styled box
-                },
-                padding: 0, // remove internal spacing
-                "& input": {
-                  padding: 0, // remove padding inside the input element
-                },
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: "6px",
+                px: 1,
+                py: 1,
+                minHeight: 48,
+                border: "1px solid",
+                borderColor: isChipInputFocused
+                  ? "mountain.100"
+                  : "mountain.400",
+                borderRadius: "8px",
+                transition: "border-color 0.2s ease-in-out",
+                borderWidth: "2px",
               }}
-              size="small"
-            />
-
-            {/* Right icons inside the box */}
-            {tags.length > 0 && (
-              <IconButton
-                size="small"
-                className="dark:text-[#ccc]"
-                onClick={() => {
-                  navigator.clipboard.writeText(tags.join(", "));
-                  alert("Tags copied to clipboard");
+            >
+              {tags.map((tag) => (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  onDelete={() => handleDelete(tag)}
+                  className="dark:bg-[#3a3a3a] dark:text-white text-base"
+                />
+              ))}
+              <OutlinedInput
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setIsChipInputFocused(true)}
+                onBlur={() => setIsChipInputFocused(false)}
+                placeholder={tags.length === 0 ? "Add tag" : ""}
+                sx={{
+                  flex: 1,
+                  minWidth: "80px",
+                  backgroundColor: "transparent",
+                  ".MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                  padding: 0,
+                  "& input": {
+                    padding: 0,
+                  },
                 }}
-              >
-                <ContentCopyOutlined fontSize="small" />
-              </IconButton>
-            )}
-
-            {tags.length >= 2 && (
-              <IconButton
                 size="small"
-                className="dark:text-[#ccc]"
-                onClick={() => setTags([])}
-              >
-                <CloseOutlined fontSize="small" />
-              </IconButton>
-            )}
-          </Box>
+              />
 
-          {/* Helper text below */}
-          <Typography
-            variant="body2"
-            className="mt-0.5 dark:text-mountain-500"
-          >
-            Type a tag and press <strong>Enter</strong> to add it.
-          </Typography>
+              {tags.length > 0 && (
+                <IconButton
+                  size="small"
+                  className="dark:text-[#ccc]"
+                  onClick={() => {
+                    navigator.clipboard.writeText(tags.join(", "));
+                    alert("Tags copied to clipboard");
+                  }}
+                >
+                  <ContentCopyOutlined fontSize="small" />
+                </IconButton>
+              )}
+
+              {tags.length >= 2 && (
+                <IconButton
+                  size="small"
+                  className="dark:text-[#ccc]"
+                  onClick={() => setTags([])}
+                >
+                  <CloseOutlined fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+            <FormHelperText className="dark:text-mountain-500">
+              Type a tag and press <strong>Enter</strong> to add it.
+            </FormHelperText>
+          </FormControl>
         </Box>
 
         {/* Art type */}

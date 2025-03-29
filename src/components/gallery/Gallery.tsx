@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchPosts } from "./api/unsplashService";
+import { fetchPosts } from "./api/post";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Photo, RowsPhotoAlbum } from "react-photo-album";
 import { ImageRenderer } from "./ImageRenderer";
 import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import "react-photo-album/rows.css";
-import useApi from "@/contexts/useApi";
-
 export interface GalleryPhoto extends Photo {
   title: string;
   author: string;
@@ -27,7 +25,6 @@ const getMediaDimensions = (
 };
 
 const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
-  const api = useApi()
   const [tab, setTab] = useState<string>("for-you");
 
   const handleFilterChange = (
@@ -50,7 +47,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
   } = useInfiniteQuery({
     queryKey: ["posts", tab, query, filter],
     queryFn: async ({ pageParam = 1 }) => {
-      const posts = await fetchPosts(api, pageParam, tab, query, filter);
+      const posts = await fetchPosts(pageParam, tab, query, filter);
       const galleryPhotos = await Promise.all(
         posts.map(async (post) => {
           const mediaDimensions = await getMediaDimensions(post.medias[0].url);
@@ -159,7 +156,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
         <ToggleButtonGroup
           className="m-1.5 flex gap-2"
           size="small"
-          value={filter}
+          value={tab}
           exclusive
           onChange={handleFilterChange}
         >

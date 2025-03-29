@@ -12,7 +12,11 @@ import {
   FormControl,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
-import { CloseOutlined, ContentCopyOutlined } from "@mui/icons-material";
+import {
+  CloseOutlined,
+  ContentCopyOutlined,
+  ErrorOutlineOutlined,
+} from "@mui/icons-material";
 import { ImageUpIcon } from "lucide-react";
 // import SearchIcon from "@mui/icons-material/Search";
 // import CloseIcon from "@mui/icons-material/Close";
@@ -42,13 +46,33 @@ const UploadForm: React.FC<{
   thumbnail: string | null;
   onThumbnailChange: (url: string) => void;
   isSubmitted: boolean;
-}> = ({ isImageUpload, thumbnail, onThumbnailChange, isSubmitted }) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  title: string;
+  setTitle: (value: string) => void;
+  description: string;
+  setDescription: (value: string) => void;
+}> = ({
+  isImageUpload,
+  thumbnail,
+  onThumbnailChange,
+  isSubmitted,
+  title,
+  setTitle,
+  description,
+  setDescription,
+}) => {
+  // const [description, setDescription] = useState("");
   const [isMature, setIsMature] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isChipInputFocused, setIsChipInputFocused] = useState(false);
+  const [titleError, setTitleError] = useState(false);
+
+  const handleTitleChange = (e: { target: { value: string } }) => {
+    setTitle(e.target.value);
+    if (isSubmitted) {
+      setTitleError(e.target.value.trim() === "");
+    }
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && inputValue.trim()) {
@@ -70,22 +94,26 @@ const UploadForm: React.FC<{
   };
 
   return (
-    <Box className="w-full mx-auto dark:text-white text-left space-y-3">
+    <Box className="space-y-3 mx-auto w-full dark:text-white text-left">
       {/* Artwork Title Box */}
-      <Box className=" dark:bg-mountain-900 space-y-3">
-        <Box className="border-b p-2.5 dark:border-mountain-200">
-          <Typography className="font-semibold text-base text-left dark:text-white">
+      <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
+        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+          <Typography className="font-semibold dark:text-white text-base text-left">
             Title
           </Typography>
         </Box>
 
-        <FormControl fullWidth error={isSubmitted && !title.trim()}>
+        <FormControl
+          fullWidth
+          error={isSubmitted && !title.trim()}
+          className="space-y-1 px-2.5 pb-2.5"
+        >
           <TextField
             placeholder="What do you call your artwork"
             variant="outlined"
-            fullWidth
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            error={isSubmitted && !title.trim()}
             sx={{
               "& .MuiOutlinedInput-root": {
                 borderRadius: "5px",
@@ -99,22 +127,33 @@ const UploadForm: React.FC<{
             }}
           />
           {isSubmitted && !title.trim() && (
-            <FormHelperText>Title is required</FormHelperText>
+            <FormHelperText>
+              <ErrorOutlineOutlined
+                fontSize="small"
+                sx={{
+                  verticalAlign: "middle",
+                  marginRight: "0.5em",
+                  fontSize: "1.5em",
+                  color: "red",
+                }}
+              />
+              Title is required
+            </FormHelperText>
           )}
         </FormControl>
       </Box>
 
       {/* Artwork Description Box */}
-      <Box className="dark:bg-mountain-900 rounded-md space-y-2">
+      <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}
-        <Box className="border-b p-2.5 dark:border-mountain-200">
-          <Typography className="font-semibold text-base text-left dark:text-white">
+        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+          <Typography className="font-semibold dark:text-white text-base text-left">
             Details
           </Typography>
         </Box>
 
-        <Box className="px-2.5 pb-2.5 space-y-1">
-          <Typography className="text-base text-left dark:text-mountain-200">
+        <Box className="space-y-1 px-2.5 pb-2.5">
+          <Typography className="dark:text-mountain-200 text-base text-left">
             Description
           </Typography>
           <TextField
@@ -128,15 +167,15 @@ const UploadForm: React.FC<{
             slotProps={{
               input: {
                 className:
-                  "p-2.5  text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
+                  "p-2.5 text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
               },
             }}
           />
         </Box>
 
         {/* Content / Mature Checkbox */}
-        <Box className="px-2.5 pb-2.5 space-y-1">
-          <Typography className="text-base text-left dark:text-mountain-200">
+        <Box className="px-2.5 pb-2.5">
+          <Typography className="dark:text-mountain-200 text-base text-left">
             Content
           </Typography>
           <FormControlLabel
@@ -171,15 +210,15 @@ const UploadForm: React.FC<{
       </Box>
 
       {!isImageUpload && (
-        <Box className="px-2.5 space-y-2">
-          <Typography className="text-base text-left dark:text-mountain-200">
+        <Box className="space-y-2 px-2.5">
+          <Typography className="dark:text-mountain-200 text-base text-left">
             Thumbnail
           </Typography>
           <Typography variant="body2" className="mb-1 dark:text-mountain-500">
             Set a thumbnail that stands out for your video.
           </Typography>
           <Box
-            className="border border-dashed border-gray-500 rounded flex flex-col items-center justify-center h-32"
+            className="flex flex-col justify-center items-center border border-gray-500 border-dashed rounded h-32"
             component="label"
           >
             {thumbnail ? (
@@ -190,7 +229,7 @@ const UploadForm: React.FC<{
               />
             ) : (
               <>
-                <ImageUpIcon className="text-4xl text-gray-400" />
+                <ImageUpIcon className="text-gray-400 text-4xl" />
                 <Typography>Upload file</Typography>
               </>
             )}
@@ -208,113 +247,108 @@ const UploadForm: React.FC<{
       )}
 
       {/* Categorization Box */}
-      <Box className="dark:bg-mountain-900 rounded-md space-y-2">
+      <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}
-        <Box className="border-b p-2.5 dark:border-mountain-200">
-          <Typography className="font-semibold text-base text-left dark:text-white">
+        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+          <Typography className="font-semibold dark:text-white text-base text-left">
             Categorization
           </Typography>
         </Box>
 
-        {/* Tags */}
-        <Box className="px-2.5 space-y-1">
-          <Typography className="text-base text-left dark:text-mountain-200">
+        {/* Tags: Commented since we may need this in the future*/}
+        {/* <Box className="space-y-1 px-2.5">
+          <Typography className="dark:text-mountain-200 text-base text-left">
             Tags
           </Typography>
           <Typography variant="body2" className="mb-1 dark:text-mountain-500">
             Tags help provide more context about your artwork.{" "}
-            {/* <a href="#" style={{ color: "#3b82f6" }}>
-              Learn more
-            </a> */}
+           
           </Typography>
 
-          {/* Chip input box */}
-          <Box
-            className="dark:bg-mountain-950 p-2.5"
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "center",
-              gap: "6px",
-              px: 1,
-              py: 1,
-              minHeight: 48,
-              border: "1px solid",
-              borderColor: isChipInputFocused ? "mountain.100" : "mountain.400",
-              borderRadius: "8px",
-              transition: "border-color 0.2s ease-in-out",
-              borderWidth: "2px",
-            }}
-          >
-            {tags.map((tag) => (
-              <Chip
-                key={tag}
-                label={tag}
-                onDelete={() => handleDelete(tag)}
-                className="text-base dark:bg-[#3a3a3a] dark:text-white"
-              />
-            ))}
-            <OutlinedInput
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              onKeyDown={handleKeyDown}
-              onFocus={() => setIsChipInputFocused(true)}
-              onBlur={() => setIsChipInputFocused(false)}
-              placeholder={tags.length === 0 ? "Add tag" : ""}
+          <FormControl fullWidth variant="outlined">
+            <Box
+              className="dark:bg-mountain-950 p-2.5"
               sx={{
-                flex: 1,
-                minWidth: "80px",
-                backgroundColor: "transparent",
-                ".MuiOutlinedInput-notchedOutline": {
-                  border: "none", // optional: remove border if it's inside a styled box
-                },
-                padding: 0, // remove internal spacing
-                "& input": {
-                  padding: 0, // remove padding inside the input element
-                },
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: "6px",
+                px: 1,
+                py: 1,
+                minHeight: 48,
+                border: "1px solid",
+                borderColor: isChipInputFocused
+                  ? "mountain.100"
+                  : "mountain.400",
+                borderRadius: "8px",
+                transition: "border-color 0.2s ease-in-out",
+                borderWidth: "2px",
               }}
-              size="small"
-            />
-
-            {/* Right icons inside the box */}
-            {tags.length > 0 && (
-              <IconButton
-                size="small"
-                className="dark:text-[#ccc]"
-                onClick={() => {
-                  navigator.clipboard.writeText(tags.join(", "));
-                  alert("Tags copied to clipboard");
+            >
+              {tags.map((tag) => (
+                <Chip
+                  key={tag}
+                  label={tag}
+                  onDelete={() => handleDelete(tag)}
+                  className="dark:bg-[#3a3a3a] dark:text-white text-base"
+                />
+              ))}
+              <OutlinedInput
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setIsChipInputFocused(true)}
+                onBlur={() => setIsChipInputFocused(false)}
+                placeholder={tags.length === 0 ? "Add tag" : ""}
+                sx={{
+                  flex: 1,
+                  minWidth: "80px",
+                  backgroundColor: "transparent",
+                  ".MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                  padding: 0,
+                  "& input": {
+                    padding: 0,
+                  },
                 }}
-              >
-                <ContentCopyOutlined fontSize="small" />
-              </IconButton>
-            )}
-
-            {tags.length >= 2 && (
-              <IconButton
                 size="small"
-                className="dark:text-[#ccc]"
-                onClick={() => setTags([])}
-              >
-                <CloseOutlined fontSize="small" />
-              </IconButton>
-            )}
-          </Box>
+              />
 
-          {/* Helper text below */}
-          <Typography
-            variant="body2"
-            className=" dark:text-mountain-500 mt-0.5"
-          >
-            Type a tag and press <strong>Enter</strong> to add it.
-          </Typography>
-        </Box>
+              {tags.length > 0 && (
+                <IconButton
+                  size="small"
+                  className="dark:text-[#ccc]"
+                  onClick={() => {
+                    navigator.clipboard.writeText(tags.join(", "));
+                    alert("Tags copied to clipboard");
+                  }}
+                >
+                  <ContentCopyOutlined fontSize="small" />
+                </IconButton>
+              )}
+
+              {tags.length >= 2 && (
+                <IconButton
+                  size="small"
+                  className="dark:text-[#ccc]"
+                  onClick={() => setTags([])}
+                >
+                  <CloseOutlined fontSize="small" />
+                </IconButton>
+              )}
+            </Box>
+            <FormHelperText className="dark:text-mountain-500">
+              Type a tag and press <strong>Enter</strong> to add it.
+            </FormHelperText>
+          </FormControl>
+        </Box> */}
 
         {/* Art type */}
-        <Box className="px-2.5 pb-2.5 space-y-1">
+        <Box className="flex flex-col space-y-1  pb-2.5 w-full">
           {/* Dialog for Selection */}
           {isImageUpload && (
-            <Box className="px-2.5 pb-2.5 space-y-1">
+            <Box className="space-y-1 px-2.5 pb-2.5">
               <SubjectSelector />
             </Box>
           )}

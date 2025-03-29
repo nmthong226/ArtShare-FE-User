@@ -101,7 +101,7 @@ const Gallery: React.FC = () => {
         </div>
       </div>
       <div className="gallery-area p-4">
-        <IGallery query={query} categories={selectedCategories}/>
+        <IGallery query={query} filter={selectedCategories}/>
       </div>
     </div>
   );

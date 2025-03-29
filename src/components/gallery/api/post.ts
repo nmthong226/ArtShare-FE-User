@@ -1,6 +1,7 @@
 import { Post } from "@/types";
 import { MEDIA_TYPE } from "@/constants";
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
+import api from "@/api/baseApi";
 
 const ACCESS_KEY = import.meta.env.VITE_UNSPLASH_ACCESS_KEY as string;
 
@@ -74,7 +75,6 @@ export const fetchPhotos = (page = 1) =>
   });
 
 export const fetchPosts = async (
-  api: AxiosInstance,
   page: number,
   tab?: string,
   query?: string,
@@ -82,19 +82,19 @@ export const fetchPosts = async (
   pageSize: number = 12
 ): Promise<Post[]> => {
   try {
-    if (tab) {
-      const response = await api.get<Post[]>(
-        `/posts/${tab}&page=${page}&page_size=${pageSize}`
-      );
-      console.log(response.data);
-      return response.data;
-    } else if (query || filter) {
+    if (query || filter && filter.length > 0) {
+      console.log(`/posts/search?q=${query}&page=${page}&page_size=${pageSize}`)
       const response = await api.get<Post[]>(
         `/posts/search?q=${query}&page=${page}&page_size=${pageSize}`
       );
       return response.data;
+    } else {
+      console.log(`/posts/${tab}?page=${page}&page_size=${pageSize}`)
+      const response = await api.get<Post[]>(
+        `/posts/${tab}?page=${page}&page_size=${pageSize}`
+      );
+      return response.data;
     }
-    return [];
   } catch (error) {
     console.error("Error fetching posts:", error);
     return [];

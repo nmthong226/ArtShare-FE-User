@@ -402,7 +402,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <hr className="md:hidden flex border-mountain-200 dark:border-mountain-700 border-t-1 w-full h-1" />
             {/* Private Features */}
             <ProtectedSidebarItem
-              path="/submit-media"
+              path="/posts/new"
               iconActive={<RiFolderUploadFill className="w-6 h-6" />}
               iconInactive={<RiFolderUploadLine className="w-6 h-6" />}
               label="Submit"

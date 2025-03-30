@@ -20,7 +20,6 @@ const MAX_IMAGES = 5;
 
 const UploadMedia: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
-  const [showThumbnailOptions, setShowThumbnailOptions] = useState(false);
   const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [isImageUpload, setIsImageUpload] = useState(true);
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState<
@@ -223,7 +222,7 @@ const UploadMedia: React.FC = () => {
         style={{ overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}
-        <Box className="flex flex-col items-start bg-mountain-100 dark:bg-mountain-900 p-6 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
+        <Box className="flex flex-col items-start bg-mountain-100 dark:bg-mountain-900 px-6 py-3 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
           <div className="flex gap-x-1 w-full h-14">
             <Button
               variant="text"
@@ -231,10 +230,11 @@ const UploadMedia: React.FC = () => {
               onClick={() => setIsImageUpload(true)}
               className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
                 isImageUpload
-                  ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-white"
+                  ? "bg-indigo-800 text-white"
                   : "bg-gray-900 text-gray-500 opacity-50"
               }`}
               sx={{
+                height: 40,
                 borderColor: isImageUpload ? "#4F46E5" : "#4B5563",
                 borderRadius: "2px",
                 textTransform: "none",
@@ -262,10 +262,11 @@ const UploadMedia: React.FC = () => {
               onClick={() => setIsImageUpload(false)}
               className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
                 !isImageUpload
-                  ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-white"
+                  ? "bg-indigo-800 text-white"
                   : "bg-gray-900 text-gray-500 opacity-50"
               }`}
               sx={{
+                height: 40,
                 borderColor: !isImageUpload ? "#4F46E5" : "#4B5563",
                 borderRadius: "2px",
                 textTransform: "none",
@@ -287,15 +288,15 @@ const UploadMedia: React.FC = () => {
               </p>
             </Button>
           </div>
-          <hr className="my-4 border-mountain-700 border-t-1 w-full" />
+          <hr className="my-2 border-mountain-700 border-t-1 w-full" />
           {isImageUpload ? (
             // -------- IMAGE UPLOAD FLOW --------
-            <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
-              <Box className="flex justify-between items-center w-full">
+            <Box className="items-center w-full h-full text-gray-900 dark:text-white">
+              <Box className="flex justify-between items-center w-full mb-2">
                 <Typography className="text-gray-900 dark:text-mountain-200 text-base">
                   {artPreviews.length}/{MAX_IMAGES} images
                 </Typography>
-                {hasSelectedImage && selectedPreviewIndex !== 0 && (
+                {hasSelectedImage && (
                   <Button
                     variant="text"
                     size="small"
@@ -314,66 +315,16 @@ const UploadMedia: React.FC = () => {
                     Remove image
                   </Button>
                 )}
-                {hasSelectedImage && selectedPreviewIndex === 0 && (
-                  <Box className="flex gap-1">
-                    <Button
-                      variant="text"
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCropThumbnail();
-                      }}
-                      className="border-mountain-600 dark:text-white text-black"
-                      sx={{
-                        backgroundColor: "transparent",
-                        borderRadius: "10px",
-                        border: "1px solid",
-                        textTransform: "none",
-                        "&:hover": { backgroundColor: "transparent" },
-                      }}
-                    >
-                      <CropIcon sx={{ mr: 1 }} />
-                      Crop
-                    </Button>
-                    <Button
-                      variant="text"
-                      component="label"
-                      size="small"
-                      onClick={(e) => e.stopPropagation()}
-                      className="border-mountain-600 dark:text-white text-black"
-                      sx={{
-                        backgroundColor: "transparent",
-                        borderRadius: "10px",
-                        border: "1px solid white",
-                        textTransform: "none",
-                        "&:hover": { backgroundColor: "transparent" },
-                      }}
-                    >
-                      <CloudUploadIcon sx={{ mr: 1 }} />
-                      Replace image
-                      <input
-                        type="file"
-                        hidden
-                        onChange={handleThumbnailUpload}
-                      />
-                    </Button>
-                  </Box>
-                )}
               </Box>
 
-              {/* Main preview of the first image */}
+              {/* Preview */}
               {artPreviews.length > 0 ? (
                 <Box
-                  className="bg-mountain-100 dark:bg-mountain-900 mb-4 rounded w-full flex flex-col"
                   sx={{
-                    maxHeight: {
-                      xs: 300, // mobile
-                      sm: 360, // small tablets
-                      md: 420, // medium desktops
-                      lg: 480, // large screens
-                    },
-                    p: 2,
-                    gap: 1,
+                    flexGrow: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                     overflow: "hidden",
                   }}
                 >
@@ -517,6 +468,64 @@ const UploadMedia: React.FC = () => {
                   )}
                 </Box>
               )}
+
+              {/* Art Previews Carousel */}
+              <Box
+                className="flex gap-2 custom-scrollbar"
+                sx={{
+                  flexShrink: 0,
+                  marginTop: "8px",
+                }}
+              >
+                {artPreviews.map((preview, index) => (
+                  <Box
+                    key={index}
+                    className="relative border-1 rounded-md cursor-pointer"
+                    sx={{
+                      borderColor:
+                        selectedPreviewIndex === index
+                          ? "primary.main"
+                          : "transparent",
+                    }}
+                    onClick={() => {
+                      setSelectedPreviewIndex(index);
+                    }}
+                  >
+                    <Avatar
+                      src={preview}
+                      className="rounded-md"
+                      sx={{ width: 80, height: 80 }}
+                    />
+                    {index !== 0 && (
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemovePreview(index);
+                        }}
+                        size="medium"
+                        className="top-0 right-0 absolute bg-gray-600 hover:bg-gray-700 bg-opacity-70 text-gray-900 dark:text-white"
+                      >
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    )}
+                  </Box>
+                ))}
+
+                {artPreviews.length > 0 && artPreviews.length < MAX_IMAGES && (
+                  <Box
+                    className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
+                    component="label"
+                  >
+                    <AddIcon fontSize="large" />
+                    <input
+                      type="file"
+                      multiple
+                      hidden
+                      onChange={handleFileChange}
+                    />
+                  </Box>
+                )}
+              </Box>
             </Box>
           ) : (
             // -------- VIDEO UPLOAD FLOW --------
@@ -635,7 +644,7 @@ const UploadMedia: React.FC = () => {
             <Button
               variant="contained"
               sx={{ textTransform: "none" }}
-              className="ml-auto rounded-md"
+              className="text-white ml-auto rounded-md bg-gradient-to-r from-indigo-800 via-violet-850 to-violet-800"
               onClick={handleSubmit}
               disabled={!isMediaValid}
             >

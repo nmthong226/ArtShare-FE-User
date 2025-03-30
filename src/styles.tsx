@@ -191,7 +191,7 @@ export const lightTheme = createTheme({
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          color: "#6b7280", // Gray-600 for icons in light mode
+          color: "#000",
         },
       },
     },

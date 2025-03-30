@@ -149,7 +149,8 @@ const UploadMedia: React.FC = () => {
         );
       }
 
-      setArtPreviews([videoURL]);
+      setVideoPreviews([videoURL]);
+      setVideoFile(videoFile); // ✅ Optional: useful if needed later
       extractThumbnail(videoFile);
 
       videoElement.currentTime = 0;
@@ -291,9 +292,9 @@ const UploadMedia: React.FC = () => {
             // -------- IMAGE UPLOAD FLOW --------
             <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
               <Box className="flex justify-between items-center w-full">
-                {/* <Typography className="text-gray-900 dark:text-mountain-200 text-base">
+                <Typography className="text-gray-900 dark:text-mountain-200 text-base">
                   {artPreviews.length}/{MAX_IMAGES} images
-                </Typography> */}
+                </Typography>
                 {hasSelectedImage && selectedPreviewIndex !== 0 && (
                   <Button
                     variant="text"
@@ -322,10 +323,9 @@ const UploadMedia: React.FC = () => {
                         e.stopPropagation();
                         handleCropThumbnail();
                       }}
-                      className="border-mountain-600"
+                      className="border-mountain-600 dark:text-white text-black"
                       sx={{
                         backgroundColor: "transparent",
-                        color: "white",
                         borderRadius: "10px",
                         border: "1px solid",
                         textTransform: "none",
@@ -340,10 +340,9 @@ const UploadMedia: React.FC = () => {
                       component="label"
                       size="small"
                       onClick={(e) => e.stopPropagation()}
-                      className="border-mountain-600"
+                      className="border-mountain-600 dark:text-white text-black"
                       sx={{
                         backgroundColor: "transparent",
-                        color: "white",
                         borderRadius: "10px",
                         border: "1px solid white",
                         textTransform: "none",
@@ -365,34 +364,103 @@ const UploadMedia: React.FC = () => {
               {/* Main preview of the first image */}
               {artPreviews.length > 0 ? (
                 <Box
-                  className="bg-mountain-900 mb-4 rounded w-full h-full"
+                  className="bg-mountain-100 dark:bg-mountain-900 mb-4 rounded w-full flex flex-col"
                   sx={{
-                    height: 300,
+                    maxHeight: {
+                      xs: 300, // mobile
+                      sm: 360, // small tablets
+                      md: 420, // medium desktops
+                      lg: 480, // large screens
+                    },
                     p: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+                    gap: 1,
                     overflow: "hidden",
                   }}
                 >
-                  {!isImageUpload ? (
-                    <video
-                      src={artPreviews[0]}
-                      controls
-                      className="rounded w-full h-full"
-                      style={{ objectFit: "contain" }}
-                    />
-                  ) : (
-                    <img
-                      src={
-                        selectedPreviewIndex !== null
-                          ? artPreviews[selectedPreviewIndex]
-                          : artPreviews[0]
-                      }
-                      alt="Preview"
-                      className="w-full max-h-96 object-contain"
-                    />
-                  )}
+                  {/* Preview area */}
+                  <Box
+                    sx={{
+                      flex: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      overflow: "hidden",
+                      minHeight: 100,
+                    }}
+                  >
+                    {selectedPreviewIndex !== null &&
+                    artPreviews[selectedPreviewIndex] ? (
+                      <img
+                        src={artPreviews[selectedPreviewIndex]}
+                        alt="Preview"
+                        className="w-full max-h-full object-contain"
+                        style={{ maxHeight: "100%", maxWidth: "100%" }}
+                      />
+                    ) : null}
+                  </Box>
+
+                  {/* Art Previews Carousel */}
+                  <Box
+                    className="flex gap-2 custom-scrollbar"
+                    sx={{
+                      flexShrink: 0,
+
+                      overflowX: "auto",
+
+                      mt: 1,
+                    }}
+                  >
+                    {artPreviews.map((preview, index) => (
+                      <Box
+                        key={index}
+                        className="relative border-1 rounded-md cursor-pointer"
+                        sx={{
+                          borderColor:
+                            selectedPreviewIndex === index
+                              ? "primary.main"
+                              : "transparent",
+                        }}
+                        onClick={() => {
+                          setSelectedPreviewIndex(index);
+                        }}
+                      >
+                        <Avatar
+                          src={preview}
+                          className="rounded-md"
+                          sx={{ width: 80, height: 80 }}
+                        />
+                        {index !== 0 && (
+                          <IconButton
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemovePreview(index);
+                            }}
+                            size="medium"
+                            className="top-0 right-0 absolute bg-gray-600 hover:bg-gray-700 bg-opacity-70 text-gray-900 dark:text-white"
+                          >
+                            <CloseIcon fontSize="small" />
+                          </IconButton>
+                        )}
+                      </Box>
+                    ))}
+
+                    {artPreviews.length > 0 &&
+                      artPreviews.length < MAX_IMAGES && (
+                        <Box
+                          className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
+                          component="label"
+                        >
+                          <AddIcon fontSize="large" />
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            hidden
+                            onChange={handleImageFilesChange}
+                          />
+                        </Box>
+                      )}
+                  </Box>
                 </Box>
               ) : (
                 <Box
@@ -449,81 +517,6 @@ const UploadMedia: React.FC = () => {
                   )}
                 </Box>
               )}
-              {/* Art Previews Carousel */}
-              <Box className="flex gap-2 custom-scrollbar">
-                {artPreviews.map((preview, index) => (
-                  <Box
-                    key={index}
-                    className="relative border-1 rounded-md cursor-pointer"
-                    sx={{
-                      borderColor:
-                        selectedPreviewIndex === index
-                          ? "primary.main"
-                          : "transparent",
-                    }}
-                    onClick={() => {
-                      if (index === 0) {
-                        // For the thumbnail item: toggle overlay for crop/upload
-                        setSelectedPreviewIndex(0);
-                        setShowThumbnailOptions(!showThumbnailOptions);
-                      } else {
-                        setSelectedPreviewIndex(index);
-                        handleSelectPreview(index);
-                      }
-                    }}
-                  >
-                    <Avatar
-                      src={preview}
-                      className="rounded-md"
-                      sx={{ width: 80, height: 80 }}
-                    />
-                    {index === 0 && (
-                      <Box
-                        sx={{
-                          backgroundColor: "primary.main",
-                          position: "absolute",
-                          top: "0.25rem",
-                          left: "0.25rem",
-                          color: "black",
-                          fontSize: "0.75rem", // equivalent to text-xs
-                          px: 1,
-                          py: 0.5,
-                          borderRadius: 1,
-                        }}
-                      >
-                        Thumbnail
-                      </Box>
-                    )}
-                    {index !== 0 && (
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemovePreview(index);
-                        }}
-                        size="medium"
-                        className="top-0 right-0 absolute bg-gray-600 hover:bg-gray-700 bg-opacity-70 text-gray-900 dark:text-white"
-                      >
-                        <CloseIcon fontSize="small" />
-                      </IconButton>
-                    )}
-                  </Box>
-                ))}
-
-                {artPreviews.length > 0 && artPreviews.length < MAX_IMAGES && (
-                  <Box
-                    className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
-                    component="label"
-                  >
-                    <AddIcon fontSize="large" />
-                    <input
-                      type="file"
-                      multiple
-                      hidden
-                      onChange={handleImageFilesChange}
-                    />
-                  </Box>
-                )}
-              </Box>
             </Box>
           ) : (
             // -------- VIDEO UPLOAD FLOW --------
@@ -547,11 +540,16 @@ const UploadMedia: React.FC = () => {
                 }
               }}
             >
-              {artPreviews.length > 0 ? (
+              {videoPreviews.length > 0 ? (
                 <video
-                  src={artPreviews[0]}
+                  src={videoPreviews[0]}
                   controls
                   className="rounded w-full h-full object-contain"
+                  style={{
+                    maxHeight: "100%",
+                    width: "100%",
+                    objectFit: "contain",
+                  }}
                 />
               ) : (
                 <>

@@ -142,7 +142,6 @@ const UploadForm: React.FC<{
           )}
         </FormControl>
       </Box>
-
       {/* Artwork Description Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}
@@ -208,44 +207,40 @@ const UploadForm: React.FC<{
           />
         </Box>
       </Box>
-
-      {!isImageUpload && (
-        <Box className="space-y-2 px-2.5">
-          <Typography className="dark:text-mountain-200 text-base text-left">
-            Thumbnail
-          </Typography>
-          <Typography variant="body2" className="mb-1 dark:text-mountain-500">
-            Set a thumbnail that stands out for your video.
-          </Typography>
-          <Box
-            className="flex flex-col justify-center items-center border border-gray-500 border-dashed rounded h-32"
-            component="label"
-          >
-            {thumbnail ? (
-              <img
-                src={thumbnail}
-                alt="Thumbnail"
-                className="h-full object-contain"
-              />
-            ) : (
-              <>
-                <ImageUpIcon className="text-gray-400 text-4xl" />
-                <Typography>Upload file</Typography>
-              </>
-            )}
-            <input
-              type="file"
-              accept="image/*"
-              hidden
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) onThumbnailChange(URL.createObjectURL(file));
-              }}
+      <Box className="space-y-2 px-2.5">
+        <Typography className="dark:text-mountain-200 text-base text-left">
+          Thumbnail
+        </Typography>
+        <Typography variant="body2" className="mb-1 dark:text-mountain-500">
+          Set a thumbnail that stands out for your post.
+        </Typography>
+        <Box
+          className="flex flex-col justify-center items-center border border-gray-500 border-dashed rounded h-32"
+          component="label"
+        >
+          {thumbnail ? (
+            <img
+              src={thumbnail}
+              alt="Thumbnail"
+              className="h-full object-contain"
             />
-          </Box>
+          ) : (
+            <>
+              <ImageUpIcon className="text-gray-400 text-4xl" />
+              <Typography>Upload file</Typography>
+            </>
+          )}
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) onThumbnailChange(URL.createObjectURL(file));
+            }}
+          />
         </Box>
-      )}
-
+      </Box>
       {/* Categorization Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}

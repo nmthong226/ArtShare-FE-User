@@ -6,6 +6,7 @@ import {
   Close as CloseIcon,
   DeleteOutlineOutlined,
   FolderOpen as FolderOpenIcon,
+  SetMealOutlined,
 } from "@mui/icons-material";
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
@@ -21,7 +22,6 @@ const MAX_IMAGES = 5;
 
 const UploadMedia: React.FC = () => {
   const heroRef = useRef<HTMLDivElement>(null);
-  const [showThumbnailOptions, setShowThumbnailOptions] = useState(false);
   const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [isImageUpload, setIsImageUpload] = useState(true);
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState<
@@ -132,6 +132,11 @@ const UploadMedia: React.FC = () => {
     if (!thumbnail && newPreviews.length > 0) {
       setThumbnail(newPreviews[0]);
     }
+    setImageFiles(newFiles);
+
+    if (!thumbnail && newPreviews.length > 0) {
+      setThumbnail(newPreviews[0]);
+    }
 
     setArtPreviews((prevPreviews) => {
       const updatedPreviews = [...prevPreviews, ...newPreviews];
@@ -178,7 +183,8 @@ const UploadMedia: React.FC = () => {
         );
       }
 
-      setArtPreviews([videoURL]);
+      setVideoPreviews([videoURL]);
+      setVideoFile(videoFile); // ✅ Optional: useful if needed later
       extractThumbnail(videoFile);
 
       videoElement.currentTime = 0;
@@ -197,6 +203,7 @@ const UploadMedia: React.FC = () => {
 
     videoElement.src = videoURL;
   };
+
 
   // Remove image from the previews array
   const handleRemovePreview = (index: number) => {
@@ -251,23 +258,23 @@ const UploadMedia: React.FC = () => {
         {/* <div ref={heroRef}>
         <HeroSection />
       </div> */}
-
         <Box
           className="flex gap-3 p-4 w-full h-[calc(100vh-4rem)]"
           style={{ overflow: "hidden" }}
         >
           {/* LEFT COLUMN */}
-          <Box className="flex flex-col items-start bg-mountain-100 dark:bg-mountain-900 p-6 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
+          <Box className="flex flex-col items-start bg-mountain-100 dark:bg-mountain-900 px-6 py-3 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
             <div className="flex gap-x-1 w-full h-14">
               <Button
                 variant="text"
                 size="small"
                 onClick={() => setIsImageUpload(true)}
                 className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${isImageUpload
-                  ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-white"
+                  ? "bg-indigo-800 text-white"
                   : "bg-gray-900 text-gray-500 opacity-50"
                   }`}
                 sx={{
+                  height: 40,
                   borderColor: isImageUpload ? "#4F46E5" : "#4B5563",
                   borderRadius: "2px",
                   textTransform: "none",
@@ -293,10 +300,11 @@ const UploadMedia: React.FC = () => {
                 size="small"
                 onClick={() => setIsImageUpload(false)}
                 className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${!isImageUpload
-                  ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-white"
+                  ? "bg-indigo-800 text-white"
                   : "bg-gray-900 text-gray-500 opacity-50"
                   }`}
                 sx={{
+                  height: 40,
                   borderColor: !isImageUpload ? "#4F46E5" : "#4B5563",
                   borderRadius: "2px",
                   textTransform: "none",
@@ -317,15 +325,19 @@ const UploadMedia: React.FC = () => {
                 </p>
               </Button>
             </div>
-            <hr className="my-4 border-mountain-700 border-t-1 w-full" />
+            <hr className="my-2 border-mountain-700 border-t-1 w-full" />
             {isImageUpload ? (
               // -------- IMAGE UPLOAD FLOW --------
-              <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
-                <Box className="flex justify-between items-center w-full">
-                  {/* <Typography className="text-gray-900 dark:text-mountain-200 text-base">
-                  {artPreviews.length}/{MAX_IMAGES} images
-                </Typography> */}
-                  {hasSelectedImage && selectedPreviewIndex !== 0 && (
+              <Box className="items-center w-full h-full text-gray-900 dark:text-white overflow-hidden flex flex-col">
+                {/* Top row (info + delete button) */}
+                <Box
+                  className="flex justify-between items-center w-full mb-2"
+                  sx={{ flexShrink: 0 }}
+                >
+                  <Typography className="text-gray-900 dark:text-mountain-200 text-base">
+                    {artPreviews.length}/{MAX_IMAGES} images
+                  </Typography>
+                  {hasSelectedImage && (
                     <Button
                       variant="text"
                       size="small"
@@ -344,144 +356,92 @@ const UploadMedia: React.FC = () => {
                       Remove image
                     </Button>
                   )}
-                  {hasSelectedImage && selectedPreviewIndex === 0 && (
-                    <Box className="flex gap-1">
-                      <Button
-                        variant="text"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCropThumbnail();
+                </Box>
+
+                {/* Main Preview Area */}
+                <Box
+                  sx={{
+                    flexGrow: 1,
+                    minHeight: 0,
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                  }}
+                >
+                  {artPreviews.length > 0 ? (
+                    selectedPreviewIndex !== null &&
+                      artPreviews[selectedPreviewIndex] ? (
+                      <img
+                        src={artPreviews[selectedPreviewIndex]}
+                        alt="Preview"
+                        className="w-full object-contain"
+                        style={{
+                          maxHeight: "100%",
+                          maxWidth: "100%",
                         }}
-                        className="border-mountain-600"
-                        sx={{
-                          backgroundColor: "transparent",
-                          color: "white",
-                          borderRadius: "10px",
-                          border: "1px solid",
-                          textTransform: "none",
-                          "&:hover": { backgroundColor: "transparent" },
-                        }}
-                      >
-                        <CropIcon sx={{ mr: 1 }} />
-                        Crop
-                      </Button>
-                      <Button
-                        variant="text"
-                        component="label"
-                        size="small"
-                        onClick={(e) => e.stopPropagation()}
-                        className="border-mountain-600"
-                        sx={{
-                          backgroundColor: "transparent",
-                          color: "white",
-                          borderRadius: "10px",
-                          border: "1px solid white",
-                          textTransform: "none",
-                          "&:hover": { backgroundColor: "transparent" },
-                        }}
-                      >
-                        <CloudUploadIcon sx={{ mr: 1 }} />
-                        Replace image
-                        <input
-                          type="file"
-                          hidden
-                          onChange={handleThumbnailUpload}
-                        />
-                      </Button>
+                      />
+                    ) : null
+                  ) : (
+                    <Box
+                      className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const droppedFiles = e.dataTransfer.files;
+                        if (droppedFiles && droppedFiles.length > 0) {
+                          handleImageFilesChange({
+                            target: { files: droppedFiles },
+                          } as React.ChangeEvent<HTMLInputElement>);
+                        }
+                      }}
+                    >
+                      {showUploadButton && (
+                        <>
+                          <Button
+                            variant="text"
+                            component="label"
+                            size="small"
+                            className="mb-2 border-mountain-600"
+                            sx={{
+                              backgroundColor: "transparent",
+                              color: "white",
+                              borderRadius: "10px",
+                              border: "1px solid",
+                              textTransform: "none",
+                              "&:hover": { backgroundColor: "transparent" },
+                            }}
+                          >
+                            <input
+                              type="file"
+                              multiple
+                              accept="image/*"
+                              hidden
+                              onChange={handleImageFilesChange}
+                            />
+                            <CloudUploadIcon sx={{ mr: 1 }} />
+                            <Typography variant="body1" className="text-center">
+                              Upload your art
+                            </Typography>
+                          </Button>
+                          <Typography variant="body1" className="text-center">
+                            or drag and drop here
+                          </Typography>
+                        </>
+                      )}
                     </Box>
                   )}
                 </Box>
 
-                {/* Main preview of the first image */}
-                {artPreviews.length > 0 ? (
-                  <Box
-                    className="bg-mountain-900 mb-4 rounded w-full h-full"
-                    sx={{
-                      height: 300,
-                      p: 2,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      overflow: "hidden",
-                    }}
-                  >
-                    {!isImageUpload ? (
-                      <video
-                        src={artPreviews[0]}
-                        controls
-                        className="rounded w-full h-full"
-                        style={{ objectFit: "contain" }}
-                      />
-                    ) : (
-                      <img
-                        src={
-                          selectedPreviewIndex !== null
-                            ? artPreviews[selectedPreviewIndex]
-                            : artPreviews[0]
-                        }
-                        alt="Preview"
-                        className="w-full max-h-96 object-contain"
-                      />
-                    )}
-                  </Box>
-                ) : (
-                  <Box
-                    className="flex flex-col justify-center items-center mb-4 border border-gray-500 border-dashed w-full h-full"
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                    }}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const droppedFiles = e.dataTransfer.files;
-                      if (droppedFiles && droppedFiles.length > 0) {
-                        // You may want to wrap the dropped files in a synthetic event object
-                        // to use your handleFileChange function, or create a separate handler.
-                        handleImageFilesChange({
-                          target: { files: droppedFiles },
-                        } as React.ChangeEvent<HTMLInputElement>);
-                      }
-                    }}
-                  >
-                    {/* Conditionally render big upload button when no images */}
-                    {showUploadButton && (
-                      <>
-                        <Button
-                          variant="text"
-                          component="label"
-                          size="small"
-                          className="mb-2 border-mountain-600"
-                          sx={{
-                            backgroundColor: "transparent",
-                            color: "white",
-                            borderRadius: "10px",
-                            border: "1px solid",
-                            textTransform: "none",
-                            "&:hover": { backgroundColor: "transparent" },
-                          }}
-                        >
-                          <input
-                            type="file"
-                            multiple
-                            accept="image/*"
-                            hidden
-                            onChange={handleImageFilesChange}
-                          />
-
-                          <CloudUploadIcon sx={{ mr: 1 }} />
-                          <Typography variant="body1" className="text-center">
-                            Upload your art
-                          </Typography>
-                        </Button>
-                        <Typography variant="body1" className="text-center">
-                          or drag and drop here
-                        </Typography>
-                      </>
-                    )}
-                  </Box>
-                )}
-                {/* Art Previews Carousel */}
-                <Box className="flex gap-2 custom-scrollbar">
+                {/* Carousel (thumbnails) */}
+                <Box
+                  className="flex gap-2 custom-scrollbar mt-2"
+                  sx={{
+                    flexShrink: 0,
+                    overflowX: "auto",
+                  }}
+                >
                   {artPreviews.map((preview, index) => (
                     <Box
                       key={index}
@@ -493,14 +453,7 @@ const UploadMedia: React.FC = () => {
                             : "transparent",
                       }}
                       onClick={() => {
-                        if (index === 0) {
-                          // For the thumbnail item: toggle overlay for crop/upload
-                          setSelectedPreviewIndex(0);
-                          setShowThumbnailOptions(!showThumbnailOptions);
-                        } else {
-                          setSelectedPreviewIndex(index);
-                          handleSelectPreview(index);
-                        }
+                        setSelectedPreviewIndex(index);
                       }}
                     >
                       <Avatar
@@ -508,23 +461,6 @@ const UploadMedia: React.FC = () => {
                         className="rounded-md"
                         sx={{ width: 80, height: 80 }}
                       />
-                      {index === 0 && (
-                        <Box
-                          sx={{
-                            backgroundColor: "primary.main",
-                            position: "absolute",
-                            top: "0.25rem",
-                            left: "0.25rem",
-                            color: "black",
-                            fontSize: "0.75rem", // equivalent to text-xs
-                            px: 1,
-                            py: 0.5,
-                            borderRadius: 1,
-                          }}
-                        >
-                          Thumbnail
-                        </Box>
-                      )}
                       {index !== 0 && (
                         <IconButton
                           onClick={(e) => {
@@ -547,6 +483,7 @@ const UploadMedia: React.FC = () => {
                     >
                       <AddIcon fontSize="large" />
                       <input
+                        accept="image/*"
                         type="file"
                         multiple
                         hidden
@@ -578,11 +515,16 @@ const UploadMedia: React.FC = () => {
                   }
                 }}
               >
-                {artPreviews.length > 0 ? (
+                {videoPreviews.length > 0 ? (
                   <video
-                    src={artPreviews[0]}
+                    src={videoPreviews[0]}
                     controls
                     className="rounded w-full h-full object-contain"
+                    style={{
+                      maxHeight: "100%",
+                      width: "100%",
+                      objectFit: "contain",
+                    }}
                   />
                 ) : (
                   <>
@@ -668,7 +610,7 @@ const UploadMedia: React.FC = () => {
               <Button
                 variant="contained"
                 sx={{ textTransform: "none" }}
-                className="ml-auto rounded-md"
+                className="text-white ml-auto rounded-md bg-gradient-to-r from-indigo-800 via-violet-850 to-violet-800"
                 onClick={handleSubmit}
                 disabled={!isMediaValid}
               >

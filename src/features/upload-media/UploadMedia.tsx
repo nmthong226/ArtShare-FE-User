@@ -156,27 +156,27 @@ const UploadMedia: React.FC = () => {
   ) => {
     const newFiles = event.target.files;
     if (!newFiles || newFiles.length === 0) return;
-    const videoFile = newFiles[0];
+    const file = newFiles[0];
+    const url = URL.createObjectURL(file);
 
-    const videoURL = URL.createObjectURL(videoFile);
-    const videoElement = document.createElement("video");
-    videoElement.preload = "metadata";
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    video.src = url;
+    video.crossOrigin = "anonymous";
 
-    videoElement.onloadedmetadata = () => {
-      const duration = videoElement.duration;
-      const width = videoElement.videoWidth;
-      const height = videoElement.videoHeight;
+    video.oncanplay = () => {
+      const duration = video.duration;
+      const width = video.videoWidth;
+      const height = video.videoHeight;
 
-      // Duration check (15s–60s)
       if (duration < 15 || duration > 60) {
         showSnackbar("Video must be between 15 and 60 seconds.", "error");
-        URL.revokeObjectURL(videoURL);
+        URL.revokeObjectURL(url);
         return;
       }
 
-      // Aspect ratio check for Shorts (9:16 ≈ 0.5625)
       const ratio = width / height;
-      const isShortRatio = ratio <= 0.58; // Allow some tolerance
+      const isShortRatio = ratio <= 0.58;
 
       if (!isShortRatio) {
         showSnackbar(
@@ -185,13 +185,18 @@ const UploadMedia: React.FC = () => {
         );
       }
 
-      setVideoPreviews([videoURL]);
-      setVideoFile(videoFile);
+      setVideoFile(file);
+      setVideoPreviews([url]);
 
       if (mediaOrder.length === 0) {
-        extractThumbnail(videoFile); // this calls setThumbnail inside it
+        extractThumbnail(file);
         setMediaOrder((prev) => [...prev, "video"]);
       }
+    };
+
+    video.onerror = () => {
+      showSnackbar("Invalid video file.", "error");
+      URL.revokeObjectURL(url);
     };
   };
 
@@ -222,7 +227,7 @@ const UploadMedia: React.FC = () => {
 
   const isMediaValid = isImageUpload
     ? artPreviews.length > 0
-    : artPreviews.length > 0 && thumbnail !== null;
+    : videoPreviews.length > 0 && thumbnail !== null;
 
   return (
     <Box className="dark:bg-mountain-950 w-full h-full">
@@ -511,7 +516,7 @@ const UploadMedia: React.FC = () => {
                 e.preventDefault();
                 const droppedFiles = e.dataTransfer.files;
                 if (droppedFiles?.[0]) {
-                  handleImageFilesChange({
+                  handleVideoFileChange({
                     target: { files: droppedFiles },
                   } as React.ChangeEvent<HTMLInputElement>);
                 }

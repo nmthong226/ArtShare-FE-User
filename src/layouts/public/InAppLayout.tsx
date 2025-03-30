@@ -306,7 +306,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <aside className="flex-shrink-0 sticky top-16 z-50 hidden xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-16 h-[calc(100vh-4rem)]">
             {/* Explore */}
             <Link
-              to="/explore"
+              to="/gallery"
               className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
             >
               <div
@@ -419,7 +419,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               user={user}
             />
           </aside>
-          <div className="w-[calc(100vw-5rem)] min-h-[calc(100vh-4rem)] bg-mountain-50">
+          <div className="sm:w-[calc(100vw-4rem)] w-full min-h-[calc(100vh-4rem)] bg-mountain-50">
             {children}
           </div>
         </div>

@@ -1,13 +1,9 @@
+import api from "@/api/baseApi";
 import { MEDIA_TYPE } from "@/constants";
 import { Category, Post, User, Media } from "@/types";
 import axios from "axios";
 
 const BACK_END_URL = import.meta.env.VITE_BACKEND_URL;
-
-// enum MEDIA_TYPE {
-//   IMAGE = "image",
-//   VIDEO = "video",
-// }
 
 const mediaData: Media[] = [
     {
@@ -69,23 +65,15 @@ const postData: Post = {
     categories: categoryData,
 };
 
-const api = axios.create({
-    baseURL: BACK_END_URL,
-    headers: {
-        "Content-Type": "application/json",
-    },
-    withCredentials: true,
-});
-
 export const fetchPost = async (postId: number) => {
-    // return await api.get<Post>(`?postId=${postId}`);
-    return { data: postData };
+    return await api.get<Post>(`/posts/${postId}`);
+    // return { data: postData };
 };
 
 export const fetchPosts = async (
     artistUsername: string,
     page: number,
-    pageSize: number = 10
+    pageSize: number = 9
 ) => {
     // return await api.get<Post[]>(`?username${artistUsername}?page=${page}?pageSize=${pageSize}`);
     return {

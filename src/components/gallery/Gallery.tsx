@@ -52,10 +52,10 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
         posts.map(async (post) => {
           const mediaDimensions = await getMediaDimensions(post.medias[0].url);
           return {
-            key: post.medias[0].url,
-            title: post.title || "Untitled",
+            key: post.id,
+            title: post.title || "",
             author: post.user.fullName,
-            src: post.medias[0].url,
+            src: post.thumbnailUrl,
             width: mediaDimensions.width,
             height: mediaDimensions.height,
             postLength: post.medias.length,

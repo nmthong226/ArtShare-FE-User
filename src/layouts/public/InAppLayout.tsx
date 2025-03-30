@@ -136,7 +136,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <Sheet>
             <SheetTrigger>
               <div className="sm:hidden flex justify-center items-center w-16 h-16">
-                <IoReorderThreeOutline className="w-6 h-6" />
+                <IoReorderThreeOutline className="w-6 h-6 text-mountain-950 dark:text-mountain-50" />
               </div>
             </SheetTrigger>
             <SheetContent
@@ -394,7 +394,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             user={user}
           />
         </aside>
-        <div className="border-l-1 border-l-mountain-100 dark:border-l-mountain-700 w-[calc(100vw-0rem)] xs:w-[calc(100vw-5rem)] h-full">{children}</div>
+        <div className={`border-l-1 border-l-mountain-100 dark:border-l-mountain-700  h-full ${location.pathname === "/gallery" || location.pathname === "/short" ? "w-[calc(100vw-5rem)]" : "w-full"}`}>{children}</div>
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ const Gallery: React.FC = () => {
 
   return (
     <div className="">
-      <div className="top-16 z-50 sticky flex flex-col gap-4 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950 p-4">
+      <div className="top-16 z-50 sticky flex flex-col gap-4 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950 p-4 w-full">
         <div className="flex items-center gap-6 w-full categories-bar">
           <Button className="p-2 rounded-lg min-w-auto aspect-[1/1] spread-btn" variant="contained" disableElevation onClick={handleToggleCP()}>
             <Ellipsis/>

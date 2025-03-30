@@ -291,8 +291,12 @@ const UploadMedia: React.FC = () => {
           <hr className="my-2 border-mountain-700 border-t-1 w-full" />
           {isImageUpload ? (
             // -------- IMAGE UPLOAD FLOW --------
-            <Box className="items-center w-full h-full text-gray-900 dark:text-white">
-              <Box className="flex justify-between items-center w-full mb-2">
+            <Box className="items-center w-full h-full text-gray-900 dark:text-white overflow-hidden flex flex-col">
+              {/* Top row (info + delete button) */}
+              <Box
+                className="flex justify-between items-center w-full mb-2"
+                sx={{ flexShrink: 0 }}
+              >
                 <Typography className="text-gray-900 dark:text-mountain-200 text-base">
                   {artPreviews.length}/{MAX_IMAGES} images
                 </Typography>
@@ -317,91 +321,61 @@ const UploadMedia: React.FC = () => {
                 )}
               </Box>
 
-              {/* Preview */}
-              {artPreviews.length > 0 ? (
-                <Box
-                  sx={{
-                    flexGrow: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    overflow: "hidden",
-                  }}
-                >
-                  {/* Preview area */}
+              {/* Main Preview Area */}
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  minHeight: 0,
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}
+              >
+                {artPreviews.length > 0 ? (
+                  selectedPreviewIndex !== null &&
+                  artPreviews[selectedPreviewIndex] ? (
+                    <img
+                      src={artPreviews[selectedPreviewIndex]}
+                      alt="Preview"
+                      className="w-full object-contain"
+                      style={{
+                        maxHeight: "100%",
+                        maxWidth: "100%",
+                      }}
+                    />
+                  ) : null
+                ) : (
                   <Box
-                    sx={{
-                      flex: 1,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      overflow: "hidden",
-                      minHeight: 100,
+                    className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const droppedFiles = e.dataTransfer.files;
+                      if (droppedFiles && droppedFiles.length > 0) {
+                        handleImageFilesChange({
+                          target: { files: droppedFiles },
+                        } as React.ChangeEvent<HTMLInputElement>);
+                      }
                     }}
                   >
-                    {selectedPreviewIndex !== null &&
-                    artPreviews[selectedPreviewIndex] ? (
-                      <img
-                        src={artPreviews[selectedPreviewIndex]}
-                        alt="Preview"
-                        className="w-full max-h-full object-contain"
-                        style={{ maxHeight: "100%", maxWidth: "100%" }}
-                      />
-                    ) : null}
-                  </Box>
-
-                  {/* Art Previews Carousel */}
-                  <Box
-                    className="flex gap-2 custom-scrollbar"
-                    sx={{
-                      flexShrink: 0,
-
-                      overflowX: "auto",
-
-                      mt: 1,
-                    }}
-                  >
-                    {artPreviews.map((preview, index) => (
-                      <Box
-                        key={index}
-                        className="relative border-1 rounded-md cursor-pointer"
-                        sx={{
-                          borderColor:
-                            selectedPreviewIndex === index
-                              ? "primary.main"
-                              : "transparent",
-                        }}
-                        onClick={() => {
-                          setSelectedPreviewIndex(index);
-                        }}
-                      >
-                        <Avatar
-                          src={preview}
-                          className="rounded-md"
-                          sx={{ width: 80, height: 80 }}
-                        />
-                        {index !== 0 && (
-                          <IconButton
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleRemovePreview(index);
-                            }}
-                            size="medium"
-                            className="top-0 right-0 absolute bg-gray-600 hover:bg-gray-700 bg-opacity-70 text-gray-900 dark:text-white"
-                          >
-                            <CloseIcon fontSize="small" />
-                          </IconButton>
-                        )}
-                      </Box>
-                    ))}
-
-                    {artPreviews.length > 0 &&
-                      artPreviews.length < MAX_IMAGES && (
-                        <Box
-                          className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
+                    {showUploadButton && (
+                      <>
+                        <Button
+                          variant="text"
                           component="label"
+                          size="small"
+                          className="mb-2 border-mountain-600"
+                          sx={{
+                            backgroundColor: "transparent",
+                            color: "white",
+                            borderRadius: "10px",
+                            border: "1px solid",
+                            textTransform: "none",
+                            "&:hover": { backgroundColor: "transparent" },
+                          }}
                         >
-                          <AddIcon fontSize="large" />
                           <input
                             type="file"
                             multiple
@@ -409,72 +383,26 @@ const UploadMedia: React.FC = () => {
                             hidden
                             onChange={handleImageFilesChange}
                           />
-                        </Box>
-                      )}
-                  </Box>
-                </Box>
-              ) : (
-                <Box
-                  className="flex flex-col justify-center items-center mb-4 border border-gray-500 border-dashed w-full h-full"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    const droppedFiles = e.dataTransfer.files;
-                    if (droppedFiles && droppedFiles.length > 0) {
-                      // You may want to wrap the dropped files in a synthetic event object
-                      // to use your handleFileChange function, or create a separate handler.
-                      handleImageFilesChange({
-                        target: { files: droppedFiles },
-                      } as React.ChangeEvent<HTMLInputElement>);
-                    }
-                  }}
-                >
-                  {/* Conditionally render big upload button when no images */}
-                  {showUploadButton && (
-                    <>
-                      <Button
-                        variant="text"
-                        component="label"
-                        size="small"
-                        className="mb-2 border-mountain-600"
-                        sx={{
-                          backgroundColor: "transparent",
-                          color: "white",
-                          borderRadius: "10px",
-                          border: "1px solid",
-                          textTransform: "none",
-                          "&:hover": { backgroundColor: "transparent" },
-                        }}
-                      >
-                        <input
-                          type="file"
-                          multiple
-                          accept="image/*"
-                          hidden
-                          onChange={handleImageFilesChange}
-                        />
-
-                        <CloudUploadIcon sx={{ mr: 1 }} />
+                          <CloudUploadIcon sx={{ mr: 1 }} />
+                          <Typography variant="body1" className="text-center">
+                            Upload your art
+                          </Typography>
+                        </Button>
                         <Typography variant="body1" className="text-center">
-                          Upload your art
+                          or drag and drop here
                         </Typography>
-                      </Button>
-                      <Typography variant="body1" className="text-center">
-                        or drag and drop here
-                      </Typography>
-                    </>
-                  )}
-                </Box>
-              )}
+                      </>
+                    )}
+                  </Box>
+                )}
+              </Box>
 
-              {/* Art Previews Carousel */}
+              {/* Carousel (thumbnails) */}
               <Box
-                className="flex gap-2 custom-scrollbar"
+                className="flex gap-2 custom-scrollbar mt-2"
                 sx={{
                   flexShrink: 0,
-                  marginTop: "8px",
+                  overflowX: "auto",
                 }}
               >
                 {artPreviews.map((preview, index) => (
@@ -518,10 +446,11 @@ const UploadMedia: React.FC = () => {
                   >
                     <AddIcon fontSize="large" />
                     <input
+                      accept="image/*"
                       type="file"
                       multiple
                       hidden
-                      onChange={handleFileChange}
+                      onChange={handleImageFilesChange}
                     />
                   </Box>
                 )}

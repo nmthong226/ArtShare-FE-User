@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button, IconButton, Avatar } from "@mui/material";
 import {
   CloudUpload as CloudUploadIcon,
@@ -6,6 +6,7 @@ import {
   Close as CloseIcon,
   DeleteOutlineOutlined,
   FolderOpen as FolderOpenIcon,
+  Loop,
 } from "@mui/icons-material";
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
@@ -19,7 +20,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 const MAX_IMAGES = 5;
 
 const UploadMedia: React.FC = () => {
-  const heroRef = useRef<HTMLDivElement>(null);
   const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [isImageUpload, setIsImageUpload] = useState(true);
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState<
@@ -176,13 +176,16 @@ const UploadMedia: React.FC = () => {
       }
 
       const ratio = width / height;
-      const isShortRatio = ratio <= 0.58;
+      const expectedRatio = 9 / 16;
+      const ratioDifference = Math.abs(ratio - expectedRatio);
 
-      if (!isShortRatio) {
+      if (ratioDifference > 0.05) {
         showSnackbar(
-          "Recommended format is vertical (9:16) like YouTube Shorts.",
-          "info"
+          "Video must have a 9:16 aspect ratio (vertical format).",
+          "error"
         );
+        URL.revokeObjectURL(url);
+        return;
       }
 
       setVideoFile(file);
@@ -503,7 +506,11 @@ const UploadMedia: React.FC = () => {
           ) : (
             // -------- VIDEO UPLOAD FLOW --------
             <Box
-              className="relative w-full border border-gray-500 border-dashed rounded-md flex flex-col"
+              className={`relative w-full rounded-md flex flex-col ${
+                videoPreviews.length === 0
+                  ? "border border-gray-500 border-dashed"
+                  : ""
+              }`}
               sx={{
                 aspectRatio: "9 / 16", // Optional: keeps a vertical shape for empty state
                 display: "flex",
@@ -523,16 +530,48 @@ const UploadMedia: React.FC = () => {
               }}
             >
               {videoPreviews.length > 0 ? (
-                <video
-                  src={videoPreviews[0]}
-                  controls
-                  className="rounded w-full h-full object-contain"
-                  style={{
-                    maxHeight: "100%",
-                    width: "100%",
-                    objectFit: "contain",
-                  }}
-                />
+                <Box className="relative w-full h-full">
+                  {/* Video preview */}
+                  <video
+                    src={videoPreviews[0]}
+                    controls
+                    className="rounded w-full h-full object-contain"
+                    style={{
+                      maxHeight: "100%",
+                      width: "100%",
+                      objectFit: "contain",
+                    }}
+                  />
+
+                  {/* Replace video button */}
+                  <Button
+                    component="label"
+                    variant="text"
+                    size="small"
+                    startIcon={<Loop sx={{ fontSize: 18 }} />}
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      zIndex: 2,
+                      backgroundColor: "transparent",
+                      color: "white",
+                      borderRadius: "10px",
+                      border: "1px solid",
+                      borderColor: "mountain-500",
+                      textTransform: "none",
+                      "&:hover": { backgroundColor: "transparent" },
+                    }}
+                  >
+                    Replace video
+                    <input
+                      type="file"
+                      accept="video/*"
+                      hidden
+                      onChange={handleVideoFileChange}
+                    />
+                  </Button>
+                </Box>
               ) : (
                 <>
                   <Button

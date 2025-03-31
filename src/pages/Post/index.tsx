@@ -8,6 +8,7 @@ import { useParams } from "react-router-dom";
 import PostTags from "@/components/posts/PostTags";
 import PostMoreByArtist from "@/components/posts/PostMoreByArtist";
 import PostShare from "@/components/posts/PostShare";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -25,7 +26,11 @@ const Post: React.FC = () => {
   });
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="m-4 text-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (error) {

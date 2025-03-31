@@ -50,12 +50,15 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
       const posts = await fetchPosts(pageParam, tab, query, filter);
       const galleryPhotos = await Promise.all(
         posts.map(async (post) => {
-          const mediaDimensions = await getMediaDimensions(post.medias[0].url);
+          if (!post.thumbnail_url && post.medias.length === 0) {
+            return null;
+          }
+          const mediaDimensions = await getMediaDimensions(post.thumbnail_url || post.medias[0].url);
           return {
-            key: post.id,
+            key: post.id.toString(),
             title: post.title || "",
             author: post.user.fullName,
-            src: post.thumbnailUrl,
+            src: post.thumbnail_url,
             width: mediaDimensions.width,
             height: mediaDimensions.height,
             postLength: post.medias.length,
@@ -140,16 +143,16 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
 
   const galleryPhotos = data ? data.pages.flat() : [];
 
-  const uniqueGalleryPhotos = Array.from(
-    new Map(galleryPhotos.map((photo) => [photo.key, photo])).values()
-  );
+  // const uniqueGalleryPhotos = Array.from(
+  //   new Map(galleryPhotos.map((photo) => [photo.key, photo])).values()
+  // );
 
   return (
-    <div className="">
+    <div className=""> 
       <RowsPhotoAlbum
         spacing={8}
         targetRowHeight={256}
-        photos={uniqueGalleryPhotos}
+        photos={galleryPhotos as GalleryPhoto[]}
         render={{ image: ImageRenderer }}
       />
 

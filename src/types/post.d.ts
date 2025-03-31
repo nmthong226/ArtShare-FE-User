@@ -12,7 +12,7 @@ export interface Post {
   share_count: number;
   comment_count: number;
   created_at: Date;
-  thumbnailUrl?: string;
+  thumbnail_url?: string;
 
   medias: Media[];
   user: User;

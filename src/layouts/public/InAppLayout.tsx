@@ -419,7 +419,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               user={user}
             />
           </aside>
-          <div className="sm:w-[calc(100%-4rem)] w-full min-h-[calc(100vh-4rem)] bg-mountain-50">
+          <div className="xs:w-[calc(100%-4rem)] w-full min-h-[calc(100vh-4rem)] bg-mountain-50">
             {children}
           </div>
         </div>

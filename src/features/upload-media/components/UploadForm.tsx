@@ -10,12 +10,16 @@ import {
   OutlinedInput,
   FormHelperText,
   FormControl,
+  Tooltip,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
 import {
   CloseOutlined,
   ContentCopyOutlined,
+  Crop,
   ErrorOutlineOutlined,
+  PhotoCameraBackOutlined,
+  RestartAltOutlined,
 } from "@mui/icons-material";
 import { ImageUpIcon } from "lucide-react";
 import { ImageCropperModal } from "@/components/ui/image-dropper-modal";
@@ -44,7 +48,6 @@ import { Button } from "@/components/ui/button";
 // ];
 
 const UploadForm: React.FC<{
-  isImageUpload: boolean;
   thumbnail: string | null;
   onThumbnailChange: (url: string) => void;
   isSubmitted: boolean;
@@ -53,7 +56,6 @@ const UploadForm: React.FC<{
   description: string;
   setDescription: (value: string) => void;
 }> = ({
-  isImageUpload,
   thumbnail,
   onThumbnailChange,
   isSubmitted,
@@ -73,9 +75,9 @@ const UploadForm: React.FC<{
 
   useEffect(() => {
     if (!resetedThumbnail || resetedThumbnail == "") {
-      setResetedThumbnail(thumbnail)
+      setResetedThumbnail(thumbnail);
     }
-  }, [resetedThumbnail, thumbnail])
+  }, [resetedThumbnail, thumbnail]);
 
   const handleTitleChange = (e: { target: { value: string } }) => {
     setTitle(e.target.value);
@@ -230,7 +232,7 @@ const UploadForm: React.FC<{
           open={thumbnailCropOpen}
           onClose={() => setThumbnailCropOpen(false)}
           onCropped={(blob) => {
-            onThumbnailChange(URL.createObjectURL(blob))
+            onThumbnailChange(URL.createObjectURL(blob));
           }}
         />
       )}
@@ -261,31 +263,56 @@ const UploadForm: React.FC<{
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
-                const fileUrl = URL.createObjectURL(file)
-                onThumbnailChange(fileUrl)
-                setResetedThumbnail(fileUrl)
+                const fileUrl = URL.createObjectURL(file);
+                onThumbnailChange(fileUrl);
+                setResetedThumbnail(fileUrl);
               }
             }}
           />
         </Box>
-        { thumbnail && 
-            <div className="flex gap-2">
-              <Button
-                variant={"default"}
+        {thumbnail && (
+          <div className="flex gap-2">
+            <Tooltip title="Crop">
+              <IconButton
                 onClick={() => setThumbnailCropOpen(true)}
-                className="dark:border-white cursor-pointer"
+                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
               >
-                Crop
-              </Button>
-              <Button
-                variant={"secondary"}
+                <Crop />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Reset">
+              <IconButton
                 onClick={() => onThumbnailChange(resetedThumbnail ?? "")}
-                className="dark:border-white cursor-pointer"
+                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
               >
-                Reset
-              </Button>
-            </div>
-        }
+                <RestartAltOutlined />
+              </IconButton>
+            </Tooltip>
+
+            <Tooltip title="Replace">
+              <IconButton
+                component="label"
+                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
+              >
+                <PhotoCameraBackOutlined />
+                <input
+                  type="file"
+                  accept="image/*"
+                  hidden
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      const url = URL.createObjectURL(file);
+                      onThumbnailChange(url);
+                      setResetedThumbnail(url);
+                    }
+                  }}
+                />
+              </IconButton>
+            </Tooltip>
+          </div>
+        )}
       </Box>
       {/* Categorization Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
@@ -388,11 +415,9 @@ const UploadForm: React.FC<{
         {/* Art type */}
         <Box className="flex flex-col space-y-1  pb-2.5 w-full">
           {/* Dialog for Selection */}
-          {isImageUpload && (
-            <Box className="space-y-1 px-2.5 pb-2.5">
-              <SubjectSelector />
-            </Box>
-          )}
+          <Box className="space-y-1 px-2.5 pb-2.5">
+            <SubjectSelector />
+          </Box>
         </Box>
       </Box>
     </Box>

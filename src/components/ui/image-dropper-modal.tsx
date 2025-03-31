@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import Cropper, { Area } from 'react-easy-crop';
+import React, { useState, useCallback, useEffect } from "react";
+import Cropper, { Area } from "react-easy-crop";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -7,10 +7,11 @@ import {
   DialogContent,
   DialogActions,
   Typography,
-  IconButton
+  IconButton,
 } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
-import getCroppedImg from '@/utils/cropImage';
+import CloseIcon from "@mui/icons-material/Close";
+import getCroppedImg from "@/utils/cropImage";
+import MuiButton from "@mui/material/Button";
 
 interface Props {
   image: string;
@@ -21,21 +22,26 @@ interface Props {
 
 interface AspectOption {
   label: string;
-  value: number | 'free';
+  value: number | "free";
 }
 
 const aspectOptions: AspectOption[] = [
-  { label: 'Free', value: 'free' },
-  { label: '1:1', value: 1 },
-  { label: '16:9', value: 16 / 9 },
-  { label: '4:3', value: 4 / 3 },
+  { label: "1:1", value: 1 },
+  { label: "3:2", value: 3 / 2 },
+  { label: "2:3", value: 2 / 3 },
+  { label: "9:16", value: 9 / 16 },
 ];
 
-export const ImageCropperModal: React.FC<Props> = ({ image, open, onClose, onCropped }) => {
+export const ImageCropperModal: React.FC<Props> = ({
+  image,
+  open,
+  onClose,
+  onCropped,
+}) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [aspect, setAspect] = useState<number | undefined>(undefined);
-  const [selectedAspect, setSelectedAspect] = useState('Free');
+  const [selectedAspect, setSelectedAspect] = useState("Free");
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   const onCropComplete = useCallback((_: Area, croppedPixels: Area) => {
@@ -51,12 +57,34 @@ export const ImageCropperModal: React.FC<Props> = ({ image, open, onClose, onCro
   };
 
   const handleAspectChange = (option: AspectOption) => {
-    setAspect(option.value === 'free' ? undefined : option.value);
+    setAspect(option.value === "free" ? undefined : option.value);
     setSelectedAspect(option.label);
   };
 
+  useEffect(() => {
+    if (!image) return;
+
+    const img = new Image();
+    img.src = image;
+    img.onload = () => {
+      const naturalAspect = img.width / img.height;
+      setAspect(naturalAspect);
+      setSelectedAspect("Original");
+    };
+  }, [image]);
+
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="lg" fullWidth>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      sx={{
+        "& .MuiDialog-paper": {
+          width: "50vw",
+          maxWidth: "50vw",
+          margin: "auto",
+        },
+      }}
+    >
       <DialogTitle className="flex items-center justify-between">
         <Typography variant="h6">Crop Image</Typography>
         <IconButton onClick={onClose} size="small">
@@ -64,8 +92,19 @@ export const ImageCropperModal: React.FC<Props> = ({ image, open, onClose, onCro
         </IconButton>
       </DialogTitle>
 
-      <DialogContent dividers>
-        <div className="w-full h-[500px] relative rounded-xl overflow-hidden">
+      <DialogContent
+        dividers
+        className="flex flex-col gap-4"
+        sx={{
+          padding: 0,
+          maxHeight: "calc(100vh - 150px)",
+          overflow: "auto",
+        }}
+      >
+        <div
+          className="w-full relative  overflow-hidden"
+          style={{ height: 320, minHeight: 280 }}
+        >
           <Cropper
             image={image}
             crop={crop}
@@ -77,7 +116,7 @@ export const ImageCropperModal: React.FC<Props> = ({ image, open, onClose, onCro
           />
         </div>
 
-        <div className="mt-4 text-sm flex flex-col gap-3 dark:text-white">
+        <div className="text-sm px-6 pb-4 flex flex-col gap-3 dark:text-white">
           <div>
             <label>
               Zoom
@@ -102,7 +141,9 @@ export const ImageCropperModal: React.FC<Props> = ({ image, open, onClose, onCro
             {aspectOptions.map((option) => (
               <Button
                 key={option.label}
-                variant={selectedAspect === option.label ? "default" : "outline"}
+                variant={
+                  selectedAspect === option.label ? "default" : "outline"
+                }
                 onClick={() => handleAspectChange(option)}
                 className="cursor-pointer"
               >
@@ -114,12 +155,25 @@ export const ImageCropperModal: React.FC<Props> = ({ image, open, onClose, onCro
       </DialogContent>
 
       <DialogActions>
-        <Button variant="ghost" onClick={onClose} className="cursor-pointer">
+        <MuiButton
+          variant="outlined"
+          onClick={onClose}
+          sx={{
+            border: "none",
+            color: "#000", // black text
+            fontWeight: 500,
+            "&:hover": {
+              backgroundColor: "#f3f4f6", // subtle gray background on hover (optional)
+              border: "none",
+            },
+          }}
+        >
           Cancel
-        </Button>
-        <Button onClick={cropImage} className="cursor-pointer">
+        </MuiButton>
+
+        <MuiButton variant="contained" onClick={cropImage}>
           Crop & Save
-        </Button>
+        </MuiButton>
       </DialogActions>
     </Dialog>
   );

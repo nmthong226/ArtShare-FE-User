@@ -31,8 +31,16 @@ export const lightTheme = createTheme({
             backgroundColor: "#c7d2fe", // lighter indigo
           },
         },
+        text: {
+          "&.MuiButton-root": {
+            color: "#000000", // black text
+            border: "2px solid #000000", // thicker black border
+            fontWeight: 700, // bold
+          },
+        },
       },
     },
+
     MuiCheckbox: {
       styleOverrides: {
         root: {

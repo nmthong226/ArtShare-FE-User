@@ -619,7 +619,6 @@ const UploadMedia: React.FC = () => {
           {/* Form fields */}
           <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
             <UploadForm
-              isImageUpload={isImageUpload}
               thumbnail={thumbnail}
               onThumbnailChange={setThumbnail}
               isSubmitted={isSubmitted}

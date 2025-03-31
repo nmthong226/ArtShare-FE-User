@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -18,6 +18,8 @@ import {
   ErrorOutlineOutlined,
 } from "@mui/icons-material";
 import { ImageUpIcon } from "lucide-react";
+import { ImageCropperModal } from "@/components/ui/image-dropper-modal";
+import { Button } from "@/components/ui/button";
 // import SearchIcon from "@mui/icons-material/Search";
 // import CloseIcon from "@mui/icons-material/Close";
 
@@ -61,11 +63,19 @@ const UploadForm: React.FC<{
   setDescription,
 }) => {
   // const [description, setDescription] = useState("");
+  const [thumbnailCropOpen, setThumbnailCropOpen] = useState(false);
+  const [resetedThumbnail, setResetedThumbnail] = useState<string | null>(null);
   const [isMature, setIsMature] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isChipInputFocused, setIsChipInputFocused] = useState(false);
   const [titleError, setTitleError] = useState(false);
+
+  useEffect(() => {
+    if (!resetedThumbnail || resetedThumbnail == "") {
+      setResetedThumbnail(thumbnail)
+    }
+  }, [resetedThumbnail, thumbnail])
 
   const handleTitleChange = (e: { target: { value: string } }) => {
     setTitle(e.target.value);
@@ -91,6 +101,13 @@ const UploadForm: React.FC<{
 
   const handleDelete = (tagToDelete: string) => {
     setTags(tags.filter((tag) => tag !== tagToDelete));
+  };
+
+  const [croppedUrl, setCroppedUrl] = useState<string | null>(null);
+
+  const handleCropped = (blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+    setCroppedURL(url);
   };
 
   return (
@@ -207,6 +224,17 @@ const UploadForm: React.FC<{
           />
         </Box>
       </Box>
+      {thumbnail && (
+        <ImageCropperModal
+          image={thumbnail}
+          open={thumbnailCropOpen}
+          onClose={() => setThumbnailCropOpen(false)}
+          onCropped={(blob) => {
+            onThumbnailChange(URL.createObjectURL(blob))
+          }}
+        />
+      )}
+
       <Box className="space-y-2 px-2.5">
         <Typography className="dark:text-mountain-200 text-base text-left">
           Thumbnail
@@ -215,15 +243,11 @@ const UploadForm: React.FC<{
           Set a thumbnail that stands out for your post.
         </Typography>
         <Box
-          className="flex flex-col justify-center items-center border border-gray-500 border-dashed rounded h-32"
+          className="flex flex-col justify-center items-center border border-gray-500 border-dashed rounded min-h-32 overflow-hidden"
           component="label"
         >
           {thumbnail ? (
-            <img
-              src={thumbnail}
-              alt="Thumbnail"
-              className="h-full object-contain"
-            />
+            <img src={thumbnail} alt="Thumbnail" className="max-h-64" />
           ) : (
             <>
               <ImageUpIcon className="text-gray-400 text-4xl" />
@@ -236,10 +260,32 @@ const UploadForm: React.FC<{
             hidden
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) onThumbnailChange(URL.createObjectURL(file));
+              if (file) {
+                const fileUrl = URL.createObjectURL(file)
+                onThumbnailChange(fileUrl)
+                setResetedThumbnail(fileUrl)
+              }
             }}
           />
         </Box>
+        { thumbnail && 
+            <div className="flex gap-2">
+              <Button
+                variant={"default"}
+                onClick={() => setThumbnailCropOpen(true)}
+                className="dark:border-white cursor-pointer"
+              >
+                Crop
+              </Button>
+              <Button
+                variant={"secondary"}
+                onClick={() => onThumbnailChange(resetedThumbnail ?? "")}
+                className="dark:border-white cursor-pointer"
+              >
+                Reset
+              </Button>
+            </div>
+        }
       </Box>
       {/* Categorization Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">

@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa6";
 
 const AuthenLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    let params = useLocation();
+    const params = useLocation();
     const showReturnToLogin = params.pathname === "/forgot-password" || params.pathname === "/email-activation" || location.pathname.includes("auth");
     return (
         <div className="flex justify-center items-center gap-x-4 bg-white dark:bg-mountain-950 shadow-xl w-full h-screen overflow-hidden">

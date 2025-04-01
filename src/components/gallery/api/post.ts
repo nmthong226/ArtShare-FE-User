@@ -1,5 +1,4 @@
 import { Post } from "@/types";
-import { MEDIA_TYPE } from "@/constants";
 import axios from "axios";
 import api from "@/api/baseApi";
 
@@ -21,52 +20,6 @@ const unsplashAPI = axios.create({
     Authorization: `Client-ID ${ACCESS_KEY}`,
   },
 });
-
-const mockPosts = (photos: string[]): Post[] => {
-  const posts: Post[] = [];
-  let toggleSingleImagePost = true;
-
-  for (let i = 0; i < photos.length; ) {
-    const images = toggleSingleImagePost
-      ? photos.slice(i, i + 1) // Single-image post
-      : photos.slice(i, i + 3); // Multi-image post
-
-    if (images.length > 0) {
-      posts.push({
-        id: i,
-        title: `Post ${posts.length + 1}`,
-        user: {
-          userId: i,
-          fullName: `Author ${posts.length + 1}`,
-          username: `author-${posts.length + 1}`,
-          profilePictureUrl: "",
-        },
-        medias: images.map((url) => ({
-          id: i,
-          post_id: i,
-          url,
-          media_type: MEDIA_TYPE.IMAGE,
-          creator_id: i,
-          downloads: 0,
-          created_at: new Date(),
-        })),
-        categories: [],
-        is_published: true,
-        is_private: false,
-        like_count: 0,
-        share_count: 0,
-        comment_count: 0,
-        created_at: new Date(),
-      });
-    }
-
-    i += images.length;
-
-    toggleSingleImagePost = !toggleSingleImagePost;
-  }
-
-  return posts;
-};
 
 export const fetchPhotos = (page = 1) =>
   unsplashAPI.get<UnsplashPhoto[]>("/photos", {

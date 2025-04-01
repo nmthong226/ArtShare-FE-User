@@ -62,6 +62,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             const idToken = await firebaseUser.getIdToken();
             setToken(idToken);
           } catch (err) {
+            console.error("Error retrieving user token:", err);
             setError("Failed to retrieve user token.");
           }
         } else {
@@ -107,8 +108,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       // Return the token for further processing (e.g., navigation)
       return token;
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError((error as Error).message);
       throw error; // Rethrow the error so the caller can handle it
     }
   };
@@ -144,8 +145,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setError(errMsg);
         throw new Error(errMsg);
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError((error as Error).message);
       throw error;
     }
   };
@@ -182,8 +183,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       if (loginResponse && loginResponse.success) {
         window.location.href = "/home"; // Redirect to home
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError((error as Error).message);
     }
   };
 
@@ -218,8 +219,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           setError("Error with Facebook login.");
         }
       }
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError((error as Error).message);
     }
   };
 
@@ -229,8 +230,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       await signOut(auth);
       setUser(null);
       setToken(null);
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError((error as Error).message);
     }
   };
 

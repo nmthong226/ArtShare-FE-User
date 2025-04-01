@@ -1,8 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-
-interface ApiResponse {
-  data: any;
-}
+import axios, { AxiosError } from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BE_URL || "http://localhost:3000/",
@@ -27,7 +23,7 @@ api.interceptors.request.use(
 );
 
 api.interceptors.response.use(
-  (response: AxiosResponse<ApiResponse>) => {
+  (response) => {
     return response;
   },
   (error: AxiosError) => {

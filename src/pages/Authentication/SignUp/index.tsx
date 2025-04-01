@@ -22,9 +22,9 @@ const SignUp = () => {
       const token = await signUpWithEmail(email, password, username); // Get the token
       localStorage.setItem("user_verify", token);
       navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
-    } catch (error: any) {
+    } catch (error) {
       console.log(error);
-      setError(error.message); // Handle any errors during signup
+      setError((error as Error).message); // Handle any errors during signup
     }
   };
 
@@ -32,8 +32,8 @@ const SignUp = () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
       navigate("/gallery"); // Redirect after successful login
-    } catch (error: any) {
-      setError(error.message); // Handle errors from Google login
+    } catch (error) {
+      setError((error as Error).message); // Handle errors from Google login
     }
   };
 
@@ -41,8 +41,8 @@ const SignUp = () => {
     try {
       await signUpWithFacebook(); // Call Facebook login function from UserProvider
       navigate("/home"); // Redirect after successful login
-    } catch (error: any) {
-      setError(error.message); // Handle errors from Facebook login
+    } catch (error) {
+      setError((error as Error).message); // Handle errors from Facebook login
     }
   };
 

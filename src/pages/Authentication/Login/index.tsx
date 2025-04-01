@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
+import { AxiosError } from "axios";
 // import { login } from "@/api/authentication/auth"; // Import the login API function
 
 const Login = () => {
@@ -20,21 +21,23 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await loginWithEmail(email, password); // Call the loginWithEmail function from UserProvider
-      // On successful login, redirect to the explore page or another page
+      await loginWithEmail(email, password);
       navigate("/gallery");
-    } catch (error: any) {
+    } catch (error) {
       console.log(error);
-      // If an error occurs, set the error message so it's visible to the user.
-      let errorMessage = error.message;
-      if (error.code === "auth/user-not-found") {
-        errorMessage = "No user found with this email address.";
-      } else if (error.code === "auth/wrong-password") {
-        errorMessage = "Incorrect password. Please try again.";
-      } else if (error.code === "auth/email-not-verified") {
-        errorMessage = "Please verify your email before logging in.";
+      if (error instanceof AxiosError) {
+        let errorMessage = error.message;
+        if (error.code === "auth/user-not-found") {
+          errorMessage = "No user found with this email address.";
+        } else if (error.code === "auth/wrong-password") {
+          errorMessage = "Incorrect password. Please try again.";
+        } else if (error.code === "auth/email-not-verified") {
+          errorMessage = "Please verify your email before logging in.";
+        }
+        setError(errorMessage);
+        return;
       }
-      setError(errorMessage);
+      setError("An unknown error occurred.");
       // Optionally, you can remain on the login page so the user can correct their input.
     }
   };
@@ -43,8 +46,8 @@ const Login = () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
       navigate("/gallery"); // Redirect after successful login
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError((error as Error).message);
     }
   };
 
@@ -52,8 +55,8 @@ const Login = () => {
     try {
       await signUpWithFacebook(); // Call Facebook login function from UserProvider
       navigate("/gallery"); // Redirect after successful login
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError((error as Error).message);
     }
   };
 

@@ -5,17 +5,13 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
-  Chip,
   IconButton,
-  OutlinedInput,
   FormHelperText,
   FormControl,
   Tooltip,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
 import {
-  CloseOutlined,
-  ContentCopyOutlined,
   Crop,
   ErrorOutlineOutlined,
   PhotoCameraBackOutlined,
@@ -23,7 +19,6 @@ import {
 } from "@mui/icons-material";
 import { ImageUpIcon } from "lucide-react";
 import { ImageCropperModal } from "@/components/ui/image-dropper-modal";
-import { Button } from "@/components/ui/button";
 // import SearchIcon from "@mui/icons-material/Search";
 // import CloseIcon from "@mui/icons-material/Close";
 
@@ -68,49 +63,12 @@ const UploadForm: React.FC<{
   const [thumbnailCropOpen, setThumbnailCropOpen] = useState(false);
   const [resetedThumbnail, setResetedThumbnail] = useState<string | null>(null);
   const [isMature, setIsMature] = useState(false);
-  const [tags, setTags] = useState<string[]>([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isChipInputFocused, setIsChipInputFocused] = useState(false);
-  const [titleError, setTitleError] = useState(false);
 
   useEffect(() => {
     if (!resetedThumbnail || resetedThumbnail == "") {
       setResetedThumbnail(thumbnail);
     }
   }, [resetedThumbnail, thumbnail]);
-
-  const handleTitleChange = (e: { target: { value: string } }) => {
-    setTitle(e.target.value);
-    if (isSubmitted) {
-      setTitleError(e.target.value.trim() === "");
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && inputValue.trim()) {
-      e.preventDefault();
-      if (!tags.includes(inputValue.trim())) {
-        setTags((prevTags) => [...prevTags, inputValue.trim()]);
-      }
-      setInputValue("");
-    }
-
-    // Handle Backspace when input is empty
-    if (e.key === "Backspace" && inputValue === "" && tags.length > 0) {
-      setTags((prevTags) => prevTags.slice(0, -1));
-    }
-  };
-
-  const handleDelete = (tagToDelete: string) => {
-    setTags(tags.filter((tag) => tag !== tagToDelete));
-  };
-
-  const [croppedUrl, setCroppedUrl] = useState<string | null>(null);
-
-  const handleCropped = (blob: Blob) => {
-    const url = URL.createObjectURL(blob);
-    setCroppedURL(url);
-  };
 
   return (
     <Box className="w-full mx-auto dark:text-white text-left space-y-3">

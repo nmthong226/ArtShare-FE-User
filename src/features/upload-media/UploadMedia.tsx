@@ -35,12 +35,9 @@ const UploadMedia: React.FC = () => {
   const [description, setDescription] = useState("");
 
   const [imageFiles, setImageFiles] = useState<FileList | null>(null);
-  const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
+  // const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [mediaOrder, setMediaOrder] = useState<string[]>([]); // values: "image" or "video"
-
-  const THUMBNAIL_HINT =
-    "Recommended: 720x1280 (vertical), less than 2MB, JPG/PNG/GIF format, 9:16 ratio";
 
   const extractThumbnail = (videoFile: File) => {
     const video = document.createElement("video");
@@ -109,9 +106,9 @@ const UploadMedia: React.FC = () => {
     }
 
     if (!imageFiles || imageFiles.length === 0) {
-      if (!videoFile) {
-        showSnackbar("At least one image or video is required.", "error");
-      }
+      // if (!videoFile) {
+      //   showSnackbar("At least one image or video is required.", "error");
+      // }
       return;
     }
     const formData = createFormData(title, description, imageFiles);
@@ -190,7 +187,7 @@ const UploadMedia: React.FC = () => {
         return;
       }
 
-      setVideoFile(file);
+      // setVideoFile(file);
       setVideoPreviews([url]);
 
       if (mediaOrder.length === 0) {
@@ -219,11 +216,6 @@ const UploadMedia: React.FC = () => {
     if (selectedPreviewIndex === index) {
       setSelectedPreviewIndex(null);
     }
-  };
-
-  // Placeholder for crop logic
-  const handleCropThumbnail = () => {
-    showSnackbar("Crop functionality is not implemented yet.", "info");
   };
 
   const showUploadButton = artPreviews.length === 0;

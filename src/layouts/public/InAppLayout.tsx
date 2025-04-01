@@ -270,7 +270,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <aside className="hidden top-16 sticky xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 px-3 py-4 min-w-16 h-[calc(100vh-4rem)]">
           {/* Explore */}
           <Link
-            to="/explore"
+            to="/gallery"
             className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
           >
             <div

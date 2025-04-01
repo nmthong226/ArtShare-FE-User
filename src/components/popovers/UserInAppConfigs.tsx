@@ -36,7 +36,7 @@ const UserInAppConfigs = () => {
     setTimeout(() => {
       logout(); // Call logout function from UserProvider
     }, 300);
-    navigate("/explore");
+    navigate("/gallery");
   };
 
   if (loading)

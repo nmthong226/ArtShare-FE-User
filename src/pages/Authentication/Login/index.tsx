@@ -6,7 +6,7 @@ import { FaApple } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/context/UserProvider"; // Import the UserProvider hook
+import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
 // import { login } from "@/api/authentication/auth"; // Import the login API function
 
 const Login = () => {
@@ -22,7 +22,7 @@ const Login = () => {
     try {
       await loginWithEmail(email, password); // Call the loginWithEmail function from UserProvider
       // On successful login, redirect to the explore page or another page
-      navigate("/explore");
+      navigate("/gallery");
     } catch (error: any) {
       console.log(error);
       // If an error occurs, set the error message so it's visible to the user.
@@ -42,7 +42,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
-      navigate("/explore"); // Redirect after successful login
+      navigate("/gallery"); // Redirect after successful login
     } catch (error: any) {
       setError(error.message);
     }
@@ -51,7 +51,7 @@ const Login = () => {
   const handleFacebookLogin = async () => {
     try {
       await signUpWithFacebook(); // Call Facebook login function from UserProvider
-      navigate("/explore"); // Redirect after successful login
+      navigate("/gallery"); // Redirect after successful login
     } catch (error: any) {
       setError(error.message);
     }
@@ -112,7 +112,7 @@ const Login = () => {
         </div>
         <Button
           type="submit"
-          className="bg-mountain-800 hover:bg-mountain-700 dark:bg-gradient-to-r dark:from-blue-800 dark:via-purple-700 dark:to-pink-900 hover:brightness-110 py-3 rounded-lg focus:ring-indigo-500 w-full h-10 font-bold text-mountain-950 dark:text-mountain-50 hover:cursor-pointer"
+          className="bg-mountain-800 hover:bg-mountain-700 dark:bg-gradient-to-r dark:from-blue-800 dark:via-purple-700 dark:to-pink-900 hover:brightness-110 py-3 rounded-lg focus:ring-indigo-500 w-full h-10 font-bold text-mountain-50 hover:cursor-pointer"
         >
           Login
         </Button>

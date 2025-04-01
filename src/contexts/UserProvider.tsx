@@ -166,6 +166,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       );
       console.log("signupResopnse: ", signupResponse);
       const token = await user.getIdToken();
+      localStorage.setItem("accessToken", token);
       let loginResponse = null;
       if (signupResponse.success) {
         loginResponse = await login(token);

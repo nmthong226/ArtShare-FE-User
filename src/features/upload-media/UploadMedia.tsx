@@ -12,7 +12,7 @@ import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
 import CollectionModal from "./components/CollectionModal";
-import { useSnackbar } from "@/context/SnackbarProvider";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { createPost } from "./api/createPost";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -109,7 +109,9 @@ const UploadMedia: React.FC = () => {
     }
 
     if (!imageFiles || imageFiles.length === 0) {
-      showSnackbar("At least one image is required.", "error");
+      if (!videoFile) {
+        showSnackbar("At least one image or video is required.", "error");
+      }
       return;
     }
     const formData = createFormData(title, description, imageFiles);
@@ -250,7 +252,7 @@ const UploadMedia: React.FC = () => {
           }}
         >
           <CircularProgress color="inherit" />
-          <Typography variant="h6" sx={{ mt: 2 }}>
+          <Typography variant="h6" sx={{ mt: 2, color: "white" }}>
             Creating post...
           </Typography>
         </Backdrop>

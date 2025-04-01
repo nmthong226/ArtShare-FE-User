@@ -203,6 +203,27 @@ export const lightTheme = createTheme({
         },
       },
     },
+    MuiAlert: {
+      styleOverrides: {
+        standardSuccess: {
+          backgroundColor: "#22c55e", // Tailwind green-500
+          color: "#ffffff",
+        },
+        standardError: {
+          backgroundColor: "#ef4444", // Tailwind red-500
+          color: "#ffffff",
+        },
+        standardInfo: {
+          backgroundColor: "#3b82f6", // Tailwind blue-500
+          color: "#ffffff",
+        },
+        standardWarning: {
+          backgroundColor: "#f59e0b", // Tailwind amber-500
+          color: "#ffffff",
+        },
+      },
+    },
+    
   },
 });
 
@@ -312,5 +333,26 @@ export const darkTheme = createTheme({
         },
       },
     },
+    MuiAlert: {
+      styleOverrides: {
+        standardSuccess: {
+          backgroundColor: "#22c55e",
+          color: "#ffffff",
+        },
+        standardError: {
+          backgroundColor: "#ef4444",
+          color: "#ffffff",
+        },
+        standardInfo: {
+          backgroundColor: "#3b82f6",
+          color: "#ffffff",
+        },
+        standardWarning: {
+          backgroundColor: "#f59e0b",
+          color: "#ffffff",
+        },
+      },
+    },
+    
   },
 });

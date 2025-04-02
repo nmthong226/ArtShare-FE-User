@@ -16,6 +16,9 @@ import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { createPost } from "./api/createPost";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import { getPresignedUrl, GetPresignedUrlResponse, uploadFile } from "@/api/storage";
+import { nanoid } from 'nanoid';
+
 
 const MAX_IMAGES = 5;
 
@@ -34,10 +37,12 @@ const UploadMedia: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [description, setDescription] = useState("");
 
-  const [imageFiles, setImageFiles] = useState<FileList | null>(null);
-  // const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
+  const [imageFiles, setImageFiles] = useState<FileList | undefined>(undefined);
+  const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [mediaOrder, setMediaOrder] = useState<string[]>([]); // values: "image" or "video"
+
+  const VIDEO_STORAGE_DIRECTORY = "posts";
 
   const extractThumbnail = (videoFile: File) => {
     const video = document.createElement("video");
@@ -64,39 +69,27 @@ const UploadMedia: React.FC = () => {
   };
   const createFormData = (
     title: string,
-    description: string,
-    imageFiles: FileList
+    description?: string,
+    imageFiles?: FileList,
+    videoUrl?: string
   ) => {
     const formData = new FormData();
 
     formData.append("title", title);
-    formData.append("description", description);
+    description && formData.append("description", description);
     formData.append("cate_ids", JSON.stringify([1, 2]));
+    videoUrl && formData.append("video_url", videoUrl);
 
-    Array.from(imageFiles).forEach((file) => {
+    imageFiles && Array.from(imageFiles).forEach((file) => {
       formData.append("images", file);
     });
 
     return formData;
   };
 
-  // Function to handle the post creation API call
-  const handleCreatePost = async (formData: FormData) => {
-    try {
-      setIsLoading(true); // Show loading screen
-      const response = await createPost(formData);
-      console.log("Post created:", response);
-      showSnackbar("Post created successfully!", "success");
-    } catch (error) {
-      console.error("Error creating post:", error);
-      showSnackbar("Failed to create post.", "error");
-    } finally {
-      setIsLoading(false); // Hide loading screen
-    }
-  };
 
   // Function to handle the form submission
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitted(true);
 
     // Validation for required fields
@@ -105,16 +98,80 @@ const UploadMedia: React.FC = () => {
       return;
     }
 
-    if (!imageFiles || imageFiles.length === 0) {
-      // if (!videoFile) {
-      //   showSnackbar("At least one image or video is required.", "error");
-      // }
+    console.log('hihi', videoFile)
+    if ((!imageFiles || imageFiles.length === 0) && !videoFile) {
+      showSnackbar("At least one image or video is required.", "error");
       return;
     }
-    const formData = createFormData(title, description, imageFiles);
 
-    // Send the request to create the post
-    handleCreatePost(formData);
+    try {
+      setIsLoading(true);
+
+      const videoFileName = videoFile
+        ? `${videoFile.name.split('.')[0]}_${nanoid(6)}`
+        : undefined;
+
+      // Create promises to upload video and create post at the same time
+      const uploadVideoPromise = handleUploadVideo(videoFileName);
+      const createPostPromise = handleCreatePost(videoFileName);
+
+      // Use Promise.all with await to wait for both operations to complete
+      const [videoUploadResult, postCreationResult] = await Promise.all([
+        uploadVideoPromise,
+        createPostPromise,
+      ]);
+
+      showSnackbar("Post created successfully!", "success");
+    } catch (error) {
+      console.error("Error during submission:", error);
+      showSnackbar("Failed to create post or upload video.", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUploadVideo = async (videoFileName?: string) => {
+    if (!videoFile || !videoFileName) {
+      return Promise.resolve();
+    }
+
+    try {
+      const response: GetPresignedUrlResponse = await getPresignedUrl(
+        videoFileName,
+        videoFile.type.split("/")[1],
+        "video",
+        VIDEO_STORAGE_DIRECTORY
+      );
+
+      console.log("Presigned URL response:", response);
+
+      const uploadVideoResponse = await uploadFile(videoFile, response.url);
+
+      console.log("Video uploaded:", uploadVideoResponse);
+      return response;
+    } catch (error) {
+      console.error("Error getting presigned URL:", error);
+      showSnackbar("Failed to get presigned URL.", "error");
+      throw error; // Throw error to be caught in Promise.all
+    }
+  };
+
+  const handleCreatePost = async (videoFileName?: string) => {
+
+    const videoUrl = videoFile
+      ? `${import.meta.env.VITE_S3_BUCKET_URL}/${VIDEO_STORAGE_DIRECTORY}/${videoFileName}.${videoFile.type.split("/")[1]}`
+      : undefined;
+    const formData = createFormData(title, description, imageFiles, videoUrl);
+
+    try {
+      const response = await createPost(formData);
+      console.log("Post created:", response);
+      return response; // Return the response for further processing if needed
+    } catch (error) {
+      console.error("Error creating post:", error);
+      showSnackbar("Failed to create post.", "error");
+      throw error; // Throw error to be caught in Promise.all
+    }
   };
 
   const handleImageFilesChange = (
@@ -156,6 +213,7 @@ const UploadMedia: React.FC = () => {
     const newFiles = event.target.files;
     if (!newFiles || newFiles.length === 0) return;
     const file = newFiles[0];
+    setVideoFile(file)
     const url = URL.createObjectURL(file);
 
     const video = document.createElement("video");
@@ -269,11 +327,10 @@ const UploadMedia: React.FC = () => {
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(true)}
-              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
-                isImageUpload
-                  ? "bg-indigo-800 text-white"
-                  : "bg-gray-900 text-gray-500 opacity-50"
-              }`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${isImageUpload
+                ? "bg-indigo-800 text-white"
+                : "bg-gray-900 text-gray-500 opacity-50"
+                }`}
               sx={{
                 height: 40,
                 borderColor: isImageUpload ? "#4F46E5" : "#4B5563",
@@ -288,9 +345,8 @@ const UploadMedia: React.FC = () => {
               <p className="text-sm">
                 Upload image{" "}
                 <span
-                  className={`${
-                    isImageUpload ? "text-mountain-300" : "text-gray-600"
-                  }`}
+                  className={`${isImageUpload ? "text-mountain-300" : "text-gray-600"
+                    }`}
                 >
                   ( .png, .jpg, .jpeg, ... )
                 </span>
@@ -301,11 +357,10 @@ const UploadMedia: React.FC = () => {
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(false)}
-              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
-                !isImageUpload
-                  ? "bg-indigo-800 text-white"
-                  : "bg-gray-900 text-gray-500 opacity-50"
-              }`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${!isImageUpload
+                ? "bg-indigo-800 text-white"
+                : "bg-gray-900 text-gray-500 opacity-50"
+                }`}
               sx={{
                 height: 40,
                 borderColor: !isImageUpload ? "#4F46E5" : "#4B5563",
@@ -320,9 +375,8 @@ const UploadMedia: React.FC = () => {
               <p className="text-sm">
                 Upload video{" "}
                 <span
-                  className={`${
-                    !isImageUpload ? "text-mountain-300" : "text-gray-600"
-                  }`}
+                  className={`${!isImageUpload ? "text-mountain-300" : "text-gray-600"
+                    }`}
                 >
                   ( .mp4, .avi, .mov, ... )
                 </span>
@@ -376,7 +430,7 @@ const UploadMedia: React.FC = () => {
               >
                 {artPreviews.length > 0 ? (
                   selectedPreviewIndex !== null &&
-                  artPreviews[selectedPreviewIndex] ? (
+                    artPreviews[selectedPreviewIndex] ? (
                     <img
                       src={artPreviews[selectedPreviewIndex]}
                       alt="Preview"
@@ -500,11 +554,10 @@ const UploadMedia: React.FC = () => {
           ) : (
             // -------- VIDEO UPLOAD FLOW --------
             <Box
-              className={`relative w-full rounded-md flex flex-col ${
-                videoPreviews.length === 0
-                  ? "border border-gray-500 border-dashed"
-                  : ""
-              }`}
+              className={`relative w-full rounded-md flex flex-col ${videoPreviews.length === 0
+                ? "border border-gray-500 border-dashed"
+                : ""
+                }`}
               sx={{
                 aspectRatio: "9 / 16", // Optional: keeps a vertical shape for empty state
                 display: "flex",

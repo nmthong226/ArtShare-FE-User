@@ -60,3 +60,16 @@ export const categoriesData = [
         thumbnail: "https://cdnb.artstation.com/p/channels/covers/000/000/077/20200505141007/thumb/thumb.jpg?1588705807",
     },
 ];
+
+export const propsData = [
+  { name: "2D" },
+  { name: "3D" },
+  { name: "Sketch" },
+  { name: "Blueprint" },
+  { name: "Wireframe" },
+  { name: "Render" },
+  { name: "Prototype" },
+  { name: "Concept Art" },
+  { name: "Draft" },
+  { name: "Animation" },
+]

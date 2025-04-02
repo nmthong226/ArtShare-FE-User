@@ -51,7 +51,7 @@ const Login = () => {
   const handleFacebookLogin = async () => {
     try {
       await signUpWithFacebook(); // Call Facebook login function from UserProvider
-      navigate("/explore"); // Redirect after successful login
+      navigate("/gallery"); // Redirect after successful login
     } catch (error: any) {
       setError(error.message);
     }

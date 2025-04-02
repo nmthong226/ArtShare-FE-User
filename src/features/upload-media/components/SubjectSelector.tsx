@@ -107,7 +107,7 @@ export default function SubjectSelector() {
 
   return (
     <div className="bg-white dark:bg-mountain-900 font-sans text-black dark:text-white">
-      <p className="mb-1 text-gray-800 dark:text-mountain-200 text-sm">
+      <p className="mb-1 text-gray-800 dark:text-mountain-200 text-base">
         How would you categorize this work? (Choose up to 3)
       </p>
       {/* Top Selection Bar */}
@@ -191,13 +191,14 @@ export default function SubjectSelector() {
               return (
                 <li
                   key={subject.label}
-                  className="flex justify-between items-center gap-2 hover:bg-gray-100 dark:hover:bg-mountain-800 px-2 py-2 rounded text-sm transition cursor-pointer"
+                  className="flex items-center justify-between gap-2 px-2 py-2 rounded text-sm transition cursor-pointer hover:bg-gray-100 dark:hover:bg-mountain-800"
                   onMouseEnter={() => setHovered(subject)}
                 >
-                  <span>{subject.label}</span>
+                  <span className="truncate max-w-[60%]">{subject.label}</span>
                   <Button
                     onClick={() => toggleSubject(subject)}
                     className="flex justify-center items-center gap-1 bg-white hover:bg-gray-100 dark:bg-mountain-950 dark:hover:bg-mountain-900 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded min-w-[110px] text-black dark:text-white text-sm"
+                    sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
                   >
                     {!selectedStatus ? (
                       <>

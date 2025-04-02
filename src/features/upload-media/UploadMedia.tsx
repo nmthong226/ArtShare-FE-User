@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Box, Typography, Button, IconButton, Avatar } from "@mui/material";
 import {
   CloudUpload as CloudUploadIcon,
@@ -6,21 +6,19 @@ import {
   Close as CloseIcon,
   DeleteOutlineOutlined,
   FolderOpen as FolderOpenIcon,
+  SetMealOutlined,
 } from "@mui/icons-material";
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
-import HeroSection from "./components/HeroSection";
 import { Crop as CropIcon } from "@mui/icons-material";
 import CollectionModal from "./components/CollectionModal";
-import UploadToggle from "./components/UploadToggle.";
 import ThumbnailCard from "./components/ThumbnailCard";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 
 const MAX_IMAGES = 5;
 
 const UploadMedia: React.FC = () => {
-  const [contentHeight, setContentHeight] = useState<number>(0);
   const heroRef = useRef<HTMLDivElement>(null);
   const [showThumbnailOptions, setShowThumbnailOptions] = useState(false);
   const [showCollectionModal, setShowCollectionModal] = useState(false);
@@ -29,29 +27,19 @@ const UploadMedia: React.FC = () => {
     number | null
   >(null);
   const [artPreviews, setArtPreviews] = useState<string[]>([]);
+  const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
   const [title, setTitle] = useState("");
   const { showSnackbar } = useSnackbar();
   // Thumbnail states
   const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [description, setDescription] = useState("");
+
+  const [imageFiles, setImageFiles] = useState<FileList | undefined>(undefined);
+  const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
 
   const THUMBNAIL_HINT =
     "Recommended: 720x1280 (vertical), less than 2MB, JPG/PNG/GIF format, 9:16 ratio";
-
-  useEffect(() => {
-    const calculateHeight = () => {
-      if (heroRef.current) {
-        const heroHeight = heroRef.current.getBoundingClientRect().height;
-        const availableHeight = window.innerHeight - heroHeight;
-        setContentHeight(availableHeight);
-      }
-    };
-    calculateHeight();
-    window.addEventListener("resize", calculateHeight);
-    return () => {
-      window.removeEventListener("resize", calculateHeight);
-    };
-  }, []);
 
   const extractThumbnail = (videoFile: File) => {
     const video = document.createElement("video");
@@ -85,74 +73,27 @@ const UploadMedia: React.FC = () => {
       return;
     }
 
-    // Continue with submission...
+    const allMedia = [...artPreviews, ...videoPreviews];
+
+    const formData = new FormData();
+
+    // Append form data fields
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("cate_ids", JSON.stringify([1, 2]));
+    formData.append("images", new Blob([imageFiles]));
+
+    console.log("Submitting media:", allMedia);
   };
-  // When user uploads new images
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleImageFilesChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const newFiles = event.target.files;
     if (!newFiles || newFiles.length === 0) return;
 
-    const firstFile = newFiles[0];
-    const fileNameWithoutExt = firstFile.name.replace(/\.[^/.]+$/, "");
+    setImageFiles(newFiles);
 
-    // Set title if it's empty
-    if (!title) {
-      setTitle(fileNameWithoutExt);
-    }
-
-    // --- VIDEO MODE ---
-    if (!isImageUpload) {
-      if (!firstFile.type.startsWith("video/")) return;
-
-      const videoURL = URL.createObjectURL(firstFile);
-      const videoElement = document.createElement("video");
-      videoElement.preload = "metadata";
-
-      videoElement.onloadedmetadata = () => {
-        const duration = videoElement.duration;
-        const width = videoElement.videoWidth;
-        const height = videoElement.videoHeight;
-
-        // Duration check (15s–60s)
-        if (duration < 15 || duration > 60) {
-          showSnackbar("Video must be between 15 and 60 seconds.", "error");
-          URL.revokeObjectURL(videoURL);
-          return;
-        }
-
-        // Aspect ratio check for Shorts (9:16 ≈ 0.5625)
-        const ratio = width / height;
-        const isShortRatio = ratio <= 0.58; // Allow some tolerance
-
-        if (!isShortRatio) {
-          showSnackbar(
-            "Recommended format is vertical (9:16) like YouTube Shorts.",
-            "info"
-          );
-        }
-
-        setArtPreviews([videoURL]);
-        extractThumbnail(firstFile);
-
-        videoElement.currentTime = 0;
-        videoElement.onseeked = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          if (ctx) {
-            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            const imageUrl = canvas.toDataURL("image/png");
-            setThumbnail(imageUrl);
-          }
-        };
-      };
-
-      videoElement.src = videoURL;
-      return;
-    }
-
-    // --- IMAGE MODE ---
     const availableSlots = MAX_IMAGES - artPreviews.length;
     if (availableSlots <= 0) return;
 
@@ -172,6 +113,60 @@ const UploadMedia: React.FC = () => {
 
       return updatedPreviews;
     });
+  };
+
+  const handleVideoFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newFiles = event.target.files;
+    if (!newFiles || newFiles.length === 0) return;
+    const videoFile = newFiles[0];
+
+    const videoURL = URL.createObjectURL(videoFile);
+    const videoElement = document.createElement("video");
+    videoElement.preload = "metadata";
+
+    videoElement.onloadedmetadata = () => {
+      const duration = videoElement.duration;
+      const width = videoElement.videoWidth;
+      const height = videoElement.videoHeight;
+
+      // Duration check (15s–60s)
+      if (duration < 15 || duration > 60) {
+        showSnackbar("Video must be between 15 and 60 seconds.", "error");
+        URL.revokeObjectURL(videoURL);
+        return;
+      }
+
+      // Aspect ratio check for Shorts (9:16 ≈ 0.5625)
+      const ratio = width / height;
+      const isShortRatio = ratio <= 0.58; // Allow some tolerance
+
+      if (!isShortRatio) {
+        showSnackbar(
+          "Recommended format is vertical (9:16) like YouTube Shorts.",
+          "info"
+        );
+      }
+
+      setArtPreviews([videoURL]);
+      extractThumbnail(videoFile);
+
+      videoElement.currentTime = 0;
+      videoElement.onseeked = () => {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+          const imageUrl = canvas.toDataURL("image/png");
+          setThumbnail(imageUrl);
+        }
+      };
+    };
+
+    videoElement.src = videoURL;
   };
 
   // Remove image from the previews array
@@ -207,8 +202,12 @@ const UploadMedia: React.FC = () => {
   const hasSelectedImage =
     selectedPreviewIndex !== null && artPreviews[selectedPreviewIndex];
 
+  const isMediaValid = isImageUpload
+    ? artPreviews.length > 0
+    : artPreviews.length > 0 && thumbnail !== null;
+
   return (
-    <Box className="w-full h-full">
+    <Box className="dark:bg-mountain-950 w-full h-full">
       {
         <CollectionModal
           open={showCollectionModal}
@@ -229,38 +228,65 @@ const UploadMedia: React.FC = () => {
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(true)}
-              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 transition-all duration-300
-          ${isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-mountain-50" : "bg-gradient-to-r from-mountain-950 via-mountain-900 to-mountain-1000 text-mountain-300"}`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
+                isImageUpload
+                  ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-white"
+                  : "bg-gray-900 text-gray-500 opacity-50"
+              }`}
               sx={{
+                borderColor: isImageUpload ? "#4F46E5" : "#4B5563",
                 borderRadius: "2px",
                 textTransform: "none",
-                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                "&:hover": {
+                  backgroundColor: isImageUpload ? undefined : "#374151", // darker gray
+                },
               }}
             >
               <IoMdImage className="mr-2 w-8 h-8" />
               <p className="text-sm">
-                Upload Image <span className="text-mountain-300">( .png, .jpg, .jpeg, ... )</span>
+                Upload image{" "}
+                <span
+                  className={`${
+                    isImageUpload ? "text-mountain-300" : "text-gray-600"
+                  }`}
+                >
+                  ( .png, .jpg, .jpeg, ... )
+                </span>
               </p>
             </Button>
+
             <Button
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(false)}
-              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2  transition-all duration-300
-          ${!isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-mountain-50" : "bg-gradient-to-r from-mountain-950 via-mountain-900 to-mountain-1000 text-mountain-300"}`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
+                !isImageUpload
+                  ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-white"
+                  : "bg-gray-900 text-gray-500 opacity-50"
+              }`}
               sx={{
+                borderColor: !isImageUpload ? "#4F46E5" : "#4B5563",
                 borderRadius: "2px",
                 textTransform: "none",
-                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                "&:hover": {
+                  backgroundColor: !isImageUpload ? undefined : "#374151",
+                },
               }}
             >
               <IoVideocam className="mr-2 w-8 h-8" />
               <p className="text-sm">
-                Upload Video <span className="text-mountain-300">( .mp4, .avi, .mov, ... )</span>
+                Upload video{" "}
+                <span
+                  className={`${
+                    !isImageUpload ? "text-mountain-300" : "text-gray-600"
+                  }`}
+                >
+                  ( .mp4, .avi, .mov, ... )
+                </span>
               </p>
             </Button>
           </div>
-          <hr className="my-4 border-mountain-700 border-t-1 w-full"/>
+          <hr className="my-4 border-mountain-700 border-t-1 w-full" />
           {isImageUpload ? (
             // -------- IMAGE UPLOAD FLOW --------
             <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
@@ -380,7 +406,7 @@ const UploadMedia: React.FC = () => {
                     if (droppedFiles && droppedFiles.length > 0) {
                       // You may want to wrap the dropped files in a synthetic event object
                       // to use your handleFileChange function, or create a separate handler.
-                      handleFileChange({
+                      handleImageFilesChange({
                         target: { files: droppedFiles },
                       } as React.ChangeEvent<HTMLInputElement>);
                     }
@@ -406,9 +432,11 @@ const UploadMedia: React.FC = () => {
                         <input
                           type="file"
                           multiple
+                          accept="image/*"
                           hidden
-                          onChange={handleFileChange}
+                          onChange={handleImageFilesChange}
                         />
+
                         <CloudUploadIcon sx={{ mr: 1 }} />
                         <Typography variant="body1" className="text-center">
                           Upload your art
@@ -491,7 +519,7 @@ const UploadMedia: React.FC = () => {
                       type="file"
                       multiple
                       hidden
-                      onChange={handleFileChange}
+                      onChange={handleImageFilesChange}
                     />
                   </Box>
                 )}
@@ -499,93 +527,63 @@ const UploadMedia: React.FC = () => {
             </Box>
           ) : (
             // -------- VIDEO UPLOAD FLOW --------
-            <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
-              {/* VIDEO player */}
-              <Box
-                className="bg-black rounded"
-                sx={{
-                  height: 300,
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  overflow: "hidden",
-                }}
-              >
-                {artPreviews.length > 0 ? (
-                  <video
-                    src={artPreviews[0]}
-                    controls
-                    className="rounded w-full h-full object-contain"
-                  />
-                ) : (
-                  <Box
-                    className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const droppedFiles = e.dataTransfer.files;
-                      if (droppedFiles?.[0]) {
-                        handleFileChange({
-                          target: { files: droppedFiles },
-                        } as React.ChangeEvent<HTMLInputElement>);
-                      }
+            <Box
+              className="relative w-full border border-gray-500 border-dashed rounded-md flex flex-col"
+              sx={{
+                aspectRatio: "9 / 16", // Optional: keeps a vertical shape for empty state
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const droppedFiles = e.dataTransfer.files;
+                if (droppedFiles?.[0]) {
+                  handleImageFilesChange({
+                    target: { files: droppedFiles },
+                  } as React.ChangeEvent<HTMLInputElement>);
+                }
+              }}
+            >
+              {artPreviews.length > 0 ? (
+                <video
+                  src={artPreviews[0]}
+                  controls
+                  className="rounded w-full h-full object-contain"
+                />
+              ) : (
+                <>
+                  <Button
+                    variant="text"
+                    component="label"
+                    size="small"
+                    className="mb-2 border-mountain-600"
+                    sx={{
+                      backgroundColor: "transparent",
+                      color: "white",
+                      borderRadius: "10px",
+                      border: "1px solid",
+                      textTransform: "none",
+                      "&:hover": { backgroundColor: "transparent" },
                     }}
                   >
-                    <Button
-                      variant="text"
-                      component="label"
-                      className="mb-2 border-mountain-600"
-                      sx={{
-                        backgroundColor: "transparent",
-                        color: "white",
-                        borderRadius: "10px",
-                        border: "1px solid",
-                        textTransform: "none",
-                        "&:hover": { backgroundColor: "transparent" },
-                      }}
-                    >
-                      <input
-                        type="file"
-                        accept="video/*"
-                        hidden
-                        onChange={handleFileChange}
-                      />
-                      <CloudUploadIcon sx={{ mr: 1 }} />
-                      <Typography>Upload your video</Typography>
-                    </Button>
-                    <Typography>or drag and drop here</Typography>
-                  </Box>
-                )}
-              </Box>
-              {!isImageUpload && artPreviews.length > 0 && (
-                <Box className="mt-4">
-                  <Typography
-                    variant="body2"
-                    className="mb-2 font-semibold dark:text-white text-base"
-                  >
-                    Thumbnail
+                    <input
+                      type="file"
+                      accept="video/*"
+                      hidden
+                      onChange={handleVideoFileChange}
+                    />
+                    <CloudUploadIcon sx={{ mr: 1 }} />
+                    <Typography variant="body1" className="text-center">
+                      Upload your video
+                    </Typography>
+                  </Button>
+                  <Typography variant="body1" className="text-center">
+                    or drag and drop here
                   </Typography>
-
-                  <ThumbnailCard
-                    thumbnail={thumbnail || undefined}
-                    onUpload={handleThumbnailUpload}
-                    onChange={() =>
-                      document.getElementById("thumbnail-upload")?.click()
-                    }
-                    onDownload={() => {
-                      if (thumbnail) {
-                        const a = document.createElement("a");
-                        a.href = thumbnail;
-                        a.download = "thumbnail.png";
-                        a.click();
-                      }
-                    }}
-                  />
-                  <Typography variant="caption" color="gray">
-                    {THUMBNAIL_HINT}
-                  </Typography>
-                </Box>
+                </>
               )}
             </Box>
           )}
@@ -606,6 +604,10 @@ const UploadMedia: React.FC = () => {
               thumbnail={thumbnail}
               onThumbnailChange={setThumbnail}
               isSubmitted={isSubmitted}
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
             />
           </Box>
 
@@ -637,6 +639,7 @@ const UploadMedia: React.FC = () => {
               sx={{ textTransform: "none" }}
               className="ml-auto rounded-md"
               onClick={handleSubmit}
+              disabled={!isMediaValid}
             >
               Submit
             </Button>

@@ -1,9 +1,5 @@
 import "./App.css";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import React from "react";
 
 // Components
@@ -31,9 +27,9 @@ import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/pages/Post";
 import Short from "@/pages/Short";
 import UploadMedia from "@/features/upload-media/UploadMedia";
+import MatureContentPage from "./pages/MatureContent/MatureContent";
 
 // Context/Provider
-import { ThemeProvider } from "@/contexts/ThemeProvider";
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
 
@@ -66,60 +62,57 @@ const InAppPrivateRoutes = [
 const App: React.FC = () => {
   return (
     <UserProvider>
-      <ThemeProvider>
-        <LanguageProvider>
-          <Router>
-            <RootLayout>
-              <Routes>
-                {/* Public Auth Routes */}
-                {authRoutes.map(({ path, element }) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={<AuthenLayout>{element}</AuthenLayout>}
-                  />
-                ))}
-                {/* Private Auth Routes */}
-                {privateAuthRoute.map(({ path, element }) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={
-                      <ProtectedAuthRoute>
-                        <AuthenLayout>
-                          {element}
-                        </AuthenLayout>
-                      </ProtectedAuthRoute>
-                    }
-                  />
-                ))}
-                {/* Public In-App Routes (Accessible by anyone) */}
-                {InAppPublicRoutes.map(({ path, element }) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={<InAppLayout>{element}</InAppLayout>}
-                  />
-                ))}
-                {/* Private In-App Routes (Only accessible by logged-in users) */}
-                {InAppPrivateRoutes.map(({ path, element }) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={
-                      <ProtectedInAppRoute>
-                        <InAppLayout>{element}</InAppLayout>
-                      </ProtectedInAppRoute>
-                    }
-                  />
-                ))}
-                {/* Fallback Route (catch-all for non-existent routes) */}
-                <Route path="/" element={<LandingPage />} />
-              </Routes>
-            </RootLayout>
-          </Router>
-        </LanguageProvider>
-      </ThemeProvider>
+      <LanguageProvider>
+        <Router>
+          <RootLayout>
+            <Routes>
+              {/* Public Auth Routes */}
+              {authRoutes.map(({ path, element }) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={<AuthenLayout>{element}</AuthenLayout>}
+                />
+              ))}
+              {/* Private Auth Routes */}
+              {privateAuthRoute.map(({ path, element }) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={
+                    <ProtectedAuthRoute>
+                      <AuthenLayout>{element}</AuthenLayout>
+                    </ProtectedAuthRoute>
+                  }
+                />
+              ))}
+              {/* Public In-App Routes (Accessible by anyone) */}
+              {InAppPublicRoutes.map(({ path, element }) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={<InAppLayout>{element}</InAppLayout>}
+                />
+              ))}
+              <Route path="/mature-content" element={<MatureContentPage />} />
+
+              {InAppPrivateRoutes.map(({ path, element }) => (
+                <Route
+                  key={path}
+                  path={path}
+                  element={
+                    <ProtectedInAppRoute>
+                      <InAppLayout>{element}</InAppLayout>
+                    </ProtectedInAppRoute>
+                  }
+                />
+              ))}
+              {/* Fallback Route (catch-all for non-existent routes) */}
+              <Route path="/" element={<LandingPage />} />
+            </Routes>
+          </RootLayout>
+        </Router>
+      </LanguageProvider>
     </UserProvider>
   );
 };

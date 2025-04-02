@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchPosts } from "./api/unsplashService";
+import { fetchPosts } from "./api/post";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { Photo, RowsPhotoAlbum } from "react-photo-album";
 import { ImageRenderer } from "./ImageRenderer";
 import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import "react-photo-album/rows.css";
-
 export interface GalleryPhoto extends Photo {
   title: string;
   author: string;
@@ -25,15 +24,15 @@ const getMediaDimensions = (
   });
 };
 
-const IGallery: React.FC = () => {
-  const [filter, setFilter] = useState<string>("for-you");
+const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
+  const [tab, setTab] = useState<string>("for-you");
 
   const handleFilterChange = (
     _: React.MouseEvent<HTMLElement>,
     newFilter: string
   ) => {
     if (newFilter) {
-      setFilter(newFilter);
+      setTab(newFilter);
     }
   };
 
@@ -46,17 +45,20 @@ const IGallery: React.FC = () => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["posts", filter],
+    queryKey: ["posts", tab, query, filter],
     queryFn: async ({ pageParam = 1 }) => {
-      const response = await fetchPosts(filter, pageParam);
+      const posts = await fetchPosts(pageParam, tab, query, filter);
       const galleryPhotos = await Promise.all(
-        response.data.map(async (post) => {
-          const mediaDimensions = await getMediaDimensions(post.medias[0].url);
+        posts.map(async (post) => {
+          if (!post.thumbnail_url && post.medias.length === 0) {
+            return null;
+          }
+          const mediaDimensions = await getMediaDimensions(post.thumbnail_url || post.medias[0].url);
           return {
-            key: post.medias[0].url,
-            title: post.title || "Untitled",
-            author: post.user.fullName,
-            src: post.medias[0].url,
+            key: post.id.toString(),
+            title: post.title || "",
+            author: post.user_id || "",
+            src: post.thumbnail_url,
             width: mediaDimensions.width,
             height: mediaDimensions.height,
             postLength: post.medias.length,
@@ -141,14 +143,16 @@ const IGallery: React.FC = () => {
 
   const galleryPhotos = data ? data.pages.flat() : [];
 
-  const uniqueGalleryPhotos = Array.from(
-    new Map(galleryPhotos.map((photo) => [photo.key, photo])).values()
-  );
+  // const uniqueGalleryPhotos = Array.from(
+  //   new Map(galleryPhotos.map((photo) => [photo.key, photo])).values()
+  // );
 
   return (
-    <div className="">
+    <div className=""> 
       <RowsPhotoAlbum
-        photos={uniqueGalleryPhotos}
+        spacing={8}
+        targetRowHeight={256}
+        photos={galleryPhotos as GalleryPhoto[]}
         render={{ image: ImageRenderer }}
       />
 
@@ -156,7 +160,7 @@ const IGallery: React.FC = () => {
         <ToggleButtonGroup
           className="flex gap-2 m-1.5"
           size="small"
-          value={filter}
+          value={tab}
           exclusive
           onChange={handleFilterChange}
         >

@@ -82,7 +82,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
           <Divider className="border-0.5" />
 
           <div className="flex justify-between -my-1.5">
-            <Button className="flex gap-1 -mx-2 px-2 py-2 w-20 text-blue-900" title="Like" onClick={() => setUserLike(!userLike)}>
+            <Button className="flex gap-1 -mx-2 px-2 py-2 w-20 text-blue-900" title="Like" onClick={handleLikeClick}>
               {userLike ?
                 <>
                   <AiFillLike className="size-6" />

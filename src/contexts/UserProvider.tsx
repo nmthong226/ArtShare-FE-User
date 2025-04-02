@@ -30,7 +30,7 @@ interface UserContextType {
   // Updated to return a Promise<string> (token)
   loginWithEmail: (email: string, password: string) => Promise<string>;
   logout: () => void;
-  signUpWithGoogle: () => void;
+  signUpWithGoogle: () => Promise<string>;
   loginWithGoogle: () => void;
   signUpWithFacebook: () => void;
   loginWithFacebook: () => void;
@@ -96,7 +96,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const user = userCredential.user;
 
       // Call backend signup API
-      const backendResponse = await signup(user.uid, email, password, username);
+      const backendResponse = await signup(user.uid, email, "", username);
       if (!backendResponse) {
         throw new Error("Error during registration. Please try again.");
       }
@@ -152,7 +152,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Google Sign-Up or Login
-  const signUpWithGoogle = async () => {
+  const signUpWithGoogle = async (): Promise<string> => {
     const provider = new GoogleAuthProvider();
     try {
       const userCredential = await signInWithPopup(auth, provider);
@@ -183,8 +183,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       if (loginResponse && loginResponse.success) {
         window.location.href = "/home"; // Redirect to home
       }
+      return token; // Return the token
     } catch (error) {
       setError((error as Error).message);
+      throw error; // Rethrow the error to maintain the Promise<string> contract
     }
   };
 

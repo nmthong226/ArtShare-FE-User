@@ -9,11 +9,11 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
 
 const SignUp = () => {
-  const { signUpWithEmail, signUpWithGoogle, signUpWithFacebook, setError } =
-    useUser(); // Use UserProvider context
+  const { signUpWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Use UserProvider context
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate(); // To navigate after signup
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -22,9 +22,13 @@ const SignUp = () => {
       const token = await signUpWithEmail(email, password, username); // Get the token
       localStorage.setItem("user_verify", token);
       navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
-      setError((error as Error).message); // Handle any errors during signup
+      let errorMessage = error.message;
+      if (error.code === "auth/email-already-in-use") {
+        errorMessage = "Email already in use";
+      }
+      setError(errorMessage);
     }
   };
 
@@ -152,6 +156,10 @@ const SignUp = () => {
           Sign Up with Email
         </Button>
       </form>
+      {/* Display error and success messages */}
+      {error && (
+        <p className="mt-4 text-red-600 dark:text-red-400 text-sm">{error}</p>
+      )}
 
       <div className="mt-6 text-left">
         <p className="text-mountain-600 dark:text-mountain-100 text-xs xl:text-sm">

@@ -106,7 +106,7 @@ export default function SubjectSelector() {
   const remainingSlots = 3 - selected.length;
 
   return (
-    <div className="bg-white dark:bg-mountain-900 font-sans text-black dark:text-white">
+    <div className="dark:bg-mountain-900 font-sans text-black dark:text-white">
       <p className="mb-1 text-gray-800 dark:text-mountain-200 text-base">
         How would you categorize this work? (Choose up to 3)
       </p>

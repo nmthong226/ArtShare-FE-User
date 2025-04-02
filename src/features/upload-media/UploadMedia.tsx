@@ -629,7 +629,7 @@ const UploadMedia: React.FC = () => {
           <Box className="flex justify-between mt-auto pr-4 w-full">
             <Button
               variant="outlined"
-              className="flex items-center hover:bg-mountain-800 border-white rounded-md text-gray-900 dark:text-white"
+              className="flex items-center hover:bg-mountain-800 dark:border-white border-black rounded-md text-gray-900 dark:text-white"
               sx={{
                 borderColor: "white",
                 "&:hover": {

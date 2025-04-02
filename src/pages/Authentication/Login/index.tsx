@@ -22,7 +22,7 @@ const Login = () => {
     try {
       await loginWithEmail(email, password); // Call the loginWithEmail function from UserProvider
       // On successful login, redirect to the explore page or another page
-      navigate("/explore");
+      navigate("/gallery");
     } catch (error: any) {
       console.log(error);
       // If an error occurs, set the error message so it's visible to the user.
@@ -42,7 +42,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
-      navigate("/explore"); // Redirect after successful login
+      navigate("/gallery"); // Redirect after successful login
     } catch (error: any) {
       setError(error.message);
     }

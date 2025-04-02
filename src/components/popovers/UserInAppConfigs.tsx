@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 
 const UserInAppConfigs = () => {
@@ -36,7 +36,7 @@ const UserInAppConfigs = () => {
     setTimeout(() => {
       logout(); // Call logout function from UserProvider
     }, 300);
-    navigate("/explore");
+    navigate("/gallery");
   };
 
   if (loading)
@@ -53,10 +53,11 @@ const UserInAppConfigs = () => {
           <Button
             variant="ghost"
             title="More"
-            className={`flex items-center bg-gradient-to-b ${user
-              ? "from-blue-800 to-pink-800"
-              : "from-mountain-800 to-mountain-300 "
-              } rounded-full w-8 h-8`}
+            className={`flex items-center bg-gradient-to-b ${
+              user
+                ? "from-blue-800 to-pink-800"
+                : "from-mountain-800 to-mountain-300 "
+            } rounded-full w-8 h-8`}
             onMouseEnter={() => setOpen(true)}
           >
             <FaReact className="size-5 text-white" />
@@ -114,14 +115,22 @@ const UserInAppConfigs = () => {
           <div className="flex space-x-2">
             <Button
               onClick={toggleTheme}
-              className={`${theme === 'light' ? "border-indigo-600" : "border-mountain-300 dark:border-mountain-800"} rounded-full dark:border-2 hover:cursor-pointer  dark:bg-mountain-800 size-8`}
+              className={`${
+                theme === "light"
+                  ? "border-indigo-600"
+                  : "border-mountain-300 dark:border-mountain-800"
+              } rounded-full dark:border-2 hover:cursor-pointer  dark:bg-mountain-800 size-8`}
               variant={"outline"}
             >
               <MdLightMode className="size-5" />
             </Button>
             <Button
               onClick={toggleTheme}
-              className={`${theme === 'dark' ? "dark:border-indigo-600" : "border-mountain-300 dark:border-mountain-800"} rounded-full dark:border-2 hover:cursor-pointer  dark:bg-mountain-800 size-8`}
+              className={`${
+                theme === "dark"
+                  ? "dark:border-indigo-600"
+                  : "border-mountain-300 dark:border-mountain-800"
+              } rounded-full dark:border-2 hover:cursor-pointer  dark:bg-mountain-800 size-8`}
               variant={"outline"}
             >
               <MdDarkMode className="size-5" />
@@ -134,12 +143,20 @@ const UserInAppConfigs = () => {
         {/* Content Settings */}
         <div className="flex justify-between items-center hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full h-full">
           <span className="text-sm">Mature Content</span>
-          <Switch checked={matureContent} onCheckedChange={setMatureContent} className="hover:cursor-pointer" />
+          <Switch
+            checked={matureContent}
+            onCheckedChange={setMatureContent}
+            className="hover:cursor-pointer"
+          />
         </div>
 
         <div className="flex justify-between items-center hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full h-full">
           <span className="text-sm">AI Content</span>
-          <Switch checked={aiContent} onCheckedChange={setAiContent} className="hover:cursor-pointer" />
+          <Switch
+            checked={aiContent}
+            onCheckedChange={setAiContent}
+            className="hover:cursor-pointer"
+          />
         </div>
         {/* Show these options only if the user is not logged in */}
         <>

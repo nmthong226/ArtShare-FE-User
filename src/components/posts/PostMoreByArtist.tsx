@@ -9,6 +9,7 @@ const PostMoreByArtist = ({ artist }: { artist: User }) => {
     error,
   } = useQuery({
     queryKey: ["posts", artist.username],
+    retry: 2,
     queryFn: async () => {
       const response = await fetchPosts(artist.username, 1);
       return response.data;

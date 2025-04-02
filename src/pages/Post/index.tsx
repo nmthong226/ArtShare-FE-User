@@ -51,11 +51,11 @@ const Post: React.FC = () => {
 
   return (
     <div className="flex-grow bg-mountain-50 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar py-4">
-      <div className="md:hidden flex flex-col gap-4 p-4">
+      {/* <div className="md:hidden flex flex-col gap-4 p-4">
         <PostArtist artist={postData!.user} />
         <PostAssets medias={postData!.medias} />
         <PostContent />
-      </div>
+      </div> */}
       <div className="hidden md:flex flex-row h-full">
         <div className="flex-grow h-full overflow-y-scroll no-scrollbar pl-4">
           <PostAssets medias={postData!.medias} />

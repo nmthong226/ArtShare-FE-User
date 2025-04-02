@@ -89,6 +89,7 @@ export const fetchPosts = async (
       const response = await api.get<Post[]>(
         `/posts/search?q=${query}&page=${page}&page_size=${pageSize}`
       );
+      console.log("search hihi", response.data);
       return response.data;
     } else {
       console.log(`/posts/${tab}?page=${page}&page_size=${pageSize}`)

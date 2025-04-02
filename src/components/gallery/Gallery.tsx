@@ -6,6 +6,7 @@ import { Photo, RowsPhotoAlbum } from "react-photo-album";
 import { ImageRenderer } from "./ImageRenderer";
 import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import "react-photo-album/rows.css";
+import { Post } from "@/types";
 export interface GalleryPhoto extends Photo {
   title: string;
   author: string;
@@ -46,8 +47,10 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
     isFetchingNextPage,
   } = useInfiniteQuery({
     queryKey: ["posts", tab, query, filter],
+    retry: 2,
     queryFn: async ({ pageParam = 1 }) => {
-      const posts = await fetchPosts(pageParam, tab, query, filter);
+      const posts: Post[] = await fetchPosts(pageParam, tab, query, filter);
+      console.log("posts", posts);
       const galleryPhotos = await Promise.all(
         posts.map(async (post) => {
           if (!post.thumbnail_url && post.medias.length === 0) {
@@ -57,7 +60,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
           return {
             key: post.id.toString(),
             title: post.title || "",
-            author: post.user_id || "",
+            author: post.user.username || "",
             src: post.thumbnail_url,
             width: mediaDimensions.width,
             height: mediaDimensions.height,
@@ -72,6 +75,8 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
     getNextPageParam: (lastPage, pages) =>
       lastPage.length > 0 ? pages.length + 1 : undefined,
   });
+
+  console.log("data", data);
 
   useEffect(() => {
     const debounce = <T extends unknown[]>(

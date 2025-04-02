@@ -43,15 +43,15 @@ import { ImageCropperModal } from "@/components/ui/image-dropper-modal";
 // ];
 
 const UploadForm: React.FC<{
-  thumbnail: string | null;
-  onThumbnailChange: (url: string) => void;
+  thumbnailFile: File | undefined;
+  onThumbnailChange: (file: File) => void;
   isSubmitted: boolean;
   title: string;
   setTitle: (value: string) => void;
   description: string;
   setDescription: (value: string) => void;
 }> = ({
-  thumbnail,
+  thumbnailFile,
   onThumbnailChange,
   isSubmitted,
   title,
@@ -61,14 +61,14 @@ const UploadForm: React.FC<{
 }) => {
   // const [description, setDescription] = useState("");
   const [thumbnailCropOpen, setThumbnailCropOpen] = useState(false);
-  const [resetedThumbnail, setResetedThumbnail] = useState<string | null>(null);
+  const [resetedThumbnail, setResetedThumbnail] = useState<File | undefined>(undefined);
   const [isMature, setIsMature] = useState(false);
 
   useEffect(() => {
-    if (!resetedThumbnail || resetedThumbnail == "") {
-      setResetedThumbnail(thumbnail);
+    if (!resetedThumbnail) {
+      setResetedThumbnail(thumbnailFile);
     }
-  }, [resetedThumbnail, thumbnail]);
+  }, [resetedThumbnail, thumbnailFile]);
 
   return (
     <Box className="w-full mx-auto dark:text-white text-left space-y-3">
@@ -184,13 +184,14 @@ const UploadForm: React.FC<{
           />
         </Box>
       </Box>
-      {thumbnail && (
+      {thumbnailFile && (
         <ImageCropperModal
-          image={thumbnail}
+          image={URL.createObjectURL(thumbnailFile)}
           open={thumbnailCropOpen}
           onClose={() => setThumbnailCropOpen(false)}
           onCropped={(blob) => {
-            onThumbnailChange(URL.createObjectURL(blob));
+            setResetedThumbnail(thumbnailFile)
+            onThumbnailChange(new File([blob], "cropped_thumbnail.png", { type: "image/png"}));
           }}
         />
       )}
@@ -206,8 +207,8 @@ const UploadForm: React.FC<{
           className="flex flex-col justify-center items-center border border-gray-500 border-dashed rounded min-h-32 overflow-hidden"
           component="label"
         >
-          {thumbnail ? (
-            <img src={thumbnail} alt="Thumbnail" className="max-h-64" />
+          {thumbnailFile ? (
+            <img src={URL.createObjectURL(thumbnailFile)} alt="Thumbnail" className="max-h-64" />
           ) : (
             <>
               <ImageUpIcon className="text-gray-400 text-4xl" />
@@ -221,14 +222,12 @@ const UploadForm: React.FC<{
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
-                const fileUrl = URL.createObjectURL(file);
-                onThumbnailChange(fileUrl);
-                setResetedThumbnail(fileUrl);
+                onThumbnailChange(file);
               }
             }}
           />
         </Box>
-        {thumbnail && (
+        {thumbnailFile && (
           <div className="flex gap-2">
             <Tooltip title="Crop">
               <IconButton
@@ -241,7 +240,7 @@ const UploadForm: React.FC<{
 
             <Tooltip title="Reset">
               <IconButton
-                onClick={() => onThumbnailChange(resetedThumbnail ?? "")}
+                onClick={() => onThumbnailChange(resetedThumbnail!)}
                 className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
               >
                 <RestartAltOutlined />
@@ -261,9 +260,7 @@ const UploadForm: React.FC<{
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      const url = URL.createObjectURL(file);
-                      onThumbnailChange(url);
-                      setResetedThumbnail(url);
+                      onThumbnailChange(file);
                     }
                   }}
                 />

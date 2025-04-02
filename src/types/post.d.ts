@@ -15,6 +15,6 @@ export interface Post {
   thumbnail_url?: string;
 
   medias: Media[];
-  user?: User;
+  user: User;
   categories: Category[];
 }

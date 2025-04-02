@@ -6,7 +6,10 @@ const PostAssets = ({ medias }: { medias: Media[] }) => {
       {medias &&
         medias.map((media) => (
           <div key={media.url} className="flex justify-center px-4 pt-4 w-full h-full">
-            <img src={media.url} alt={media.description} className="w-full h-full object-contain" />
+            {media.media_type == "image"
+              ? <img src={media.url} alt={media.description} />
+              : <video src={media.url} controls className="w-full h-full object-contain" />
+            }
           </div>
         ))}
     </div>

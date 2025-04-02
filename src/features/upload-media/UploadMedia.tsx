@@ -18,11 +18,14 @@ import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import { getPresignedUrl, GetPresignedUrlResponse, uploadFile } from "@/api/storage";
 import { nanoid } from 'nanoid';
+import { useNavigate } from "react-router-dom";
 
 
 const MAX_IMAGES = 5;
 
 const UploadMedia: React.FC = () => {
+  const navigate = useNavigate();
+
   const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [isImageUpload, setIsImageUpload] = useState(true);
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState<
@@ -33,20 +36,21 @@ const UploadMedia: React.FC = () => {
   const [title, setTitle] = useState("");
   const { showSnackbar } = useSnackbar();
   // Thumbnail states
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [description, setDescription] = useState("");
 
   const [imageFiles, setImageFiles] = useState<FileList | undefined>(undefined);
   const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
+  const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [mediaOrder, setMediaOrder] = useState<string[]>([]); // values: "image" or "video"
+  let canvas: HTMLCanvasElement | undefined = undefined
 
   const VIDEO_STORAGE_DIRECTORY = "posts";
 
   const extractThumbnail = (videoFile: File) => {
     const video = document.createElement("video");
-    const canvas = document.createElement("canvas");
+    canvas = document.createElement("canvas");
     const url = URL.createObjectURL(videoFile);
 
     video.src = url;
@@ -56,13 +60,25 @@ const UploadMedia: React.FC = () => {
     video.onloadeddata = () => {
       video.currentTime = 0;
       video.onseeked = () => {
+        if (!canvas) {
+          console.error("Canvas is not defined");
+          return;
+        }
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         canvas
           .getContext("2d")
           ?.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const thumbnailUrl = canvas.toDataURL("image/png");
-        setThumbnail(thumbnailUrl);
+        // const videoThumbnailUrl = canvas.toDataURL("image/png");
+        // setThumbnail(videoThumbnailUrl);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], `thumbnailFromVideo`, { type: "image/png"});
+            setThumbnailFile(file);
+          } else {
+            console.error("Failed to create blob from canvas");
+          }
+        });
         URL.revokeObjectURL(url);
       };
     };
@@ -71,7 +87,8 @@ const UploadMedia: React.FC = () => {
     title: string,
     description?: string,
     imageFiles?: FileList,
-    videoUrl?: string
+    videoUrl?: string,
+    thumbnailUrl?: string
   ) => {
     const formData = new FormData();
 
@@ -79,6 +96,7 @@ const UploadMedia: React.FC = () => {
     description && formData.append("description", description);
     formData.append("cate_ids", JSON.stringify([1, 2]));
     videoUrl && formData.append("video_url", videoUrl);
+    thumbnailUrl && formData.append("thumbnail_url", thumbnailUrl);
 
     imageFiles && Array.from(imageFiles).forEach((file) => {
       formData.append("images", file);
@@ -107,21 +125,25 @@ const UploadMedia: React.FC = () => {
     try {
       setIsLoading(true);
 
-      const videoFileName = videoFile
-        ? `${videoFile.name.split('.')[0]}_${nanoid(6)}`
-        : undefined;
+      if (!thumbnailFile) {
+        throw new Error("Thumbnail file is not defined");
+      }
 
       // Create promises to upload video and create post at the same time
-      const uploadVideoPromise = handleUploadVideo(videoFileName);
-      const createPostPromise = handleCreatePost(videoFileName);
+      const uploadVideoPromise = handleUploadVideo();
+      const uploadThumbnailPromise = handleUploadThumbnail();
 
       // Use Promise.all with await to wait for both operations to complete
-      const [videoUploadResult, postCreationResult] = await Promise.all([
+      const [videoUrl, thumbnailUrl] = await Promise.all([
         uploadVideoPromise,
-        createPostPromise,
+        uploadThumbnailPromise,
       ]);
 
+      await handleCreatePost(thumbnailUrl, videoUrl);
+
       showSnackbar("Post created successfully!", "success");
+      
+      navigate('/gallery')
     } catch (error) {
       console.error("Error during submission:", error);
       showSnackbar("Failed to create post or upload video.", "error");
@@ -130,25 +152,23 @@ const UploadMedia: React.FC = () => {
     }
   };
 
-  const handleUploadVideo = async (videoFileName?: string) => {
-    if (!videoFile || !videoFileName) {
-      return Promise.resolve();
+  const handleUploadVideo = async () : Promise<string | undefined> => {
+    if (!videoFile) {
+      return Promise.resolve(undefined);
     }
 
     try {
-      const response: GetPresignedUrlResponse = await getPresignedUrl(
-        videoFileName,
+      const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
+        `${videoFile.name.split('.')[0]}_${nanoid(6)}`,
         videoFile.type.split("/")[1],
         "video",
         VIDEO_STORAGE_DIRECTORY
       );
 
-      console.log("Presigned URL response:", response);
+      await uploadFile(videoFile, presignedUrlResponse.presignedUrl);
 
-      const uploadVideoResponse = await uploadFile(videoFile, response.url);
-
-      console.log("Video uploaded:", uploadVideoResponse);
-      return response;
+      console.log("Video uploaded successfully:", presignedUrlResponse.fileUrl);
+      return presignedUrlResponse.fileUrl;
     } catch (error) {
       console.error("Error getting presigned URL:", error);
       showSnackbar("Failed to get presigned URL.", "error");
@@ -156,23 +176,36 @@ const UploadMedia: React.FC = () => {
     }
   };
 
-  const handleCreatePost = async (videoFileName?: string) => {
-
-    const videoUrl = videoFile
-      ? `${import.meta.env.VITE_S3_BUCKET_URL}/${VIDEO_STORAGE_DIRECTORY}/${videoFileName}.${videoFile.type.split("/")[1]}`
-      : undefined;
-    const formData = createFormData(title, description, imageFiles, videoUrl);
+  const handleCreatePost = async (thumbnailUrl: string, videoUrl?: string) : Promise<void> => {
+    
+    const formData = createFormData(title, description, imageFiles, videoUrl, thumbnailUrl);
 
     try {
       const response = await createPost(formData);
       console.log("Post created:", response);
-      return response; // Return the response for further processing if needed
     } catch (error) {
       console.error("Error creating post:", error);
       showSnackbar("Failed to create post.", "error");
       throw error; // Throw error to be caught in Promise.all
     }
   };
+
+  const handleUploadThumbnail = async () : Promise<string> => {
+    const thumbnailFileName = `thumbnail_${nanoid(6)}`;
+
+      const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
+        thumbnailFileName,
+        thumbnailFile!.type.split("/")[1],
+        "image",
+        VIDEO_STORAGE_DIRECTORY
+      );
+
+    await uploadFile(thumbnailFile!, presignedUrlResponse.presignedUrl);
+    
+    return presignedUrlResponse.fileUrl;
+  }
+
+  // const handle
 
   const handleImageFilesChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -195,7 +228,7 @@ const UploadMedia: React.FC = () => {
 
       // Only set thumbnail if there is no media yet
       if (mediaOrder.length === 0 && newPreviews.length > 0) {
-        setThumbnail(newPreviews[0]);
+        setThumbnailFile(newFilesArray[0]);
         setMediaOrder((prev) => [...prev, "image"]);
       }
 
@@ -265,7 +298,7 @@ const UploadMedia: React.FC = () => {
     setArtPreviews((prevPreviews) => {
       const updated = prevPreviews.filter((_, i) => i !== index);
       if (updated.length === 0 && videoPreviews.length === 0) {
-        setThumbnail(null);
+        setThumbnailFile(undefined);
         setMediaOrder([]);
       }
       return updated;
@@ -276,13 +309,26 @@ const UploadMedia: React.FC = () => {
     }
   };
 
+  const handleRemoveVideoPreview = () => {
+    setVideoPreviews([]);
+    setVideoFile(undefined);
+    if (!artPreviews || artPreviews.length === 0) {
+      setThumbnailFile(undefined);
+    }
+  }
+
+  const handleThumbnailChange = (file: File) => {
+    setThumbnailFile(file);
+  };
+
+
   const showUploadButton = artPreviews.length === 0;
   const hasSelectedImage =
     selectedPreviewIndex !== null && artPreviews[selectedPreviewIndex];
 
   const isMediaValid = isImageUpload
     ? artPreviews.length > 0
-    : videoPreviews.length > 0 && thumbnail !== null;
+    : videoPreviews.length > 0 && thumbnailFile !== null;
 
   return (
     <Box className="dark:bg-mountain-950 w-full h-full">
@@ -591,7 +637,7 @@ const UploadMedia: React.FC = () => {
                   />
 
                   {/* Replace video button */}
-                  <Button
+                  {/* <Button
                     component="label"
                     variant="text"
                     size="small"
@@ -617,6 +663,27 @@ const UploadMedia: React.FC = () => {
                       hidden
                       onChange={handleVideoFileChange}
                     />
+                  </Button> */}
+                  <Button
+                    variant="text"
+                    size="small"
+                    startIcon={<DeleteOutlineOutlined sx={{ fontSize: 18 }} />}
+                    onClick={() => handleRemoveVideoPreview()}
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      zIndex: 2,
+                      backgroundColor: "transparent",
+                      color: "white",
+                      borderRadius: "10px",
+                      border: "1px solid",
+                      borderColor: "mountain-500",
+                      textTransform: "none",
+                      "&:hover": { backgroundColor: "transparent" },
+                    }}
+                  >
+                    Remove video
                   </Button>
                 </Box>
               ) : (
@@ -666,8 +733,8 @@ const UploadMedia: React.FC = () => {
           {/* Form fields */}
           <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
             <UploadForm
-              thumbnail={thumbnail}
-              onThumbnailChange={setThumbnail}
+              thumbnailFile={thumbnailFile}
+              onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
               title={title}
               setTitle={setTitle}

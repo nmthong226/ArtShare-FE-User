@@ -2,8 +2,8 @@ import axios from "axios"
 import api from "./baseApi"
 
 export type GetPresignedUrlResponse = {
-  url: string
-  key: string
+  presignedUrl: string
+  fileUrl: string
 }
 
 export const getPresignedUrl = async (

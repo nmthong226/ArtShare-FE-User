@@ -27,6 +27,7 @@ import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/pages/Post";
 import Short from "@/pages/Short";
 import UploadMedia from "@/features/upload-media/UploadMedia";
+import UserProfile from "@/pages/UserManagement/UserProfile";
 import MatureContentPage from "./pages/MatureContent/MatureContent";
 
 // Context/Provider
@@ -57,6 +58,7 @@ const InAppPrivateRoutes = [
   { path: "/create-art", element: <ArtGeneration /> },
   { path: "/portfolio", element: <Portfolio /> },
   { path: "/artgen", element: <ArtGeneration /> },
+  { path: "/:username", element: <UserProfile /> }
 ];
 
 const App: React.FC = () => {

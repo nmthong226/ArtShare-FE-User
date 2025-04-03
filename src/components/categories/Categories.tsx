@@ -103,7 +103,6 @@ export const Categories: React.FC<CategoriesProps> = ({
           >
             <img
               src={category.thumbnail}
-              alt={category.name}
               className="object-cover object-center w-12 aspect-[1/1] rounded-lg border"
             />
             <span className="text-sm text-gray-800 line-clamp-2">

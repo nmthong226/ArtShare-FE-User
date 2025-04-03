@@ -27,8 +27,8 @@ export const ImageRenderer = (_: unknown, context: RenderPhotoContext<GalleryPho
                             <Images size={16} />
                         </div>
                     )}
-                    <span className="font-semibold text-lg">{photo.title}</span>
-                    <span className="text-sm">{photo.author}</span>
+                    <span className="font-semibold text-md line-clamp-1">{photo.title}</span>
+                    <span className="text-xs line-clamp-1">{photo.author}</span>
                 </div>
             </Link>
         </div>

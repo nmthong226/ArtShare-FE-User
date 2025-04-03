@@ -23,10 +23,8 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "**/*.cy.ts","cypress.d.ts"]
+  "include": ["src", "**/*.cy.ts", "cypress.d.ts", "src/pages/MatureContent"]
 }

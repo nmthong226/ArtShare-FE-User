@@ -1,8 +1,10 @@
 import { useRef, forwardRef, useImperativeHandle } from "react";
 import { Button, IconButton, TextareaAutosize } from "@mui/material";
-import { HeartIcon, Ellipsis, Dot, Clock, SendHorizontal } from "lucide-react";
+import { Ellipsis, Dot, SendHorizontal } from "lucide-react";
 import Avatar from "boring-avatars";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
+import { AiFillLike } from "react-icons/ai";
+import { BsClockFill } from "react-icons/bs";
 
 const PostComments = forwardRef(() => {
   const count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -34,16 +36,16 @@ const PostComments = forwardRef(() => {
                 </div>
                 <div className="text-sm">very cute!!</div>
                 <div className="flex items-center text-xs">
-                  <div className="px-1.5 py-0.5 border rounded-sm">Like</div>
-                  <Dot size={36} className="-m-1" />
+                  <div className="hover:bg-gradient-to-r hover:from-blue-800 hover:to-purple-800 px-1.5 py-0.5 border rounded-sm hover:text-white hover:cursor-pointer">Like</div>
+                  <Dot size={24} className="mx-0.5 text-mountain-400" />
                   <div className="flex items-center gap-1">
-                    <HeartIcon size={14} />
+                    <AiFillLike size={14} className="-mt-0.5 text-mountain-500" />
                     <span>53</span>
                   </div>
-                  <Dot size={36} />
+                  <Dot size={24} className="mx-0.5 text-mountain-400" />
                   <div className="flex items-center gap-1">
-                    <Clock size={14} />
-                    <span>2d</span>
+                    <BsClockFill className="-mt-0.5 text-mountain-500" />
+                    <div>2d</div>
                   </div>
                 </div>
               </div>

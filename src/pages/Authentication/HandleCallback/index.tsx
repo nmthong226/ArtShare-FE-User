@@ -72,9 +72,9 @@ const AuthAction = () => {
         setMessage("Password has been reset successfully!");
         setError(null);
         navigate("/login"); // Redirect to login after successful password reset
-      } catch (error: any) {
+      } catch (error) {
         setMessage(null);
-        setError(error.message); // Handle any errors (invalid token, etc.)
+        setError((error as Error).message); // Handle any errors (invalid token, etc.)
       } finally {
         setLoading(false);
       }

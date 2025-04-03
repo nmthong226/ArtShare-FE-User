@@ -36,8 +36,8 @@ const SignUp = () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
       navigate("/gallery"); // Redirect after successful login
-    } catch (error: any) {
-      setError(error.message); // Handle errors from Google login
+    } catch (error) {
+      setError((error as Error).message); // Handle errors from Google login
     }
   };
 
@@ -45,8 +45,8 @@ const SignUp = () => {
     try {
       await signUpWithFacebook(); // Call Facebook login function from UserProvider
       navigate("/home"); // Redirect after successful login
-    } catch (error: any) {
-      setError(error.message); // Handle errors from Facebook login
+    } catch (error) {
+      setError((error as Error).message); // Handle errors from Facebook login
     }
   };
 

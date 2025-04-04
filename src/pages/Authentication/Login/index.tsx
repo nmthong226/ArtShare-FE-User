@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
+
 // import { login } from "@/api/authentication/auth"; // Import the login API function
 
 const Login = () => {
@@ -20,22 +21,21 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await loginWithEmail(email, password); // Call the loginWithEmail function from UserProvider
-      // On successful login, redirect to the explore page or another page
+      await loginWithEmail(email, password);
       navigate("/gallery");
     } catch (error: any) {
       console.log(error);
-      // If an error occurs, set the error message so it's visible to the user.
       let errorMessage = error.message;
-      if (error.code === "auth/user-not-found") {
-        errorMessage = "No user found with this email address.";
+      if (error.code === "auth/invalid-credential") {
+        errorMessage =
+          "Invalid email or password. Try signing up if you do not have account";
       } else if (error.code === "auth/wrong-password") {
         errorMessage = "Incorrect password. Please try again.";
       } else if (error.code === "auth/email-not-verified") {
         errorMessage = "Please verify your email before logging in.";
       }
       setError(errorMessage);
-      // Optionally, you can remain on the login page so the user can correct their input.
+      return;
     }
   };
 
@@ -43,19 +43,32 @@ const Login = () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
       navigate("/gallery"); // Redirect after successful login
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error) {
+      setError((error as Error).message);
     }
   };
 
   const handleFacebookLogin = async () => {
     try {
       await signUpWithFacebook(); // Call Facebook login function from UserProvider
-      navigate("/explore"); // Redirect after successful login
-    } catch (error: any) {
-      setError(error.message);
+      navigate("/gallery"); // Redirect after successful login
+    } catch (error) {
+      setError((error as Error).message);
     }
   };
+
+  function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const emailValue = e.target.value;
+    setEmail(emailValue);
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailValue)) {
+      setError("Please enter a valid email address.");
+    } else {
+      setError(null); // Clear error if email is valid
+    }
+  }
 
   return (
     <div className="flex-1 space-y-4 px-10 md:px-0 lg:px-20 py-8">
@@ -83,7 +96,9 @@ const Login = () => {
             placeholder="Enter your username or email"
             className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:ring-indigo-500 w-full h-10 text-mountain-950 dark:text-mountain-50"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              handleEmailChange(e);
+            }}
           />
         </div>
         <div>

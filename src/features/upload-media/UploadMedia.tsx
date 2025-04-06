@@ -44,26 +44,13 @@ const UploadMedia: React.FC = () => {
     const formData = new FormData();
 
     formData.append("title", title);
-
-    if (description) {
-      formData.append("description", description);
-    }
-
+    description && formData.append("description", description);
     formData.append("cate_ids", JSON.stringify([1, 2]));
-
-    if (videoUrl) {
-      formData.append("video_url", videoUrl);
-    }
-
-    if (thumbnailUrl) {
-      formData.append("thumbnail_url", thumbnailUrl);
-    }
-
-    if (imageFiles) {
-      Array.from(imageFiles).forEach((file) => {
-        formData.append("images", file);
-      });
-    }
+    videoUrl && formData.append("video_url", videoUrl);
+    thumbnailUrl && formData.append("thumbnail_url", thumbnailUrl);
+    imageFiles && imageFiles.forEach((file) => {
+      formData.append("images", file);
+    });
 
     return formData;
   };

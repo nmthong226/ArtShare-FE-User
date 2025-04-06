@@ -1,8 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Button, IconButton, Avatar } from "@mui/material";
-import {
-  FolderOpen as FolderOpenIcon,
-} from "@mui/icons-material";
+import { Box, Typography, Button } from "@mui/material";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { createPost } from "./api/createPost";
@@ -22,7 +19,7 @@ const UploadMedia: React.FC = () => {
   const navigate = useNavigate();
   const { showSnackbar } = useSnackbar();
 
-  const [showCollectionModal, setShowCollectionModal] = useState(false);
+  // const [showCollectionModal, setShowCollectionModal] = useState(false);
 
   const [title, setTitle] = useState("");
   // Thumbnail states

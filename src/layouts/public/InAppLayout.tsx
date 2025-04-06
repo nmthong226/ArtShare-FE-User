@@ -51,7 +51,6 @@ import { FiLogIn } from "react-icons/fi";
 import { IoMailOutline } from "react-icons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
 import ProtectedSidebarItem from "@/components/ProtectedItems/ProtectedSidebarItem";
-import ExploreNavigation from "@/components/popovers/ExploreNavigation";
 
 const UserFunctionality: React.FC<{
   user?: User | null;

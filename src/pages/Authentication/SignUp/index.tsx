@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
+import { AxiosError } from "axios";
 
 const SignUp = () => {
   const { signUpWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Use UserProvider context
@@ -22,10 +23,10 @@ const SignUp = () => {
       const token = await signUpWithEmail(email, password, username); // Get the token
       localStorage.setItem("user_verify", token);
       navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
-    } catch (error: any) {
+    } catch (error) {
       console.log(error);
-      let errorMessage = error.message;
-      if (error.code === "auth/email-already-in-use") {
+      let errorMessage = (error as AxiosError).message;
+      if ((error as AxiosError).code === "auth/email-already-in-use") {
         errorMessage = "Email already in use";
       }
       setError(errorMessage);

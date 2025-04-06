@@ -12,7 +12,7 @@ const PostArtist = ({ artist }: { artist: User }) => {
         <CardHeader
           className="p-0"
           action={
-            <Link to="/gallery">
+            <Link to="/explore">
               <IconButton>
                 <X />
               </IconButton>

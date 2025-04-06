@@ -22,7 +22,7 @@ const Login = () => {
     e.preventDefault();
     try {
       await loginWithEmail(email, password);
-      navigate("/gallery");
+      navigate("/explore");
     } catch (error) {
       console.log(error);
       if (error instanceof AxiosError) {
@@ -45,7 +45,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
-      navigate("/gallery"); // Redirect after successful login
+      navigate("/explore"); // Redirect after successful login
     } catch (error) {
       setError((error as Error).message);
     }
@@ -54,7 +54,7 @@ const Login = () => {
   const handleFacebookLogin = async () => {
     try {
       await signUpWithFacebook(); // Call Facebook login function from UserProvider
-      navigate("/gallery"); // Redirect after successful login
+      navigate("/explore"); // Redirect after successful login
     } catch (error) {
       setError((error as Error).message);
     }

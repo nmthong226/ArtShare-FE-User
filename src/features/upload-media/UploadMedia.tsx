@@ -13,10 +13,13 @@ import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { createPost } from "./api/createPost";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { getPresignedUrl, GetPresignedUrlResponse, uploadFile } from "@/api/storage";
-import { nanoid } from 'nanoid';
+import {
+  getPresignedUrl,
+  GetPresignedUrlResponse,
+  uploadFile,
+} from "@/api/storage";
+import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
-
 
 const MAX_IMAGES = 5;
 
@@ -37,10 +40,12 @@ const UploadMedia: React.FC = () => {
 
   const [imageFiles, setImageFiles] = useState<FileList | undefined>(undefined);
   const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
-  const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(undefined);
+  const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(
+    undefined,
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [mediaOrder, setMediaOrder] = useState<string[]>([]); // values: "image" or "video"
-  let canvas: HTMLCanvasElement | undefined = undefined
+  let canvas: HTMLCanvasElement | undefined = undefined;
 
   const VIDEO_STORAGE_DIRECTORY = "posts";
 
@@ -69,7 +74,9 @@ const UploadMedia: React.FC = () => {
         // setThumbnail(videoThumbnailUrl);
         canvas.toBlob((blob) => {
           if (blob) {
-            const file = new File([blob], `thumbnailFromVideo`, { type: "image/png"});
+            const file = new File([blob], `thumbnailFromVideo`, {
+              type: "image/png",
+            });
             setThumbnailFile(file);
           } else {
             console.error("Failed to create blob from canvas");
@@ -84,36 +91,34 @@ const UploadMedia: React.FC = () => {
     description?: string,
     imageFiles?: FileList,
     videoUrl?: string,
-    thumbnailUrl?: string
+    thumbnailUrl?: string,
   ) => {
     const formData = new FormData();
 
     formData.append("title", title);
-    
+
     if (description) {
       formData.append("description", description);
     }
-    
+
     formData.append("cate_ids", JSON.stringify([1, 2]));
-    
+
     if (videoUrl) {
       formData.append("video_url", videoUrl);
     }
-    
+
     if (thumbnailUrl) {
       formData.append("thumbnail_url", thumbnailUrl);
     }
-    
+
     if (imageFiles) {
       Array.from(imageFiles).forEach((file) => {
         formData.append("images", file);
       });
     }
-    
 
     return formData;
   };
-
 
   // Function to handle the form submission
   const handleSubmit = async () => {
@@ -125,7 +130,7 @@ const UploadMedia: React.FC = () => {
       return;
     }
 
-    console.log('hihi', videoFile)
+    console.log("hihi", videoFile);
     if ((!imageFiles || imageFiles.length === 0) && !videoFile) {
       showSnackbar("At least one image or video is required.", "error");
       return;
@@ -151,8 +156,8 @@ const UploadMedia: React.FC = () => {
       await handleCreatePost(thumbnailUrl, videoUrl);
 
       showSnackbar("Post created successfully!", "success");
-      
-      navigate('/gallery')
+
+      navigate("/explore");
     } catch (error) {
       console.error("Error during submission:", error);
       showSnackbar("Failed to create post or upload video.", "error");
@@ -161,18 +166,19 @@ const UploadMedia: React.FC = () => {
     }
   };
 
-  const handleUploadVideo = async () : Promise<string | undefined> => {
+  const handleUploadVideo = async (): Promise<string | undefined> => {
     if (!videoFile) {
       return Promise.resolve(undefined);
     }
 
     try {
-      const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
-        `${videoFile.name.split('.')[0]}_${nanoid(6)}`,
-        videoFile.type.split("/")[1],
-        "video",
-        VIDEO_STORAGE_DIRECTORY
-      );
+      const presignedUrlResponse: GetPresignedUrlResponse =
+        await getPresignedUrl(
+          `${videoFile.name.split(".")[0]}_${nanoid(6)}`,
+          videoFile.type.split("/")[1],
+          "video",
+          VIDEO_STORAGE_DIRECTORY,
+        );
 
       await uploadFile(videoFile, presignedUrlResponse.presignedUrl);
 
@@ -185,9 +191,17 @@ const UploadMedia: React.FC = () => {
     }
   };
 
-  const handleCreatePost = async (thumbnailUrl: string, videoUrl?: string) : Promise<void> => {
-    
-    const formData = createFormData(title, description, imageFiles, videoUrl, thumbnailUrl);
+  const handleCreatePost = async (
+    thumbnailUrl: string,
+    videoUrl?: string,
+  ): Promise<void> => {
+    const formData = createFormData(
+      title,
+      description,
+      imageFiles,
+      videoUrl,
+      thumbnailUrl,
+    );
 
     try {
       const response = await createPost(formData);
@@ -199,25 +213,25 @@ const UploadMedia: React.FC = () => {
     }
   };
 
-  const handleUploadThumbnail = async () : Promise<string> => {
+  const handleUploadThumbnail = async (): Promise<string> => {
     const thumbnailFileName = `thumbnail_${nanoid(6)}`;
 
-      const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
-        thumbnailFileName,
-        thumbnailFile!.type.split("/")[1],
-        "image",
-        VIDEO_STORAGE_DIRECTORY
-      );
+    const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
+      thumbnailFileName,
+      thumbnailFile!.type.split("/")[1],
+      "image",
+      VIDEO_STORAGE_DIRECTORY,
+    );
 
     await uploadFile(thumbnailFile!, presignedUrlResponse.presignedUrl);
-    
+
     return presignedUrlResponse.fileUrl;
-  }
+  };
 
   // const handle
 
   const handleImageFilesChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const newFiles = event.target.files;
     if (!newFiles || newFiles.length === 0) return;
@@ -250,12 +264,12 @@ const UploadMedia: React.FC = () => {
   };
 
   const handleVideoFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const newFiles = event.target.files;
     if (!newFiles || newFiles.length === 0) return;
     const file = newFiles[0];
-    setVideoFile(file)
+    setVideoFile(file);
     const url = URL.createObjectURL(file);
 
     const video = document.createElement("video");
@@ -281,7 +295,7 @@ const UploadMedia: React.FC = () => {
       if (ratioDifference > 0.05) {
         showSnackbar(
           "Video must have a 9:16 aspect ratio (vertical format).",
-          "error"
+          "error",
         );
         URL.revokeObjectURL(url);
         return;
@@ -324,12 +338,11 @@ const UploadMedia: React.FC = () => {
     if (!artPreviews || artPreviews.length === 0) {
       setThumbnailFile(undefined);
     }
-  }
+  };
 
   const handleThumbnailChange = (file: File) => {
     setThumbnailFile(file);
   };
-
 
   const showUploadButton = artPreviews.length === 0;
   const hasSelectedImage =
@@ -362,7 +375,7 @@ const UploadMedia: React.FC = () => {
           </Typography>
         </Backdrop>
       )}
- 
+
       <Box
         className="flex gap-3 p-4 w-full h-[calc(100vh-4rem)]"
         style={{ overflow: "hidden" }}
@@ -374,10 +387,11 @@ const UploadMedia: React.FC = () => {
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(true)}
-              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${isImageUpload
-                ? "bg-indigo-800 text-white"
-                : "bg-gray-900 text-gray-500 opacity-50"
-                }`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
+                isImageUpload
+                  ? "bg-indigo-800 text-white"
+                  : "bg-gray-900 text-gray-500 opacity-50"
+              }`}
               sx={{
                 height: 40,
                 borderColor: isImageUpload ? "#4F46E5" : "#4B5563",
@@ -392,8 +406,9 @@ const UploadMedia: React.FC = () => {
               <p className="text-sm">
                 Upload image{" "}
                 <span
-                  className={`${isImageUpload ? "text-mountain-300" : "text-gray-600"
-                    }`}
+                  className={`${
+                    isImageUpload ? "text-mountain-300" : "text-gray-600"
+                  }`}
                 >
                   ( .png, .jpg, .jpeg, ... )
                 </span>
@@ -404,10 +419,11 @@ const UploadMedia: React.FC = () => {
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(false)}
-              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${!isImageUpload
-                ? "bg-indigo-800 text-white"
-                : "bg-gray-900 text-gray-500 opacity-50"
-                }`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${
+                !isImageUpload
+                  ? "bg-indigo-800 text-white"
+                  : "bg-gray-900 text-gray-500 opacity-50"
+              }`}
               sx={{
                 height: 40,
                 borderColor: !isImageUpload ? "#4F46E5" : "#4B5563",
@@ -422,8 +438,9 @@ const UploadMedia: React.FC = () => {
               <p className="text-sm">
                 Upload video{" "}
                 <span
-                  className={`${!isImageUpload ? "text-mountain-300" : "text-gray-600"
-                    }`}
+                  className={`${
+                    !isImageUpload ? "text-mountain-300" : "text-gray-600"
+                  }`}
                 >
                   ( .mp4, .avi, .mov, ... )
                 </span>
@@ -477,7 +494,7 @@ const UploadMedia: React.FC = () => {
               >
                 {artPreviews.length > 0 ? (
                   selectedPreviewIndex !== null &&
-                    artPreviews[selectedPreviewIndex] ? (
+                  artPreviews[selectedPreviewIndex] ? (
                     <img
                       src={artPreviews[selectedPreviewIndex]}
                       alt="Preview"
@@ -601,10 +618,11 @@ const UploadMedia: React.FC = () => {
           ) : (
             // -------- VIDEO UPLOAD FLOW --------
             <Box
-              className={`relative w-full rounded-md flex flex-col ${videoPreviews.length === 0
-                ? "border border-gray-500 border-dashed"
-                : ""
-                }`}
+              className={`relative w-full rounded-md flex flex-col ${
+                videoPreviews.length === 0
+                  ? "border border-gray-500 border-dashed"
+                  : ""
+              }`}
               sx={{
                 aspectRatio: "9 / 16", // Optional: keeps a vertical shape for empty state
                 display: "flex",

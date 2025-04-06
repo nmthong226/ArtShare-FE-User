@@ -156,7 +156,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
     <div className=""> 
       <RowsPhotoAlbum
         spacing={8}
-        targetRowHeight={256}
+        rowConstraints={{singleRowMaxHeight: 256}}
         photos={galleryPhotos as GalleryPhoto[]}
         render={{ image: ImageRenderer }}
       />

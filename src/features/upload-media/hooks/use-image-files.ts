@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 export function useImageFilesHandler(
-  imageFiles: File[],
+  imageFilesPreview: Map<File, string>,
   videoPreviewUrl: string | undefined,
-  setImageFiles: (files: File[]) => void,
+  setImageFilesPreview: (map: Map<File, string>) => void,
+  setImageFiles: React.Dispatch<React.SetStateAction<File[]>>,
   setThumbnailFile: (file: File | undefined) => void
 ) {
-  const [imageFilesPreview, setImageFilesPreview] = useState<Map<File, string>>(new Map());
   const [selectedPreview, setSelectedPreview] = useState<File | undefined>(undefined);
 
   const handleImageFilesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,7 +24,7 @@ export function useImageFilesHandler(
     setImageFilesPreview(newImagePreviewMap);
 
     setSelectedPreview(filesArray[0]);
-    if (newImagePreviewMap.size > 0) {
+    if (!videoPreviewUrl && newImagePreviewMap.size > 0) {
       setThumbnailFile(filesArray[0]);
     }
   };
@@ -35,8 +35,7 @@ export function useImageFilesHandler(
     newImagePreviewMap.delete(preview);
     setImageFilesPreview(newImagePreviewMap);
 
-    setImageFiles(imageFiles.filter((file: File) => file !== preview));
-
+    setImageFiles((prevFiles: File[]) => prevFiles.filter((file) => file !== preview));
 
     if (newImagePreviewMap.size === 0 && !videoPreviewUrl) {
       setThumbnailFile(undefined);

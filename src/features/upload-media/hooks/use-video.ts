@@ -1,9 +1,9 @@
 import { useSnackbar } from '@/contexts/SnackbarProvider';
 
 export default function useVideoFileHandler(
-  imageFiles: File[],
   setVideoFile: (file: File | undefined) => void,
   setThumbnailFile: (file: File | undefined) => void,
+  imageFilesPreview: Map<File, string>,
   videoPreviewUrl: string | undefined,
   setVideoPreviewUrl: (url: string | undefined) => void,
 ) {
@@ -45,7 +45,9 @@ export default function useVideoFileHandler(
     };
 
     video.onseeked = () => {
-      captureThumbnail(video);
+      if (imageFilesPreview.size === 0) {
+        captureThumbnail(video);
+      }
     };
 
     video.onerror = () => {
@@ -58,7 +60,7 @@ export default function useVideoFileHandler(
     URL.revokeObjectURL(videoPreviewUrl!); // Revoke the object URL
     setVideoPreviewUrl(undefined);
     setVideoFile(undefined);
-    if (imageFiles.length === 0) {
+    if (imageFilesPreview.size === 0) {
       setThumbnailFile(undefined);
     }
   }

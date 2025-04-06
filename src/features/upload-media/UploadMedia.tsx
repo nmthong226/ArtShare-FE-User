@@ -4,13 +4,16 @@ import {
   FolderOpen as FolderOpenIcon,
 } from "@mui/icons-material";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
-import CollectionModal from "./components/CollectionModal";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { createPost } from "./api/createPost";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import { getPresignedUrl, GetPresignedUrlResponse, uploadFile } from "@/api/storage";
-import { nanoid } from 'nanoid';
+import {
+  getPresignedUrl,
+  GetPresignedUrlResponse,
+  uploadFile,
+} from "@/api/storage";
+import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import MediaSelection from "./components/media-selection";
 
@@ -39,23 +42,34 @@ const UploadMedia: React.FC = () => {
     description?: string,
     imageFiles?: File[],
     videoUrl?: string,
-    thumbnailUrl?: string
+    thumbnailUrl?: string,
   ) => {
     const formData = new FormData();
 
     formData.append("title", title);
-    description && formData.append("description", description);
-    formData.append("cate_ids", JSON.stringify([1, 2]));
-    videoUrl && formData.append("video_url", videoUrl);
-    thumbnailUrl && formData.append("thumbnail_url", thumbnailUrl);
 
-    imageFiles && Array.from(imageFiles).forEach((file) => {
-      formData.append("images", file);
-    });
+    if (description) {
+      formData.append("description", description);
+    }
+
+    formData.append("cate_ids", JSON.stringify([1, 2]));
+
+    if (videoUrl) {
+      formData.append("video_url", videoUrl);
+    }
+
+    if (thumbnailUrl) {
+      formData.append("thumbnail_url", thumbnailUrl);
+    }
+
+    if (imageFiles) {
+      Array.from(imageFiles).forEach((file) => {
+        formData.append("images", file);
+      });
+    }
 
     return formData;
   };
-
 
   // Function to handle the form submission
   const handleSubmit = async () => {
@@ -67,7 +81,7 @@ const UploadMedia: React.FC = () => {
       return;
     }
 
-    console.log('hihi', videoFile)
+    console.log("hihi", videoFile);
     if ((!imageFiles || imageFiles.length === 0) && !videoFile) {
       showSnackbar("At least one image or video is required.", "error");
       return;
@@ -94,7 +108,7 @@ const UploadMedia: React.FC = () => {
 
       showSnackbar("Post created successfully!", "success");
 
-      navigate('/gallery')
+      navigate("/explore");
     } catch (error) {
       console.error("Error during submission:", error);
       showSnackbar("Failed to create post or upload video.", "error");
@@ -109,12 +123,13 @@ const UploadMedia: React.FC = () => {
     }
 
     try {
-      const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
-        `${videoFile.name.split('.')[0]}_${nanoid(6)}`,
-        videoFile.type.split("/")[1],
-        "video",
-        VIDEO_STORAGE_DIRECTORY
-      );
+      const presignedUrlResponse: GetPresignedUrlResponse =
+        await getPresignedUrl(
+          `${videoFile.name.split(".")[0]}_${nanoid(6)}`,
+          videoFile.type.split("/")[1],
+          "video",
+          VIDEO_STORAGE_DIRECTORY,
+        );
 
       await uploadFile(videoFile, presignedUrlResponse.presignedUrl);
 
@@ -127,9 +142,17 @@ const UploadMedia: React.FC = () => {
     }
   };
 
-  const handleCreatePost = async (thumbnailUrl: string, videoUrl?: string): Promise<void> => {
-
-    const formData = createFormData(title, description, imageFiles, videoUrl, thumbnailUrl);
+  const handleCreatePost = async (
+    thumbnailUrl: string,
+    videoUrl?: string,
+  ): Promise<void> => {
+    const formData = createFormData(
+      title,
+      description,
+      imageFiles,
+      videoUrl,
+      thumbnailUrl,
+    );
 
     try {
       const response = await createPost(formData);
@@ -148,7 +171,7 @@ const UploadMedia: React.FC = () => {
       thumbnailFileName,
       thumbnailFile!.type.split("/")[1],
       "image",
-      VIDEO_STORAGE_DIRECTORY
+      VIDEO_STORAGE_DIRECTORY,
     );
 
     await uploadFile(thumbnailFile!, presignedUrlResponse.presignedUrl);
@@ -159,7 +182,6 @@ const UploadMedia: React.FC = () => {
   const handleThumbnailChange = (file: File) => {
     setThumbnailFile(file);
   };
-
 
   const isMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
 
@@ -186,15 +208,7 @@ const UploadMedia: React.FC = () => {
           </Typography>
         </Backdrop>
       )}
-      {
-        <CollectionModal
-          open={showCollectionModal}
-          onClose={() => setShowCollectionModal(false)}
-        />
-      }
-      {/* <div ref={heroRef}>
-        <HeroSection />
-      </div> */}
+
       <Box
         className="flex gap-3 p-4 w-full h-[calc(100vh-4rem)]"
         style={{ overflow: "hidden" }}
@@ -232,7 +246,7 @@ const UploadMedia: React.FC = () => {
 
           {/* Bottom actions */}
           <Box className="flex justify-between mt-auto pr-4 w-full">
-            <Button
+            {/* <Button
               variant="outlined"
               className="flex items-center hover:bg-mountain-800 dark:border-white border-black rounded-md text-gray-900 dark:text-white"
               sx={{
@@ -245,12 +259,11 @@ const UploadMedia: React.FC = () => {
               onClick={() => setShowCollectionModal(true)}
               startIcon={<FolderOpenIcon />}
             >
-              {/* <span>{"Gallery | My Char Design".substring(0, 13) + "..."}</span> */}
               <div className="flex items-center gap-8">
                 <span>{"Collection".substring(0, 13)}</span>
                 <span className="text-mountain-600">Favourites</span>
               </div>
-            </Button>
+            </Button> */}
             <Button
               variant="contained"
               onClick={handleSubmit}

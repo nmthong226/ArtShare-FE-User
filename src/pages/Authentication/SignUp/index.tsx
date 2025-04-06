@@ -35,7 +35,7 @@ const SignUp = () => {
   const handleGoogleLogin = async () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
-      navigate("/gallery"); // Redirect after successful login
+      navigate("/explore"); // Redirect after successful login
     } catch (error) {
       setError((error as Error).message); // Handle errors from Google login
     }

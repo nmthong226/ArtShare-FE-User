@@ -5,13 +5,10 @@ import {
   Add as AddIcon,
   Close as CloseIcon,
   DeleteOutlineOutlined,
-  FolderOpen as FolderOpenIcon,
-  Loop,
 } from "@mui/icons-material";
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
-import CollectionModal from "./components/CollectionModal";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { createPost } from "./api/createPost";
 import Backdrop from "@mui/material/Backdrop";
@@ -26,7 +23,6 @@ const MAX_IMAGES = 5;
 const UploadMedia: React.FC = () => {
   const navigate = useNavigate();
 
-  const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [isImageUpload, setIsImageUpload] = useState(true);
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState<
     number | null
@@ -93,14 +89,27 @@ const UploadMedia: React.FC = () => {
     const formData = new FormData();
 
     formData.append("title", title);
-    description && formData.append("description", description);
+    
+    if (description) {
+      formData.append("description", description);
+    }
+    
     formData.append("cate_ids", JSON.stringify([1, 2]));
-    videoUrl && formData.append("video_url", videoUrl);
-    thumbnailUrl && formData.append("thumbnail_url", thumbnailUrl);
-
-    imageFiles && Array.from(imageFiles).forEach((file) => {
-      formData.append("images", file);
-    });
+    
+    if (videoUrl) {
+      formData.append("video_url", videoUrl);
+    }
+    
+    if (thumbnailUrl) {
+      formData.append("thumbnail_url", thumbnailUrl);
+    }
+    
+    if (imageFiles) {
+      Array.from(imageFiles).forEach((file) => {
+        formData.append("images", file);
+      });
+    }
+    
 
     return formData;
   };
@@ -353,15 +362,7 @@ const UploadMedia: React.FC = () => {
           </Typography>
         </Backdrop>
       )}
-      {
-        <CollectionModal
-          open={showCollectionModal}
-          onClose={() => setShowCollectionModal(false)}
-        />
-      }
-      {/* <div ref={heroRef}>
-        <HeroSection />
-      </div> */}
+ 
       <Box
         className="flex gap-3 p-4 w-full h-[calc(100vh-4rem)]"
         style={{ overflow: "hidden" }}
@@ -636,34 +637,6 @@ const UploadMedia: React.FC = () => {
                     }}
                   />
 
-                  {/* Replace video button */}
-                  {/* <Button
-                    component="label"
-                    variant="text"
-                    size="small"
-                    startIcon={<Loop sx={{ fontSize: 18 }} />}
-                    sx={{
-                      position: "absolute",
-                      top: 8,
-                      right: 8,
-                      zIndex: 2,
-                      backgroundColor: "transparent",
-                      color: "white",
-                      borderRadius: "10px",
-                      border: "1px solid",
-                      borderColor: "mountain-500",
-                      textTransform: "none",
-                      "&:hover": { backgroundColor: "transparent" },
-                    }}
-                  >
-                    Replace video
-                    <input
-                      type="file"
-                      accept="video/*"
-                      hidden
-                      onChange={handleVideoFileChange}
-                    />
-                  </Button> */}
                   <Button
                     variant="text"
                     size="small"
@@ -747,7 +720,7 @@ const UploadMedia: React.FC = () => {
 
           {/* Bottom actions */}
           <Box className="flex justify-between mt-auto pr-4 w-full">
-            <Button
+            {/* <Button
               variant="outlined"
               className="flex items-center hover:bg-mountain-800 dark:border-white border-black rounded-md text-gray-900 dark:text-white"
               sx={{
@@ -760,12 +733,11 @@ const UploadMedia: React.FC = () => {
               onClick={() => setShowCollectionModal(true)}
               startIcon={<FolderOpenIcon />}
             >
-              {/* <span>{"Gallery | My Char Design".substring(0, 13) + "..."}</span> */}
               <div className="flex items-center gap-8">
                 <span>{"Collection".substring(0, 13)}</span>
                 <span className="text-mountain-600">Favourites</span>
               </div>
-            </Button>
+            </Button> */}
             <Button
               variant="contained"
               onClick={handleSubmit}

@@ -65,7 +65,6 @@ const UploadMedia: React.FC = () => {
       return;
     }
 
-    console.log("hihi", videoFile);
     if ((!imageFiles || imageFiles.length === 0) && !videoFile) {
       showSnackbar("At least one image or video is required.", "error");
       return;

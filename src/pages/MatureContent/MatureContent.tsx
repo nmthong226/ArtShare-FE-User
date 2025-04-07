@@ -3,8 +3,8 @@ import { Box, Typography, Link } from "@mui/material";
 
 const MatureContentPage: React.FC = () => {
   return (
-    <Box className="min-h-screen bg-gray-100 p-8">
-      <Box className="max-w-3xl mx-auto bg-white p-6 rounded-md shadow-md">
+    <Box className="min-h-screen w-full bg-gray-100 p-8">
+      <Box className="w-full bg-white p-6 rounded-md shadow-md">
         <Typography variant="h4" className="mb-4 text-gray-800">
           Mature Content & Unsuitable Content Guidelines
         </Typography>

@@ -9,6 +9,7 @@ const PostMoreByArtist = ({ artist }: { artist: User }) => {
     error,
   } = useQuery({
     queryKey: ["posts", artist.username],
+    retry: 2,
     queryFn: async () => {
       const response = await fetchPosts(artist.username, 1);
       return response.data;
@@ -24,9 +25,9 @@ const PostMoreByArtist = ({ artist }: { artist: User }) => {
   }
 
   return (
-    <div className="flex flex-col bg-white px-4 py-6 rounded-2xl gap-4">
-      <div className="font-bold text-xl">More by {artist.fullName}</div>
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 bg-white rounded-2xl">
+    <div className="flex flex-col gap-4 bg-white px-4 py-6 rounded-2xl">
+      <div className="font-bold text-xl">More by {artist.fullName || ""}</div>
+      <div className="gap-4 grid grid-cols-2 lg:grid-cols-3 bg-white rounded-2xl">
         {posts?.map((post) => (
           <img
             key={post.id}

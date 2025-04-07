@@ -1,8 +1,10 @@
 export interface Media {
-  mediaType: MediaType;
+  id: number;
+  post_id: number;
+  media_type: MediaType;
   description?: string;
   url: string;
-  creatorId: number;
+  creator_id: number;
   downloads: number;
-  createdAt: Date;
+  created_at: Date;
 }

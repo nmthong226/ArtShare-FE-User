@@ -31,8 +31,16 @@ export const lightTheme = createTheme({
             backgroundColor: "#c7d2fe", // lighter indigo
           },
         },
+        text: {
+          "&.MuiButton-root": {
+            color: "#000000", // black text
+            border: "2px solid #000000", // thicker black border
+            fontWeight: 700, // bold
+          },
+        },
       },
     },
+
     MuiCheckbox: {
       styleOverrides: {
         root: {
@@ -191,10 +199,31 @@ export const lightTheme = createTheme({
     MuiSvgIcon: {
       styleOverrides: {
         root: {
-          color: "#6b7280", // Gray-600 for icons in light mode
+          color: "#000",
         },
       },
     },
+    MuiAlert: {
+      styleOverrides: {
+        standardSuccess: {
+          backgroundColor: "#22c55e", // Tailwind green-500
+          color: "#ffffff",
+        },
+        standardError: {
+          backgroundColor: "#ef4444", // Tailwind red-500
+          color: "#ffffff",
+        },
+        standardInfo: {
+          backgroundColor: "#3b82f6", // Tailwind blue-500
+          color: "#ffffff",
+        },
+        standardWarning: {
+          backgroundColor: "#f59e0b", // Tailwind amber-500
+          color: "#ffffff",
+        },
+      },
+    },
+    
   },
 });
 
@@ -304,5 +333,26 @@ export const darkTheme = createTheme({
         },
       },
     },
+    MuiAlert: {
+      styleOverrides: {
+        standardSuccess: {
+          backgroundColor: "#22c55e",
+          color: "#ffffff",
+        },
+        standardError: {
+          backgroundColor: "#ef4444",
+          color: "#ffffff",
+        },
+        standardInfo: {
+          backgroundColor: "#3b82f6",
+          color: "#ffffff",
+        },
+        standardWarning: {
+          backgroundColor: "#f59e0b",
+          color: "#ffffff",
+        },
+      },
+    },
+    
   },
 });

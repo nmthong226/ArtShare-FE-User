@@ -29,7 +29,8 @@ const AccountActivation = () => {
         await sendEmailVerification(user);
         setSuccess(true); // Mark the verification as successful
         setError(null); // Clear any previous errors
-      } catch (error: any) {
+      } catch (error) {
+        console.error("Error sending email verification:", error);
         setError("Failed to send verification email. Please try again later.");
         setSuccess(false); // Mark as failure if error occurs
       }
@@ -66,7 +67,7 @@ const AccountActivation = () => {
             Your Email Is:
           </label>
           <Input
-            value={auth.currentUser?.email!}
+            value={auth.currentUser?.email || ''}
             className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full h-10 disabled:font-bold disabled:text-mountain-950 dark:disabled:text-mountain-100"
             disabled
           />

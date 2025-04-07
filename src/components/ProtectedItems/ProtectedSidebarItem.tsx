@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
+
+
 interface ProtectedSidebarItemProps {
     path: string;
     iconActive: React.ReactNode;
     iconInactive: React.ReactNode;
     label: string;
-    user: any; // Replace with actual user type if available
+    user: User; // Replace with actual user type if available
 }
 
 const ProtectedSidebarItem = ({ path, iconActive, iconInactive, label, user }: ProtectedSidebarItemProps) => {

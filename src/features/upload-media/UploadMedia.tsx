@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button, IconButton, Avatar } from "@mui/material";
 import {
   CloudUpload as CloudUploadIcon,
@@ -10,52 +10,46 @@ import {
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
-import HeroSection from "./components/HeroSection";
-import { Crop as CropIcon } from "@mui/icons-material";
 import CollectionModal from "./components/CollectionModal";
-import UploadToggle from "./components/UploadToggle.";
-import ThumbnailCard from "./components/ThumbnailCard";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
+import { createPost } from "./api/createPost";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import { getPresignedUrl, GetPresignedUrlResponse, uploadFile } from "@/api/storage";
+import { nanoid } from 'nanoid';
+import { useNavigate } from "react-router-dom";
+
 
 const MAX_IMAGES = 5;
 
 const UploadMedia: React.FC = () => {
-  const [contentHeight, setContentHeight] = useState<number>(0);
-  const heroRef = useRef<HTMLDivElement>(null);
-  const [showThumbnailOptions, setShowThumbnailOptions] = useState(false);
+  const navigate = useNavigate();
+
   const [showCollectionModal, setShowCollectionModal] = useState(false);
   const [isImageUpload, setIsImageUpload] = useState(true);
   const [selectedPreviewIndex, setSelectedPreviewIndex] = useState<
     number | null
   >(null);
   const [artPreviews, setArtPreviews] = useState<string[]>([]);
+  const [videoPreviews, setVideoPreviews] = useState<string[]>([]);
   const [title, setTitle] = useState("");
   const { showSnackbar } = useSnackbar();
   // Thumbnail states
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [description, setDescription] = useState("");
 
-  const THUMBNAIL_HINT =
-    "Recommended: 720x1280 (vertical), less than 2MB, JPG/PNG/GIF format, 9:16 ratio";
+  const [imageFiles, setImageFiles] = useState<FileList | undefined>(undefined);
+  const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
+  const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(false);
+  const [mediaOrder, setMediaOrder] = useState<string[]>([]); // values: "image" or "video"
+  let canvas: HTMLCanvasElement | undefined = undefined
 
-  useEffect(() => {
-    const calculateHeight = () => {
-      if (heroRef.current) {
-        const heroHeight = heroRef.current.getBoundingClientRect().height;
-        const availableHeight = window.innerHeight - heroHeight;
-        setContentHeight(availableHeight);
-      }
-    };
-    calculateHeight();
-    window.addEventListener("resize", calculateHeight);
-    return () => {
-      window.removeEventListener("resize", calculateHeight);
-    };
-  }, []);
+  const VIDEO_STORAGE_DIRECTORY = "posts";
 
   const extractThumbnail = (videoFile: File) => {
     const video = document.createElement("video");
-    const canvas = document.createElement("canvas");
+    canvas = document.createElement("canvas");
     const url = URL.createObjectURL(videoFile);
 
     video.src = url;
@@ -65,106 +59,177 @@ const UploadMedia: React.FC = () => {
     video.onloadeddata = () => {
       video.currentTime = 0;
       video.onseeked = () => {
+        if (!canvas) {
+          console.error("Canvas is not defined");
+          return;
+        }
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
         canvas
           .getContext("2d")
           ?.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const thumbnailUrl = canvas.toDataURL("image/png");
-        setThumbnail(thumbnailUrl);
+        // const videoThumbnailUrl = canvas.toDataURL("image/png");
+        // setThumbnail(videoThumbnailUrl);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const file = new File([blob], `thumbnailFromVideo`, { type: "image/png"});
+            setThumbnailFile(file);
+          } else {
+            console.error("Failed to create blob from canvas");
+          }
+        });
         URL.revokeObjectURL(url);
       };
     };
   };
+  const createFormData = (
+    title: string,
+    description?: string,
+    imageFiles?: FileList,
+    videoUrl?: string,
+    thumbnailUrl?: string
+  ) => {
+    const formData = new FormData();
 
-  const handleSubmit = () => {
+    formData.append("title", title);
+    description && formData.append("description", description);
+    formData.append("cate_ids", JSON.stringify([1, 2]));
+    videoUrl && formData.append("video_url", videoUrl);
+    thumbnailUrl && formData.append("thumbnail_url", thumbnailUrl);
+
+    imageFiles && Array.from(imageFiles).forEach((file) => {
+      formData.append("images", file);
+    });
+
+    return formData;
+  };
+
+
+  // Function to handle the form submission
+  const handleSubmit = async () => {
     setIsSubmitted(true);
 
+    // Validation for required fields
     if (!title.trim()) {
       showSnackbar("Title is required.", "error");
       return;
     }
 
-    // Continue with submission...
-  };
-  // When user uploads new images
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newFiles = event.target.files;
-    if (!newFiles || newFiles.length === 0) return;
-
-    const firstFile = newFiles[0];
-    const fileNameWithoutExt = firstFile.name.replace(/\.[^/.]+$/, "");
-
-    // Set title if it's empty
-    if (!title) {
-      setTitle(fileNameWithoutExt);
-    }
-
-    // --- VIDEO MODE ---
-    if (!isImageUpload) {
-      if (!firstFile.type.startsWith("video/")) return;
-
-      const videoURL = URL.createObjectURL(firstFile);
-      const videoElement = document.createElement("video");
-      videoElement.preload = "metadata";
-
-      videoElement.onloadedmetadata = () => {
-        const duration = videoElement.duration;
-        const width = videoElement.videoWidth;
-        const height = videoElement.videoHeight;
-
-        // Duration check (15s–60s)
-        if (duration < 15 || duration > 60) {
-          showSnackbar("Video must be between 15 and 60 seconds.", "error");
-          URL.revokeObjectURL(videoURL);
-          return;
-        }
-
-        // Aspect ratio check for Shorts (9:16 ≈ 0.5625)
-        const ratio = width / height;
-        const isShortRatio = ratio <= 0.58; // Allow some tolerance
-
-        if (!isShortRatio) {
-          showSnackbar(
-            "Recommended format is vertical (9:16) like YouTube Shorts.",
-            "info"
-          );
-        }
-
-        setArtPreviews([videoURL]);
-        extractThumbnail(firstFile);
-
-        videoElement.currentTime = 0;
-        videoElement.onseeked = () => {
-          const canvas = document.createElement("canvas");
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          if (ctx) {
-            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-            const imageUrl = canvas.toDataURL("image/png");
-            setThumbnail(imageUrl);
-          }
-        };
-      };
-
-      videoElement.src = videoURL;
+    console.log('hihi', videoFile)
+    if ((!imageFiles || imageFiles.length === 0) && !videoFile) {
+      showSnackbar("At least one image or video is required.", "error");
       return;
     }
 
-    // --- IMAGE MODE ---
+    try {
+      setIsLoading(true);
+
+      if (!thumbnailFile) {
+        throw new Error("Thumbnail file is not defined");
+      }
+
+      // Create promises to upload video and create post at the same time
+      const uploadVideoPromise = handleUploadVideo();
+      const uploadThumbnailPromise = handleUploadThumbnail();
+
+      // Use Promise.all with await to wait for both operations to complete
+      const [videoUrl, thumbnailUrl] = await Promise.all([
+        uploadVideoPromise,
+        uploadThumbnailPromise,
+      ]);
+
+      await handleCreatePost(thumbnailUrl, videoUrl);
+
+      showSnackbar("Post created successfully!", "success");
+      
+      navigate('/gallery')
+    } catch (error) {
+      console.error("Error during submission:", error);
+      showSnackbar("Failed to create post or upload video.", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleUploadVideo = async () : Promise<string | undefined> => {
+    if (!videoFile) {
+      return Promise.resolve(undefined);
+    }
+
+    try {
+      const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
+        `${videoFile.name.split('.')[0]}_${nanoid(6)}`,
+        videoFile.type.split("/")[1],
+        "video",
+        VIDEO_STORAGE_DIRECTORY
+      );
+
+      await uploadFile(videoFile, presignedUrlResponse.presignedUrl);
+
+      console.log("Video uploaded successfully:", presignedUrlResponse.fileUrl);
+      return presignedUrlResponse.fileUrl;
+    } catch (error) {
+      console.error("Error getting presigned URL:", error);
+      showSnackbar("Failed to get presigned URL.", "error");
+      throw error; // Throw error to be caught in Promise.all
+    }
+  };
+
+  const handleCreatePost = async (thumbnailUrl: string, videoUrl?: string) : Promise<void> => {
+    
+    const formData = createFormData(title, description, imageFiles, videoUrl, thumbnailUrl);
+
+    try {
+      const response = await createPost(formData);
+      console.log("Post created:", response);
+    } catch (error) {
+      console.error("Error creating post:", error);
+      showSnackbar("Failed to create post.", "error");
+      throw error; // Throw error to be caught in Promise.all
+    }
+  };
+
+  const handleUploadThumbnail = async () : Promise<string> => {
+    const thumbnailFileName = `thumbnail_${nanoid(6)}`;
+
+      const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
+        thumbnailFileName,
+        thumbnailFile!.type.split("/")[1],
+        "image",
+        VIDEO_STORAGE_DIRECTORY
+      );
+
+    await uploadFile(thumbnailFile!, presignedUrlResponse.presignedUrl);
+    
+    return presignedUrlResponse.fileUrl;
+  }
+
+  // const handle
+
+  const handleImageFilesChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newFiles = event.target.files;
+    if (!newFiles || newFiles.length === 0) return;
+
+    setImageFiles(newFiles);
+
     const availableSlots = MAX_IMAGES - artPreviews.length;
     if (availableSlots <= 0) return;
 
     const newFilesArray = Array.from(newFiles).slice(0, availableSlots);
     const newPreviews = newFilesArray.map((file) => URL.createObjectURL(file));
 
-    if (!thumbnail && newPreviews.length > 0) {
-      setThumbnail(newPreviews[0]);
-    }
+    setImageFiles(newFiles);
 
     setArtPreviews((prevPreviews) => {
       const updatedPreviews = [...prevPreviews, ...newPreviews];
+
+      // Only set thumbnail if there is no media yet
+      if (mediaOrder.length === 0 && newPreviews.length > 0) {
+        setThumbnailFile(newFilesArray[0]);
+        setMediaOrder((prev) => [...prev, "image"]);
+      }
 
       if (prevPreviews.length === 0 && newPreviews.length > 0) {
         setSelectedPreviewIndex(0);
@@ -174,41 +239,119 @@ const UploadMedia: React.FC = () => {
     });
   };
 
+  const handleVideoFileChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const newFiles = event.target.files;
+    if (!newFiles || newFiles.length === 0) return;
+    const file = newFiles[0];
+    setVideoFile(file)
+    const url = URL.createObjectURL(file);
+
+    const video = document.createElement("video");
+    video.preload = "metadata";
+    video.src = url;
+    video.crossOrigin = "anonymous";
+
+    video.oncanplay = () => {
+      const duration = video.duration;
+      const width = video.videoWidth;
+      const height = video.videoHeight;
+
+      if (duration < 15 || duration > 60) {
+        showSnackbar("Video must be between 15 and 60 seconds.", "error");
+        URL.revokeObjectURL(url);
+        return;
+      }
+
+      const ratio = width / height;
+      const expectedRatio = 9 / 16;
+      const ratioDifference = Math.abs(ratio - expectedRatio);
+
+      if (ratioDifference > 0.05) {
+        showSnackbar(
+          "Video must have a 9:16 aspect ratio (vertical format).",
+          "error"
+        );
+        URL.revokeObjectURL(url);
+        return;
+      }
+
+      // setVideoFile(file);
+      setVideoPreviews([url]);
+
+      if (mediaOrder.length === 0) {
+        extractThumbnail(file);
+        setMediaOrder((prev) => [...prev, "video"]);
+      }
+    };
+
+    video.onerror = () => {
+      showSnackbar("Invalid video file.", "error");
+      URL.revokeObjectURL(url);
+    };
+  };
+
   // Remove image from the previews array
   const handleRemovePreview = (index: number) => {
-    setArtPreviews((prevPreviews) =>
-      prevPreviews.filter((_, i) => i !== index)
-    );
+    setArtPreviews((prevPreviews) => {
+      const updated = prevPreviews.filter((_, i) => i !== index);
+      if (updated.length === 0 && videoPreviews.length === 0) {
+        setThumbnailFile(undefined);
+        setMediaOrder([]);
+      }
+      return updated;
+    });
+
     if (selectedPreviewIndex === index) {
       setSelectedPreviewIndex(null);
     }
   };
 
-  const handleSelectPreview = (index: number) => {
-    setSelectedPreviewIndex(index);
-  };
-
-  // Allow user to upload a different thumbnail
-  const handleThumbnailUpload = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setThumbnail(URL.createObjectURL(file));
+  const handleRemoveVideoPreview = () => {
+    setVideoPreviews([]);
+    setVideoFile(undefined);
+    if (!artPreviews || artPreviews.length === 0) {
+      setThumbnailFile(undefined);
     }
+  }
+
+  const handleThumbnailChange = (file: File) => {
+    setThumbnailFile(file);
   };
 
-  // Placeholder for crop logic
-  const handleCropThumbnail = () => {
-    showSnackbar("Crop functionality is not implemented yet.", "info");
-  };
 
   const showUploadButton = artPreviews.length === 0;
   const hasSelectedImage =
     selectedPreviewIndex !== null && artPreviews[selectedPreviewIndex];
 
+  const isMediaValid = isImageUpload
+    ? artPreviews.length > 0
+    : videoPreviews.length > 0 && thumbnailFile !== null;
+
   return (
-    <Box className="w-full h-full">
+    <Box className="dark:bg-mountain-950 w-full h-full">
+      {isLoading && (
+        <Backdrop
+          open
+          sx={{
+            color: "#fff",
+            zIndex: (theme) => theme.zIndex.modal + 1,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            flexDirection: "column",
+            backdropFilter: "blur(3px)",
+          }}
+        >
+          <CircularProgress color="inherit" />
+          <Typography variant="h6" sx={{ mt: 2, color: "white" }}>
+            Creating post...
+          </Typography>
+        </Backdrop>
+      )}
       {
         <CollectionModal
           open={showCollectionModal}
@@ -223,52 +366,81 @@ const UploadMedia: React.FC = () => {
         style={{ overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}
-        <Box className="flex flex-col items-start bg-mountain-100 dark:bg-mountain-900 p-6 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
+        <Box className="flex flex-col items-start bg-mountain-100 dark:bg-mountain-900 px-6 py-3 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
           <div className="flex gap-x-1 w-full h-14">
             <Button
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(true)}
-              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2 transition-all duration-300
-          ${isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-mountain-50" : "bg-gradient-to-r from-mountain-950 via-mountain-900 to-mountain-1000 text-mountain-300"}`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${isImageUpload
+                ? "bg-indigo-800 text-white"
+                : "bg-gray-900 text-gray-500 opacity-50"
+                }`}
               sx={{
+                height: 40,
+                borderColor: isImageUpload ? "#4F46E5" : "#4B5563",
                 borderRadius: "2px",
                 textTransform: "none",
-                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                "&:hover": {
+                  backgroundColor: isImageUpload ? undefined : "#374151", // darker gray
+                },
               }}
             >
               <IoMdImage className="mr-2 w-8 h-8" />
               <p className="text-sm">
-                Upload Image <span className="text-mountain-300">( .png, .jpg, .jpeg, ... )</span>
+                Upload image{" "}
+                <span
+                  className={`${isImageUpload ? "text-mountain-300" : "text-gray-600"
+                    }`}
+                >
+                  ( .png, .jpg, .jpeg, ... )
+                </span>
               </p>
             </Button>
+
             <Button
               variant="text"
               size="small"
               onClick={() => setIsImageUpload(false)}
-              className={`flex items-center justify-start px-2 border border-mountain-700 rounded-sm w-1/2  transition-all duration-300
-          ${!isImageUpload ? "bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-mountain-50" : "bg-gradient-to-r from-mountain-950 via-mountain-900 to-mountain-1000 text-mountain-300"}`}
+              className={`flex items-center justify-start px-2 border rounded-sm w-1/2 transition-all duration-300 ${!isImageUpload
+                ? "bg-indigo-800 text-white"
+                : "bg-gray-900 text-gray-500 opacity-50"
+                }`}
               sx={{
+                height: 40,
+                borderColor: !isImageUpload ? "#4F46E5" : "#4B5563",
                 borderRadius: "2px",
                 textTransform: "none",
-                "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+                "&:hover": {
+                  backgroundColor: !isImageUpload ? undefined : "#374151",
+                },
               }}
             >
               <IoVideocam className="mr-2 w-8 h-8" />
               <p className="text-sm">
-                Upload Video <span className="text-mountain-300">( .mp4, .avi, .mov, ... )</span>
+                Upload video{" "}
+                <span
+                  className={`${!isImageUpload ? "text-mountain-300" : "text-gray-600"
+                    }`}
+                >
+                  ( .mp4, .avi, .mov, ... )
+                </span>
               </p>
             </Button>
           </div>
-          <hr className="my-4 border-mountain-700 border-t-1 w-full"/>
+          <hr className="my-2 border-mountain-700 border-t-1 w-full" />
           {isImageUpload ? (
             // -------- IMAGE UPLOAD FLOW --------
-            <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
-              <Box className="flex justify-between items-center w-full">
-                {/* <Typography className="text-gray-900 dark:text-mountain-200 text-base">
+            <Box className="flex flex-col items-center w-full h-full overflow-hidden text-gray-900 dark:text-white">
+              {/* Top row (info + delete button) */}
+              <Box
+                className="flex justify-between items-center mb-2 w-full"
+                sx={{ flexShrink: 0 }}
+              >
+                <Typography className="text-gray-900 dark:text-mountain-200 text-base">
                   {artPreviews.length}/{MAX_IMAGES} images
-                </Typography> */}
-                {hasSelectedImage && selectedPreviewIndex !== 0 && (
+                </Typography>
+                {hasSelectedImage && (
                   <Button
                     variant="text"
                     size="small"
@@ -287,142 +459,92 @@ const UploadMedia: React.FC = () => {
                     Remove image
                   </Button>
                 )}
-                {hasSelectedImage && selectedPreviewIndex === 0 && (
-                  <Box className="flex gap-1">
-                    <Button
-                      variant="text"
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleCropThumbnail();
+              </Box>
+
+              {/* Main Preview Area */}
+              <Box
+                sx={{
+                  flexGrow: 1,
+                  minHeight: 0,
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  overflow: "hidden",
+                }}
+              >
+                {artPreviews.length > 0 ? (
+                  selectedPreviewIndex !== null &&
+                    artPreviews[selectedPreviewIndex] ? (
+                    <img
+                      src={artPreviews[selectedPreviewIndex]}
+                      alt="Preview"
+                      className="w-full object-contain"
+                      style={{
+                        maxHeight: "100%",
+                        maxWidth: "100%",
                       }}
-                      className="border-mountain-600"
-                      sx={{
-                        backgroundColor: "transparent",
-                        color: "white",
-                        borderRadius: "10px",
-                        border: "1px solid",
-                        textTransform: "none",
-                        "&:hover": { backgroundColor: "transparent" },
-                      }}
-                    >
-                      <CropIcon sx={{ mr: 1 }} />
-                      Crop
-                    </Button>
-                    <Button
-                      variant="text"
-                      component="label"
-                      size="small"
-                      onClick={(e) => e.stopPropagation()}
-                      className="border-mountain-600"
-                      sx={{
-                        backgroundColor: "transparent",
-                        color: "white",
-                        borderRadius: "10px",
-                        border: "1px solid white",
-                        textTransform: "none",
-                        "&:hover": { backgroundColor: "transparent" },
-                      }}
-                    >
-                      <CloudUploadIcon sx={{ mr: 1 }} />
-                      Replace image
-                      <input
-                        type="file"
-                        hidden
-                        onChange={handleThumbnailUpload}
-                      />
-                    </Button>
+                    />
+                  ) : null
+                ) : (
+                  <Box
+                    className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      const droppedFiles = e.dataTransfer.files;
+                      if (droppedFiles && droppedFiles.length > 0) {
+                        handleImageFilesChange({
+                          target: { files: droppedFiles },
+                        } as React.ChangeEvent<HTMLInputElement>);
+                      }
+                    }}
+                  >
+                    {showUploadButton && (
+                      <>
+                        <Button
+                          variant="text"
+                          component="label"
+                          size="small"
+                          className="mb-2 border-mountain-600"
+                          sx={{
+                            backgroundColor: "transparent",
+                            color: "white",
+                            borderRadius: "10px",
+                            border: "1px solid",
+                            textTransform: "none",
+                            "&:hover": { backgroundColor: "transparent" },
+                          }}
+                        >
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            hidden
+                            onChange={handleImageFilesChange}
+                          />
+                          <CloudUploadIcon sx={{ mr: 1 }} />
+                          <Typography variant="body1" className="text-center">
+                            Upload your art
+                          </Typography>
+                        </Button>
+                        <Typography variant="body1" className="text-center">
+                          or drag and drop here
+                        </Typography>
+                      </>
+                    )}
                   </Box>
                 )}
               </Box>
 
-              {/* Main preview of the first image */}
-              {artPreviews.length > 0 ? (
-                <Box
-                  className="bg-mountain-900 mb-4 rounded w-full h-full"
-                  sx={{
-                    height: 300,
-                    p: 2,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    overflow: "hidden",
-                  }}
-                >
-                  {!isImageUpload ? (
-                    <video
-                      src={artPreviews[0]}
-                      controls
-                      className="rounded w-full h-full"
-                      style={{ objectFit: "contain" }}
-                    />
-                  ) : (
-                    <img
-                      src={
-                        selectedPreviewIndex !== null
-                          ? artPreviews[selectedPreviewIndex]
-                          : artPreviews[0]
-                      }
-                      alt="Preview"
-                      className="w-full max-h-96 object-contain"
-                    />
-                  )}
-                </Box>
-              ) : (
-                <Box
-                  className="flex flex-col justify-center items-center mb-4 border border-gray-500 border-dashed w-full h-full"
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    const droppedFiles = e.dataTransfer.files;
-                    if (droppedFiles && droppedFiles.length > 0) {
-                      // You may want to wrap the dropped files in a synthetic event object
-                      // to use your handleFileChange function, or create a separate handler.
-                      handleFileChange({
-                        target: { files: droppedFiles },
-                      } as React.ChangeEvent<HTMLInputElement>);
-                    }
-                  }}
-                >
-                  {/* Conditionally render big upload button when no images */}
-                  {showUploadButton && (
-                    <>
-                      <Button
-                        variant="text"
-                        component="label"
-                        size="small"
-                        className="mb-2 border-mountain-600"
-                        sx={{
-                          backgroundColor: "transparent",
-                          color: "white",
-                          borderRadius: "10px",
-                          border: "1px solid",
-                          textTransform: "none",
-                          "&:hover": { backgroundColor: "transparent" },
-                        }}
-                      >
-                        <input
-                          type="file"
-                          multiple
-                          hidden
-                          onChange={handleFileChange}
-                        />
-                        <CloudUploadIcon sx={{ mr: 1 }} />
-                        <Typography variant="body1" className="text-center">
-                          Upload your art
-                        </Typography>
-                      </Button>
-                      <Typography variant="body1" className="text-center">
-                        or drag and drop here
-                      </Typography>
-                    </>
-                  )}
-                </Box>
-              )}
-              {/* Art Previews Carousel */}
-              <Box className="flex gap-2 custom-scrollbar">
+              {/* Carousel (thumbnails) */}
+              <Box
+                className="flex gap-2 mt-2 custom-scrollbar"
+                sx={{
+                  flexShrink: 0,
+                  overflowX: "auto",
+                }}
+              >
                 {artPreviews.map((preview, index) => (
                   <Box
                     key={index}
@@ -434,14 +556,7 @@ const UploadMedia: React.FC = () => {
                           : "transparent",
                     }}
                     onClick={() => {
-                      if (index === 0) {
-                        // For the thumbnail item: toggle overlay for crop/upload
-                        setSelectedPreviewIndex(0);
-                        setShowThumbnailOptions(!showThumbnailOptions);
-                      } else {
-                        setSelectedPreviewIndex(index);
-                        handleSelectPreview(index);
-                      }
+                      setSelectedPreviewIndex(index);
                     }}
                   >
                     <Avatar
@@ -449,23 +564,6 @@ const UploadMedia: React.FC = () => {
                       className="rounded-md"
                       sx={{ width: 80, height: 80 }}
                     />
-                    {index === 0 && (
-                      <Box
-                        sx={{
-                          backgroundColor: "primary.main",
-                          position: "absolute",
-                          top: "0.25rem",
-                          left: "0.25rem",
-                          color: "black",
-                          fontSize: "0.75rem", // equivalent to text-xs
-                          px: 1,
-                          py: 0.5,
-                          borderRadius: 1,
-                        }}
-                      >
-                        Thumbnail
-                      </Box>
-                    )}
                     {index !== 0 && (
                       <IconButton
                         onClick={(e) => {
@@ -488,10 +586,11 @@ const UploadMedia: React.FC = () => {
                   >
                     <AddIcon fontSize="large" />
                     <input
+                      accept="image/*"
                       type="file"
                       multiple
                       hidden
-                      onChange={handleFileChange}
+                      onChange={handleImageFilesChange}
                     />
                   </Box>
                 )}
@@ -499,93 +598,124 @@ const UploadMedia: React.FC = () => {
             </Box>
           ) : (
             // -------- VIDEO UPLOAD FLOW --------
-            <Box className="flex flex-col items-center w-full h-full text-gray-900 dark:text-white">
-              {/* VIDEO player */}
-              <Box
-                className="bg-black rounded"
-                sx={{
-                  height: 300,
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  overflow: "hidden",
-                }}
-              >
-                {artPreviews.length > 0 ? (
+            <Box
+              className={`relative w-full rounded-md flex flex-col ${videoPreviews.length === 0
+                ? "border border-gray-500 border-dashed"
+                : ""
+                }`}
+              sx={{
+                aspectRatio: "9 / 16", // Optional: keeps a vertical shape for empty state
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const droppedFiles = e.dataTransfer.files;
+                if (droppedFiles?.[0]) {
+                  handleVideoFileChange({
+                    target: { files: droppedFiles },
+                  } as React.ChangeEvent<HTMLInputElement>);
+                }
+              }}
+            >
+              {videoPreviews.length > 0 ? (
+                <Box className="relative w-full h-full">
+                  {/* Video preview */}
                   <video
-                    src={artPreviews[0]}
+                    src={videoPreviews[0]}
                     controls
                     className="rounded w-full h-full object-contain"
-                  />
-                ) : (
-                  <Box
-                    className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => {
-                      e.preventDefault();
-                      const droppedFiles = e.dataTransfer.files;
-                      if (droppedFiles?.[0]) {
-                        handleFileChange({
-                          target: { files: droppedFiles },
-                        } as React.ChangeEvent<HTMLInputElement>);
-                      }
+                    style={{
+                      maxHeight: "100%",
+                      width: "100%",
+                      objectFit: "contain",
                     }}
-                  >
-                    <Button
-                      variant="text"
-                      component="label"
-                      className="mb-2 border-mountain-600"
-                      sx={{
-                        backgroundColor: "transparent",
-                        color: "white",
-                        borderRadius: "10px",
-                        border: "1px solid",
-                        textTransform: "none",
-                        "&:hover": { backgroundColor: "transparent" },
-                      }}
-                    >
-                      <input
-                        type="file"
-                        accept="video/*"
-                        hidden
-                        onChange={handleFileChange}
-                      />
-                      <CloudUploadIcon sx={{ mr: 1 }} />
-                      <Typography>Upload your video</Typography>
-                    </Button>
-                    <Typography>or drag and drop here</Typography>
-                  </Box>
-                )}
-              </Box>
-              {!isImageUpload && artPreviews.length > 0 && (
-                <Box className="mt-4">
-                  <Typography
-                    variant="body2"
-                    className="mb-2 font-semibold dark:text-white text-base"
-                  >
-                    Thumbnail
-                  </Typography>
+                  />
 
-                  <ThumbnailCard
-                    thumbnail={thumbnail || undefined}
-                    onUpload={handleThumbnailUpload}
-                    onChange={() =>
-                      document.getElementById("thumbnail-upload")?.click()
-                    }
-                    onDownload={() => {
-                      if (thumbnail) {
-                        const a = document.createElement("a");
-                        a.href = thumbnail;
-                        a.download = "thumbnail.png";
-                        a.click();
-                      }
+                  {/* Replace video button */}
+                  {/* <Button
+                    component="label"
+                    variant="text"
+                    size="small"
+                    startIcon={<Loop sx={{ fontSize: 18 }} />}
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      zIndex: 2,
+                      backgroundColor: "transparent",
+                      color: "white",
+                      borderRadius: "10px",
+                      border: "1px solid",
+                      borderColor: "mountain-500",
+                      textTransform: "none",
+                      "&:hover": { backgroundColor: "transparent" },
                     }}
-                  />
-                  <Typography variant="caption" color="gray">
-                    {THUMBNAIL_HINT}
-                  </Typography>
+                  >
+                    Replace video
+                    <input
+                      type="file"
+                      accept="video/*"
+                      hidden
+                      onChange={handleVideoFileChange}
+                    />
+                  </Button> */}
+                  <Button
+                    variant="text"
+                    size="small"
+                    startIcon={<DeleteOutlineOutlined sx={{ fontSize: 18 }} />}
+                    onClick={() => handleRemoveVideoPreview()}
+                    sx={{
+                      position: "absolute",
+                      top: 8,
+                      right: 8,
+                      zIndex: 2,
+                      backgroundColor: "transparent",
+                      color: "white",
+                      borderRadius: "10px",
+                      border: "1px solid",
+                      borderColor: "mountain-500",
+                      textTransform: "none",
+                      "&:hover": { backgroundColor: "transparent" },
+                    }}
+                  >
+                    Remove video
+                  </Button>
                 </Box>
+              ) : (
+                <>
+                  <Button
+                    variant="text"
+                    component="label"
+                    size="small"
+                    className="mb-2 border-mountain-600"
+                    sx={{
+                      backgroundColor: "transparent",
+                      color: "white",
+                      borderRadius: "10px",
+                      border: "1px solid",
+                      textTransform: "none",
+                      "&:hover": { backgroundColor: "transparent" },
+                    }}
+                  >
+                    <input
+                      type="file"
+                      accept="video/*"
+                      hidden
+                      onChange={handleVideoFileChange}
+                    />
+                    <CloudUploadIcon sx={{ mr: 1 }} />
+                    <Typography variant="body1" className="text-center">
+                      Upload your video
+                    </Typography>
+                  </Button>
+                  <Typography variant="body1" className="text-center">
+                    or drag and drop here
+                  </Typography>
+                </>
               )}
             </Box>
           )}
@@ -602,10 +732,13 @@ const UploadMedia: React.FC = () => {
           {/* Form fields */}
           <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
             <UploadForm
-              isImageUpload={isImageUpload}
-              thumbnail={thumbnail}
-              onThumbnailChange={setThumbnail}
+              thumbnailFile={thumbnailFile}
+              onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
             />
           </Box>
 
@@ -615,7 +748,7 @@ const UploadMedia: React.FC = () => {
           <Box className="flex justify-between mt-auto pr-4 w-full">
             <Button
               variant="outlined"
-              className="flex items-center hover:bg-mountain-800 border-white rounded-md text-gray-900 dark:text-white"
+              className="flex items-center hover:bg-mountain-800 dark:border-white border-black rounded-md text-gray-900 dark:text-white"
               sx={{
                 borderColor: "white",
                 "&:hover": {
@@ -634,14 +767,27 @@ const UploadMedia: React.FC = () => {
             </Button>
             <Button
               variant="contained"
-              sx={{ textTransform: "none" }}
-              className="ml-auto rounded-md"
               onClick={handleSubmit}
+              disabled={!isMediaValid}
+              className="ml-auto rounded-md"
+              sx={{
+                textTransform: "none",
+                background: !isMediaValid
+                  ? "linear-gradient(to right, #9ca3af, #6b7280)" // Tailwind's gray-400 to gray-500
+                  : "linear-gradient(to right, #3730a3, #5b21b6, #4c1d95)", // indigo-violet gradient
+                color: "white",
+                opacity: !isMediaValid ? 0.6 : 1,
+                pointerEvents: !isMediaValid ? "none" : "auto",
+                "&:hover": {
+                  background: !isMediaValid
+                    ? "linear-gradient(to right, #9ca3af, #6b7280)"
+                    : "linear-gradient(to right, #312e81, #4c1d95, #3b0764)",
+                },
+              }}
             >
               Submit
             </Button>
           </Box>
-
         </Box>
       </Box>
     </Box>

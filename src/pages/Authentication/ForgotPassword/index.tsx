@@ -26,9 +26,9 @@ const ForgotPassword = () => {
         "Password reset email sent successfully! Please check your inbox."
       );
       setError(null); // Clear any previous error messages
-    } catch (error: any) {
+    } catch (error) {
       setMessage(null); // Clear any success message if an error occurs
-      setError(error.message); // Handle Firebase error (invalid email, etc.)
+      setError((error as Error).message); // Handle Firebase error (invalid email, etc.)
     } finally {
       setLoading(false);
     }

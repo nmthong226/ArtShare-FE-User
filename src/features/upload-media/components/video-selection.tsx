@@ -11,7 +11,7 @@ export default function VideoSelection({
   setVideoFile,
   setThumbnailFile,
   setVideoPreviewUrl,
-  hidden
+  hidden,
 }: {
   imageFilesPreview: Map<File, string>;
   videoPreviewUrl: string | undefined;
@@ -20,26 +20,21 @@ export default function VideoSelection({
   setVideoPreviewUrl: (url: string | undefined) => void;
   hidden: boolean;
 }) {
-
-  const {
-    handleVideoFileChange,
-    handleRemoveVideoPreview
-  } = useVideoFileHandler(
-    setVideoFile,
-    setThumbnailFile,
-    imageFilesPreview,
-    videoPreviewUrl,
-    setVideoPreviewUrl
-  )
+  const { handleVideoFileChange, handleRemoveVideoPreview } =
+    useVideoFileHandler(
+      setVideoFile,
+      setThumbnailFile,
+      imageFilesPreview,
+      videoPreviewUrl,
+      setVideoPreviewUrl,
+    );
 
   return (
     <Box
-      className={`relative w-full rounded-md flex flex-col ${videoPreviewUrl
-        ? "border border-gray-500 border-dashed"
-        : ""
-        }`}
+      className={`relative w-full rounded-md flex flex-col ${
+        videoPreviewUrl ? "" : "border border-gray-500 border-dashed"
+      }`}
       hidden={hidden}
-
       sx={{
         aspectRatio: "9 / 16", // Optional: keeps a vertical shape for empty state
         display: "flex",
@@ -59,41 +54,44 @@ export default function VideoSelection({
       }}
     >
       {videoPreviewUrl ? (
-        <Box className="relative w-full h-full">
-          {/* Video preview */}
-          <video
-            src={videoPreviewUrl}
-            controls
-            className="rounded w-full h-full object-contain"
-            style={{
-              maxHeight: "100%",
-              width: "100%",
-              objectFit: "contain",
-            }}
-          />
+        <Box className="w-full h-full flex flex-col gap-2">
+          {/* Remove button on top, outside of the video */}
+          <Box className="flex justify-end px-2 pt-2 ">
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<DeleteOutlineOutlined sx={{ fontSize: 18 }} />}
+              onClick={handleRemoveVideoPreview}
+              sx={{
+                backgroundColor: "transparent",
+                color: "white",
+                borderRadius: "10px",
+                border: "1px solid",
+                borderColor: "white",
+                textTransform: "none",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+              }}
+            >
+              Remove video
+            </Button>
+          </Box>
 
-          <Button
-            variant="text"
-            size="small"
-            startIcon={<DeleteOutlineOutlined sx={{ fontSize: 18 }} />}
-            onClick={() => handleRemoveVideoPreview()}
-            className="bg-gray-200 text-gray-800 hover:opacity-90"
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              zIndex: 2,
-              backgroundColor: "transparent",
-              color: "white",
-              borderRadius: "10px",
-              border: "1px solid",
-              borderColor: "mountain-500",
-              textTransform: "none",
-              "&:hover": { backgroundColor: "transparent" },
-            }}
+          <Box
+            className=" w-full relative "
+            sx={{ maxHeight: 500, minHeight: 300 }}
           >
-            Remove video
-          </Button>
+            {/* Video preview */}
+            <video
+              src={videoPreviewUrl}
+              controls
+              className="rounded w-full object-contain"
+              style={{
+                maxHeight: "100%",
+                width: "100%",
+                objectFit: "contain",
+              }}
+            />
+          </Box>
         </Box>
       ) : (
         <>
@@ -129,4 +127,4 @@ export default function VideoSelection({
       )}
     </Box>
   );
-};
+}

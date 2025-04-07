@@ -9,6 +9,7 @@ type Subject = {
   examples?: string[];
 };
 
+// TODO: delete this hardcode and call to api to get categories
 const allSubjects: Subject[] = [
   { label: "Abstract" },
   {

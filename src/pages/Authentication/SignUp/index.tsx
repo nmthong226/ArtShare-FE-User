@@ -7,26 +7,47 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
+import { AxiosError } from "axios";
 
 const SignUp = () => {
   const { signUpWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Use UserProvider context
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate(); // To navigate after signup
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // Clear previous error
+    setEmailError("");
+    setPasswordError("");
     try {
       const token = await signUpWithEmail(email, password, username); // Get the token
       localStorage.setItem("user_verify", token);
       navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
-    } catch (error: any) {
-      console.log(error);
-      let errorMessage = error.message;
-      if (error.code === "auth/email-already-in-use") {
-        errorMessage = "Email already in use";
+    } catch (err) {
+      let errorMessage = "";
+      if (err instanceof AxiosError) {
+        const code = err.code;
+        switch (code) {
+          case "auth/email-already-in-use":
+            errorMessage = "Already used email. Please try with another";
+            break;
+          case "auth/invalid-email":
+            setEmailError("Invalid email. Please try again");
+            break;
+          case "auth/missing-password":
+            setPasswordError("Missing password. Please try again");
+            break;
+          case "auth/network-request-failed":
+            errorMessage = "Overload sign up request. Please try again";
+            break;
+          default:
+            errorMessage = err.message;
+        }
       }
       setError(errorMessage);
     }
@@ -35,9 +56,30 @@ const SignUp = () => {
   const handleGoogleLogin = async () => {
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
-      navigate("/gallery"); // Redirect after successful login
+      navigate("/explore"); // Redirect after successful login
     } catch (error) {
-      setError((error as Error).message); // Handle errors from Google login
+      let message = "Something went wrong. Please try again.";
+      if (error instanceof AxiosError) {
+        const code = error.code;
+        switch (code) {
+          case "auth/popup-closed-by-user":
+            message = "Login was cancelled. You closed the popup before signing in.";
+            break;
+          case "auth/cancelled-popup-request":
+            message = "Login was interrupted by another popup request.";
+            break;
+          case "auth/account-exists-with-different-credential":
+            message =
+              "An account already exists with a different sign-in method. Try logging in using that method.";
+            break;
+          case "auth/popup-blocked":
+            message = "The login popup was blocked by your browser. Please enable popups and try again.";
+            break;
+          default:
+            message = error.message;
+        }
+      }
+      setError(message);
     }
   };
 
@@ -59,8 +101,8 @@ const SignUp = () => {
         <p className="mt-2 font-bold text-mountain-600 dark:text-mountain-300 text-xl lg:text-2xl xl:text-3xl text-nowrap">
           Create an ArtShare account
         </p>
-        <p className="mt-4 text-mountain-500 dark:text-mountain-300 text-xs xl:text-sm">
-          Join a vibrant community where you can create, share, and celebrate
+        <p className="mt-4 text-mountain-500 dark:text-mountain-300 text-xs xl:text-sm xl:text-nowrap">
+          Join a vibrant community where you can create, share, & celebrate
           art.
         </p>
       </div>
@@ -126,6 +168,9 @@ const SignUp = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          {emailError && emailError.length > 0 && (
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{emailError}</p>
+          )}
         </div>
         <div>
           <label
@@ -141,11 +186,13 @@ const SignUp = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {passwordError && passwordError.length > 0 && (
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{passwordError}</p>
+          )}
         </div>
-
         <div className="flex justify-between items-center mt-4">
           <span className="text-mountain-500 text-xs xl:text-sm">
-            Your password must be at least 8 characters, numbers, and symbols.
+            Your password must be at least 8 characters, numbers & symbols.
           </span>
         </div>
 
@@ -157,7 +204,7 @@ const SignUp = () => {
         </Button>
       </form>
       {/* Display error and success messages */}
-      {error && (
+      {error && error.length > 0 && (
         <p className="mt-4 text-red-600 dark:text-red-400 text-sm">{error}</p>
       )}
 

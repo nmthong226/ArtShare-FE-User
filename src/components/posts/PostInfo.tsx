@@ -34,7 +34,9 @@ const PostInfo = ({ postData }: { postData: Post }) => {
 
   const handleLikeClick = () => {
     if (userLike) {
-      setLikeCount(likeCount - 1); // Decrease like count if already liked
+      if (likeCount > 0) {
+        setLikeCount(likeCount - 1);
+      }
     } else {
       setLikeCount(likeCount + 1); // Increase like count if not liked
     }

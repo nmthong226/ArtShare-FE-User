@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const UserInAppConfigs = () => {
   const { user, loading, logout } = useUser(); // Get user and logout function from UserProvider
@@ -36,7 +36,7 @@ const UserInAppConfigs = () => {
     setTimeout(() => {
       logout(); // Call logout function from UserProvider
     }, 300);
-    navigate("/gallery");
+    navigate("/explore");
   };
 
   if (loading)
@@ -93,9 +93,12 @@ const UserInAppConfigs = () => {
                 Become Seller
               </p>
             </div>
-            <div className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer">
+            <Link
+              to={`/${user.id}`}
+              className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer"
+            >
               <p className="text-sm">User Profile</p>
-            </div>
+            </Link>
             <div className="xs:hidden flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer">
               <p className="text-sm">Message</p>
             </div>

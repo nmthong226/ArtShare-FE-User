@@ -51,7 +51,6 @@ import { FiLogIn } from "react-icons/fi";
 import { IoMailOutline } from "react-icons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
 import ProtectedSidebarItem from "@/components/ProtectedItems/ProtectedSidebarItem";
-import ExploreNavigation from "@/components/popovers/ExploreNavigation";
 
 const UserFunctionality: React.FC<{
   user?: User | null;
@@ -150,7 +149,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <SearchContext.Provider value={{ query, setQuery }}>
       <div className="flex flex-col w-full h-full">
-        <nav className="sticky top-0 z-50 flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16">
+        <nav className="top-0 z-50 sticky flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16">
           <div className="flex items-center h-full">
             <Sheet>
               <SheetTrigger>
@@ -229,7 +228,27 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   Art Share
                 </p>
               </div>
-              <ExploreNavigation />
+              {/* <ExploreNavigation /> */}
+              <Link
+                to="/explore"
+                className={`group flex items-center border-b-4 h-full ${
+                  location.pathname === "/explore" ||
+                  location.pathname === "/short"
+                    ? "border-indigo-300 dark:text-mountain-50 text-mountain-950"
+                    : "dark:border-mountain-950 border-white dark:text-mountain-500 text-mountain-700"
+                }`}
+              >
+                <div className="hidden md:flex items-center space-x-1 lg:space-x-2 hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
+                  {location.pathname === "/explore" ||
+                  location.pathname === "/short" ? (
+                    <MdExplore className="w-6 h-6" />
+                  ) : (
+                    <MdOutlineExplore className="w-6 h-6" />
+                  )}
+                  <p className="text-sm">Explore</p>
+                </div>
+              </Link>
+
               <Link
                 to="/blogs"
                 className={`group flex items-center border-b-4 h-full ${
@@ -303,21 +322,21 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </nav>
         <div className="flex w-full h-full">
-          <aside className="flex-shrink-0 sticky top-16 z-50 hidden xs:flex flex-col space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-16 h-[calc(100vh-4rem)]">
+          <aside className="hidden top-16 z-50 sticky xs:flex flex-col flex-shrink-0 space-y-4 bg-white dark:bg-mountain-950 py-4 border-r-1 border-r-mountain-100 dark:border-r-mountain-700 w-16 h-[calc(100vh-4rem)]">
             {/* Explore */}
             <Link
-              to="/gallery"
+              to="/explore"
               className="group md:hidden flex flex-col justify-center items-center w-full h-16 hover:cursor-pointer"
             >
               <div
                 className={`flex justify-center items-center dark:group-hover:bg-mountain-800 group-hover:bg-mountain-100 rounded-lg w-[80%] h-8 ${
-                  location.pathname === "/gallery" ||
+                  location.pathname === "/explore" ||
                   location.pathname === "/short"
                     ? "dark:text-mountain-50 text-mountain-950 bg-mountain-100 dark:bg-mountain-800"
                     : "dark:text-mountain-600 text-mountain-400"
                 } dark:group-hover:text-mountain-50 group-hover:text-mountain-950`}
               >
-                {location.pathname === "/gallery" ||
+                {location.pathname === "/explore" ||
                 location.pathname === "/short" ? (
                   <MdExplore className="w-6 h-6" />
                 ) : (
@@ -326,7 +345,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               </div>
               <p
                 className={`${
-                  location.pathname === "/gallery" ||
+                  location.pathname === "/explore" ||
                   location.pathname === "/short"
                     ? "dark:text-mountain-50"
                     : "text-mountain-600 dark:text-mountain-500"
@@ -393,33 +412,49 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   <FiSearch className="w-6 h-6" />
                 )}
               </div>
-              <p className="text-[10px]">Search</p>
+              <p
+                className={`${
+                  location.pathname === "/search"
+                    ? "dark:text-mountain-50"
+                    : "text-mountain-600 dark:text-mountain-500"
+                } text-[10px] dark:group-hover:text-mountain-50`}
+              >
+                Search
+              </p>
             </Link>
             <hr className="md:hidden flex border-mountain-200 dark:border-mountain-700 border-t-1 w-full h-1" />
             {/* Private Features */}
             <ProtectedSidebarItem
               path="/posts/new"
-              iconActive={<RiFolderUploadFill className="w-6 h-6" />}
+              iconActive={
+                <RiFolderUploadFill className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />
+              }
               iconInactive={<RiFolderUploadLine className="w-6 h-6" />}
               label="Submit"
-              user={user}
+              user={user!}
             />
             <ProtectedSidebarItem
               path="/create-art"
-              iconActive={<RiImageAiFill className="w-6 h-6" />}
+              iconActive={
+                <RiImageAiFill className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />
+              }
               iconInactive={<RiImageAiLine className="w-6 h-6" />}
               label="Create"
-              user={user}
+              user={user!}
             />
             <ProtectedSidebarItem
               path="/portfolio"
-              iconActive={<BsFilePersonFill className="w-6 h-6" />}
+              iconActive={
+                <BsFilePersonFill className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />
+              }
               iconInactive={<BsFilePerson className="w-6 h-6" />}
               label="Portfolio"
-              user={user}
+              user={user!}
             />
           </aside>
-          <div className="xs:w-[calc(100%-4rem)] w-full min-h-[calc(100vh-4rem)] bg-mountain-50">
+          <div
+            className={`border-l-1 border-l-mountain-100 dark:border-l-mountain-700  h-full ${location.pathname === "/explore" || location.pathname === "/short" ? "w-[calc(100vw-5rem)]" : "w-full"}`}
+          >
             {children}
           </div>
         </div>

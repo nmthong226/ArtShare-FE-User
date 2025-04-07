@@ -6,7 +6,6 @@ import {
   Close as CloseIcon,
   DeleteOutlineOutlined,
   FolderOpen as FolderOpenIcon,
-  Loop,
 } from "@mui/icons-material";
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
@@ -432,10 +431,10 @@ const UploadMedia: React.FC = () => {
           <hr className="my-2 border-mountain-700 border-t-1 w-full" />
           {isImageUpload ? (
             // -------- IMAGE UPLOAD FLOW --------
-            <Box className="items-center w-full h-full text-gray-900 dark:text-white overflow-hidden flex flex-col">
+            <Box className="flex flex-col items-center w-full h-full overflow-hidden text-gray-900 dark:text-white">
               {/* Top row (info + delete button) */}
               <Box
-                className="flex justify-between items-center w-full mb-2"
+                className="flex justify-between items-center mb-2 w-full"
                 sx={{ flexShrink: 0 }}
               >
                 <Typography className="text-gray-900 dark:text-mountain-200 text-base">
@@ -540,7 +539,7 @@ const UploadMedia: React.FC = () => {
 
               {/* Carousel (thumbnails) */}
               <Box
-                className="flex gap-2 custom-scrollbar mt-2"
+                className="flex gap-2 mt-2 custom-scrollbar"
                 sx={{
                   flexShrink: 0,
                   overflowX: "auto",

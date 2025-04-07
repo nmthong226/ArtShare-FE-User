@@ -14,39 +14,83 @@ const Login = () => {
   const { loginWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Using the UserProvider context
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [error, setError] = useState<string | null>(null);
   const [message] = useState<string | null>(null);
   const navigate = useNavigate(); // To navigate after login
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // Clear previous error
     try {
       await loginWithEmail(email, password);
       navigate("/gallery");
-    } catch (error: any) {
-      console.log(error);
-      let errorMessage = error.message;
-      if (error.code === "auth/invalid-credential") {
-        errorMessage =
-          "Invalid email or password. Try signing up if you do not have account";
-      } else if (error.code === "auth/wrong-password") {
-        errorMessage = "Incorrect password. Please try again.";
-      } else if (error.code === "auth/email-not-verified") {
-        errorMessage = "Please verify your email before logging in.";
+    } catch (err) {
+      let errorMessage = "An unexpected error occurred. Please try again later.";
+      if (err && typeof err === "object" && "code" in err) {
+        const code = (err as any).code;
+        switch (code) {
+          case "auth/invalid-credential":
+            errorMessage =
+              "Invalid email or password. Try signing up if you don’t have an account.";
+            break;
+          case "auth/wrong-password":
+            errorMessage = "Incorrect password. Please try again.";
+            break;
+          case "auth/email-not-verified":
+          case "auth/user-not-verified":
+            errorMessage = "Please verify your email before logging in.";
+            break;
+          case "auth/invalid-email":
+            errorMessage = "Invalid email. Please try again";
+            break;
+          case "auth/missing-password":
+            errorMessage = "Missing password. Please try again";
+            break;
+          default:
+            if ("message" in err) {
+              errorMessage = (err as any).message;
+            }
+        }
       }
       setError(errorMessage);
-      return;
     }
   };
 
+
   const handleGoogleLogin = async () => {
+    setError(""); // Clear previous error
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
       navigate("/gallery"); // Redirect after successful login
     } catch (error) {
-      setError((error as Error).message);
+      let message = "Something went wrong. Please try again.";
+      if (error && typeof error === "object" && "code" in error) {
+        const code = (error as any).code;
+        switch (code) {
+          case "auth/popup-closed-by-user":
+            message = "Login was cancelled. You closed the popup before signing in.";
+            break;
+          case "auth/cancelled-popup-request":
+            message = "Login was interrupted by another popup request.";
+            break;
+          case "auth/account-exists-with-different-credential":
+            message =
+              "An account already exists with a different sign-in method. Try logging in using that method.";
+            break;
+          case "auth/popup-blocked":
+            message = "The login popup was blocked by your browser. Please enable popups and try again.";
+            break;
+          default:
+            if ("message" in error) {
+              message = (error as any).message;
+            }
+        }
+      }
+      setError(message);
     }
   };
+
 
   const handleFacebookLogin = async () => {
     try {
@@ -61,13 +105,13 @@ const Login = () => {
     const emailValue = e.target.value;
     setEmail(emailValue);
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(emailValue)) {
-      setError("Please enter a valid email address.");
-    } else {
-      setError(null); // Clear error if email is valid
-    }
+    // // Basic email validation
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(emailValue)) {
+    //   setError("Please enter a valid email address.");
+    // } else {
+    //   setError(null); // Clear error if email is valid
+    // }
   }
 
   return (
@@ -89,10 +133,10 @@ const Login = () => {
             htmlFor="username"
             className="block font-semibold text-mountain-600 dark:text-mountain-50 text-sm"
           >
-            Username or Email
+            Email
           </label>
           <Input
-            type="text"
+            type="email"
             placeholder="Enter your username or email"
             className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:ring-indigo-500 w-full h-10 text-mountain-950 dark:text-mountain-50"
             value={email}

@@ -18,15 +18,30 @@ const SignUp = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // Clear previous error
     try {
       const token = await signUpWithEmail(email, password, username); // Get the token
       localStorage.setItem("user_verify", token);
       navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
-    } catch (error: any) {
-      console.log(error);
-      let errorMessage = error.message;
-      if (error.code === "auth/email-already-in-use") {
-        errorMessage = "Email already in use";
+    } catch (err: any) {
+      let errorMessage = "An unexpected error occurred. Please try again later.";
+      if (err && typeof err === "object" && "code" in err) {
+        const code = (err as any).code;
+        switch (code) {
+          case "auth/email-already-in-use":
+            errorMessage = "Already used email. Please try with another";
+            break;
+          case "auth/invalid-email":
+            errorMessage = "Invalid email. Please try again";
+            break;
+          case "auth/missing-password":
+            errorMessage = "Missing password. Please try again";
+            break;
+          default:
+            if ("message" in err) {
+              errorMessage = (err as any).message;
+            }
+        }
       }
       setError(errorMessage);
     }
@@ -37,7 +52,30 @@ const SignUp = () => {
       await signUpWithGoogle(); // Call Google login function from UserProvider
       navigate("/gallery"); // Redirect after successful login
     } catch (error) {
-      setError((error as Error).message); // Handle errors from Google login
+      let message = "Something went wrong. Please try again.";
+      if (error && typeof error === "object" && "code" in error) {
+        const code = (error as any).code;
+        switch (code) {
+          case "auth/popup-closed-by-user":
+            message = "Login was cancelled. You closed the popup before signing in.";
+            break;
+          case "auth/cancelled-popup-request":
+            message = "Login was interrupted by another popup request.";
+            break;
+          case "auth/account-exists-with-different-credential":
+            message =
+              "An account already exists with a different sign-in method. Try logging in using that method.";
+            break;
+          case "auth/popup-blocked":
+            message = "The login popup was blocked by your browser. Please enable popups and try again.";
+            break;
+          default:
+            if ("message" in error) {
+              message = (error as any).message;
+            }
+        }
+      }
+      setError(message);
     }
   };
 
@@ -59,8 +97,8 @@ const SignUp = () => {
         <p className="mt-2 font-bold text-mountain-600 dark:text-mountain-300 text-xl lg:text-2xl xl:text-3xl text-nowrap">
           Create an ArtShare account
         </p>
-        <p className="mt-4 text-mountain-500 dark:text-mountain-300 text-xs xl:text-sm">
-          Join a vibrant community where you can create, share, and celebrate
+        <p className="mt-4 text-mountain-500 dark:text-mountain-300 text-xs xl:text-sm xl:text-nowrap">
+          Join a vibrant community where you can create, share, & celebrate
           art.
         </p>
       </div>
@@ -145,7 +183,7 @@ const SignUp = () => {
 
         <div className="flex justify-between items-center mt-4">
           <span className="text-mountain-500 text-xs xl:text-sm">
-            Your password must be at least 8 characters, numbers, and symbols.
+            Your password must be at least 8 characters, numbers & symbols.
           </span>
         </div>
 

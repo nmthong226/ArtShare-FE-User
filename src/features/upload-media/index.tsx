@@ -33,7 +33,6 @@ const UploadMedia: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isMature, setIsMature] = useState(false);
   const [aiCreated, setAiCreated] = useState(false);
-  const [noAi, setNoAi] = useState(true);
 
   const VIDEO_STORAGE_DIRECTORY = "posts";
 
@@ -238,8 +237,6 @@ const UploadMedia: React.FC = () => {
               setIsMature={setIsMature}
               aiCreated={aiCreated}
               setAiCreated={setAiCreated}
-              noAi={noAi}
-              setNoAi={setNoAi}
             />
           </Box>
 

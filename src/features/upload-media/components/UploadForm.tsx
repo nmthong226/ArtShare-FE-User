@@ -9,8 +9,6 @@ import {
   FormHelperText,
   FormControl,
   Tooltip,
-  RadioGroup,
-  Radio,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
 import {
@@ -56,8 +54,6 @@ const UploadForm: React.FC<{
   setIsMature: (value: boolean) => void;
   aiCreated: boolean;
   setAiCreated: (value: boolean) => void;
-  noAi: boolean;
-  setNoAi: (value: boolean) => void;
 }> = ({
   thumbnailFile,
   onThumbnailChange,
@@ -70,8 +66,6 @@ const UploadForm: React.FC<{
   setIsMature,
   aiCreated,
   setAiCreated,
-  noAi,
-  setNoAi,
 }) => {
   // const [description, setDescription] = useState("");
   const [thumbnailCropOpen, setThumbnailCropOpen] = useState(false);
@@ -196,49 +190,19 @@ const UploadForm: React.FC<{
                 </>
               }
             />
-
-            {/* AI usage radio group */}
-            <Typography className="dark:text-mountain-200 text-base text-left mb-1">
-              AI Usage
-            </Typography>
-            <RadioGroup
-              row
-              value={aiCreated ? "ai" : noAi ? "noai" : ""}
-              onChange={(e) => {
-                const value = e.target.value;
-                setAiCreated(value === "ai");
-                setNoAi(value === "noai");
-              }}
-            >
-              <FormControlLabel
-                value="noai"
-                control={
-                  <Radio
-                    sx={{
-                      color: "#6b7280",
-                      "&.Mui-checked": { color: "#a5b4fc" },
-                    }}
-                  />
-                }
-                label={<span className="dark:text-white text-base">NoAI</span>}
-              />
-              <FormControlLabel
-                value="ai"
-                control={
-                  <Radio
-                    sx={{
-                      color: "#6b7280",
-                      "&.Mui-checked": { color: "#a5b4fc" },
-                    }}
-                  />
-                }
-                label={
-                  <span className="dark:text-white text-base">
-                    Created with AI
-                  </span>
-                }
-              />
-            </RadioGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={aiCreated}
+                  onChange={(e) => setAiCreated(e.target.checked)}
+                  sx={{
+                    color: "#6b7280",
+                    "&.Mui-checked": { color: "#a5b4fc" },
+                  }}
+                />
+              }
+              label={<span className="dark:text-white">Created with AI</span>}
+            />
           </FormControl>
         </Box>
       </Box>

@@ -26,7 +26,7 @@ const PostMoreByArtist = ({ artist }: { artist: User }) => {
 
   return (
     <div className="flex flex-col gap-4 bg-white px-4 py-6 rounded-2xl">
-      <div className="font-bold text-xl">More by {artist.fullName || ""}</div>
+      <div className="font-bold text-xl">More by {artist.full_name || "artist"}</div>
       <div className="gap-4 grid grid-cols-4 md:grid-cols-2 lg:grid-cols-3 bg-white rounded-2xl">
         {posts?.map((post) => (
           <img

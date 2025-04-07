@@ -58,6 +58,15 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             >
               {postData.description}
             </AnyShowMoreText>
+
+            <div className="flex gap-8 text-mountain-950">
+              <div className="flex items-center gap-1 text-sm">
+                <span>
+                  {likeCount > 1 ? likeCount + " Likes" : likeCount + " Like"}
+                </span>
+              </div>
+            </div>
+
             <div className="text-xs italic">
               Posted <ReactTimeAgo date={postData.created_at} />
             </div>
@@ -65,47 +74,49 @@ const PostInfo = ({ postData }: { postData: Post }) => {
 
           <Divider className="border-0.5" />
 
-          <div className="flex gap-8 text-mountain-950">
-            <div className="flex items-center gap-1 text-sm">
-              <span>{likeCount > 1 ? likeCount + " Likes" : likeCount + " Like"}</span>
-            </div>
-            <div className="flex gap-1 text-sm">
-              {/* <Eye /> */}
-              <span>354 Views</span>
-            </div>
-            <div className="flex gap-1 text-sm">
-              {/* <MessageSquareText /> */}
-              <span>{postData.comment_count} Comments</span>
-            </div>
-          </div>
-
-          <Divider className="border-0.5" />
-
           <div className="flex justify-between -my-1.5">
-            <Button className="flex gap-1 -mx-2 px-2 py-2 w-20 text-blue-900" title="Like" onClick={handleLikeClick}>
-              {userLike ?
-                <>
-                  <AiFillLike className="size-6" />
-                  <span className="font-normal text-sm normal-case">Liked</span>
-                </> : <>
-                  <AiOutlineLike className="size-6" />
-                  <span className="font-normal text-sm normal-case">Like</span>
-                </>}
-            </Button>
-            <Button className="flex gap-1 -mx-2 px-2 py-2 text-blue-900" title="Save" onClick={handleClickOpen}>
-              <Bookmark />
-              <span className="font-normal text-sm normal-case">Save</span>
-            </Button>
-            <Button className="flex gap-1 -mx-2 px-2 py-2 text-blue-900" title="Comment" onClick={handleFocusCommentInput}>
-              <MessageSquareText />
-              <span className="font-normal text-sm normal-case">Comment</span>
-            </Button>
-            <Button className="min-w-auto aspect-[1/1] text-blue-900">
+            <div>
+              <Button
+                className="min-w-0 p-2 text-blue-900 border-0"
+                title="Like"
+                onClick={handleLikeClick}
+              >
+                {userLike ? (
+                  <>
+                    <AiFillLike className="size-6" />
+                  </>
+                ) : (
+                  <>
+                    <AiOutlineLike className="size-6" />
+                  </>
+                )}
+              </Button>
+              <Button
+                className="min-w-0 p-2 text-blue-900 border-0"
+                title="Comment"
+                onClick={handleFocusCommentInput}
+              >
+                <MessageSquareText />
+              </Button>
+              <Button
+                className="min-w-0 p-2 text-blue-900 border-0"
+                title="Save"
+                onClick={handleClickOpen}
+              >
+                <Bookmark />
+              </Button>
+            </div>
+
+            <Button className="min-w-auto aspect-[1/1] text-blue-900 border-0">
               <EllipsisVertical />
             </Button>
           </div>
         </CardContent>
-        <SavePostDialog postId={postData.id} open={open} onClose={handleClose} />
+        <SavePostDialog
+          postId={postData.id}
+          open={open}
+          onClose={handleClose}
+        />
       </div>
     )
   );

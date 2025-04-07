@@ -14,7 +14,8 @@ const Login = () => {
   const { loginWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Using the UserProvider context
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message] = useState<string | null>(null);
   const navigate = useNavigate(); // To navigate after login
@@ -22,11 +23,13 @@ const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(""); // Clear previous error
+    setEmailError("");
+    setPasswordError("");
     try {
       await loginWithEmail(email, password);
       navigate("/gallery");
     } catch (err) {
-      let errorMessage = "An unexpected error occurred. Please try again later.";
+      let errorMessage = "";
       if (err && typeof err === "object" && "code" in err) {
         const code = (err as any).code;
         switch (code) {
@@ -35,17 +38,17 @@ const Login = () => {
               "Invalid email or password. Try signing up if you don’t have an account.";
             break;
           case "auth/wrong-password":
-            errorMessage = "Incorrect password. Please try again.";
+            setPasswordError("Incorrect password. Please try again.");
             break;
           case "auth/email-not-verified":
           case "auth/user-not-verified":
             errorMessage = "Please verify your email before logging in.";
             break;
           case "auth/invalid-email":
-            errorMessage = "Invalid email. Please try again";
+            setEmailError("Invalid email. Please try again");
             break;
           case "auth/missing-password":
-            errorMessage = "Missing password. Please try again";
+            setPasswordError("Missing password. Please try again");
             break;
           default:
             if ("message" in err) {
@@ -144,6 +147,10 @@ const Login = () => {
               handleEmailChange(e);
             }}
           />
+          {/* Display error and success messages */}
+          {emailError && emailError.length > 0 && (
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{emailError}</p>
+          )}
         </div>
         <div>
           <label
@@ -159,6 +166,10 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {/* Display error and success messages */}
+          {passwordError && passwordError.length > 0 && (
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{passwordError}</p>
+          )}
         </div>
         <div className="flex justify-between items-center mt-4">
           <label className="flex items-center text-mountain-500 text-sm">
@@ -178,7 +189,7 @@ const Login = () => {
       </form>
 
       {/* Display error and success messages */}
-      {error && (
+      {error && error.length > 0 && (
         <p className="mt-4 text-red-600 dark:text-red-400 text-sm">{error}</p>
       )}
       {message && (

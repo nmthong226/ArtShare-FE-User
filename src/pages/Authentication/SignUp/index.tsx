@@ -13,18 +13,22 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate(); // To navigate after signup
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(""); // Clear previous error
+    setEmailError("");
+    setPasswordError("");
     try {
       const token = await signUpWithEmail(email, password, username); // Get the token
       localStorage.setItem("user_verify", token);
       navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
     } catch (err: any) {
-      let errorMessage = "An unexpected error occurred. Please try again later.";
+      let errorMessage = "";
       if (err && typeof err === "object" && "code" in err) {
         const code = (err as any).code;
         switch (code) {
@@ -32,10 +36,13 @@ const SignUp = () => {
             errorMessage = "Already used email. Please try with another";
             break;
           case "auth/invalid-email":
-            errorMessage = "Invalid email. Please try again";
+            setEmailError("Invalid email. Please try again");
             break;
           case "auth/missing-password":
-            errorMessage = "Missing password. Please try again";
+            setPasswordError("Missing password. Please try again");
+            break;
+          case "auth/network-request-failed":
+            errorMessage = "Overload sign up request. Please try again";
             break;
           default:
             if ("message" in err) {
@@ -164,6 +171,9 @@ const SignUp = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
+          {emailError && emailError.length > 0 && (
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{emailError}</p>
+          )}
         </div>
         <div>
           <label
@@ -179,8 +189,10 @@ const SignUp = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {passwordError && passwordError.length > 0 && (
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{passwordError}</p>
+          )}
         </div>
-
         <div className="flex justify-between items-center mt-4">
           <span className="text-mountain-500 text-xs xl:text-sm">
             Your password must be at least 8 characters, numbers & symbols.
@@ -195,7 +207,7 @@ const SignUp = () => {
         </Button>
       </form>
       {/* Display error and success messages */}
-      {error && (
+      {error && error.length > 0 && (
         <p className="mt-4 text-red-600 dark:text-red-400 text-sm">{error}</p>
       )}
 

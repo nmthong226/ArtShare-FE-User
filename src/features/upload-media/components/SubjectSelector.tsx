@@ -177,7 +177,7 @@ export default function SubjectSelector() {
       {/* Main layout */}
       <div className="flex gap-2">
         {/* Left column */}
-        <div className="flex flex-col pr-4 border-gray-300 dark:border-gray-700 w-2/5 h-72">
+        <div className="flex flex-col pr-4 border-gray-300 dark:border-gray-700 w-1/2 h-72">
           <p className="mb-3 py-1.5 text-gray-700 dark:text-gray-400 text-sm">
             CHOOSE ANOTHER {remainingSlots} ART TYPE
             {remainingSlots !== 1 ? "S" : ""}
@@ -221,7 +221,7 @@ export default function SubjectSelector() {
         </div>
 
         {/* Right preview panel */}
-        <div className="flex-1 w-3/5 overflow-hidden ">
+        <div className="flex-1 w-1/2 overflow-hidden ">
           <div className="bg-gray-100 dark:bg-mountain-950 p-5 border border-indigo-300 rounded-lg h-full ">
             <div className="flex justify-between items-center mb-3">
               <div>

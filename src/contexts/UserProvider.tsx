@@ -56,6 +56,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
               id: firebaseUser.uid,
               name: firebaseUser.displayName || "Unknown",
               email: firebaseUser.email || "Unknown",
+              username: "",
             };
             setUser(userData);
 
@@ -135,6 +136,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         id: user.uid,
         name: user.displayName || "Unknown",
         email: user.email || "Unknown",
+        username: "", // Add the username property
       });
       setToken(token);
       const backendResponse = await login(token);
@@ -176,6 +178,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         id: user.uid,
         name: user.displayName || "Unknown",
         email: user.email || "Unknown",
+        username: "", // Add the username property with a default value
       });
       setToken(token);
       localStorage.setItem("accessToken", token);
@@ -201,6 +204,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         id: user.uid,
         name: user.displayName || "Unknown",
         email: user.email || "Unknown",
+        username: "", // Add the username property with a default value
       });
       setToken(token);
       // Call backend login API after Firebase authentication

@@ -7,49 +7,93 @@ import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
-import { AxiosError } from "axios";
+
 // import { login } from "@/api/authentication/auth"; // Import the login API function
 
 const Login = () => {
   const { loginWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Using the UserProvider context
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message] = useState<string | null>(null);
   const navigate = useNavigate(); // To navigate after login
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(""); // Clear previous error
+    setEmailError("");
+    setPasswordError("");
     try {
       await loginWithEmail(email, password);
-      navigate("/explore");
-    } catch (error) {
-      console.log(error);
-      if (error instanceof AxiosError) {
-        let errorMessage = error.message;
-        if (error.code === "auth/user-not-found") {
-          errorMessage = "No user found with this email address.";
-        } else if (error.code === "auth/wrong-password") {
-          errorMessage = "Incorrect password. Please try again.";
-        } else if (error.code === "auth/email-not-verified") {
-          errorMessage = "Please verify your email before logging in.";
+      navigate("/gallery");
+    } catch (err) {
+      let errorMessage = "";
+      if (err && typeof err === "object" && "code" in err) {
+        const code = (err as any).code;
+        switch (code) {
+          case "auth/invalid-credential":
+            errorMessage =
+              "Invalid email or password. Try signing up if you don’t have an account.";
+            break;
+          case "auth/wrong-password":
+            setPasswordError("Incorrect password. Please try again.");
+            break;
+          case "auth/email-not-verified":
+          case "auth/user-not-verified":
+            errorMessage = "Please verify your email before logging in.";
+            break;
+          case "auth/invalid-email":
+            setEmailError("Invalid email. Please try again");
+            break;
+          case "auth/missing-password":
+            setPasswordError("Missing password. Please try again");
+            break;
+          default:
+            if ("message" in err) {
+              errorMessage = (err as any).message;
+            }
         }
-        setError(errorMessage);
-        return;
       }
-      setError("An unknown error occurred.");
-      // Optionally, you can remain on the login page so the user can correct their input.
+      setError(errorMessage);
     }
   };
 
+
   const handleGoogleLogin = async () => {
+    setError(""); // Clear previous error
     try {
       await signUpWithGoogle(); // Call Google login function from UserProvider
       navigate("/explore"); // Redirect after successful login
     } catch (error) {
-      setError((error as Error).message);
+      let message = "Something went wrong. Please try again.";
+      if (error && typeof error === "object" && "code" in error) {
+        const code = (error as any).code;
+        switch (code) {
+          case "auth/popup-closed-by-user":
+            message = "Login was cancelled. You closed the popup before signing in.";
+            break;
+          case "auth/cancelled-popup-request":
+            message = "Login was interrupted by another popup request.";
+            break;
+          case "auth/account-exists-with-different-credential":
+            message =
+              "An account already exists with a different sign-in method. Try logging in using that method.";
+            break;
+          case "auth/popup-blocked":
+            message = "The login popup was blocked by your browser. Please enable popups and try again.";
+            break;
+          default:
+            if ("message" in error) {
+              message = (error as any).message;
+            }
+        }
+      }
+      setError(message);
     }
   };
+
 
   const handleFacebookLogin = async () => {
     try {
@@ -59,6 +103,19 @@ const Login = () => {
       setError((error as Error).message);
     }
   };
+
+  function handleEmailChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const emailValue = e.target.value;
+    setEmail(emailValue);
+
+    // // Basic email validation
+    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    // if (!emailRegex.test(emailValue)) {
+    //   setError("Please enter a valid email address.");
+    // } else {
+    //   setError(null); // Clear error if email is valid
+    // }
+  }
 
   return (
     <div className="flex-1 space-y-4 px-10 md:px-0 lg:px-20 py-8">
@@ -79,15 +136,21 @@ const Login = () => {
             htmlFor="username"
             className="block font-semibold text-mountain-600 dark:text-mountain-50 text-sm"
           >
-            Username or Email
+            Email
           </label>
           <Input
-            type="text"
+            type="email"
             placeholder="Enter your username or email"
             className="dark:bg-mountain-900 shadow-sm mt-1 p-3 border border-mountain-800 rounded-lg focus:ring-indigo-500 w-full h-10 text-mountain-950 dark:text-mountain-50"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              handleEmailChange(e);
+            }}
           />
+          {/* Display error and success messages */}
+          {emailError && emailError.length > 0 && (
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{emailError}</p>
+          )}
         </div>
         <div>
           <label
@@ -103,6 +166,10 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {/* Display error and success messages */}
+          {passwordError && passwordError.length > 0 && (
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{passwordError}</p>
+          )}
         </div>
         <div className="flex justify-between items-center mt-4">
           <label className="flex items-center text-mountain-500 text-sm">
@@ -122,7 +189,7 @@ const Login = () => {
       </form>
 
       {/* Display error and success messages */}
-      {error && (
+      {error && error.length > 0 && (
         <p className="mt-4 text-red-600 dark:text-red-400 text-sm">{error}</p>
       )}
       {message && (

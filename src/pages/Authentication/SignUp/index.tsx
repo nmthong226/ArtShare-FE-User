@@ -28,10 +28,10 @@ const SignUp = () => {
       const token = await signUpWithEmail(email, password, username); // Get the token
       localStorage.setItem("user_verify", token);
       navigate(`/activate-account/${token}`); // Redirect to the activate-account page with the token
-    } catch (err: any) {
+    } catch (err) {
       let errorMessage = "";
-      if (err && typeof err === "object" && "code" in err) {
-        const code = (err as any).code;
+      if (err instanceof AxiosError) {
+        const code = err.code;
         switch (code) {
           case "auth/email-already-in-use":
             errorMessage = "Already used email. Please try with another";
@@ -46,9 +46,7 @@ const SignUp = () => {
             errorMessage = "Overload sign up request. Please try again";
             break;
           default:
-            if ("message" in err) {
-              errorMessage = (err as any).message;
-            }
+            errorMessage = err.message;
         }
       }
       setError(errorMessage);
@@ -61,8 +59,8 @@ const SignUp = () => {
       navigate("/explore"); // Redirect after successful login
     } catch (error) {
       let message = "Something went wrong. Please try again.";
-      if (error && typeof error === "object" && "code" in error) {
-        const code = (error as any).code;
+      if (error instanceof AxiosError) {
+        const code = error.code;
         switch (code) {
           case "auth/popup-closed-by-user":
             message = "Login was cancelled. You closed the popup before signing in.";
@@ -78,9 +76,7 @@ const SignUp = () => {
             message = "The login popup was blocked by your browser. Please enable popups and try again.";
             break;
           default:
-            if ("message" in error) {
-              message = (error as any).message;
-            }
+            message = error.message;
         }
       }
       setError(message);

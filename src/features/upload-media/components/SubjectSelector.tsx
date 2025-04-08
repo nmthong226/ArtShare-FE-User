@@ -199,8 +199,9 @@ export default function SubjectSelector() {
                   <span className="truncate max-w-[60%]">{subject.label}</span>
                   <Button
                     onClick={() => toggleSubject(subject)}
-                    className="flex justify-center items-center gap-1 bg-white hover:bg-gray-100 dark:bg-mountain-950 dark:hover:bg-mountain-900 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded min-w-[110px] text-black dark:text-white text-sm"
+                    className={`${selected.length >= 3 && !selectedStatus ? "dark:text-mountain-500 text-gray-400" : "dark:text-white text-black"} flex justify-center items-center gap-1 bg-white hover:bg-gray-100 dark:bg-mountain-950 dark:hover:bg-mountain-900 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded min-w-[110px] text-black  text-sm`}
                     sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
+                    disabled={!selectedStatus && selected.length >= 3}
                   >
                     {!selectedStatus ? (
                       <>

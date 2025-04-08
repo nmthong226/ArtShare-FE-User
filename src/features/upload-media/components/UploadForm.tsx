@@ -15,10 +15,9 @@ import {
   Crop,
   ErrorOutlineOutlined,
   PhotoCameraBackOutlined,
-  RestartAltOutlined,
 } from "@mui/icons-material";
 import { ImageUpIcon } from "lucide-react";
-import { ImageCropperModal } from "@/components/ui/image-dropper-modal";
+import { ImageCropperModal } from "@/components/ui/image-cropper-modal";
 // import SearchIcon from "@mui/icons-material/Search";
 // import CloseIcon from "@mui/icons-material/Close";
 
@@ -263,15 +262,6 @@ const UploadForm: React.FC<{
                 className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
               >
                 <Crop />
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip title="Reset">
-              <IconButton
-                onClick={() => onThumbnailChange(resetedThumbnail!)}
-                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
-              >
-                <RestartAltOutlined />
               </IconButton>
             </Tooltip>
 

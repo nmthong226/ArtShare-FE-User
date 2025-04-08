@@ -67,7 +67,6 @@ export default function VideoSelection({
                 color: "white",
                 borderRadius: "10px",
                 border: "1px solid",
-                borderColor: "white",
                 textTransform: "none",
                 "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
               }}

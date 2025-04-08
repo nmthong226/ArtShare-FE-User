@@ -158,6 +158,7 @@ export const ImageCropperModal: React.FC<Props> = ({
         <MuiButton
           variant="outlined"
           onClick={onClose}
+          className="dark:text-white"
           sx={{
             border: "none",
             color: "#000", // black text

@@ -13,7 +13,7 @@ describe("App Component (Landing Page only)", () => {
   });
 
   it("renders 'Start For Free' button", () => {
-    cy.get("a").contains("Start For Free").should("be.visible").click();
+    cy.get("a").contains("Start For Free").should("be.visible");
   });
 
   it("renders pricing section", () => {

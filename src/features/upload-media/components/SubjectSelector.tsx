@@ -9,6 +9,7 @@ type Subject = {
   examples?: string[];
 };
 
+// TODO: delete this hardcode and call to api to get categories
 const allSubjects: Subject[] = [
   { label: "Abstract" },
   {
@@ -106,37 +107,38 @@ export default function SubjectSelector() {
   const remainingSlots = 3 - selected.length;
 
   return (
-    <div className="bg-white dark:bg-mountain-900 font-sans text-black dark:text-white">
-      <p className="mb-1 text-gray-800 dark:text-mountain-200 text-sm">
+    <div className="dark:bg-mountain-900 font-sans text-black dark:text-white">
+      <p className="mb-1 text-gray-800 dark:text-mountain-200 text-base">
         How would you categorize this work? (Choose up to 3)
       </p>
       {/* Top Selection Bar */}
       <div
-        className={`flex items-center gap-2 flex-wrap dark:bg-mountain-950 bg-gray-100 dark:border-gray-600  border-gray-300 rounded text-left mb-6 ${
-          selected.length > 0 ? "px-3 py-2" : ""
+        className={`flex items-center gap-2 flex-wrap dark:bg-mountain-950 min-h-[52px] bg-gray-100 text-left mb-6 transition-colors duration-200 ${
+          selected.length > 0 ? "px-2 py-0.5" : ""
         }`}
         style={{
-          border: "2px solid #9d9d9d", // default
-          borderRadius: "8px",
+          border: "2px solid",
+          borderColor: "#9ca3af", // mountain-400 default
+          borderRadius: "6px",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = "#e7e7e7"; // hover effect
+          e.currentTarget.style.borderColor = "#e7e7e7"; // mountain-100 hover
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = "#9d9d9d"; // revert
+          e.currentTarget.style.borderColor = "#9ca3af"; // revert to default
         }}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = "#e7e7e7"; // focus effect
+          e.currentTarget.style.borderColor = "#a5b4fc"; // primary.main
         }}
         onBlur={(e) => {
-          e.currentTarget.style.borderColor = "#9d9d9d"; // blur
+          e.currentTarget.style.borderColor = "#9ca3af";
         }}
-        tabIndex={-1} // allow focus if needed
+        tabIndex={-1}
       >
         {selected.map((subject) => (
           <div
             key={subject.label}
-            className="flex items-center gap-2 bg-gray-200 dark:bg-mountain-800 px-3 py-2 rounded text-sm"
+            className="flex items-center gap-2 bg-gray-200 dark:bg-mountain-800 px-2 py-1 rounded text-sm"
           >
             <span>{subject.label}</span>
             <Button
@@ -173,9 +175,9 @@ export default function SubjectSelector() {
       </div>
 
       {/* Main layout */}
-      <div className="flex gap-6">
+      <div className="flex gap-2">
         {/* Left column */}
-        <div className="flex flex-col pr-4 border-gray-300 dark:border-gray-700 border-r w-1/2 h-72">
+        <div className="flex flex-col pr-4 border-gray-300 dark:border-gray-700 w-1/2 h-72">
           <p className="mb-3 py-1.5 text-gray-700 dark:text-gray-400 text-sm">
             CHOOSE ANOTHER {remainingSlots} ART TYPE
             {remainingSlots !== 1 ? "S" : ""}
@@ -191,13 +193,15 @@ export default function SubjectSelector() {
               return (
                 <li
                   key={subject.label}
-                  className="flex justify-between items-center gap-2 hover:bg-gray-100 dark:hover:bg-mountain-800 px-2 py-2 rounded text-sm transition cursor-pointer"
+                  className="flex items-center justify-between gap-2 px-2 py-2 rounded text-sm transition cursor-pointer hover:bg-gray-100 dark:hover:bg-mountain-800"
                   onMouseEnter={() => setHovered(subject)}
                 >
-                  <span>{subject.label}</span>
+                  <span className="truncate max-w-[60%]">{subject.label}</span>
                   <Button
                     onClick={() => toggleSubject(subject)}
-                    className="flex justify-center items-center gap-1 bg-white hover:bg-gray-100 dark:bg-mountain-950 dark:hover:bg-mountain-900 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded min-w-[110px] text-black dark:text-white text-sm"
+                    className={`${selected.length >= 3 && !selectedStatus ? "dark:text-mountain-500 text-gray-400" : "dark:text-white text-black"} flex justify-center items-center gap-1 bg-white hover:bg-gray-100 dark:bg-mountain-950 dark:hover:bg-mountain-900 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded min-w-[110px] text-black  text-sm`}
+                    sx={{ whiteSpace: "nowrap", flexShrink: 0 }}
+                    disabled={!selectedStatus && selected.length >= 3}
                   >
                     {!selectedStatus ? (
                       <>
@@ -218,8 +222,8 @@ export default function SubjectSelector() {
         </div>
 
         {/* Right preview panel */}
-        <div className="flex-1 w-1/2">
-          <div className="bg-gray-100 dark:bg-mountain-950 p-5 border border-indigo-300 rounded-lg h-full">
+        <div className="flex-1 w-1/2 overflow-hidden ">
+          <div className="bg-gray-100 dark:bg-mountain-950 p-5 border border-indigo-300 rounded-lg h-full ">
             <div className="flex justify-between items-center mb-3">
               <div>
                 <h3 className="font-semibold text-xl">{hovered.label}</h3>
@@ -230,7 +234,7 @@ export default function SubjectSelector() {
             </div>
             {hovered.examples && (
               <>
-                <p className="mb-2 text-gray-500 dark:text-gray-400 text-sm">
+                <p className="mb-2 text-gray-500 dark:text-gray-400 text-sm ">
                   Examples
                 </p>
                 <div className="flex gap-3 overflow-x-auto">

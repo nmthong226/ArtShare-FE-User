@@ -166,3 +166,7 @@ body {
     scrollbar-width: none; /* Firefox */
   }
 }
+
+.bounce-item {
+  @apply transform transition-transform duration-500 hover:-translate-y-1;
+}

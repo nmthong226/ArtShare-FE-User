@@ -2,6 +2,7 @@ interface User {
   id: string;
   name: string;
   email: string;
+  username?: string;
   password_hash?: string;
   full_name?: string;
   profile_picture_url?: string;

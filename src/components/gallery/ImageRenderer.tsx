@@ -19,16 +19,16 @@ export const ImageRenderer = (_: unknown, context: RenderPhotoContext<GalleryPho
                     {...photo}
                     srcSet={Array.isArray(photo.srcSet) ? photo.srcSet.join(", ") : photo.srcSet}
                     alt={photo.alt || `Image ${index}`}
-                    className="rounded-sm w-full h-full object-cover"
+                    className="rounded-lg w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 flex flex-col justify-end items-start bg-gradient-to-b from-transparent via-transparent to-black/70 opacity-0 group-hover:opacity-100 m-0.5 p-4 rounded-lg text-white transition-opacity duration-300">
+                <div className="absolute inset-0 flex flex-col justify-end items-start bg-gradient-to-b from-transparent via-transparent to-black/70 opacity-0 group-hover:opacity-100 p-4 rounded-lg text-white transition-opacity duration-300">
                     {photo.postLength > 1 && (
                         <div className="top-2 left-2 absolute flex justify-center items-center bg-black/40 p-2 rounded-full">
                             <Images size={16} />
                         </div>
                     )}
-                    <span className="font-semibold text-lg">{photo.title}</span>
-                    <span className="text-sm">{photo.author}</span>
+                    <span className="font-semibold text-md line-clamp-1">{photo.title}</span>
+                    <span className="text-xs line-clamp-1">{photo.author}</span>
                 </div>
             </Link>
         </div>

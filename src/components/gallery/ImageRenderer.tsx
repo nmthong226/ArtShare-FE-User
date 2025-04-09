@@ -4,6 +4,11 @@ import { Link } from "react-router-dom";
 import { GalleryPhoto } from "./Gallery";
 import { Images } from "lucide-react";
 
+// Icons
+import { AiOutlineLike } from "react-icons/ai";
+import { BiCommentDetail } from "react-icons/bi";
+import { HiOutlineEye } from "react-icons/hi";
+
 export const ImageRenderer = (
   _: unknown,
   context: RenderPhotoContext<GalleryPhoto>
@@ -32,10 +37,28 @@ export const ImageRenderer = (
               <Images size={16} />
             </div>
           )}
-          <span className="font-semibold text-md line-clamp-1">
-            {photo.title}
-          </span>
-          <span className="text-xs line-clamp-1">{photo.author}</span>
+          <div className="flex justify-between items-end w-full">
+            <div>
+              <span className="font-semibold text-md line-clamp-1">
+                {photo.title}
+              </span>
+              <span className="text-xs line-clamp-1">{photo.author}</span>
+            </div>
+            <div className="flex flex-col items-end space-y-1">
+              <div className="flex items-center space-x-1">
+                <p className="font-semibold">{9}</p>
+                <AiOutlineLike className="size-4" />
+              </div>
+              <div className="flex items-center space-x-1">
+                <p className="font-semibold">23</p>
+                <BiCommentDetail className="size-4 text-white" />
+              </div>
+              <div className="flex items-center space-x-1">
+                <p className="font-semibold">1k</p>
+                <HiOutlineEye className="size-4" />
+              </div>
+            </div>
+          </div>
         </div>
       </Link>
     </div>

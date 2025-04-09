@@ -50,6 +50,10 @@ const UploadForm: React.FC<{
   setTitle: (value: string) => void;
   description: string;
   setDescription: (value: string) => void;
+  isMature: boolean;
+  setIsMature: (value: boolean) => void;
+  aiCreated: boolean;
+  setAiCreated: (value: boolean) => void;
 }> = ({
   thumbnailFile,
   onThumbnailChange,
@@ -58,11 +62,16 @@ const UploadForm: React.FC<{
   setTitle,
   description,
   setDescription,
+  isMature,
+  setIsMature,
+  aiCreated,
+  setAiCreated,
 }) => {
   // const [description, setDescription] = useState("");
   const [thumbnailCropOpen, setThumbnailCropOpen] = useState(false);
-  const [resetedThumbnail, setResetedThumbnail] = useState<File | undefined>(undefined);
-  const [isMature, setIsMature] = useState(false);
+  const [resetedThumbnail, setResetedThumbnail] = useState<File | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     if (!resetedThumbnail) {
@@ -151,37 +160,50 @@ const UploadForm: React.FC<{
 
         {/* Content / Mature Checkbox */}
         <Box className="px-2.5 pb-2.5">
-          <Typography className="dark:text-mountain-200 text-base text-left">
+          <Typography className="dark:text-mountain-200 text-base text-left mb-1">
             Content
           </Typography>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={isMature}
-                onChange={(e) => setIsMature(e.target.checked)}
-                sx={{
-                  color: "#6b7280",
-                  "&.Mui-checked": {
-                    color: "#a5b4fc",
-                  },
-                }}
-              />
-            }
-            label={
-              <>
-                <span className="dark:text-white">Has mature content</span>
-                <span className="dark:text-mountain-200">
-                  {" "}
-                  (see our Guidelines for{" "}
-                </span>
-                <a href="/mature-content" className="hover:underline">
-                  Mature Content
-                </a>
-                <span className="dark:text-mountain-200">)</span>
-              </>
-            }
-            className="text-base text-left"
-          />
+          <FormControl component="fieldset" className="space-y-2">
+            {/* Mature content checkbox */}
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={isMature}
+                  onChange={(e) => setIsMature(e.target.checked)}
+                  sx={{
+                    color: "#6b7280",
+                    "&.Mui-checked": { color: "#a5b4fc" },
+                  }}
+                />
+              }
+              label={
+                <>
+                  <span className="dark:text-white">Has mature content</span>
+                  <span className="dark:text-mountain-200">
+                    {" "}
+                    (see our{" "}
+                    <a href="/mature-content" className="hover:underline">
+                      guidelines
+                    </a>
+                    )
+                  </span>
+                </>
+              }
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={aiCreated}
+                  onChange={(e) => setAiCreated(e.target.checked)}
+                  sx={{
+                    color: "#6b7280",
+                    "&.Mui-checked": { color: "#a5b4fc" },
+                  }}
+                />
+              }
+              label={<span className="dark:text-white">Created with AI</span>}
+            />
+          </FormControl>
         </Box>
       </Box>
       {thumbnailFile && (
@@ -190,8 +212,10 @@ const UploadForm: React.FC<{
           open={thumbnailCropOpen}
           onClose={() => setThumbnailCropOpen(false)}
           onCropped={(blob) => {
-            setResetedThumbnail(thumbnailFile)
-            onThumbnailChange(new File([blob], "cropped_thumbnail.png", { type: "image/png"}));
+            setResetedThumbnail(thumbnailFile);
+            onThumbnailChange(
+              new File([blob], "cropped_thumbnail.png", { type: "image/png" }),
+            );
           }}
         />
       )}
@@ -208,7 +232,11 @@ const UploadForm: React.FC<{
           component="label"
         >
           {thumbnailFile ? (
-            <img src={URL.createObjectURL(thumbnailFile)} alt="Thumbnail" className="max-h-64" />
+            <img
+              src={URL.createObjectURL(thumbnailFile)}
+              alt="Thumbnail"
+              className="max-h-64"
+            />
           ) : (
             <>
               <ImageUpIcon className="text-gray-400 text-4xl" />

@@ -42,25 +42,25 @@ const Post: React.FC = () => {
       <div className="flex flex-col gap-8">
         <PostInfo postData={postData!} />
         <PostComments />
-        <PostTags />
+        <PostTags categories={postData!.categories} />
         <PostMoreByArtist artist={postData!.user} />
         <PostShare />
       </div>
     );
   };
-
+  
   return (
-    <div className="flex-grow bg-mountain-50 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar py-4">
+    <div className="flex-grow bg-mountain-50 py-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
       {/* <div className="md:hidden flex flex-col gap-4 p-4">
         <PostArtist artist={postData!.user} />
         <PostAssets medias={postData!.medias} />
         <PostContent />
       </div> */}
       <div className="hidden md:flex flex-row h-full">
-        <div className="flex-grow h-full overflow-y-scroll no-scrollbar pl-4">
+        <div className="flex flex-grow justify-center items-center pl-4 h-full overflow-y-scroll no-scrollbar">
           <PostAssets medias={postData!.medias} />
         </div>
-        <div className="flex-shrink-0 py-0 sm:w-[256px] md:w-[384px] lg:w-[448px] overflow-y-scroll no-scrollbar pl-8 pr-4">
+        <div className="flex-shrink-0 py-0 pr-4 pl-8 sm:w-[256px] md:w-[384px] lg:w-[448px] overflow-y-scroll no-scrollbar">
           <PostArtist artist={postData!.user} />
           <PostContent />
         </div>

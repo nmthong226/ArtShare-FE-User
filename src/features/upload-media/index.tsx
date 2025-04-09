@@ -14,7 +14,6 @@ import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import MediaSelection from "./components/media-selection";
 
-
 const UploadMedia: React.FC = () => {
   const navigate = useNavigate();
   const { showSnackbar } = useSnackbar();
@@ -28,11 +27,14 @@ const UploadMedia: React.FC = () => {
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
 
-  const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(undefined);
+  const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(
+    undefined,
+  );
   const [isLoading, setIsLoading] = useState(false);
+  const [isMature, setIsMature] = useState(false);
+  const [aiCreated, setAiCreated] = useState(false);
 
   const VIDEO_STORAGE_DIRECTORY = "posts";
-
 
   const createFormData = (
     title: string,
@@ -40,18 +42,25 @@ const UploadMedia: React.FC = () => {
     imageFiles?: File[],
     videoUrl?: string,
     thumbnailUrl?: string,
+    isMature?: boolean,
+    aiCreated?: boolean,
   ) => {
     const formData = new FormData();
 
     formData.append("title", title);
-    description && formData.append("description", description);
+    if (description) formData.append("description", description);
     formData.append("cate_ids", JSON.stringify([1, 2]));
-    videoUrl && formData.append("video_url", videoUrl);
-    thumbnailUrl && formData.append("thumbnail_url", thumbnailUrl);
-    imageFiles && imageFiles.forEach((file) => {
-      formData.append("images", file);
-    });
-
+    if (videoUrl) formData.append("video_url", videoUrl);
+    if (thumbnailUrl) formData.append("thumbnail_url", thumbnailUrl);
+    if (imageFiles) {
+      imageFiles.forEach((file) => formData.append("images", file));
+    }
+    formData.append("is_mature", String(isMature));
+    formData.append("ai_created", String(aiCreated));
+    console.log("formData contents:");
+    for (const [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
     return formData;
   };
 
@@ -135,6 +144,8 @@ const UploadMedia: React.FC = () => {
       imageFiles,
       videoUrl,
       thumbnailUrl,
+      isMature,
+      aiCreated,
     );
 
     try {
@@ -143,7 +154,7 @@ const UploadMedia: React.FC = () => {
     } catch (error) {
       console.error("Error creating post:", error);
       showSnackbar("Failed to create post.", "error");
-      throw error; // Throw error to be caught in Promise.all
+      throw error;
     }
   };
 
@@ -160,7 +171,7 @@ const UploadMedia: React.FC = () => {
     await uploadFile(thumbnailFile!, presignedUrlResponse.presignedUrl);
 
     return presignedUrlResponse.fileUrl;
-  }
+  };
 
   const handleThumbnailChange = (file: File) => {
     setThumbnailFile(file);
@@ -205,7 +216,7 @@ const UploadMedia: React.FC = () => {
           setThumbnailFile={setThumbnailFile}
         />
         {/* RIGHT COLUMN: FORM FIELDS & ACTIONS */}
-        <Box className="flex flex-col space-y-3 w-[40%]">
+        <Box className="flex flex-col space-y-3 w-[50%]">
           {/* <Box className="mb-2">
             <UploadToggle
               isImageUpload={isImageUpload}
@@ -222,6 +233,10 @@ const UploadMedia: React.FC = () => {
               setTitle={setTitle}
               description={description}
               setDescription={setDescription}
+              isMature={isMature}
+              setIsMature={setIsMature}
+              aiCreated={aiCreated}
+              setAiCreated={setAiCreated}
             />
           </Box>
 

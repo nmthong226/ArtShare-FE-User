@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Link } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 const MatureContentPage: React.FC = () => {
   return (
@@ -23,16 +23,6 @@ const MatureContentPage: React.FC = () => {
           When submitting content, please ensure that any mature material is
           clearly marked. Users are encouraged to review our guidelines to avoid
           posting content that might be deemed inappropriate.
-        </Typography>
-        <Typography variant="body1" className="mb-2 text-gray-700">
-          For more detailed information, please visit our{" "}
-          <Link
-            href="/detailed-guidelines"
-            className="text-blue-600 hover:underline"
-          >
-            Detailed Guidelines
-          </Link>{" "}
-          page.
         </Typography>
         <Typography variant="body2" className="mt-4 text-gray-500">
           Note: These guidelines are subject to periodic review and updates to

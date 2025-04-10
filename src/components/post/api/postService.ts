@@ -50,7 +50,7 @@ const categoryData: Category[] = [
   {
     id: 1,
     name: "Illustration",
-    cateName: "Art",
+    cate_name: "Art",
     url: "example.com/category/art",
     createdAt: new Date(),
   },

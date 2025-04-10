@@ -53,7 +53,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               lines={3}
               more="Show more"
               less="Show less"
-              className="text-sm"
+              className="text-sm break-words"
               anchorClass="cursor-pointer hover:text-cyan-500 block py-2 underline text-sm"
               expanded={false}
               truncatedEndingComponent={"... "}

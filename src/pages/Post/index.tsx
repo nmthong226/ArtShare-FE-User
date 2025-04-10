@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import PostTags from "@/components/posts/PostTags";
 import PostMoreByArtist from "@/components/posts/PostMoreByArtist";
-import PostShare from "@/components/posts/PostShare";
+// import PostShare from "@/components/posts/PostShare";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Post: React.FC = () => {
@@ -44,7 +44,7 @@ const Post: React.FC = () => {
         <PostComments />
         <PostTags categories={postData!.categories} />
         <PostMoreByArtist artist={postData!.user} />
-        <PostShare />
+        {/* <PostShare /> */}
       </div>
     );
   };

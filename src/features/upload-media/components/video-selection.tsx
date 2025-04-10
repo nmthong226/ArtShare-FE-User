@@ -31,7 +31,7 @@ export default function VideoSelection({
 
   return (
     <Box
-      className={`relative w-full rounded-md flex flex-col ${
+      className={`relative w-full h-full rounded-md flex flex-col ${
         videoPreviewUrl ? "" : "border border-gray-500 border-dashed"
       }`}
       hidden={hidden}
@@ -54,9 +54,9 @@ export default function VideoSelection({
       }}
     >
       {videoPreviewUrl ? (
-        <Box className="w-full h-full flex flex-col gap-2">
+        <Box className="flex flex-col gap-2 w-full h-full">
           {/* Remove button on top, outside of the video */}
-          <Box className="flex justify-end px-2 pt-2 ">
+          <Box className="flex justify-end px-2 pt-2">
             <Button
               variant="text"
               size="small"
@@ -76,7 +76,7 @@ export default function VideoSelection({
           </Box>
 
           <Box
-            className=" w-full relative "
+            className="relative w-full"
             sx={{ maxHeight: 500, minHeight: 300 }}
           >
             {/* Video preview */}

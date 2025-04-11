@@ -40,7 +40,7 @@ export default function MediaSelection({
           examples="( .mp4, .avi, .mov, ... )"
         />
       </div>
-      <hr className="my-2 border-mountain-700 border-t-1 w-full" />
+      <hr className="mb-3 border-mountain-400 border-t-1 w-full" />
       <ImagesSelection
         imageFilesPreview={imageFilesPreview}
         videoPreviewUrl={videoPreviewUrl}

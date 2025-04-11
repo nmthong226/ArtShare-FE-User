@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Button } from "@mui/material";
 
 export default function MediaUploadTab({
   isActive,
@@ -20,9 +20,9 @@ export default function MediaUploadTab({
       variant="text"
       size="small"
       onClick={onClick}
-      className={`flex items-center justify-start px-3 border rounded-sm w-1/2 transition-all duration-300 ${isActive
-        ? "bg-indigo-800 text-white"
-        : "bg-gray-900 text-gray-500 opacity-50"
+      className={`flex items-center justify-start text-gray-400 px-3 border rounded-sm w-1/2 transition-all duration-300 ${isActive
+        ? "bg-indigo-800"
+        : "bg-gray-900 opacity-50"
         }`}
       sx={{
         height: 40,
@@ -34,18 +34,8 @@ export default function MediaUploadTab({
         },
       }}
     >
-      {icon}
-      <Box
-        component="div"
-        className={`${isActive ? "text-mountain-300" : "text-gray-600"} text-sm flex-1 overflow-hidden w-full`}
-        sx={{
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {label + " " + examples}
-      </Box>
-
+      <div className={`${isActive && "text-mountain-50"}`}>{icon}</div>
+      <span className={`${isActive && "text-mountain-50"} mr-2`}>{label}</span>{examples}
     </Button>
   );
 }

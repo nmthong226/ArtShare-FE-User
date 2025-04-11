@@ -80,7 +80,7 @@ const UploadForm: React.FC<{
   }, [resetedThumbnail, thumbnailFile]);
 
   return (
-    <Box className="w-full mx-auto dark:text-white text-left space-y-3">
+    <Box className="space-y-3 mx-auto w-full dark:text-white text-left">
       {/* Artwork Title Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
@@ -108,7 +108,7 @@ const UploadForm: React.FC<{
             slotProps={{
               input: {
                 className:
-                  "text-base text-white dark:placeholder:text-mountain-400",
+                  "text-base placeholder:text-mountain-950 bg-white dark:bg-mountain-950 dark:text-mountain-50",
               },
             }}
           />
@@ -152,7 +152,7 @@ const UploadForm: React.FC<{
             slotProps={{
               input: {
                 className:
-                  "p-2.5 text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
+                  "p-2.5 text-base bg-white dark:bg-mountain-950 dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
               },
             }}
           />
@@ -160,10 +160,10 @@ const UploadForm: React.FC<{
 
         {/* Content / Mature Checkbox */}
         <Box className="px-2.5 pb-2.5">
-          <Typography className="dark:text-mountain-200 text-base text-left mb-1">
+          <Typography className="mb-1 dark:text-mountain-200 text-base text-left">
             Content
           </Typography>
-          <FormControl component="fieldset" className="space-y-2">
+          <FormControl component="fieldset" className="space-y-2 px-2">
             {/* Mature content checkbox */}
             <FormControlLabel
               control={
@@ -178,7 +178,7 @@ const UploadForm: React.FC<{
               }
               label={
                 <>
-                  <span className="dark:text-white">Has mature content</span>
+                  <span className="ml-2 dark:text-white">Has mature content</span>
                   <span className="dark:text-mountain-200">
                     {" "}
                     (see our{" "}
@@ -201,7 +201,7 @@ const UploadForm: React.FC<{
                   }}
                 />
               }
-              label={<span className="dark:text-white">Created with AI</span>}
+              label={<span className="ml-2 dark:text-white">Created with AI</span>}
             />
           </FormControl>
         </Box>
@@ -260,7 +260,7 @@ const UploadForm: React.FC<{
             <Tooltip title="Crop">
               <IconButton
                 onClick={() => setThumbnailCropOpen(true)}
-                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
+                className="border border-gray-300 dark:border-white text-gray-900 dark:text-white"
               >
                 <Crop />
               </IconButton>
@@ -269,7 +269,7 @@ const UploadForm: React.FC<{
             <Tooltip title="Reset">
               <IconButton
                 onClick={() => onThumbnailChange(resetedThumbnail!)}
-                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
+                className="border border-gray-300 dark:border-white text-gray-900 dark:text-white"
               >
                 <RestartAltOutlined />
               </IconButton>
@@ -278,7 +278,7 @@ const UploadForm: React.FC<{
             <Tooltip title="Replace">
               <IconButton
                 component="label"
-                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
+                className="border border-gray-300 dark:border-white text-gray-900 dark:text-white"
               >
                 <PhotoCameraBackOutlined />
                 <input
@@ -396,7 +396,7 @@ const UploadForm: React.FC<{
         </Box> */}
 
         {/* Art type */}
-        <Box className="flex flex-col space-y-1  pb-2.5 w-full">
+        <Box className="flex flex-col space-y-1 pb-2.5 w-full">
           {/* Dialog for Selection */}
           <Box className="space-y-1 px-2.5 pb-2.5">
             <SubjectSelector />

@@ -153,33 +153,55 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
   // );
 
   return (
-    <div className=""> 
+    <div className="">
       <RowsPhotoAlbum
         spacing={8}
-        targetRowHeight={256}
+        rowConstraints={{ singleRowMaxHeight: 256 }}
         photos={galleryPhotos as GalleryPhoto[]}
         render={{ image: ImageRenderer }}
       />
 
-      <Paper className="bottom-4 left-1/2 z-50 fixed bg-white shadow-lg rounded-full -translate-x-1/2 transform">
+      <Paper className="bottom-4 left-1/2 z-50 fixed shadow-lg rounded-full -translate-x-1/2 transform">
         <ToggleButtonGroup
           className="flex gap-2 m-1.5"
-          size="small"
+          size="large"
           value={tab}
           exclusive
           onChange={handleFilterChange}
         >
           <ToggleButton
-            color="primary"
-            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case"
             value="for-you"
+            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
+            sx={{
+              '&.Mui-selected': {
+                backgroundColor: '#c7d2fe',
+                color: '#000',
+                '&:hover': {
+                  backgroundColor: '#c7d2fe',
+                },
+              },
+              '&:hover': {
+                backgroundColor: '#e0e0e0',
+              },
+            }}
           >
             For you
           </ToggleButton>
           <ToggleButton
-            color="primary"
-            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case"
             value="following"
+            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
+            sx={{
+              '&.Mui-selected': {
+                backgroundColor: '#c7d2fe',
+                color: '#000',
+                '&:hover': {
+                  backgroundColor: '#c7d2fe',
+                },
+              },
+              '&:hover': {
+                backgroundColor: '#e0e0e0',
+              },
+            }}
           >
             Following
           </ToggleButton>

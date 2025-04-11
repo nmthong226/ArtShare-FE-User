@@ -89,7 +89,7 @@ export const SavePostDialog = (props: SavePostDialogProps) => {
                         </div>
                         <DialogContentText id="scroll-dialog-description" ref={descriptionElementRef} tabIndex={-1}>
                             {filteredCollections.map((collection, index) => (
-                                <div className="flex items-center gap-2 p-2 border-mountain-400 border-b" key={index}>
+                                <div className="flex items-center gap-2 p-2 px-4 border-mountain-400 border-b" key={index}>
                                     <img
                                         src="https://cdnb.artstation.com/p/channels/covers/000/000/077/20200505141007/thumb/thumb.jpg?1588705807"
                                         className="border rounded-lg w-18 object-center object-cover aspect-[1/1]"

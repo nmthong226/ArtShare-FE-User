@@ -113,7 +113,7 @@ export default function SubjectSelector() {
       </p>
       {/* Top Selection Bar */}
       <div
-        className={`flex items-center gap-2 flex-wrap bg-white dark:bg-mountain-800 hover:border-mountain-950 dark:hover:border-mountain-100 min-h-[52px] text-left mb-6 transition-colors duration-200 ${
+        className={`flex items-center gap-2 flex-wrap bg-white dark:bg-mountain-950 hover:border-mountain-950 dark:hover:border-mountain-100 min-h-[52px] text-left mb-6 transition-colors duration-200 ${
           selected.length > 0 ? "px-2 py-0.5" : ""
         }`}
         style={{
@@ -138,7 +138,7 @@ export default function SubjectSelector() {
         {selected.map((subject) => (
           <div
             key={subject.label}
-            className="flex items-center gap-2 bg-gray-200 dark:bg-mountain-800 px-2 py-1 rounded text-sm"
+            className="flex items-center gap-2 bg-gray-200 dark:bg-mountain-1000 px-2 py-1 rounded h-full text-sm"
           >
             <span>{subject.label}</span>
             <Button

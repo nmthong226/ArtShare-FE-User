@@ -289,7 +289,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <FiSearch className="left-2 absolute w-5 h-5" />
                 <Input
                   ref={inputRef}
-                  className="shadow-inner pr-8 pl-8 border-1 rounded-2xl"
+                  className="shadow-inner pr-8 pl-8 rounded-2xl"
                   placeholder="Search"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}

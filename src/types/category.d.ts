@@ -1,7 +1,7 @@
 export interface Category {
   id: number;
   name: string;
-  cate_name: string;
+  cateName: string;
   url: string;
   createdAt: Date;
 }

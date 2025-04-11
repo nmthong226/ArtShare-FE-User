@@ -108,7 +108,7 @@ const UploadForm: React.FC<{
             slotProps={{
               input: {
                 className:
-                  "text-base placeholder:text-mountain-950 bg-white dark:bg-mountain-800 dark:text-mountain-50",
+                  "text-base placeholder:text-mountain-950 bg-white dark:bg-mountain-950 dark:text-mountain-50",
               },
             }}
           />
@@ -152,7 +152,7 @@ const UploadForm: React.FC<{
             slotProps={{
               input: {
                 className:
-                  "p-2.5 text-base bg-white dark:bg-mountain-800 dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
+                  "p-2.5 text-base bg-white dark:bg-mountain-950 dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
               },
             }}
           />

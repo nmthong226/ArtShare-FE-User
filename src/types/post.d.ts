@@ -16,5 +16,5 @@ export interface Post {
 
   medias: Media[];
   user: User;
-  categories: RawCategory[];
+  categories: Category[];
 }

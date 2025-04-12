@@ -9,6 +9,7 @@ import PostTags from "@/components/posts/PostTags";
 import PostMoreByArtist from "@/components/posts/PostMoreByArtist";
 // import PostShare from "@/components/posts/PostShare";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { mappedCategoryPost } from "@/lib/utils";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -21,9 +22,12 @@ const Post: React.FC = () => {
     queryFn: async () => {
       const response = await fetchPost(parseInt(postId!));
       console.log("fetchPost", response.data);
-      return response.data;
+      const formattedData = mappedCategoryPost(response.data); // Convert BE type to FE type
+      return formattedData;
     },
   });
+
+
 
   if (isLoading) {
     return (
@@ -48,7 +52,7 @@ const Post: React.FC = () => {
       </div>
     );
   };
-  
+
   return (
     <div className="flex-grow bg-mountain-50 py-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
       {/* <div className="md:hidden flex flex-col gap-4 p-4">

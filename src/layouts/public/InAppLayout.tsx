@@ -165,7 +165,11 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   <SheetTitle>
                     <div className="flex justify-between w-full">
                       <div className="flex items-center space-x-2 lg:space-x-2 pr-4 border-r-mountain-300 md:border-r-1 dark:border-r-mountain-700 w-full text-nowrap">
-                        <img src={app_logo} className="rounded-sm w-8 h-8" />
+                        <img
+                          alt="app-logo"
+                          src={app_logo}
+                          className="rounded-sm w-8 h-8"
+                        />
                         <p className="font-semibold text-mountain-950 dark:text-mountain-50">
                           Art Share
                         </p>
@@ -283,7 +287,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   <p className="text-sm">Shop</p>
                 </div>
               </Link>
-              <div className="hidden relative lg:flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl lg:w-72 xl:w-96 h-10 text-mountain-500 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-mountain-400">
+              <div className="hidden relative lg:flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl lg:w-72 xl:w-96 h-10 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 text-neutral-700 dark:text-neutral-300">
                 <FiSearch className="left-2 absolute w-5 h-5" />
                 <Input
                   ref={inputRef}

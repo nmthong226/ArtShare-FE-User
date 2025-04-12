@@ -248,7 +248,10 @@ const UploadForm: React.FC<{
         <Typography className="dark:text-mountain-200 text-base text-left">
           Thumbnail
         </Typography>
-        <Typography variant="body2" className="mb-1 dark:text-mountain-500">
+        <Typography
+          variant="body2"
+          className="mb-1 text-gray-700 dark:text-mountain-400"
+        >
           Set a thumbnail that stands out for your post.
         </Typography>
         <Box

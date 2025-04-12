@@ -623,7 +623,6 @@ const LandingPage = () => {
               <img
                 alt="app-logo"
                 src={app_logo}
-                alt="app-logo"
                 className="shadow rounded-sm w-10 h-10"
               />
               <p className="bg-clip-text bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 font-bold text-transparent text-xl">

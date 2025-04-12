@@ -1,7 +1,9 @@
+import ArtGenAI from "@/features/gen-art/ArtGenAI"
+
 const ArtGeneration = () => {
   return (
-    <div className=''>
-      ArtGeneration
+    <div className='flex p-4 w-full h-full'>
+      <ArtGenAI />
     </div>
   )
 }

@@ -1,8 +1,11 @@
-import { CardContent, CardHeader, IconButton } from "@mui/material";
+import { Button, CardContent, CardHeader, IconButton } from "@mui/material";
 import { X } from "lucide-react";
 import Avatar from "boring-avatars";
 import { User } from "@/types";
 import { Link } from "react-router-dom";
+
+// Icons
+import { RiUserFollowLine } from "react-icons/ri";
 
 const PostArtist = ({ artist }: { artist: User }) => {
   return (
@@ -18,7 +21,7 @@ const PostArtist = ({ artist }: { artist: User }) => {
             </Link>
           }
         />
-        <CardContent className="flex flex-col gap-4 p-0">
+        <CardContent className="flex flex-row justify-between items-center gap-4 p-0">
           <div className="flex gap-4 cursor-pointer">
             <div className="relative flex-shrink-0 rounded-full overflow-hidden">
               {artist.profile_picture_url ? (
@@ -47,6 +50,10 @@ const PostArtist = ({ artist }: { artist: User }) => {
               <div className="text-sm line-clamp-1">@{"nickname"}</div>
             </div>
           </div>
+          <Button variant="contained" className="flex justify-center space-x-1 p-0.5 w-28 min-w-auto h-12 aspect-[1/1] font-normal text-mountain-800 text-sm">
+            <RiUserFollowLine className="size-4" />
+            <p>Follow</p>
+          </Button>
         </CardContent>
       </div>
     )

@@ -1,0 +1,238 @@
+//Core
+import { useState } from 'react';
+
+//Components
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
+
+//Icons
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { GoSidebarExpand } from "react-icons/go";
+import { IoImageOutline } from "react-icons/io5";
+import { IoIosArrowForward } from "react-icons/io";
+import { IoIosSquareOutline } from "react-icons/io";
+import { VscSymbolColor } from "react-icons/vsc";
+import { GoLightBulb } from "react-icons/go";
+import { AiOutlineCamera } from "react-icons/ai";
+import { IoColorFillOutline } from "react-icons/io5";
+
+//Assets
+import example_1 from "./assets/1.webp"
+
+const ArtGenAI = () => {
+    const [numberOfImages, setNumberOfImages] = useState(1);
+    const [expanded, setExpanded] = useState<boolean>(false);
+
+    const handleParentToggle = (_event: React.SyntheticEvent, isExpanded: boolean) => {
+        setExpanded(isExpanded);
+    };
+
+    const handleSelectNumber = (
+        _: React.MouseEvent<HTMLElement>,
+        newNumber: number
+    ) => {
+        if (newNumber) {
+            setNumberOfImages(newNumber);
+        }
+    };
+
+    return (
+        <div className='flex flex-1 gap-4 w-full h-[calc(100vh-6rem)]'>
+            <Accordion
+                expanded={expanded}
+                onChange={handleParentToggle}
+                className={`flex flex-col bg-white shadow-md border border-mountain-300 rounded-xl w-1/4 ${expanded ? 'h-full' : 'h-fit'}`}>
+                <AccordionSummary
+                    expandIcon={<GoSidebarExpand />}
+                    aria-controls="panel2-content"
+                    id="panel2-header"
+                    className={`bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 ${expanded ? 'rounded-t-xl' : 'rounded-xl'}`}
+                >
+                    <Typography component="span" className="flex items-center space-x-2 font-medium">
+                        <IoImageOutline className="size-5" />
+                        <p>Image Generation</p>
+                    </Typography>
+                </AccordionSummary>
+                <AccordionDetails className='flex flex-col p-0 h-[600px] overflow-y-auto custom-scrollbar'>
+                    {/* Nested Accordions */}
+                    <Accordion className="shadow-none">
+                        <AccordionSummary
+                            expandIcon={<ArrowDropDownIcon />}
+                            aria-controls="panel2-content"
+                            id="panel2-header"
+                        >
+                            <Typography component="span" className="font-medium">
+                                General Settings
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails className='flex flex-col space-y-2'>
+                            <div className='flex flex-col space-y-1'>
+                                <p className='text-mountain-600 text-sm'>Model</p>
+                                <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
+                                    <div className='flex items-center space-x-2'>
+                                        <img src={example_1} className='rounded-xs w-5 h-5' />
+                                        <p>Ultra Realism</p>
+                                    </div>
+                                    <IoIosArrowForward />
+                                </Button>
+                            </div>
+                            <div className='flex flex-col space-y-1'>
+                                <p className='text-mountain-600 text-sm'>Aspect Ratio</p>
+                                <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
+                                    <div className='flex items-center space-x-2'>
+                                        <IoIosSquareOutline className='size-5' />
+                                        <p>1:1</p>
+                                    </div>
+                                    <IoIosArrowForward />
+                                </Button>
+                            </div>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion className="shadow-none">
+                        <AccordionSummary
+                            expandIcon={<ArrowDropDownIcon />}
+                            aria-controls="panel2-content"
+                            id="panel2-header"
+                        >
+                            <Typography component="span" className="font-medium">
+                                Styles
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <div className='flex flex-col space-y-1'>
+                                <p className='text-mountain-600 text-sm'>Image Effect</p>
+                                <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
+                                    <div className='flex items-center space-x-2'>
+                                        <IoColorFillOutline className='rounded-xs w-5 h-5' />
+                                        <p>Styles</p>
+                                    </div>
+                                    <IoIosArrowForward />
+                                </Button>
+                                <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
+                                    <div className='flex items-center space-x-2'>
+                                        <GoLightBulb className='rounded-xs w-5 h-5' />
+                                        <p>Lighting</p>
+                                    </div>
+                                    <IoIosArrowForward />
+                                </Button>
+                                <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
+                                    <div className='flex items-center space-x-2'>
+                                        <AiOutlineCamera className='rounded-xs w-5 h-5' />
+                                        <p>Camera</p>
+                                    </div>
+                                    <IoIosArrowForward />
+                                </Button>
+                            </div>
+                        </AccordionDetails>
+                    </Accordion>
+                    <Accordion className="shadow-none">
+                        <AccordionSummary
+                            expandIcon={<ArrowDropDownIcon />}
+                            aria-controls="panel2-content"
+                            id="panel2-header"
+                        >
+                            <Typography component="span" className="font-medium">
+                                Advance Settings
+                            </Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <div className='flex flex-col space-y-1'>
+                                <p className='text-mountain-600 text-sm'>Number of Images</p>
+                                <ToggleButtonGroup
+                                    className="flex justify-between gap-2 m-1.5"
+                                    size="large"
+                                    value={numberOfImages}
+                                    exclusive
+                                    onChange={handleSelectNumber}
+                                >
+                                    <ToggleButton
+                                        value="1"
+                                        className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/4 normal-case transition duration-300 ease-in-out transform"
+                                        sx={{
+                                            backgroundColor: '#e0e0e0',
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#c7d2fe',
+                                                color: '#000',
+                                                '&:hover': {
+                                                    backgroundColor: '#c7d2fe',
+                                                },
+                                            },
+                                            '&:hover': {
+                                                backgroundColor: '#e0e0e0',
+                                            },
+                                        }}
+                                    >
+                                        1
+                                    </ToggleButton>
+                                    <ToggleButton
+                                        value="2"
+                                        className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/4 normal-case transition duration-300 ease-in-out transform"
+                                        sx={{
+                                            backgroundColor: '#e0e0e0',
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#c7d2fe',
+                                                color: '#000',
+                                                '&:hover': {
+                                                    backgroundColor: '#c7d2fe',
+                                                },
+                                            },
+                                            '&:hover': {
+                                                backgroundColor: '#e0e0e0',
+                                            },
+                                        }}
+                                    >
+                                        2
+                                    </ToggleButton>
+                                    <ToggleButton
+                                        value="3"
+                                        className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/4 normal-case transition duration-300 ease-in-out transform"
+                                        sx={{
+                                            backgroundColor: '#e0e0e0',
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#c7d2fe',
+                                                color: '#000',
+                                                '&:hover': {
+                                                    backgroundColor: '#c7d2fe',
+                                                },
+                                            },
+                                            '&:hover': {
+                                                backgroundColor: '#e0e0e0',
+                                            },
+                                        }}
+                                    >
+                                        3
+                                    </ToggleButton>
+                                    <ToggleButton
+                                        value="4"
+                                        className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/4 normal-case transition duration-300 ease-in-out transform"
+                                        sx={{
+                                            backgroundColor: '#e0e0e0',
+                                            '&.Mui-selected': {
+                                                backgroundColor: '#c7d2fe',
+                                                color: '#000',
+                                                '&:hover': {
+                                                    backgroundColor: '#c7d2fe',
+                                                },
+                                            },
+                                            '&:hover': {
+                                                backgroundColor: '#e0e0e0',
+                                            },
+                                        }}
+                                    >
+                                        4
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </div>
+                        </AccordionDetails>
+                    </Accordion>
+                </AccordionDetails>
+            </Accordion>
+            <div className='flex bg-mountain-100 w-3/4'>b</div>
+        </div>
+    )
+}
+
+export default ArtGenAI

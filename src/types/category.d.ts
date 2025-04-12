@@ -5,3 +5,11 @@ export interface Category {
   url: string;
   createdAt: Date;
 }
+
+export interface RawCategory {
+  id: number;
+  name: string;
+  cate_name: string;
+  createdAt: Date;
+  url: string;
+};

@@ -1,12 +1,4 @@
-import { Category } from "@/types/category";
-
-type RawCategory = {
-    id: number;
-    name: string;
-    cate_name: string;
-    createdAt: Date;
-    url: string;
-};
+import { Category, RawCategory } from "@/types/category";
 
 interface PostTagsProps {
     categories: RawCategory[];

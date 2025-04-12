@@ -1,5 +1,5 @@
 import { Button, CardContent, Divider } from "@mui/material";
-import { MessageSquareText, Bookmark, EllipsisVertical } from "lucide-react";
+import { MessageSquareText, Bookmark, EllipsisVertical, Share2 } from "lucide-react";
 import ShowMoreText from "react-show-more-text";
 import { ElementType, useState } from "react";
 import ReactTimeAgo from "react-time-ago";
@@ -53,7 +53,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               lines={3}
               more="Show more"
               less="Show less"
-              className="text-sm"
+              className="text-sm break-words"
               anchorClass="cursor-pointer hover:text-cyan-500 block py-2 underline text-sm"
               expanded={false}
               truncatedEndingComponent={"... "}
@@ -64,50 +64,78 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               Posted <ReactTimeAgo date={postData.created_at} />
             </div>
           </div>
-
           <Divider className="border-0.5" />
-
-          <div className="flex gap-8 text-mountain-950">
+          <div className="flex gap-6 text-mountain-950">
             <div className="flex items-center gap-1 text-sm">
-              <span>{likeCount > 1 ? likeCount + " Likes" : likeCount + " Like"}</span>
+              <p className="font-semibold">{likeCount}</p>
+              <span className="text-mountain-600">
+                {likeCount > 1 ? " Likes" : " Like"}
+              </span>
             </div>
-            <div className="flex gap-1 text-sm">
-              {/* <Eye /> */}
-              <span>354 Views</span>
+            <div className="flex items-center gap-1 text-sm">
+              <div className="flex items-center gap-1 text-sm">
+                <p className="font-semibold">{postData.comment_count}</p>
+                <span className="text-mountain-600">
+                  {postData.comment_count > 1 ? " Comments" : " Comment"}
+                </span>
+              </div>
             </div>
-            <div className="flex gap-1 text-sm">
-              {/* <MessageSquareText /> */}
-              <span>{postData.comment_count} Comments</span>
+            <div className="flex items-center gap-1 text-sm">
+              <div className="flex items-center gap-1 text-sm">
+                <p className="font-semibold">{"1k"}</p>
+                <span className="text-mountain-600">
+                  Views
+                </span>
+              </div>
             </div>
           </div>
-
           <Divider className="border-0.5" />
-
-          <div className="flex justify-between -my-1.5">
-            <Button className="flex gap-1 -mx-2 px-2 py-2 w-20 text-blue-900" title="Like" onClick={handleLikeClick}>
-              {userLike ?
+          <div className="flex justify-between w-full">
+            <Button
+              className="p-2 border-0 min-w-0 text-blue-900"
+              title="Like"
+              onClick={handleLikeClick}
+            >
+              {userLike ? (
                 <>
                   <AiFillLike className="size-6" />
-                  <span className="font-normal text-sm normal-case">Liked</span>
-                </> : <>
+                </>
+              ) : (
+                <>
                   <AiOutlineLike className="size-6" />
-                  <span className="font-normal text-sm normal-case">Like</span>
-                </>}
+                </>
+              )}
             </Button>
-            <Button className="flex gap-1 -mx-2 px-2 py-2 text-blue-900" title="Save" onClick={handleClickOpen}>
-              <Bookmark />
-              <span className="font-normal text-sm normal-case">Save</span>
-            </Button>
-            <Button className="flex gap-1 -mx-2 px-2 py-2 text-blue-900" title="Comment" onClick={handleFocusCommentInput}>
+            <Button
+              className="p-2 border-0 min-w-0 text-blue-900"
+              title="Comment"
+              onClick={handleFocusCommentInput}
+            >
               <MessageSquareText />
-              <span className="font-normal text-sm normal-case">Comment</span>
             </Button>
-            <Button className="min-w-auto aspect-[1/1] text-blue-900">
+            <Button
+              className="p-2 border-0 min-w-0 text-blue-900"
+              title="Save"
+              onClick={handleClickOpen}
+            >
+              <Bookmark />
+            </Button>
+            <Button
+              className="p-2 border-0 min-w-0 text-blue-900"
+              title="Copy Link"
+            >
+              <Share2 />
+            </Button>
+            <Button className="border-0 min-w-auto aspect-[1/1] text-blue-900">
               <EllipsisVertical />
             </Button>
           </div>
         </CardContent>
-        <SavePostDialog postId={postData.id} open={open} onClose={handleClose} />
+        <SavePostDialog
+          postId={postData.id}
+          open={open}
+          onClose={handleClose}
+        />
       </div>
     )
   );

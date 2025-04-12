@@ -14,16 +14,15 @@ export default function ImagesSelection({
   setImageFilesPreview,
   setImageFiles,
   setThumbnailFile,
-  hidden
+  hidden,
 }: {
   imageFilesPreview: Map<File, string>;
   videoPreviewUrl: string | undefined;
   setImageFilesPreview: (map: Map<File, string>) => void;
   setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  setThumbnailFile: (file: File | undefined) => void;
+  setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
   hidden: boolean;
 }) {
-
   const {
     selectedPreview,
     setSelectedPreview,
@@ -34,11 +33,10 @@ export default function ImagesSelection({
     videoPreviewUrl,
     setImageFilesPreview,
     setImageFiles,
-    setThumbnailFile
-  )
+    setThumbnailFile,
+  );
 
   return (
-
     <Box
       className="items-center w-full h-full text-gray-900 dark:text-white overflow-hidden flex flex-col"
       hidden={hidden}
@@ -130,42 +128,45 @@ export default function ImagesSelection({
           overflowX: "auto",
         }}
       >
-        {Array.from(imageFilesPreview.entries()).map(([file, previewUrl], index) => (
-          <Box
-            key={index}
-            className="relative border-1 rounded-md cursor-pointer bounce-item"
-            sx={{
-              borderColor:
-                selectedPreview === file
-                  ? "primary.main"
-                  : "transparent",
-            }}
-            onClick={() => {
-              setSelectedPreview(file);
-            }}
-          >
-            <Avatar
-              src={previewUrl}
-              className="rounded-md"
-              sx={{ width: 80, height: 80 }}
-            />
-            <IconButton
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemoveImagePreview(file);
+        {Array.from(imageFilesPreview.entries()).map(
+          ([file, previewUrl], index) => (
+            <Box
+              key={index}
+              className="relative border-1 rounded-md cursor-pointer bounce-item"
+              sx={{
+                borderColor:
+                  selectedPreview === file ? "primary.main" : "transparent",
               }}
-              size="small"
-              className="-top-2 -right-2 absolute opacity-60 bg-gray-600 hover:bg-gray-400 group "
+              onClick={() => {
+                setSelectedPreview(file);
+              }}
             >
-              <CloseIcon className="text-white text-sm group-hover:text-black" />
-            </IconButton>
-          </Box>
-        ))}
+              <Avatar
+                src={previewUrl}
+                className="rounded-md"
+                sx={{ width: 80, height: 80 }}
+              />
+              <IconButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveImagePreview(file);
+                }}
+                size="small"
+                className="-top-2 -right-2 absolute opacity-60 bg-gray-600 hover:bg-gray-400 group "
+              >
+                <CloseIcon className="text-white text-sm group-hover:text-black" />
+              </IconButton>
+            </Box>
+          ),
+        )}
 
         <Box
           className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
           component="label"
-          hidden={imageFilesPreview.size === 0 || imageFilesPreview.size === MAX_IMAGES}
+          hidden={
+            imageFilesPreview.size === 0 ||
+            imageFilesPreview.size === MAX_IMAGES
+          }
         >
           <AddIcon fontSize="large" />
           <input
@@ -179,4 +180,4 @@ export default function ImagesSelection({
       </Box>
     </Box>
   );
-};
+}

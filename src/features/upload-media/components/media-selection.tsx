@@ -6,7 +6,7 @@ import TabValue from "../enum/media-tab-value";
 import MediaUploadTab from "./media-upload-tab";
 import ImagesSelection from "./images-selection";
 
-const VideoSelection = lazy(() => import('./video-selection'));
+const VideoSelection = lazy(() => import("./video-selection"));
 
 export default function MediaSelection({
   setVideoFile,
@@ -16,10 +16,14 @@ export default function MediaSelection({
   setVideoFile: (file: File | undefined) => void;
   imageFiles: File[];
   setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  setThumbnailFile: (file: File | undefined) => void;
+  setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
 }) {
-  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | undefined>(undefined);
-  const [imageFilesPreview, setImageFilesPreview] = useState<Map<File, string>>(new Map());
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | undefined>(
+    undefined,
+  );
+  const [imageFilesPreview, setImageFilesPreview] = useState<Map<File, string>>(
+    new Map(),
+  );
   const [tabValue, setTabValue] = useState<TabValue>(TabValue.UPLOAD_IMAGE);
 
   return (
@@ -57,6 +61,6 @@ export default function MediaSelection({
         setVideoPreviewUrl={setVideoPreviewUrl}
         hidden={tabValue !== TabValue.UPLOAD_VIDEO}
       />
-    </Box >
+    </Box>
   );
-};
+}

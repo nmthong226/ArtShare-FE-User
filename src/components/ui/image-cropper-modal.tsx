@@ -18,6 +18,10 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onCropped: (croppedFile: Blob) => void;
+  initialCrop?: { x: number; y: number };
+  initialZoom?: number;
+  onCropChange?: (crop: { x: number; y: number }) => void;
+  onZoomChange?: (zoom: number) => void;
 }
 
 interface AspectOption {
@@ -37,9 +41,13 @@ export const ImageCropperModal: React.FC<Props> = ({
   open,
   onClose,
   onCropped,
+  initialCrop,
+  initialZoom,
+  onCropChange,
+  onZoomChange,
 }) => {
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [crop, setCrop] = useState(initialCrop || { x: 0, y: 0 });
+  const [zoom, setZoom] = useState(initialZoom || 1);
   const [aspect, setAspect] = useState<number | undefined>(undefined);
   const [selectedAspect, setSelectedAspect] = useState("Free");
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
@@ -47,6 +55,8 @@ export const ImageCropperModal: React.FC<Props> = ({
   const onCropComplete = useCallback((_: Area, croppedPixels: Area) => {
     setCroppedAreaPixels(croppedPixels);
   }, []);
+
+  console.log("📥 Received props:", { initialCrop, initialZoom, image, open });
 
   const cropImage = async () => {
     if (croppedAreaPixels) {
@@ -71,6 +81,14 @@ export const ImageCropperModal: React.FC<Props> = ({
       setAspect(naturalAspect);
       setSelectedAspect("Original");
     };
+  }, [image]);
+
+  // Reset crop/zoom only on file change
+  useEffect(() => {
+    if (!open || !image) return;
+
+    setCrop(initialCrop ?? { x: 0, y: 0 });
+    setZoom(initialZoom ?? 1);
   }, [image]);
 
   return (
@@ -110,8 +128,15 @@ export const ImageCropperModal: React.FC<Props> = ({
             crop={crop}
             zoom={zoom}
             aspect={aspect}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
+            onCropChange={(newCrop) => {
+              setCrop(newCrop);
+              onCropChange?.(newCrop); // propagate up
+            }}
+            onZoomChange={(newZoom) => {
+              console.log("@@new zoom in parent", newZoom);
+              setZoom(newZoom);
+              onZoomChange?.(newZoom); // propagate up
+            }}
             onCropComplete={onCropComplete}
           />
         </div>
@@ -126,7 +151,11 @@ export const ImageCropperModal: React.FC<Props> = ({
                 max="3"
                 step="0.1"
                 value={zoom}
-                onChange={(e) => setZoom(Number(e.target.value))}
+                onChange={(e) => {
+                  const value = Number(e.target.value);
+                  setZoom(value);
+                  onZoomChange?.(value); // ✅ propagate to parent
+                }}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:text-white"
               />
             </label>

@@ -16,7 +16,7 @@ export default function VideoSelection({
   imageFilesPreview: Map<File, string>;
   videoPreviewUrl: string | undefined;
   setVideoFile: (file: File | undefined) => void;
-  setThumbnailFile: (file: File | undefined) => void;
+  setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
   setVideoPreviewUrl: (url: string | undefined) => void;
   hidden: boolean;
 }) {

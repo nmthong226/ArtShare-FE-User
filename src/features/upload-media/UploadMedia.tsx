@@ -17,8 +17,14 @@ import MediaSelection from "./components/media-selection";
 const UploadMedia: React.FC = () => {
   const navigate = useNavigate();
   const { showSnackbar } = useSnackbar();
-
-  // const [showCollectionModal, setShowCollectionModal] = useState(false);
+  const [lastCrop, setLastCrop] = useState<{ x: number; y: number }>({
+    x: 0,
+    y: 0,
+  });
+  const [lastZoom, setLastZoom] = useState(1);
+  const [originalThumbnailFile, setOriginalThumbnailFile] = useState<
+    File | undefined
+  >();
 
   const [title, setTitle] = useState("");
   // Thumbnail states
@@ -98,8 +104,6 @@ const UploadMedia: React.FC = () => {
 
       await handleCreatePost(thumbnailUrl, videoUrl);
 
-      showSnackbar("Post created successfully!", "success");
-
       navigate("/explore");
     } catch (error) {
       console.error("Error during submission:", error);
@@ -173,8 +177,17 @@ const UploadMedia: React.FC = () => {
     return presignedUrlResponse.fileUrl;
   };
 
-  const handleThumbnailChange = (file: File) => {
+  const handleThumbnailChange = (
+    file: File | undefined,
+    isOriginal = false,
+  ) => {
     setThumbnailFile(file);
+
+    if (isOriginal) {
+      setOriginalThumbnailFile(file);
+      setLastCrop({ x: 0, y: 0 });
+      setLastZoom(1);
+    }
   };
 
   const isMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
@@ -213,7 +226,7 @@ const UploadMedia: React.FC = () => {
           imageFiles={imageFiles}
           setImageFiles={setImageFiles}
           setVideoFile={setVideoFile}
-          setThumbnailFile={setThumbnailFile}
+          setThumbnailFile={handleThumbnailChange}
         />
         {/* RIGHT COLUMN: FORM FIELDS & ACTIONS */}
         <Box className="flex flex-col space-y-3 w-[50%]">
@@ -227,6 +240,7 @@ const UploadMedia: React.FC = () => {
           <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
             <UploadForm
               thumbnailFile={thumbnailFile}
+              setOriginalThumbnailFile={setOriginalThumbnailFile}
               onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
               title={title}
@@ -237,6 +251,11 @@ const UploadMedia: React.FC = () => {
               setIsMature={setIsMature}
               aiCreated={aiCreated}
               setAiCreated={setAiCreated}
+              lastCrop={lastCrop}
+              lastZoom={lastZoom}
+              setLastCrop={setLastCrop}
+              setLastZoom={setLastZoom}
+              originalThumbnailFile={originalThumbnailFile}
             />
           </Box>
 
@@ -244,24 +263,6 @@ const UploadMedia: React.FC = () => {
 
           {/* Bottom actions */}
           <Box className="flex justify-between mt-auto pr-4 w-full">
-            {/* <Button
-              variant="outlined"
-              className="flex items-center hover:bg-mountain-800 dark:border-white border-black rounded-md text-gray-900 dark:text-white"
-              sx={{
-                borderColor: "white",
-                "&:hover": {
-                  borderColor: "white",
-                },
-                textTransform: "none",
-              }}
-              onClick={() => setShowCollectionModal(true)}
-              startIcon={<FolderOpenIcon />}
-            >
-              <div className="flex items-center gap-8">
-                <span>{"Collection".substring(0, 13)}</span>
-                <span className="text-mountain-600">Favourites</span>
-              </div>
-            </Button> */}
             <Button
               variant="contained"
               onClick={handleSubmit}

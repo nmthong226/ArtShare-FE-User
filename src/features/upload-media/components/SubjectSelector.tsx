@@ -116,11 +116,6 @@ export default function SubjectSelector() {
         className={`flex items-center gap-2 flex-wrap dark:bg-mountain-950 min-h-[52px] bg-gray-100 text-left mb-6 transition-colors duration-200 ${
           selected.length > 0 ? "px-2 py-0.5" : ""
         }`}
-        style={{
-          border: "2px solid",
-          borderColor: "#9ca3af", // mountain-400 default
-          borderRadius: "6px",
-        }}
         onMouseEnter={(e) => {
           e.currentTarget.style.borderColor = "#e7e7e7"; // mountain-100 hover
         }}
@@ -168,7 +163,9 @@ export default function SubjectSelector() {
             flex: 1,
             backgroundColor: "transparent",
             ".MuiOutlinedInput-notchedOutline": {
-              border: "none", // optional: remove border if it's inside a styled box
+              border: "2px solid",
+              borderColor: "#9ca3af", // mountain-400 default
+              borderRadius: "6px",
             },
           }}
         />

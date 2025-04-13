@@ -1,4 +1,4 @@
-import { Button, CardContent, Divider } from "@mui/material";
+import { Button, CardContent, Divider, Menu, MenuItem } from "@mui/material";
 import {
   MessageSquareText,
   Bookmark,
@@ -12,21 +12,35 @@ import { Post } from "@/types";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
 import { SavePostDialog } from "./SavePostDialog";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { auth } from "@/firebase";
 
 const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 const PostInfo = ({ postData }: { postData: Post }) => {
   const { postCommentsRef } = useFocusContext();
-  const [open, setOpen] = useState(false);
-
+  const [openSaveDialog, setOpenSaveDialog] = useState(false);
   const [userLike, setUserLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(postData.like_count);
+
+  // State for the ellipsis menu popover
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(menuAnchorEl);
+
+  // Get current Firebase user
+
+  const currentUser = auth.currentUser;
+
+  // Compare postData.user_id to currentUser.uid to determine ownership.
+
+  const isOwner = currentUser && postData.user_id === currentUser.uid;
+  console.log("@@@ Test owner", postData.user_id, currentUser?.uid, isOwner);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    setOpenSaveDialog(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseSaveDialog = () => {
+    setOpenSaveDialog(false);
   };
 
   const handleFocusCommentInput = () => {
@@ -35,17 +49,42 @@ const PostInfo = ({ postData }: { postData: Post }) => {
     }
   };
 
-  const [likeCount, setLikeCount] = useState(postData.like_count);
-
   const handleLikeClick = () => {
     if (userLike) {
       if (likeCount > 0) {
         setLikeCount(likeCount - 1);
       }
     } else {
-      setLikeCount(likeCount + 1); // Increase like count if not liked
+      setLikeCount(likeCount + 1);
     }
-    setUserLike(!userLike); // Toggle user like state
+    setUserLike(!userLike);
+  };
+
+  // Handlers for the ellipsis menu
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
+
+  const handleReport = () => {
+    // Insert your report logic here.
+    console.log("Report clicked");
+    handleMenuClose();
+  };
+
+  const handleEdit = () => {
+    // Insert your edit logic here.
+    console.log("Edit clicked");
+    handleMenuClose();
+  };
+
+  const handleDelete = () => {
+    // Insert your delete logic here.
+    console.log("Delete clicked");
+    handleMenuClose();
   };
 
   return (
@@ -87,7 +126,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             </div>
             <div className="flex items-center gap-1 text-sm">
               <div className="flex items-center gap-1 text-sm">
-                <p className="font-semibold">{"1k"}</p>
+                <p className="font-semibold">1k</p>
                 <span className="text-mountain-600">Views</span>
               </div>
             </div>
@@ -100,13 +139,9 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               onClick={handleLikeClick}
             >
               {userLike ? (
-                <>
-                  <AiFillLike className="size-6" />
-                </>
+                <AiFillLike className="size-6" />
               ) : (
-                <>
-                  <AiOutlineLike className="size-6" />
-                </>
+                <AiOutlineLike className="size-6" />
               )}
             </Button>
             <Button
@@ -129,16 +164,38 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             >
               <Share2 />
             </Button>
-            <Button className="border-0 min-w-auto aspect-[1/1] text-blue-900">
+            {/* Vertical dots button */}
+            <Button
+              className="border-0 min-w-auto aspect-[1/1] text-blue-900"
+              onClick={handleMenuOpen}
+            >
               <EllipsisVertical />
             </Button>
           </div>
         </CardContent>
+        {/* Save Post Dialog */}
         <SavePostDialog
           postId={postData.id}
-          open={open}
-          onClose={handleClose}
+          open={openSaveDialog}
+          onClose={handleCloseSaveDialog}
         />
+        {/* Popup Menu for Ellipsis Button */}
+        <Menu
+          anchorEl={menuAnchorEl}
+          open={menuOpen}
+          onClose={handleMenuClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          {isOwner ? (
+            <>
+              <MenuItem onClick={handleEdit}>Edit</MenuItem>
+              <MenuItem onClick={handleDelete}>Delete</MenuItem>
+            </>
+          ) : (
+            <MenuItem onClick={handleReport}>Report</MenuItem>
+          )}
+        </Menu>
       </div>
     )
   );

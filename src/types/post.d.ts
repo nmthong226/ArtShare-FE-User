@@ -4,6 +4,7 @@ import { User } from "./user";
 
 export interface Post {
   id: number;
+  user_id: string;
   title?: string;
   description?: string;
   is_published: boolean;

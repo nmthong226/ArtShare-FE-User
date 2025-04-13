@@ -6,7 +6,7 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
-import { Button, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Button, Collapse, ImageList, ImageListItem, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 //Icons
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -20,10 +20,19 @@ import { IoColorFillOutline } from "react-icons/io5";
 import { TbChessQueenFilled } from "react-icons/tb";
 import { PiStarFourFill } from "react-icons/pi";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { FiDownload } from "react-icons/fi";
+import { PiDotsThreeVerticalBold } from "react-icons/pi";
+import { RiFolderUploadLine } from "react-icons/ri";
 
 //Assets
 import example_1 from "./assets/1.webp"
+import img_1 from "./assets/img_1.png";
+import img_2 from "./assets/img_2.png";
+import img_3 from "./assets/img_3.png";
+import img_4 from "./assets/img_4.png";
+
 import { Input } from '@/components/ui/input';
+const images = [img_1, img_2, img_3, img_4];
 
 const ArtGenAI = () => {
     const [numberOfImages, setNumberOfImages] = useState('4');
@@ -43,11 +52,17 @@ const ArtGenAI = () => {
     };
 
     return (
-        <div className='flex flex-1 gap-4 w-full h-[calc(100vh-6rem)]'>
+        <div className='flex flex-col space-y-4 w-full h-[calc(100vh-6rem)]'>
             <Accordion
                 expanded={expanded}
                 onChange={handleParentToggle}
-                className={`flex flex-col bg-white shadow-md border border-mountain-300 rounded-xl w-1/4 ${expanded ? 'h-full' : 'h-fit'}`}>
+                slots={{ transition: Collapse }}
+                slotProps={{
+                    transition: {
+                        timeout: 200,
+                    },
+                }}
+                className={`flex flex-col absolute bg-white shadow-md border border-mountain-300 rounded-xl w-[300px] ${expanded ? 'h-[680px]' : 'h-fit'}`}>
                 <AccordionSummary
                     expandIcon={<GoSidebarExpand />}
                     aria-controls="panel2-content"
@@ -190,7 +205,7 @@ const ArtGenAI = () => {
                                     </ToggleButton>
                                     <ToggleButton
                                         value="3"
-                                        className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/5 normal-case transition duration-300 ease-in-out transform"
+                                        className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/4 normal-case transition duration-300 ease-in-out transform"
                                         sx={{
                                             backgroundColor: '#e0e0e0',
                                             '&.Mui-selected': {
@@ -232,7 +247,7 @@ const ArtGenAI = () => {
                     </Accordion>
                 </AccordionDetails>
             </Accordion>
-            <div className='relative flex flex-col items-end rounded-xl w-4/5'>
+            <div className='flex justify-end w-full h-fit'>
                 <div className='flex items-center space-x-2 bg-white shadow-md p-2 rounded-xl w-fit h-13'>
                     <div className='flex h-full'>
                         <div className='flex justify-center items-center bg-mountain-100 px-2 rounded-lg w-fit h-full font-normal'>
@@ -250,12 +265,80 @@ const ArtGenAI = () => {
                     </div>
                     <Button className='flex justify-center items-center bg-indigo-100 rounded-lg w-28 h-full font-normal'>
                         <TbChessQueenFilled className='mr-2 size-5' />
-                        <p>Upgrade</p>
+                        <p>Get Token</p>
                     </Button>
                 </div>
-                <div className='bottom-2 left-1/2 absolute flex -translate-x-1/2'>
-                    <Input placeholder='What do you imagine about?...' className='relative flex bg-white shadow-md pr-28 border border-mountain-100 rounded-xl w-[760px] h-15 placeholder:text-mountain-400' />
-                    <Button className='top-1/2 right-4 absolute flex items-center bg-indigo-100 px-4 -translate-y-1/2'>Generate</Button>
+            </div>
+            <div className='flex justify-end w-full h-full'>
+                <div className={`relative flex space-y-4 overflow-y-auto h-[600px] flex-col ${expanded ? 'w-[78%]' : 'w-full delay-300'} items-start transition-all duration-200 ease-in-out overflow-y-hidden`}>
+                    <div className='flex flex-col space-y-2'>
+                        <div className='flex justify-center items-center space-x-2'>
+                            <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span> Dynamic angle, best quality, highly detailed, depth of field. A stunning steampunk city with towering skyscrapers and intricate clockwork mechanisms, gears and pistons move in a complex symphony, steam billows from chimneys, airships navigate the bustling skylanes, a vibrant metropolis.</p>
+                            <div className='flex items-center space-x-2'>
+                                <Button className='flex bg-mountain-100 w-8' title='Post Media'>
+                                    <RiFolderUploadLine className='size-5' />
+                                </Button>
+                                <Button className='flex bg-mountain-100 w-8' title='Download'>
+                                    <FiDownload className='size-5' />
+                                </Button>
+                                <Button className='flex bg-mountain-100 w-4'>
+                                    <PiDotsThreeVerticalBold className='size-5' />
+                                </Button>
+                            </div>
+                        </div>
+                        <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
+                            {images.map((img, index) => (
+                                <ImageListItem key={index}>
+                                    <img
+                                        src={img}
+                                        alt={`Image ${index + 1}`}
+                                        loading="lazy"
+                                        className='shadow-md'
+                                        style={{ borderRadius: '8px' }}
+                                    />
+                                </ImageListItem>
+                            ))}
+                        </ImageList>
+                    </div>
+                    {/* <div className='flex flex-col space-y-2'>
+                        <div className='flex justify-center items-center space-x-2'>
+                            <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span> Dynamic angle, best quality, highly detailed, depth of field. A stunning steampunk city with towering skyscrapers and intricate clockwork mechanisms, gears and pistons move in a complex symphony, steam billows from chimneys, airships navigate the bustling skylanes, a vibrant metropolis.</p>
+                            <div className='flex items-center space-x-2'>
+                                <Button className='flex bg-mountain-100 w-8' title='Post Media'>
+                                    <RiFolderUploadLine className='size-5' />
+                                </Button>
+                                <Button className='flex bg-mountain-100 w-8' title='Download'>
+                                    <FiDownload className='size-5' />
+                                </Button>
+                                <Button className='flex bg-mountain-100 w-4'>
+                                    <PiDotsThreeVerticalBold className='size-5' />
+                                </Button>
+                            </div>
+                        </div>
+                        <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
+                            {images.map((img, index) => (
+                                <ImageListItem key={index}>
+                                    <img
+                                        src={img}
+                                        alt={`Image ${index + 1}`}
+                                        loading="lazy"
+                                        className='shadow-md'
+                                        style={{ borderRadius: '8px' }}
+                                    />
+                                </ImageListItem>
+                            ))}
+                        </ImageList>
+                    </div> */}
+                    {/* Prompt Chat */}
+                    <div className='bottom-0 left-1/2 absolute flex -translate-x-1/2'>
+                        <Input
+                            placeholder='What do you imagine about?...'
+                            className='relative flex bg-white shadow-md pr-28 border border-mountain-100 rounded-xl w-[760px] h-15 placeholder:text-mountain-400'
+                        />
+                        <Button className='top-1/2 right-4 absolute flex items-center bg-indigo-100 px-4 -translate-y-1/2'>
+                            Generate
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

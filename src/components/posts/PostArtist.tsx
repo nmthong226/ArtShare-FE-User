@@ -5,10 +5,9 @@ import { User } from "@/types";
 import { Link } from "react-router-dom";
 
 const PostArtist = ({ artist }: { artist: User }) => {
-  console.log(artist.profilePictureUrl);
   return (
     artist && (
-      <div className="bg-white shadow p-4 md:border-b rounded-2xl md:rounded-b-none overflow-none">
+      <div className="bg-white shadow p-4 md:border-b md:border-b-mountain-200 rounded-2xl md:rounded-b-none overflow-none">
         <CardHeader
           className="p-0"
           action={
@@ -21,7 +20,7 @@ const PostArtist = ({ artist }: { artist: User }) => {
         />
         <CardContent className="flex flex-col gap-4 p-0">
           <div className="flex gap-4 cursor-pointer">
-            <div className="relative flex-shrink-0 border border-mountain-300 rounded-full overflow-hidden">
+            <div className="relative flex-shrink-0 rounded-full overflow-hidden">
               {artist.profile_picture_url ? (
                 <img
                   src={artist.profile_picture_url}
@@ -38,13 +37,16 @@ const PostArtist = ({ artist }: { artist: User }) => {
                     "#000511",
                   ]}
                   variant="beam"
-                  size={80}
+                  size={48}
                 />
               )}
             </div>
             <div className="flex flex-col pt-0.5">
-              <div className="font-bold text-2xl">{artist.fullName || ""}</div>
-              <div className="text-sm">@{artist.username}</div>
+              <div className="font-bold text-xl">
+                {artist.fullName || "Mock User"}
+              </div>
+              {/* <div className="text-sm line-clamp-1">@{artist.username}</div> */}
+              <div className="text-sm line-clamp-1">@{"nickname"}</div>
             </div>
           </div>
         </CardContent>

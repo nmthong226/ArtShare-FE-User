@@ -2444,7 +2444,7 @@ array-union@^2.1.0:
     "@tailwindcss/vite" "^4.0.9"
     "@tanstack/react-query" "^5.69.0"
     "@types/react-show-more-text" "^1.4.5"
-    art-share "file:../../../../../Yarn/Cache/v6/npm-art-share-0.0.0-b0f4de54-dd3e-471a-8266-797f88b3754a-1744453413812/node_modules/art-share"
+    art-share "file:../../../../../Yarn/Cache/v6/npm-art-share-0.0.0-39d02887-7540-470f-a287-886cfcf5c20e-1744561111413/node_modules/art-share"
     axios "^1.8.4"
     boring-avatars "^1.11.2"
     class-variance-authority "^0.7.1"
@@ -2466,6 +2466,7 @@ array-union@^2.1.0:
     react-icons "^5.5.0"
     react-infinite-scroll-hook "^5.0.1"
     react-photo-album "^3.0.2"
+    react-photo-view "^1.2.7"
     react-router-dom "^7.3.0"
     react-scroll "^1.9.3"
     react-show-more-text "^1.7.1"
@@ -4621,7 +4622,7 @@ lightningcss@1.29.2:
 
 lightningcss@^1.29.3:
   version "1.29.3"
-  resolved "https://registry.npmjs.org/lightningcss/-/lightningcss-1.29.3.tgz#ddb8c6367f6d63432a4e81278421f2a9b3ac6efb"
+  resolved "https://registry.npmjs.org/lightningcss/-/lightningcss-1.29.3.tgz"
   integrity sha512-GlOJwTIP6TMIlrTFsxTerwC0W6OpQpCGuX1ECRLBUVRh6fpJH3xTqjCjRgQHTb4ZXexH9rtHou1Lf03GKzmhhQ==
   dependencies:
     detect-libc "^2.0.3"
@@ -5740,6 +5741,11 @@ react-photo-album@^3.0.2:
   version "3.1.0"
   resolved "https://registry.npmjs.org/react-photo-album/-/react-photo-album-3.1.0.tgz#90ca5b116341543ced3024c580ebeb06394c1cfe"
   integrity sha512-9PiWzwvckfefJRHY5E6kcNKoWNjyyFKhQ6Pl5nS1Z29QeP9h8zDOAoVQKWcv/AhZjRoduw1dybu9RNMj0+uPzQ==
+
+react-photo-view@^1.2.7:
+  version "1.2.7"
+  resolved "https://registry.npmjs.org/react-photo-view/-/react-photo-view-1.2.7.tgz"
+  integrity sha512-MfOWVPxuibncRLaycZUNxqYU8D9IA+rbGDDaq6GM8RIoGJal592hEJoRAyRSI7ZxyyJNJTLMUWWL3UIXHJJOpw==
 
 react-remove-scroll-bar@^2.3.7:
   version "2.3.8"

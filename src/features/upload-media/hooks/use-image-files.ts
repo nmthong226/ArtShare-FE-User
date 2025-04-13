@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export function useImageFilesHandler(
   imageFilesPreview: Map<File, string>,
   videoPreviewUrl: string | undefined,
   setImageFilesPreview: (map: Map<File, string>) => void,
   setImageFiles: React.Dispatch<React.SetStateAction<File[]>>,
-  setThumbnailFile: (file: File | undefined) => void
+  setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void,
 ) {
-  const [selectedPreview, setSelectedPreview] = useState<File | undefined>(undefined);
+  const [selectedPreview, setSelectedPreview] = useState<File | undefined>(
+    undefined,
+  );
 
-  const handleImageFilesChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageFilesChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const newFiles = event.target.files;
     if (!newFiles || newFiles.length === 0) return;
 
@@ -25,7 +29,7 @@ export function useImageFilesHandler(
 
     setSelectedPreview(filesArray[0]);
     if (!videoPreviewUrl && newImagePreviewMap.size > 0) {
-      setThumbnailFile(filesArray[0]);
+      setThumbnailFile(filesArray[0], true);
     }
   };
 
@@ -35,10 +39,13 @@ export function useImageFilesHandler(
     newImagePreviewMap.delete(preview);
     setImageFilesPreview(newImagePreviewMap);
 
-    setImageFiles((prevFiles: File[]) => prevFiles.filter((file) => file !== preview));
+    setImageFiles((prevFiles: File[]) =>
+      prevFiles.filter((file) => file !== preview),
+    );
 
+    // no images and video -> remove thumbnail
     if (newImagePreviewMap.size === 0 && !videoPreviewUrl) {
-      setThumbnailFile(undefined);
+      setThumbnailFile(undefined, true);
     }
 
     if (selectedPreview === preview) {

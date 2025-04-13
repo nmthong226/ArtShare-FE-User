@@ -81,21 +81,24 @@ export const fetchPosts = async (
   tab?: string,
   query?: string,
   filter?: string[],
-  pageSize: number = 12
+  pageSize: number = 24,
 ): Promise<Post[]> => {
   try {
-    if (query || filter && filter.length > 0) {
-      console.log(`/posts/search?q=${query}&page=${page}&page_size=${pageSize}`)
-      const response = await api.get<Post[]>(
-        `/posts/search?q=${query}&page=${page}&page_size=${pageSize}`
+    if (query) {
+      console.log(
+        `/posts/search?q=${query}&page=${page}&page_size=${pageSize}`,
       );
-      console.log("search hihi", response.data);
+      const response = await api.get<Post[]>(
+        `/posts/search?q=${query}&page=${page}&page_size=${pageSize}`,
+      );
       return response.data;
     } else {
-      console.log(`/posts/${tab}?page=${page}&page_size=${pageSize}`)
-      const response = await api.get<Post[]>(
-        `/posts/${tab}?page=${page}&page_size=${pageSize}`
-      );
+      console.log(`/posts/${tab}?page=${page}&page_size=${pageSize}`);
+      const response = await api.post<Post[]>(`/posts/${tab}`, {
+        page,
+        page_size: pageSize,
+        filter,
+      });
       return response.data;
     }
   } catch (error) {

@@ -6,7 +6,7 @@ import TabValue from "../enum/media-tab-value";
 import MediaUploadTab from "./media-upload-tab";
 import ImagesSelection from "./images-selection";
 
-const VideoSelection = lazy(() => import('./video-selection'));
+const VideoSelection = lazy(() => import("./video-selection"));
 
 export default function MediaSelection({
   setVideoFile,
@@ -16,10 +16,14 @@ export default function MediaSelection({
   setVideoFile: (file: File | undefined) => void;
   imageFiles: File[];
   setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  setThumbnailFile: (file: File | undefined) => void;
+  setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
 }) {
-  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | undefined>(undefined);
-  const [imageFilesPreview, setImageFilesPreview] = useState<Map<File, string>>(new Map());
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | undefined>(
+    undefined,
+  );
+  const [imageFilesPreview, setImageFilesPreview] = useState<Map<File, string>>(
+    new Map(),
+  );
   const [tabValue, setTabValue] = useState<TabValue>(TabValue.UPLOAD_IMAGE);
 
   return (
@@ -28,19 +32,19 @@ export default function MediaSelection({
         <MediaUploadTab
           isActive={tabValue == TabValue.UPLOAD_IMAGE}
           onClick={() => setTabValue(TabValue.UPLOAD_IMAGE)}
-          icon={<IoMdImage className="mr-2 w-8 h-8" />}
+          icon={<IoMdImage className="mr-0.5 w-5 h-5" />}
           label="Upload image"
           examples="( .png, .jpg, .jpeg, ... )"
         />
         <MediaUploadTab
           isActive={tabValue == TabValue.UPLOAD_VIDEO}
           onClick={() => setTabValue(TabValue.UPLOAD_VIDEO)}
-          icon={<IoVideocam className="mr-2 w-8 h-8" />}
+          icon={<IoVideocam className="mr-2 w-5 h-5 text-sm" />}
           label="Upload video"
           examples="( .mp4, .avi, .mov, ... )"
         />
       </div>
-      <hr className="my-2 border-mountain-700 border-t-1 w-full" />
+      <hr className="mb-3 border-mountain-400 border-t-1 w-full" />
       <ImagesSelection
         imageFilesPreview={imageFilesPreview}
         videoPreviewUrl={videoPreviewUrl}
@@ -57,6 +61,6 @@ export default function MediaSelection({
         setVideoPreviewUrl={setVideoPreviewUrl}
         hidden={tabValue !== TabValue.UPLOAD_VIDEO}
       />
-    </Box >
+    </Box>
   );
-};
+}

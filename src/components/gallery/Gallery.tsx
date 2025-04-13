@@ -57,6 +57,7 @@ const IGallery: React.FC<IGalleryProps> = ({
       <RowsPhotoAlbum
         spacing={8}
         targetRowHeight={256}
+        rowConstraints={{ singleRowMaxHeight: 256 }}
         photos={photos}
         render={{ image: ImageRenderer }}
       />

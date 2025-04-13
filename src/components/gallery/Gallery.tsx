@@ -15,7 +15,7 @@ export interface GalleryPhoto extends Photo {
 }
 
 const getMediaDimensions = (
-  url: string
+  url: string,
 ): Promise<{ width: number; height: number }> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -30,7 +30,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
 
   const handleFilterChange = (
     _: React.MouseEvent<HTMLElement>,
-    newFilter: string
+    newFilter: string,
   ) => {
     if (newFilter) {
       setTab(newFilter);
@@ -56,7 +56,9 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
           if (!post.thumbnail_url && post.medias.length === 0) {
             return null;
           }
-          const mediaDimensions = await getMediaDimensions(post.thumbnail_url || post.medias[0].url);
+          const mediaDimensions = await getMediaDimensions(
+            post.thumbnail_url || post.medias[0].url,
+          );
           return {
             key: post.id.toString(),
             title: post.title || "",
@@ -67,7 +69,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
             postLength: post.medias.length,
             postId: post.id,
           };
-        })
+        }),
       );
       return galleryPhotos;
     },
@@ -81,7 +83,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
   useEffect(() => {
     const debounce = <T extends unknown[]>(
       func: (...args: T) => void,
-      delay: number
+      delay: number,
     ): ((...args: T) => void) => {
       let timeoutId: number | null = null;
 
@@ -112,7 +114,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
         }
       } else {
         console.warn(
-          "Element with class 'gallery-area' not found or is not an HTMLElement."
+          "Element with class 'gallery-area' not found or is not an HTMLElement.",
         );
       }
     }, 10);
@@ -131,7 +133,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
         }
       } else {
         console.warn(
-          "Element with class 'gallery-area' is not an HTMLElement or was not found."
+          "Element with class 'gallery-area' is not an HTMLElement or was not found.",
         );
       }
     }, 200);
@@ -173,15 +175,15 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
             value="for-you"
             className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
             sx={{
-              '&.Mui-selected': {
-                backgroundColor: '#c7d2fe',
-                color: '#000',
-                '&:hover': {
-                  backgroundColor: '#c7d2fe',
+              "&.Mui-selected": {
+                backgroundColor: "#c7d2fe",
+                color: "#000",
+                "&:hover": {
+                  backgroundColor: "#c7d2fe",
                 },
               },
-              '&:hover': {
-                backgroundColor: '#e0e0e0',
+              "&:hover": {
+                backgroundColor: "#e0e0e0",
               },
             }}
           >
@@ -191,15 +193,15 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
             value="following"
             className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
             sx={{
-              '&.Mui-selected': {
-                backgroundColor: '#c7d2fe',
-                color: '#000',
-                '&:hover': {
-                  backgroundColor: '#c7d2fe',
+              "&.Mui-selected": {
+                backgroundColor: "#c7d2fe",
+                color: "#000",
+                "&:hover": {
+                  backgroundColor: "#c7d2fe",
                 },
               },
-              '&:hover': {
-                backgroundColor: '#e0e0e0',
+              "&:hover": {
+                backgroundColor: "#e0e0e0",
               },
             }}
           >

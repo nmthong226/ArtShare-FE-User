@@ -27,8 +27,6 @@ const Post: React.FC = () => {
     },
   });
 
-
-
   if (isLoading) {
     return (
       <div className="m-4 text-center">

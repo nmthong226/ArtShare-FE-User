@@ -1,5 +1,10 @@
 import { Button, CardContent, Divider } from "@mui/material";
-import { MessageSquareText, Bookmark, EllipsisVertical, Share2 } from "lucide-react";
+import {
+  MessageSquareText,
+  Bookmark,
+  EllipsisVertical,
+  Share2,
+} from "lucide-react";
 import ShowMoreText from "react-show-more-text";
 import { ElementType, useState } from "react";
 import ReactTimeAgo from "react-time-ago";
@@ -83,9 +88,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             <div className="flex items-center gap-1 text-sm">
               <div className="flex items-center gap-1 text-sm">
                 <p className="font-semibold">{"1k"}</p>
-                <span className="text-mountain-600">
-                  Views
-                </span>
+                <span className="text-mountain-600">Views</span>
               </div>
             </div>
           </div>

@@ -1,8 +1,8 @@
-import { useSnackbar } from '@/contexts/SnackbarProvider';
+import { useSnackbar } from "@/contexts/SnackbarProvider";
 
 export default function useVideoFileHandler(
   setVideoFile: (file: File | undefined) => void,
-  setThumbnailFile: (file: File | undefined) => void,
+  setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void,
   imageFilesPreview: Map<File, string>,
   videoPreviewUrl: string | undefined,
   setVideoPreviewUrl: (url: string | undefined) => void,
@@ -11,27 +11,39 @@ export default function useVideoFileHandler(
 
   const captureThumbnail = (videoElement: HTMLVideoElement) => {
     const canvas = document.createElement("canvas");
-
     canvas.width = videoElement.videoWidth;
     canvas.height = videoElement.videoHeight;
-    canvas.getContext("2d")?.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+    const ctx = canvas.getContext("2d", { alpha: true }); // ✅ Fix: store it
+
+    if (!ctx) {
+      console.error("Failed to get canvas context");
+      return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // ✅ Clear with transparency
+    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height); // ✅ draw the frame
 
     canvas.toBlob((blob) => {
       if (blob) {
-        setThumbnailFile(new File([blob], "thumbnailFromVideo.png", { type: "image/png" }));
+        setThumbnailFile(
+          new File([blob], "thumbnailFromVideo.png", { type: "image/png" }),
+          true,
+        );
       } else {
         throw new Error("Failed to create blob from canvas");
       }
     }, "image/png");
-
   };
 
-  const handleVideoFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const newFiles = event.target.files;
     if (!newFiles || newFiles.length === 0) return;
 
     const file = newFiles[0];
-    setVideoFile(file)
+    setVideoFile(file);
     const url = URL.createObjectURL(file);
     setVideoPreviewUrl(url);
 
@@ -61,13 +73,13 @@ export default function useVideoFileHandler(
     setVideoPreviewUrl(undefined);
     setVideoFile(undefined);
     if (imageFilesPreview.size === 0) {
-      setThumbnailFile(undefined);
+      setThumbnailFile(undefined, true);
     }
-  }
+  };
 
   return {
     videoPreviewUrl,
     handleVideoFileChange,
-    handleRemoveVideoPreview
+    handleRemoveVideoPreview,
   };
 }

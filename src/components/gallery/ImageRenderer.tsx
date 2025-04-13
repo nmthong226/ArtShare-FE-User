@@ -11,7 +11,7 @@ import { HiOutlineEye } from "react-icons/hi";
 
 export const ImageRenderer = (
   _: unknown,
-  context: RenderPhotoContext<GalleryPhoto>
+  context: RenderPhotoContext<GalleryPhoto>,
 ) => {
   const { photo, height, width, index } = context;
   return (

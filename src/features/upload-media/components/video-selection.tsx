@@ -3,7 +3,9 @@ import useVideoFileHandler from "../hooks/use-video";
 import {
   CloudUpload as CloudUploadIcon,
   DeleteOutlineOutlined,
+  ReplayOutlined,
 } from "@mui/icons-material";
+import React, { useRef } from "react";
 
 export default function VideoSelection({
   imageFilesPreview,
@@ -16,10 +18,12 @@ export default function VideoSelection({
   imageFilesPreview: Map<File, string>;
   videoPreviewUrl: string | undefined;
   setVideoFile: (file: File | undefined) => void;
-  setThumbnailFile: (file: File | undefined) => void;
+  setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
   setVideoPreviewUrl: (url: string | undefined) => void;
   hidden: boolean;
 }) {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
   const { handleVideoFileChange, handleRemoveVideoPreview } =
     useVideoFileHandler(
       setVideoFile,
@@ -36,7 +40,7 @@ export default function VideoSelection({
       }`}
       hidden={hidden}
       sx={{
-        aspectRatio: "9 / 16", // Optional: keeps a vertical shape for empty state
+        aspectRatio: "9 / 16",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -55,8 +59,25 @@ export default function VideoSelection({
     >
       {videoPreviewUrl ? (
         <Box className="flex flex-col gap-2 w-full h-full">
-          {/* Remove button on top, outside of the video */}
-          <Box className="flex justify-end px-2 pt-2">
+          {/* Replace & Remove buttons */}
+          <Box className="flex justify-end gap-2 px-2 pt-2">
+            <Button
+              variant="text"
+              size="small"
+              startIcon={<ReplayOutlined sx={{ fontSize: 18 }} />}
+              onClick={() => inputRef.current?.click()}
+              sx={{
+                backgroundColor: "transparent",
+                color: "white",
+                borderRadius: "10px",
+                border: "1px solid",
+                textTransform: "none",
+                "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
+              }}
+            >
+              Replace video
+            </Button>
+
             <Button
               variant="text"
               size="small"
@@ -73,13 +94,21 @@ export default function VideoSelection({
             >
               Remove video
             </Button>
+
+            {/* Hidden input for replacing video */}
+            <input
+              type="file"
+              ref={inputRef}
+              hidden
+              accept="video/*"
+              onChange={handleVideoFileChange}
+            />
           </Box>
 
           <Box
             className="relative w-full"
             sx={{ maxHeight: 500, minHeight: 300 }}
           >
-            {/* Video preview */}
             <video
               src={videoPreviewUrl}
               controls

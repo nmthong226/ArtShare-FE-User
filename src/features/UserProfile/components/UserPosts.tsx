@@ -1,6 +1,6 @@
-import { MoreHorizontal } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar } from "@mui/material";
+import { RowsPhotoAlbum } from "react-photo-album";
+import { useMemo } from "react";
+import { ImageRenderer } from "@/components/gallery/ImageRenderer";
 
 const posts = [
   {
@@ -21,54 +21,29 @@ const posts = [
   },
 ];
 
-interface PostsProps {
-  isOwner: boolean;
-}
+const UserPosts = () => {
+  const photos = useMemo(
+    () =>
+      posts.map((post) => ({
+        key: post.id.toString(),
+        src: post.image,
+        width: 640,
+        height: 360,
+        title: post.text,
+        author: post.username,
+        postLength: 1, // or actual length if multiple media
+        postId: post.id,
+      })),
+    [],
+  );
 
-const UserPosts: React.FC<PostsProps> = ({ isOwner }) => {
   return (
-    <div className="space-y-4">
-      {posts.map((post) => (
-        <Card key={post.id} className="bg-black text-white">
-          <CardContent className="p-4">
-            <div className="flex justify-between items-start">
-              <div className="flex gap-3 items-center">
-                <Avatar sx={{ width: 32, height: 32 }} />
-                <div className="text-sm">
-                  <div className="font-semibold text-white">
-                    {post.username}
-                  </div>
-                  <div className="text-gray-400 text-xs">
-                    {post.handle} • {post.time}
-                  </div>
-                </div>
-              </div>
-              <MoreHorizontal className="text-gray-400 w-5 h-5 cursor-pointer" />
-            </div>
-            {post.text && (
-              <p className="text-white text-sm mt-3 whitespace-pre-wrap">
-                {post.text}
-              </p>
-            )}
-            {post.image && (
-              <img
-                src={post.image}
-                alt="portfolio post"
-                className="w-full max-w-[600px] max-h-[338px] object-cover rounded-md mt-3"
-              />
-            )}
-
-            <div className="flex justify-around text-gray-400 text-sm mt-3">
-              <span className="cursor-pointer">💬</span>
-              <span className="cursor-pointer">🔁</span>
-              <span className="cursor-pointer">❤️</span>
-              <span className="cursor-pointer">🔖</span>
-              <span className="cursor-pointer">🔗</span>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+    <RowsPhotoAlbum
+      photos={photos}
+      spacing={8}
+      targetRowHeight={250}
+      render={{ image: ImageRenderer }}
+    />
   );
 };
 

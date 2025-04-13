@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/sheet";
 import UserInAppConfigs from "@/components/popovers/UserInAppConfigs";
 import { Skeleton } from "@/components/ui/skeleton";
+import ProtectedSidebarItem from "@/components/ProtectedItems/ProtectedSidebarItem";
 
 // Icons
 import { FiSearch } from "react-icons/fi";
@@ -50,7 +51,7 @@ import { MdLibraryBooks, MdOutlineLibraryBooks } from "react-icons/md";
 import { FiLogIn } from "react-icons/fi";
 import { IoMailOutline } from "react-icons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
-import ProtectedSidebarItem from "@/components/ProtectedItems/ProtectedSidebarItem";
+import { FaPenToSquare, FaRegPenToSquare } from "react-icons/fa6";
 
 const UserFunctionality: React.FC<{
   user?: User | null;
@@ -153,7 +154,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <div className="flex items-center h-full">
             <Sheet>
               <SheetTrigger>
-                <div className="sm:hidden flex justify-center items-center w-16 h-16">
+                <div className="xs:hidden flex justify-center items-center w-16 h-16">
                   <IoReorderThreeOutline className="w-6 h-6" />
                 </div>
               </SheetTrigger>
@@ -215,19 +216,28 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                       <p className="text-sm">Create</p>
                     </div>
                     <div className="flex items-center space-x-2 lg:space-x-2 hover:bg-mountain-200 dark:hover:bg-mountain-1000 p-2 rounded-lg w-full text-mountain-600 dark:text-mountain-50 hover:cursor-pointer">
+                      <FaRegPenToSquare className="w-6 h-6" />
+                      <p className="text-sm">Write</p>
+                    </div>
+                    <div className="flex items-center space-x-2 lg:space-x-2 hover:bg-mountain-200 dark:hover:bg-mountain-1000 p-2 rounded-lg w-full text-mountain-600 dark:text-mountain-50 hover:cursor-pointer">
                       <BsFilePerson className="w-6 h-6" />
-                      <p className="text-sm">Portfolio</p>
+                      <p className="text-sm">Studio</p>
                     </div>
                   </div>
                 </SheetHeader>
               </SheetContent>
             </Sheet>
-            <div className="hidden sm:flex justify-center items-center w-16 h-16">
+            {/* <div className="hidden sm:flex justify-center items-center w-16 h-16">
               <IoReorderThreeOutline className="w-6 h-6 text-mountain-950 dark:text-mountain-50" />
-            </div>
+            </div> */}
             <div className="flex items-center space-x-1 lg:space-x-2 xl:space-x-4 h-full">
-              <div className="flex items-center space-x-1 lg:space-x-2 pr-4 border-r-mountain-300 md:border-r-1 dark:border-r-mountain-700 text-nowrap">
-                <img src={app_logo} className="rounded-sm w-8 h-8" />
+              <div className="flex items-center space-x-1 pr-4 border-r-mountain-300 md:border-r-1 dark:border-r-mountain-700 text-nowrap">
+                <Link
+                  to="/explore"
+                  className="flex justify-center items-center w-16"
+                >
+                  <img src={app_logo} className="rounded-sm w-8 h-8" />
+                </Link>
                 <p className="font-semibold text-mountain-950 dark:text-mountain-50">
                   Art Share
                 </p>
@@ -291,7 +301,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 <FiSearch className="left-2 absolute w-5 h-5" />
                 <Input
                   ref={inputRef}
-                  className="shadow-inner pr-8 pl-8 border-1 rounded-2xl"
+                  className="shadow-inner pr-8 pl-8 rounded-2xl"
                   placeholder="Search"
                   value={inputValue}
                   onChange={(e) => setInputValue(e.target.value)}
@@ -447,12 +457,21 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               user={user!}
             />
             <ProtectedSidebarItem
+              path="/write-blog"
+              iconActive={
+                <FaPenToSquare className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />
+              }
+              iconInactive={<FaRegPenToSquare className="w-6 h-6" />}
+              label="Write"
+              user={user!}
+            />
+            <ProtectedSidebarItem
               path="/portfolio"
               iconActive={
                 <BsFilePersonFill className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />
               }
               iconInactive={<BsFilePerson className="w-6 h-6" />}
-              label="Portfolio"
+              label="Studio"
               user={user!}
             />
           </aside>

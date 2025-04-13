@@ -101,10 +101,10 @@ const UploadForm: React.FC<{
   }, [lastCrop, lastZoom]);
 
   return (
-    <Box className="w-full mx-auto dark:text-white text-left space-y-3">
+    <Box className="space-y-3 mx-auto w-full dark:text-white text-left">
       {/* Artwork Title Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
-        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+        <Box className="p-3 border-mountain-300 dark:border-mountain-700 border-b">
           <Typography className="font-semibold dark:text-white text-base text-left">
             Title
           </Typography>
@@ -113,7 +113,7 @@ const UploadForm: React.FC<{
         <FormControl
           fullWidth
           error={isSubmitted && !title.trim()}
-          className="space-y-1 px-2.5 pb-2.5"
+          className="space-y-1 px-3 py-3"
         >
           <TextField
             placeholder="What do you call your artwork"
@@ -152,13 +152,13 @@ const UploadForm: React.FC<{
       {/* Artwork Description Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}
-        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+        <Box className="p-3 border-mountain-300 dark:border-mountain-700 border-b">
           <Typography className="font-semibold dark:text-white text-base text-left">
             Details
           </Typography>
         </Box>
 
-        <Box className="space-y-1 px-2.5 pb-2.5">
+        <Box className="space-y-1 px-3 pb-3">
           <Typography className="dark:text-mountain-200 text-base text-left">
             Description
           </Typography>
@@ -173,15 +173,15 @@ const UploadForm: React.FC<{
             slotProps={{
               input: {
                 className:
-                  "p-2.5 text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
+                  "p-3 text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
               },
             }}
           />
         </Box>
 
         {/* Content / Mature Checkbox */}
-        <Box className="px-2.5 pb-2.5">
-          <Typography className="dark:text-mountain-200 text-base text-left mb-1">
+        <Box className="px-3 pb-3">
+          <Typography className="mb-1 dark:text-mountain-200 text-base text-left">
             Content
           </Typography>
           <FormControl component="fieldset" className="space-y-2">
@@ -244,7 +244,7 @@ const UploadForm: React.FC<{
         />
       )}
 
-      <Box className="space-y-2 px-2.5">
+      <Box className="space-y-2 px-3">
         <Typography className="dark:text-mountain-200 text-base text-left">
           Thumbnail
         </Typography>
@@ -324,22 +324,22 @@ const UploadForm: React.FC<{
       {/* Categorization Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}
-        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+        <Box className="p-3 border-mountain-300 dark:border-mountain-700 border-b">
           <Typography className="font-semibold dark:text-white text-base text-left">
             Categorization
           </Typography>
         </Box>
 
         {/* Art type */}
-        <Box className="flex flex-col space-y-1  pb-2.5 w-full">
+        <Box className="flex flex-col space-y-1  pb-3 w-full">
           {/* Dialog for Selection */}
-          <Box className="space-y-1 px-2.5 pb-2.5">
+          <Box className="space-y-1 px-3 pb-3">
             <SubjectSelector />
           </Box>
         </Box>
 
         {/* Tags: Commented since we may need this in the future*/}
-        {/* <Box className="space-y-1 px-2.5">
+        {/* <Box className="space-y-1 px-3">
           <Typography className="dark:text-mountain-200 text-base text-left">
             Tags
           </Typography>
@@ -350,7 +350,7 @@ const UploadForm: React.FC<{
 
           <FormControl fullWidth variant="outlined">
             <Box
-              className="dark:bg-mountain-950 p-2.5"
+              className="dark:bg-mountain-950 p-3"
               sx={{
                 display: "flex",
                 flexWrap: "wrap",

@@ -13,7 +13,6 @@ const user3 =
   "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?q=80&w=1780&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
 
 // Libs
-import { Link as NavLink, Element } from "react-scroll";
 import { motion } from "framer-motion";
 
 // Icons
@@ -111,13 +110,9 @@ const LandingPage = () => {
   return (
     <div className="flex flex-col bg-white w-full h-screen">
       {/* Header */}
-      <Element
-        name="section0"
-        className="flex justify-between items-center bg-white px-4 md:px-8 lg:px-16 xl:px-24 py-5 w-full h-20"
-      >
+      <div className="flex justify-between items-center bg-white px-4 md:px-8 lg:px-16 xl:px-24 py-5 w-full h-20">
         <div className="flex items-center space-x-2">
           <img
-            alt="app-logo"
             src={app_logo}
             className="shadow rounded-sm w-8 md:w-10 h-8 md:h-10"
           />
@@ -126,30 +121,15 @@ const LandingPage = () => {
           </p>
         </div>
         <div className="flex items-center space-x-4 md:space-x-8 font-semibold">
-          <NavLink
-            to="section2"
-            smooth={true}
-            duration={500}
-            className="max-sm:hidden text-mountain-950 hover:text-indigo-600 hover:cursor-pointer"
-          >
+          <div className="max-sm:hidden text-mountain-950 hover:text-indigo-600 hover:cursor-pointer">
             Features
-          </NavLink>
-          <NavLink
-            to="section3"
-            smooth={true}
-            duration={500}
-            className="max-sm:hidden text-mountain-950 hover:text-indigo-600 hover:cursor-pointer"
-          >
+          </div>
+          <div className="max-sm:hidden text-mountain-950 hover:text-indigo-600 hover:cursor-pointer">
             Testimonials
-          </NavLink>
-          <NavLink
-            to="section4"
-            smooth={true}
-            duration={500}
-            className="max-sm:hidden text-mountain-950 hover:text-indigo-600 hover:cursor-pointer"
-          >
+          </div>
+          <div className="max-sm:hidden text-mountain-950 hover:text-indigo-600 hover:cursor-pointer">
             Pricing
-          </NavLink>
+          </div>
           <Link
             to="/login"
             className="bg-gradient-to-r from-blue-800 via-indigo-800 to-purple-800 hover:brightness-110 p-1 md:p-2 px-4 md:px-6 rounded-full text-mountain-50 text-sm md:text-base hover:cursor-pointer"
@@ -157,40 +137,22 @@ const LandingPage = () => {
             Get Started
           </Link>
         </div>
-      </Element>
+      </div>
       <div className="sm:hidden -bottom-1 z-50 fixed flex justify-center items-center bg-white/70 py-5 w-full h-20">
         <div className="flex justify-between items-center md:space-x-8 bg-white px-4 border rounded-full w-[90%] h-12 font-semibold">
-          <NavLink
-            to="section2"
-            smooth={true}
-            duration={500}
-            className="text-mountain-950 hover:text-indigo-600 hover:cursor-pointer"
-          >
+          <div className="text-mountain-950 hover:text-indigo-600 hover:cursor-pointer">
             Features
-          </NavLink>
-          <NavLink
-            to="section3"
-            smooth={true}
-            duration={500}
-            className="text-mountain-950 hover:text-indigo-600 hover:cursor-pointer"
-          >
+          </div>
+          <div className="text-mountain-950 hover:text-indigo-600 hover:cursor-pointer">
             Testimonials
-          </NavLink>
-          <NavLink
-            to="section4"
-            smooth={true}
-            duration={500}
-            className="text-mountain-950 hover:text-indigo-600 hover:cursor-pointer"
-          >
+          </div>
+          <div className="text-mountain-950 hover:text-indigo-600 hover:cursor-pointer">
             Pricing
-          </NavLink>
+          </div>
         </div>
       </div>
       {/* Hero Section */}
-      <Element
-        name="section1"
-        className="flex sm:flex-row flex-col justify-between items-center gap-x-4 bg-mountain-50 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-10 lg:px-16 xl:px-24 w-full sm:min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]"
-      >
+      <div className="flex sm:flex-row flex-col justify-between items-center gap-x-4 bg-mountain-50 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-10 lg:px-16 xl:px-24 w-full sm:min-h-[400px] lg:min-h-[500px] xl:min-h-[600px]">
         <div className="flex flex-col space-y-4 lg:space-y-6 xl:space-y-8 my-4 sm:my-0 w-full sm:w-[50%]">
           <motion.div
             initial={{ y: -50, opacity: 0 }}
@@ -293,12 +255,9 @@ const LandingPage = () => {
             </div>
           </div>
         </motion.div>
-      </Element>
+      </div>
       {/* Core Features */}
-      <Element
-        name="section2"
-        className="flex flex-col justify-center space-y-12 bg-white my-4 sm:my-0 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-8 lg:px-16 xl:px-24 w-full h-fit sm:min-h-[900px] lg:min-h-[800px]"
-      >
+      <div className="flex flex-col justify-center space-y-12 bg-white my-4 sm:my-0 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-8 lg:px-16 xl:px-24 w-full h-fit sm:min-h-[900px] lg:min-h-[800px]">
         <div className="flex flex-col justify-center items-center space-y-3 lg:space-y-5">
           <motion.p
             initial={{ opacity: 0 }}
@@ -455,12 +414,9 @@ const LandingPage = () => {
             </div>
           </motion.div>
         </div>
-      </Element>
+      </div>
       {/* Testimonials */}
-      <Element
-        name="section3"
-        className="flex flex-col justify-center space-y-12 bg-mountain-50 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-8 lg:px-16 xl:px-24 w-full h-fit sm:min-h-[400px] md:min-h-[500px] xl:min-h-[600px]"
-      >
+      <div className="flex flex-col justify-center space-y-12 bg-mountain-50 p-4 md:p-8 lg:p-12 xl:p-20 px-4 md:px-8 lg:px-16 xl:px-24 w-full h-fit sm:min-h-[400px] md:min-h-[500px] xl:min-h-[600px]">
         <div className="flex flex-col justify-center items-center space-y-3 lg:space-y-5">
           <motion.p
             initial={{ opacity: 0 }}
@@ -565,12 +521,9 @@ const LandingPage = () => {
             </div>
           </motion.div>
         </div>
-      </Element>
+      </div>
       {/* Pricing */}
-      <Element
-        name="section4"
-        className="flex flex-col justify-center bg-white p-8 lg:p-12 xl:p-20 px-10 lg:px-16 xl:px-24 w-full h-fit md:min-h-[1300px] xl:min-h-[900px]"
-      >
+      <div className="flex flex-col justify-center bg-white p-8 lg:p-12 xl:p-20 px-10 lg:px-16 xl:px-24 w-full h-fit md:min-h-[1300px] xl:min-h-[900px]">
         <div className="flex flex-col justify-center items-center space-y-3 lg:space-y-5">
           <motion.p
             initial={{ opacity: 0 }}
@@ -604,16 +557,11 @@ const LandingPage = () => {
           </div>
           <PricingSection frequencies={PAYMENT_FREQUENCIES} tiers={TIERS} />
         </div>
-      </Element>
+      </div>
       <div className="flex justify-center items-center w-full min-h-20">
-        <NavLink
-          to="section0"
-          smooth={true}
-          duration={500}
-          className="flex justify-center items-center bg-mountain-50 shadow-md border rounded-full w-12 h-12 hover:scale-120 transition duration-300 hover:cursor-pointer"
-        >
+        <div className="flex justify-center items-center bg-mountain-50 shadow-md border rounded-full w-12 h-12 hover:scale-120 transition duration-300 hover:cursor-pointer">
           <IoArrowUp />
-        </NavLink>
+        </div>
       </div>
       {/* Footer */}
       <div className="flex flex-col justify-center bg-mountain-950 w-full min-h-[300px] sm:min-h-[240px]">

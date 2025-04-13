@@ -26,12 +26,13 @@ import Portfolio from "@/pages/Portfolio";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/pages/Post";
 import UploadMedia from "@/features/upload-media";
-import UserProfile from "@/pages/UserManagement/UserProfile";
+// import UserProfile from "@/pages/UserManagement/UserProfile";
 import MatureContentPage from "./pages/MatureContent/MatureContent";
 
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
+import { UserProfile } from "./features/user-profile/UserProfile";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -54,9 +55,10 @@ const InAppPublicRoutes = [
 const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
   { path: "/create-art", element: <ArtGeneration /> },
-  { path: "/portfolio", element: <Portfolio /> },
+  // { path: "/portfolio", element: <Portfolio /> },
+  { path: "/portfolio", element: <UserProfile /> },
   { path: "/artgen", element: <ArtGeneration /> },
-  { path: "/:username", element: <UserProfile /> },
+  // { path: "/:username", element: <UserProfile /> },
 ];
 
 const App: React.FC = () => {

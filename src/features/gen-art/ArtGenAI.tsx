@@ -52,7 +52,7 @@ const ArtGenAI = () => {
     };
 
     return (
-        <div className='flex flex-col space-y-4 w-full h-[calc(100vh-6rem)]'>
+        <div className='relative flex flex-col space-y-4 w-full h-[calc(100vh-5rem)] overflow-y-hidden'>
             <Accordion
                 expanded={expanded}
                 onChange={handleParentToggle}
@@ -62,7 +62,7 @@ const ArtGenAI = () => {
                         timeout: 200,
                     },
                 }}
-                className={`flex flex-col absolute bg-white shadow-md border border-mountain-300 rounded-xl w-[300px] ${expanded ? 'h-[680px]' : 'h-fit'}`}>
+                className={`flex flex-col z-50 absolute bg-white shadow-md border border-mountain-300 rounded-xl w-[300px] ${expanded ? 'h-[680px]' : 'h-fit'}`}>
                 <AccordionSummary
                     expandIcon={<GoSidebarExpand />}
                     aria-controls="panel2-content"
@@ -247,7 +247,7 @@ const ArtGenAI = () => {
                     </Accordion>
                 </AccordionDetails>
             </Accordion>
-            <div className='flex justify-end w-full h-fit'>
+            <div className='flex justify-end pr-4 w-full h-fit'>
                 <div className='flex items-center space-x-2 bg-white shadow-md p-2 rounded-xl w-fit h-13'>
                     <div className='flex h-full'>
                         <div className='flex justify-center items-center bg-mountain-100 px-2 rounded-lg w-fit h-full font-normal'>
@@ -269,68 +269,102 @@ const ArtGenAI = () => {
                     </Button>
                 </div>
             </div>
-            <div className='flex justify-end w-full h-full'>
-                <div className={`relative flex space-y-4 overflow-y-auto h-[600px] flex-col ${expanded ? 'w-[78%]' : 'w-full delay-300'} items-start transition-all duration-200 ease-in-out overflow-y-hidden`}>
-                    <div className='flex flex-col space-y-2'>
-                        <div className='flex justify-center items-center space-x-2'>
-                            <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span> Dynamic angle, best quality, highly detailed, depth of field. A stunning steampunk city with towering skyscrapers and intricate clockwork mechanisms, gears and pistons move in a complex symphony, steam billows from chimneys, airships navigate the bustling skylanes, a vibrant metropolis.</p>
-                            <div className='flex items-center space-x-2'>
-                                <Button className='flex bg-mountain-100 w-8' title='Post Media'>
-                                    <RiFolderUploadLine className='size-5' />
-                                </Button>
-                                <Button className='flex bg-mountain-100 w-8' title='Download'>
-                                    <FiDownload className='size-5' />
-                                </Button>
-                                <Button className='flex bg-mountain-100 w-4'>
-                                    <PiDotsThreeVerticalBold className='size-5' />
-                                </Button>
+            <div className='relative flex justify-end w-full h-full'>
+                <div className={`flex relative h-full custom-scrollbar flex-col ${expanded ? 'w-[78%]' : 'w-full delay-300'} items-start transition-all duration-200 ease-in-out`}>
+                    <div className='flex flex-col space-y-10 pr-4 h-full overflow-y-auto custom-scrollbar'>
+                        <div className='flex flex-col space-y-2'>
+                            <div className='flex justify-center items-center space-x-2'>
+                                <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span> Dynamic angle, best quality, highly detailed, depth of field. A stunning steampunk city with towering skyscrapers and intricate clockwork mechanisms, gears and pistons move in a complex symphony, steam billows from chimneys, airships navigate the bustling skylanes, a vibrant metropolis.</p>
+                                <div className='flex items-center space-x-2'>
+                                    <Button className='flex bg-mountain-100 w-8' title='Post Media'>
+                                        <RiFolderUploadLine className='size-5' />
+                                    </Button>
+                                    <Button className='flex bg-mountain-100 w-8' title='Download'>
+                                        <FiDownload className='size-5' />
+                                    </Button>
+                                    <Button className='flex bg-mountain-100 w-4'>
+                                        <PiDotsThreeVerticalBold className='size-5' />
+                                    </Button>
+                                </div>
                             </div>
+                            <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
+                                {images.map((img, index) => (
+                                    <ImageListItem key={index}>
+                                        <img
+                                            src={img}
+                                            alt={`Image ${index + 1}`}
+                                            loading="lazy"
+                                            className='shadow-md'
+                                            style={{ borderRadius: '8px' }}
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
                         </div>
-                        <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
-                            {images.map((img, index) => (
-                                <ImageListItem key={index}>
-                                    <img
-                                        src={img}
-                                        alt={`Image ${index + 1}`}
-                                        loading="lazy"
-                                        className='shadow-md'
-                                        style={{ borderRadius: '8px' }}
-                                    />
-                                </ImageListItem>
-                            ))}
-                        </ImageList>
+                        <div className='flex flex-col space-y-2'>
+                            <div className='flex justify-center items-center space-x-2'>
+                                <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span> Dynamic angle, best quality, highly detailed, depth of field. A stunning steampunk city with towering skyscrapers and intricate clockwork mechanisms, gears and pistons move in a complex symphony, steam billows from chimneys, airships navigate the bustling skylanes, a vibrant metropolis.</p>
+                                <div className='flex items-center space-x-2'>
+                                    <Button className='flex bg-mountain-100 w-8' title='Post Media'>
+                                        <RiFolderUploadLine className='size-5' />
+                                    </Button>
+                                    <Button className='flex bg-mountain-100 w-8' title='Download'>
+                                        <FiDownload className='size-5' />
+                                    </Button>
+                                    <Button className='flex bg-mountain-100 w-4'>
+                                        <PiDotsThreeVerticalBold className='size-5' />
+                                    </Button>
+                                </div>
+                            </div>
+                            <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
+                                {images.map((img, index) => (
+                                    <ImageListItem key={index}>
+                                        <img
+                                            src={img}
+                                            alt={`Image ${index + 1}`}
+                                            loading="lazy"
+                                            className='shadow-md'
+                                            style={{ borderRadius: '8px' }}
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
+                        </div>
+                        <div className='flex flex-col space-y-2'>
+                            <div className='flex justify-center items-center space-x-2'>
+                                <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span> Dynamic angle, best quality, highly detailed, depth of field. A stunning steampunk city with towering skyscrapers and intricate clockwork mechanisms, gears and pistons move in a complex symphony, steam billows from chimneys, airships navigate the bustling skylanes, a vibrant metropolis.</p>
+                                <div className='flex items-center space-x-2'>
+                                    <Button className='flex bg-mountain-100 w-8' title='Post Media'>
+                                        <RiFolderUploadLine className='size-5' />
+                                    </Button>
+                                    <Button className='flex bg-mountain-100 w-8' title='Download'>
+                                        <FiDownload className='size-5' />
+                                    </Button>
+                                    <Button className='flex bg-mountain-100 w-4'>
+                                        <PiDotsThreeVerticalBold className='size-5' />
+                                    </Button>
+                                </div>
+                            </div>
+                            <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
+                                {images.map((img, index) => (
+                                    <ImageListItem key={index}>
+                                        <img
+                                            src={img}
+                                            alt={`Image ${index + 1}`}
+                                            loading="lazy"
+                                            className='shadow-md'
+                                            style={{ borderRadius: '8px' }}
+                                        />
+                                    </ImageListItem>
+                                ))}
+                            </ImageList>
+                        </div>
+                        <div className='flex flex-col space-y-2'>
+                            <div className='flex h-40' />
+                        </div>
                     </div>
-                    {/* <div className='flex flex-col space-y-2'>
-                        <div className='flex justify-center items-center space-x-2'>
-                            <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span> Dynamic angle, best quality, highly detailed, depth of field. A stunning steampunk city with towering skyscrapers and intricate clockwork mechanisms, gears and pistons move in a complex symphony, steam billows from chimneys, airships navigate the bustling skylanes, a vibrant metropolis.</p>
-                            <div className='flex items-center space-x-2'>
-                                <Button className='flex bg-mountain-100 w-8' title='Post Media'>
-                                    <RiFolderUploadLine className='size-5' />
-                                </Button>
-                                <Button className='flex bg-mountain-100 w-8' title='Download'>
-                                    <FiDownload className='size-5' />
-                                </Button>
-                                <Button className='flex bg-mountain-100 w-4'>
-                                    <PiDotsThreeVerticalBold className='size-5' />
-                                </Button>
-                            </div>
-                        </div>
-                        <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
-                            {images.map((img, index) => (
-                                <ImageListItem key={index}>
-                                    <img
-                                        src={img}
-                                        alt={`Image ${index + 1}`}
-                                        loading="lazy"
-                                        className='shadow-md'
-                                        style={{ borderRadius: '8px' }}
-                                    />
-                                </ImageListItem>
-                            ))}
-                        </ImageList>
-                    </div> */}
                     {/* Prompt Chat */}
-                    <div className='bottom-0 left-1/2 absolute flex -translate-x-1/2'>
+                    <div className='bottom-20 left-1/2 z-50 absolute flex -translate-x-1/2'>
                         <Input
                             placeholder='What do you imagine about?...'
                             className='relative flex bg-white shadow-md pr-28 border border-mountain-100 rounded-xl w-[760px] h-15 placeholder:text-mountain-400'
@@ -340,6 +374,7 @@ const ArtGenAI = () => {
                         </Button>
                     </div>
                 </div>
+                <div className='bottom-0 z-10 absolute flex bg-white blur-3xl w-full h-40'>a</div>
             </div>
         </div>
     )

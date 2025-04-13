@@ -217,7 +217,26 @@ const UploadMedia: React.FC = () => {
       )}
 
       <Box
-        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem)]"
+        className="w-full px-6 py-3 border-b border-mountain-200 dark:border-mountain-700 bg-white dark:bg-mountain-900 shadow-sm"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          position: "sticky", // if you want it to always stick to the top
+          top: 0,
+          zIndex: 10,
+        }}
+      >
+        <Typography
+          variant="h6"
+          className="text-gray-900 dark:text-white font-semibold"
+        >
+          Create Post
+        </Typography>
+      </Box>
+
+      <Box
+        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem-56px)]"
         style={{ overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}

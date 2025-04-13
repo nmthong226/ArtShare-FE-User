@@ -22,7 +22,6 @@ import Blogs from "./pages/Blogs";
 import Shop from "@/pages/Shop";
 // import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/pages/ArtGeneration";
-import Portfolio from "@/pages/Portfolio";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/pages/Post";
 import UploadMedia from "@/features/upload-media/UploadMedia";
@@ -49,14 +48,13 @@ const InAppPublicRoutes = [
   { path: "/posts/:postId", element: <Post /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/shop", element: <Shop /> },
+  { path: "/:username", element: <UserProfile /> },
 ];
 
 const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
   { path: "/create-art", element: <ArtGeneration /> },
-  { path: "/portfolio", element: <Portfolio /> },
   { path: "/artgen", element: <ArtGeneration /> },
-  { path: "/:username", element: <UserProfile /> },
 ];
 
 const App: React.FC = () => {

@@ -21,11 +21,11 @@ const posts = [
   },
 ];
 
-interface PortfolioProps {
+interface PostsProps {
   isOwner: boolean;
 }
 
-const Portfolio: React.FC<PortfolioProps> = ({ isOwner }) => {
+const UserPosts: React.FC<PostsProps> = ({ isOwner }) => {
   return (
     <div className="space-y-4">
       {posts.map((post) => (
@@ -72,4 +72,4 @@ const Portfolio: React.FC<PortfolioProps> = ({ isOwner }) => {
   );
 };
 
-export default Portfolio;
+export default UserPosts;

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useUser } from "@/contexts/UserProvider";
-import Portfolio from "@/features/UserProfile/components/Portfolio";
+import UserPosts from "@/features/UserProfile/components/UserPosts";
 import { Box, Typography, Avatar, Button } from "@mui/material";
 
 const UserProfile = () => {
@@ -9,10 +9,10 @@ const UserProfile = () => {
   const isOwner = user?.username === username;
 
   return (
-    <Box className="min-h-screen sm:px-6 md:px-4 lg:px-6 py-4 bg-black text-white">
-      {/* Container for Portfolio + Profile Sidebar */}
+    <Box className="min-h-screen sm:px-6 md:px-4 lg:px-6 py-4 bg-mountain-1000 text-white">
+      {/* Container for Posts + Profile Sidebar */}
       <Box className="flex gap-6">
-        {/* LEFT COLUMN: Portfolio */}
+        {/* LEFT COLUMN: Posts */}
         <Box className="w-full md:w-[70%]">
           <Box className="mb-6">
             <Box className="flex items-center  ">
@@ -29,11 +29,11 @@ const UserProfile = () => {
             </Box>
           </Box>
 
-          <Portfolio isOwner={isOwner} />
+          <UserPosts isOwner={isOwner} />
         </Box>
 
         {/* RIGHT COLUMN: Profile Sidebar */}
-        <Box className="w-full md:w-[30%] bg-[#1a1a1a] rounded-lg p-5">
+        <Box className="w-full md:w-[30%] bg-mountain-950 rounded-lg p-6">
           {" "}
           <Box className="flex flex-col items-center text-center space-y-3">
             <Avatar sx={{ width: 80, height: 80 }} />

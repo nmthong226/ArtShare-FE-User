@@ -15,8 +15,7 @@ export const UserProfileCard = () => {
         isFollowing: false,
       }
     return (
-        <div className="min-h-screen bg-white dark:bg-black  text-white">
-          <div className="max-w-2xl mx-auto">
+        <div>
             <ProfileHeader
               name={profileData.name}
               username={profileData.username}
@@ -31,7 +30,6 @@ export const UserProfileCard = () => {
               website={profileData.website}
             />
             <ProfileStats following={profileData.following} followers={profileData.followers} />
-          </div>
         </div>
       )
 }

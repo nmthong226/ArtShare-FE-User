@@ -26,18 +26,18 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({ name, avatarUrl, isFollowing })
       </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          className="rounded-full bg-transparent border border-gray-600 hover:bg-gray-800"
-        >
-          <Mail className="h-4 w-4 black" color={iconColor} />
-          <span className="sr-only">Message</span>
-        </Button>
+      <Button
+      variant="ghost"
+      size="lg"
+      className="rounded-full cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          >
+      <Mail className="h-4 w-4" color={iconColor} />
+      <span className="sr-only">Message</span>
+    </Button>
         <Button
           variant={isFollowing ? "outline" : "default"}
-          size="sm"
-          className={`rounded-full ${isFollowing ? "bg-transparent border border-gray-600 hover:bg-gray-800 text-white" : "bg-blue-500 hover:bg-blue-600"}`}
+          size="lg"
+          className={`rounded-full ${isFollowing ? "bg-transparent border border-gray-600 hover:bg-gray-800 text-white" : "bg-blue-500 hover:bg-blue-600 cursor-pointer"}`}
         >
           {isFollowing ? "Following" : "Follow"}
         </Button>

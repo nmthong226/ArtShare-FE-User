@@ -3,6 +3,7 @@ import { useUser } from "@/contexts/UserProvider";
 import UserPosts from "@/features/UserProfile/components/UserPosts";
 import { Box, Typography, Avatar, Button, Tabs, Tab } from "@mui/material";
 import { useState } from "react";
+import { UserProfileCard } from "../user-profile/UserProfileCard";
 
 const UserProfile = () => {
   const { username } = useParams();
@@ -31,59 +32,7 @@ const UserProfile = () => {
             overflowY: "auto",
           }}
         >
-          <Box className="flex flex-col items-center text-center space-y-3">
-            <Avatar sx={{ width: 80, height: 80 }} />
-            <Typography variant="h6" className="font-semibold">
-              Jade
-            </Typography>
-            <Box
-              sx={{
-                width: "100%",
-                wordBreak: "break-word",
-                overflowWrap: "break-word",
-                textAlign: "center",
-              }}
-            >
-              <Typography
-                variant="body2"
-                className="text-sm text-gray-400"
-                sx={{
-                  whiteSpace: "normal",
-                  wordBreak: "break-word",
-                  overflowWrap: "break-word",
-                  maxWidth: "100%",
-                }}
-              >
-                @{username}
-              </Typography>
-            </Box>
-
-            <Typography className="text-sm text-gray-400">
-              0 Following · 0 Followers
-            </Typography>
-
-            {isOwner ? (
-              <Button variant="contained" fullWidth>
-                Edit Profile
-              </Button>
-            ) : (
-              <Box className="flex gap-2 w-full">
-                <Button variant="contained" fullWidth>
-                  Follow
-                </Button>
-                <Button variant="outlined" fullWidth>
-                  Message
-                </Button>
-              </Box>
-            )}
-          </Box>
-
-          <Box className="mt-6">
-            <Typography variant="body2" className="text-gray-300">
-              Concept Designer with over 16 years crafting immersive visual
-              narratives...
-            </Typography>
-          </Box>
+            <UserProfileCard />
         </Box>
 
         {/* BOTTOM SECTION: Posts */}

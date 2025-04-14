@@ -2,7 +2,7 @@ import ProfileHeader from "./components/ProfileHeader"
 import ProfileInfo from "./components/ProfileInfo"
 import ProfileStats from "./components/ProfileStats"
 
-export const UserProfile = () => {
+export const UserProfileCard = () => {
     const profileData = {
         name: "MarFish",
         username: "marfish",

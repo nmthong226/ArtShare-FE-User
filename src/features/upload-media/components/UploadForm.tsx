@@ -15,10 +15,9 @@ import {
   Crop,
   ErrorOutlineOutlined,
   PhotoCameraBackOutlined,
-  RestartAltOutlined,
 } from "@mui/icons-material";
 import { ImageUpIcon } from "lucide-react";
-import { ImageCropperModal } from "@/components/ui/image-dropper-modal";
+import { ImageCropperModal } from "@/components/ui/image-cropper-modal";
 // import SearchIcon from "@mui/icons-material/Search";
 // import CloseIcon from "@mui/icons-material/Close";
 
@@ -44,7 +43,7 @@ import { ImageCropperModal } from "@/components/ui/image-dropper-modal";
 
 const UploadForm: React.FC<{
   thumbnailFile: File | undefined;
-  onThumbnailChange: (file: File) => void;
+  onThumbnailChange: (file: File | undefined, isOriginal?: boolean) => void;
   isSubmitted: boolean;
   title: string;
   setTitle: (value: string) => void;
@@ -54,8 +53,15 @@ const UploadForm: React.FC<{
   setIsMature: (value: boolean) => void;
   aiCreated: boolean;
   setAiCreated: (value: boolean) => void;
+  originalThumbnailFile: File | undefined;
+  setOriginalThumbnailFile: (file: File | undefined) => void;
+  lastCrop: { x: number; y: number };
+  lastZoom: number;
+  setLastCrop: (value: { x: number; y: number }) => void;
+  setLastZoom: (value: number) => void;
 }> = ({
   thumbnailFile,
+  setOriginalThumbnailFile,
   onThumbnailChange,
   isSubmitted,
   title,
@@ -66,24 +72,39 @@ const UploadForm: React.FC<{
   setIsMature,
   aiCreated,
   setAiCreated,
+  originalThumbnailFile,
+  lastCrop,
+  lastZoom,
+  setLastCrop,
+  setLastZoom,
 }) => {
   // const [description, setDescription] = useState("");
   const [thumbnailCropOpen, setThumbnailCropOpen] = useState(false);
-  const [resetedThumbnail, setResetedThumbnail] = useState<File | undefined>(
-    undefined,
+  const [initialThumbnailUrl, setInitialThumbnailUrl] = useState<string | null>(
+    null,
   );
 
   useEffect(() => {
-    if (!resetedThumbnail) {
-      setResetedThumbnail(thumbnailFile);
-    }
-  }, [resetedThumbnail, thumbnailFile]);
+    if (!thumbnailCropOpen || !originalThumbnailFile) return;
+
+    const url = URL.createObjectURL(originalThumbnailFile);
+    console.log("🟢 thumbnail url", url);
+    setInitialThumbnailUrl(url);
+
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [thumbnailCropOpen, originalThumbnailFile]);
+
+  useEffect(() => {
+    console.log("📤 Sending crop/zoom to modal:", lastCrop, lastZoom);
+  }, [lastCrop, lastZoom]);
 
   return (
-    <Box className="w-full mx-auto dark:text-white text-left space-y-3">
+    <Box className="space-y-3 mx-auto w-full dark:text-white text-left">
       {/* Artwork Title Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
-        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+        <Box className="p-3 border-mountain-300 dark:border-mountain-700 border-b">
           <Typography className="font-semibold dark:text-white text-base text-left">
             Title
           </Typography>
@@ -92,7 +113,7 @@ const UploadForm: React.FC<{
         <FormControl
           fullWidth
           error={isSubmitted && !title.trim()}
-          className="space-y-1 px-2.5 pb-2.5"
+          className="space-y-1 px-3 py-3"
         >
           <TextField
             placeholder="What do you call your artwork"
@@ -108,7 +129,7 @@ const UploadForm: React.FC<{
             slotProps={{
               input: {
                 className:
-                  "text-base text-white dark:placeholder:text-mountain-400",
+                  "text-base placeholder:text-mountain-950 bg-white dark:bg-mountain-950 dark:text-mountain-50",
               },
             }}
           />
@@ -131,13 +152,13 @@ const UploadForm: React.FC<{
       {/* Artwork Description Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}
-        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+        <Box className="p-3 border-mountain-300 dark:border-mountain-700 border-b">
           <Typography className="font-semibold dark:text-white text-base text-left">
             Details
           </Typography>
         </Box>
 
-        <Box className="space-y-1 px-2.5 pb-2.5">
+        <Box className="space-y-1 px-3 pb-3">
           <Typography className="dark:text-mountain-200 text-base text-left">
             Description
           </Typography>
@@ -152,18 +173,18 @@ const UploadForm: React.FC<{
             slotProps={{
               input: {
                 className:
-                  "p-2.5 text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
+                  "p-3 text-base dark:placeholder:text-base dark:text-white dark:placeholder:text-mountain-400 text-left",
               },
             }}
           />
         </Box>
 
         {/* Content / Mature Checkbox */}
-        <Box className="px-2.5 pb-2.5">
-          <Typography className="dark:text-mountain-200 text-base text-left mb-1">
+        <Box className="px-3 pb-3">
+          <Typography className="mb-1 dark:text-mountain-200 text-base text-left">
             Content
           </Typography>
-          <FormControl component="fieldset" className="space-y-2">
+          <FormControl component="fieldset" className="space-y-2 px-2">
             {/* Mature content checkbox */}
             <FormControlLabel
               control={
@@ -178,7 +199,9 @@ const UploadForm: React.FC<{
               }
               label={
                 <>
-                  <span className="dark:text-white">Has mature content</span>
+                  <span className="ml-2 dark:text-white">
+                    Has mature content
+                  </span>
                   <span className="dark:text-mountain-200">
                     {" "}
                     (see our{" "}
@@ -201,18 +224,23 @@ const UploadForm: React.FC<{
                   }}
                 />
               }
-              label={<span className="dark:text-white">Created with AI</span>}
+              label={
+                <span className="ml-2 dark:text-white">Created with AI</span>
+              }
             />
           </FormControl>
         </Box>
       </Box>
-      {thumbnailFile && (
+      {initialThumbnailUrl && (
         <ImageCropperModal
-          image={URL.createObjectURL(thumbnailFile)}
+          image={initialThumbnailUrl}
           open={thumbnailCropOpen}
           onClose={() => setThumbnailCropOpen(false)}
+          initialCrop={lastCrop}
+          initialZoom={lastZoom}
+          onCropChange={setLastCrop}
+          onZoomChange={setLastZoom}
           onCropped={(blob) => {
-            setResetedThumbnail(thumbnailFile);
             onThumbnailChange(
               new File([blob], "cropped_thumbnail.png", { type: "image/png" }),
             );
@@ -220,15 +248,20 @@ const UploadForm: React.FC<{
         />
       )}
 
-      <Box className="space-y-2 px-2.5">
+      <Box className="space-y-2 px-3">
         <Typography className="dark:text-mountain-200 text-base text-left">
           Thumbnail
         </Typography>
-        <Typography variant="body2" className="mb-1 dark:text-mountain-500">
+        <Typography
+          variant="body2"
+          className="mb-1 text-gray-700 dark:text-mountain-400"
+        >
           Set a thumbnail that stands out for your post.
         </Typography>
         <Box
-          className="flex flex-col justify-center items-center border border-gray-500 border-dashed rounded min-h-32 overflow-hidden"
+          className={`flex flex-col justify-center items-center border ${
+            thumbnailFile ? "border-none" : "border-gray-500 border-dashed"
+          } rounded min-h-32 overflow-hidden`}
           component="label"
         >
           {thumbnailFile ? (
@@ -250,7 +283,7 @@ const UploadForm: React.FC<{
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
-                onThumbnailChange(file);
+                onThumbnailChange(file, true); // ✅ original
               }
             }}
           />
@@ -260,25 +293,16 @@ const UploadForm: React.FC<{
             <Tooltip title="Crop">
               <IconButton
                 onClick={() => setThumbnailCropOpen(true)}
-                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
+                className="border border-gray-300 dark:border-white text-gray-900 dark:text-white"
               >
                 <Crop />
-              </IconButton>
-            </Tooltip>
-
-            <Tooltip title="Reset">
-              <IconButton
-                onClick={() => onThumbnailChange(resetedThumbnail!)}
-                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
-              >
-                <RestartAltOutlined />
               </IconButton>
             </Tooltip>
 
             <Tooltip title="Replace">
               <IconButton
                 component="label"
-                className="text-gray-900 dark:text-white border border-gray-300 dark:border-white"
+                className="border border-gray-300 dark:border-white text-gray-900 dark:text-white"
               >
                 <PhotoCameraBackOutlined />
                 <input
@@ -288,7 +312,11 @@ const UploadForm: React.FC<{
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
+                      setOriginalThumbnailFile(file);
                       onThumbnailChange(file);
+                      // ✅ Reset crop and zoom
+                      setLastCrop({ x: 0, y: 0 });
+                      setLastZoom(1);
                     }
                   }}
                 />
@@ -300,14 +328,22 @@ const UploadForm: React.FC<{
       {/* Categorization Box */}
       <Box className="space-y-2 dark:bg-mountain-900 rounded-md">
         {/* Heading with bottom border */}
-        <Box className="p-2.5 border-mountain-300 dark:border-mountain-700 border-b">
+        <Box className="p-3 border-mountain-300 dark:border-mountain-700 border-b">
           <Typography className="font-semibold dark:text-white text-base text-left">
             Categorization
           </Typography>
         </Box>
 
+        {/* Art type */}
+        <Box className="flex flex-col space-y-1  pb-3 w-full">
+          {/* Dialog for Selection */}
+          <Box className="space-y-1 px-3 pb-3">
+            <SubjectSelector />
+          </Box>
+        </Box>
+
         {/* Tags: Commented since we may need this in the future*/}
-        {/* <Box className="space-y-1 px-2.5">
+        {/* <Box className="space-y-1 px-3">
           <Typography className="dark:text-mountain-200 text-base text-left">
             Tags
           </Typography>
@@ -318,7 +354,7 @@ const UploadForm: React.FC<{
 
           <FormControl fullWidth variant="outlined">
             <Box
-              className="dark:bg-mountain-950 p-2.5"
+              className="dark:bg-mountain-950 p-3"
               sx={{
                 display: "flex",
                 flexWrap: "wrap",
@@ -394,14 +430,6 @@ const UploadForm: React.FC<{
             </FormHelperText>
           </FormControl>
         </Box> */}
-
-        {/* Art type */}
-        <Box className="flex flex-col space-y-1  pb-2.5 w-full">
-          {/* Dialog for Selection */}
-          <Box className="space-y-1 px-2.5 pb-2.5">
-            <SubjectSelector />
-          </Box>
-        </Box>
       </Box>
     </Box>
   );

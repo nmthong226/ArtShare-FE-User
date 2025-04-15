@@ -374,9 +374,9 @@ export const mockCollections: Collection[] = [
     name: "Amazing Vistas",
     description: "Collection of breathtaking landscape shots.",
     user_id: mockUser.id,
-    created_at: new Date(Date.now() - 86400000 * 15), // Older date
+    created_at: new Date(Date.now() - 86400000 * 15),
     updated_at: new Date(),
-    posts: [post101, post111], // Added post 111
+    posts: [post101, post111],
   },
   {
     id: 2,
@@ -404,7 +404,7 @@ export const mockCollections: Collection[] = [
     updated_at: new Date(),
     posts: [post103],
   },
-  // --- Add More Mock Collections ---
+
   {
     id: 5,
     name: "Nature's Details",
@@ -447,15 +447,15 @@ export const mockCollections: Collection[] = [
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 1),
     updated_at: new Date(),
-    posts: [post110, post112], // Added post 112
+    posts: [post110, post112],
   },
   {
     id: 10,
     name: "Minimalist Mood",
     user_id: mockUser.id,
-    created_at: new Date(Date.now() - 86400000 * 0.5), // Very recent
+    created_at: new Date(Date.now() - 86400000 * 0.5),
     updated_at: new Date(),
-    posts: [post104], // Reusing post 104 here too
+    posts: [post104],
   },
 ];
 
@@ -479,11 +479,44 @@ export const fetchCollectionsWithPosts = async (): Promise<Collection[]> => {
   );
 };
 
-export const fetchOrphanPosts = async (): Promise<Post[]> => {
-  console.log("Fetching posts not in any collection...");
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return mockUnassignedPosts.sort(
-    (a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-  );
+export const renameCollection = async (
+  collectionId: number,
+  newName: string,
+): Promise<Collection> => {
+  console.log(`API: Renaming collection ${collectionId} to "${newName}"`);
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  const updatedCollection = mockCollections.find((c) => c.id === collectionId);
+  if (!updatedCollection) {
+    throw new Error("Collection not found");
+  }
+  updatedCollection.name = newName;
+  console.log("API: Rename successful", updatedCollection);
+  return { ...updatedCollection };
+};
+
+export const removePostFromCollection = async (
+  collectionId: number,
+  postId: number,
+): Promise<void> => {
+  console.log(`API: Removing post ${postId} from collection ${collectionId}`);
+  await new Promise((resolve) => setTimeout(resolve, 500));
+
+  const collection = mockCollections.find((c) => c.id === collectionId);
+  if (!collection) {
+    throw new Error("Collection not found");
+  }
+
+  const initialLength = collection.posts.length;
+  collection.posts = collection.posts.filter((p) => p.id !== postId);
+
+  if (collection.posts.length === initialLength) {
+    console.warn(
+      `API: Post ${postId} was not found in collection ${collectionId}`,
+    );
+  } else {
+    console.log(`API: Post ${postId} removed successfully.`);
+  }
+
+  return Promise.resolve();
 };

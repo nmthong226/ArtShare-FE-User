@@ -93,7 +93,11 @@ export const HorizontalSlider = <T extends object>({
         {data.map((item, index) => {
           const itemId = getItemId(item);
           return (
-            <div key={itemId} data-testid={`slider-item-${itemId}`}>
+            <div
+              key={itemId}
+              data-testid={`slider-item-${itemId}`}
+              className="h-full"
+            >
               {renderItem(item, index)}
             </div>
           );

@@ -1,5 +1,6 @@
 import React from "react";
-import { Photo, RowsPhotoAlbum } from "react-photo-album";
+
+import { Photo, RowsPhotoAlbum, RenderPhotoContext } from "react-photo-album";
 import "react-photo-album/rows.css";
 
 import { ImageRenderer } from "./ImageRenderer";
@@ -19,6 +20,16 @@ interface IGalleryProps {
   isFetchingNextPage: boolean;
   isError: boolean;
   error: Error | null;
+
+  /**
+   * Optional custom rendering function for each photo.
+   * If not provided, defaults to the basic ImageRenderer.
+   * The function receives RenderPhotoProps<GalleryPhoto> from react-photo-album.
+   */
+  renderPhoto?: (
+    _: unknown,
+    context: RenderPhotoContext<GalleryPhoto>,
+  ) => React.ReactNode;
 }
 
 const IGallery: React.FC<IGalleryProps> = ({
@@ -27,6 +38,8 @@ const IGallery: React.FC<IGalleryProps> = ({
   isFetchingNextPage,
   isError,
   error,
+
+  renderPhoto,
 }) => {
   if (isLoading) {
     return (
@@ -36,7 +49,7 @@ const IGallery: React.FC<IGalleryProps> = ({
     );
   }
 
-  if (isError) {
+  if (isError && !isLoading && photos.length === 0) {
     return (
       <div className="p-4 text-red-500 text-center">
         Error loading posts: {error?.message || "Unknown error"}
@@ -52,23 +65,28 @@ const IGallery: React.FC<IGalleryProps> = ({
     );
   }
 
+  const effectiveRenderPhoto = renderPhoto ? renderPhoto : ImageRenderer;
+
   return (
     <div className="relative pb-20">
+      {/* Padding at the bottom for the spinner */}
       <RowsPhotoAlbum
         spacing={8}
         targetRowHeight={256}
         rowConstraints={{ singleRowMaxHeight: 256 }}
         photos={photos}
-        render={{ image: ImageRenderer }}
+        render={{ image: effectiveRenderPhoto }}
       />
+      {/* --- Loading More Spinner --- */}
       {isFetchingNextPage && (
         <div className="my-4 text-center">
           <LoadingSpinner />
         </div>
       )}
-      {isError && !isLoading && (
+      {/* --- Error fetching more state (shown below existing photos) --- */}
+      {isError && !isLoading && photos.length > 0 && (
         <div className="text-red-500 text-center py-4">
-          Error fetching more posts: {(error as Error)?.message}
+          Error fetching more posts: {error?.message || "Unknown error"}
         </div>
       )}
     </div>

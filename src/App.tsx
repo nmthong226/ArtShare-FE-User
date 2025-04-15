@@ -32,7 +32,7 @@ import MatureContentPage from "./pages/MatureContent/MatureContent";
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
-import Collection from "./pages/Collection";
+import Collection from "./features/collections";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },

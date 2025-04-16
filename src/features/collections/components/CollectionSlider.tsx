@@ -9,7 +9,7 @@ import {
   CardActionArea,
   Paper,
 } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { FiPlus as AddIcon } from "react-icons/fi";
 import { HorizontalSlider } from "@/components/HorizontalSlider";
 import { SelectedCollectionId, SliderItem } from "../types/collectionTypes";
 
@@ -150,11 +150,11 @@ const renderSliderItem = (
             },
           }}
         >
-          <AddCircleOutlineIcon sx={{ fontSize: 24, mb: 1 }} />
+          <AddIcon fontSize={28} />
           <Typography
             variant="subtitle1"
             align="center"
-            sx={{ lineHeight: 1.3 }}
+            sx={{ lineHeight: 1.3, mt: 1 }}
           >
             Add new collection
           </Typography>

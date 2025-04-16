@@ -8,9 +8,9 @@ import {
   CircularProgress,
   Stack,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import SaveIcon from "@mui/icons-material/Save";
-import CancelIcon from "@mui/icons-material/Cancel";
+import { FiEdit as EditIcon } from "react-icons/fi";
+import { FiCheck  as SaveIcon } from "react-icons/fi";
+import { FiX  as CancelIcon } from "react-icons/fi";
 
 interface CollectionTitleProps {
   title: string;
@@ -110,7 +110,6 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
               <span>
                 <IconButton
                   size="small"
-                  color="primary"
                   onClick={handleSave}
                   disabled={
                     isSaving ||
@@ -122,7 +121,7 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
                   {isSaving ? (
                     <CircularProgress size={20} />
                   ) : (
-                    <SaveIcon fontSize="small" />
+                    <SaveIcon fontSize={20} />
                   )}
                 </IconButton>
               </span>
@@ -134,7 +133,7 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
                   onClick={handleCancel}
                   disabled={isSaving || isLoading}
                 >
-                  <CancelIcon fontSize="small" />
+                  <CancelIcon fontSize={20} />
                 </IconButton>
               </span>
             </Tooltip>
@@ -163,7 +162,7 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
                     transition: "opacity 0.2s ease-in-out",
                   }}
                 >
-                  <EditIcon fontSize="small" />
+                  <EditIcon fontSize={20} />
                 </IconButton>
               </Tooltip>
             )}

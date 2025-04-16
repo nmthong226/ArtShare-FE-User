@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { FiChevronRight as RightArrowIcon, FiChevronLeft as LeftArrowIcon} from "react-icons/fi";
 import {
   ScrollMenu,
   VisibilityContext,
@@ -25,7 +25,7 @@ const DefaultLeftArrow: React.FC = () => {
         onClick={() => visibility.scrollPrev()}
         size="small"
       >
-        <ChevronLeft size={18} />
+        <LeftArrowIcon fontSize={20} />
       </Button>
     </div>
   );
@@ -47,7 +47,7 @@ const DefaultRightArrow: React.FC = () => {
         onClick={() => visibility.scrollNext()}
         size="small"
       >
-        <ChevronRight size={18} />
+        <RightArrowIcon fontSize={20} />
       </Button>
     </div>
   );

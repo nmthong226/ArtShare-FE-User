@@ -3,14 +3,14 @@ import React from "react";
 import { RenderPhotoContext } from "react-photo-album";
 import { Link } from "react-router-dom";
 import { IconButton, Tooltip } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/DeleteForever";
+import { FiX as DeleteIcon} from "react-icons/fi";
 import { Images } from "lucide-react";
 
 import { AiOutlineLike } from "react-icons/ai";
 import { BiCommentDetail } from "react-icons/bi";
 import { HiOutlineEye } from "react-icons/hi";
-import { SelectedCollectionId } from "@/features/collections";
-import { GalleryPhoto } from "../gallery/Gallery";
+import { GalleryPhoto } from "@/components/gallery/Gallery";
+import { SelectedCollectionId } from "../types/collectionTypes";
 
 export interface CollectionImageRendererOptions {
   onRemovePost: (postId: number) => void;
@@ -35,7 +35,7 @@ export const CollectionImageRenderer = (
 
   return (
     <div
-      className="group relative overflow-hidden cursor-pointer border border-transparent hover:border-gray-300 rounded-lg"
+      className="group relative cursor-pointer border border-transparent hover:border-gray-300 rounded-lg"
       style={{
         height: height,
         width: width,
@@ -51,8 +51,8 @@ export const CollectionImageRenderer = (
             onClick={handleDeleteClick}
             sx={{
               position: "absolute",
-              top: 8,
-              right: 8,
+              top: -8,
+              right: -8,
               zIndex: 10,
               color: "white",
               backgroundColor: "rgba(0, 0, 0, 0.5)",
@@ -68,7 +68,7 @@ export const CollectionImageRenderer = (
               },
             }}
           >
-            <DeleteIcon fontSize="small" />
+            <DeleteIcon fontSize={20} />
           </IconButton>
         </Tooltip>
       )}

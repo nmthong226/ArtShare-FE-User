@@ -16,17 +16,26 @@ import {
 } from "./types/collectionTypes";
 import { useCollectionsData } from "./hooks/useCollectionsData";
 import { useGalleryPhotos } from "./hooks/useGalleryPhotos";
-import { removePostFromCollection, renameCollection } from "./api/mockApi";
-import { CollectionSearchInput } from "./components/CollectionSearchInput";
+import {
+  createCollection,
+  removePostFromCollection,
+  renameCollection,
+} from "./api/mockApi";
 import { CollectionSlider } from "./components/CollectionSlider";
 import { CollectionTitle } from "./components/CollectionTitle";
 import { CollectionGallery } from "./components/CollectionGallery";
+import {
+  CreateCollectionDialog,
+  CreateCollectionFormData,
+} from "./components/CreateCollectionDialog";
+import { SearchInput } from "@/components/SearchInput";
 
 const CollectionPage: React.FC = () => {
   const [selectedCollectionId, setSelectedCollectionId] =
     useState<SelectedCollectionId>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [actionError, setActionError] = useState<string | null>(null);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
 
   const {
     collections,
@@ -135,9 +144,38 @@ const CollectionPage: React.FC = () => {
   }, []);
 
   const handleAddCollectionClick = useCallback(() => {
-    console.log("Add Collection button clicked - Navigate/Open Modal");
-    alert("Add Collection functionality not implemented.");
+    setIsCreateDialogOpen(true);
+    setActionError(null);
   }, []);
+
+  const handleCloseCreateDialog = useCallback(() => {
+    setIsCreateDialogOpen(false);
+  }, []);
+
+  const handleCreateCollection = useCallback(
+    async (data: CreateCollectionFormData) => {
+      setActionError(null);
+
+      try {
+        const newCollection: Collection = await createCollection(data);
+
+        setCollections((prevCollections) => [
+          ...prevCollections,
+          newCollection,
+        ]);
+
+        setSelectedCollectionId(newCollection.id);
+
+        handleCloseCreateDialog();
+      } catch (err) {
+        console.error("Error creating collection:", err);
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to create collection.";
+        setActionError(errorMsg);
+      }
+    },
+    [setCollections, handleCloseCreateDialog],
+  );
 
   const handleSaveTitle = useCallback(
     async (newName: string) => {
@@ -227,12 +265,13 @@ const CollectionPage: React.FC = () => {
         spacing={2}
         mb={4}
       >
-        <Typography variant="h4" component="h1" fontWeight="medium">
+        <Typography variant="h5" component="h1" fontWeight="medium">
           My Collections
         </Typography>
-        <CollectionSearchInput
+        <SearchInput
           searchQuery={searchQuery}
           onSearchChange={handleSearchChange}
+          placeholder="Search collections..."
         />
       </Stack>
 
@@ -290,6 +329,11 @@ const CollectionPage: React.FC = () => {
           <CircularProgress />
         </Box>
       )}
+      <CreateCollectionDialog
+        open={isCreateDialogOpen}
+        onClose={handleCloseCreateDialog}
+        onCreate={handleCreateCollection}
+      />
     </Container>
   );
 };

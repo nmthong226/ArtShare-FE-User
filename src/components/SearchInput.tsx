@@ -3,16 +3,16 @@ import { Paper, Input } from "@mui/material";
 import { FiSearch } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
 
-interface CollectionSearchInputProps {
+interface SearchInputProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   placeholder?: string;
 }
 
-export const CollectionSearchInput: React.FC<CollectionSearchInputProps> = ({
+export const SearchInput: React.FC<SearchInputProps> = ({
   searchQuery,
   onSearchChange,
-  placeholder = "Search collections...",
+  placeholder = "Search...",
 }) => {
   return (
     <Paper
@@ -22,13 +22,13 @@ export const CollectionSearchInput: React.FC<CollectionSearchInputProps> = ({
         p: "2px 4px",
         display: "flex",
         alignItems: "center",
-        width: { xs: "100%", sm: 300, md: 400 },
         borderRadius: "16px",
         border: "1px solid",
         borderColor: "grey.400",
         boxShadow: "none",
         bgcolor: "background.paper",
         height: 40,
+        minWidth: 256,
       }}
     >
       <FiSearch style={{ margin: "0 8px", color: "grey.600" }} />
@@ -39,6 +39,7 @@ export const CollectionSearchInput: React.FC<CollectionSearchInputProps> = ({
         value={searchQuery}
         onChange={(e) => onSearchChange(e.target.value)}
         sx={{ flex: 1, ml: 1 }}
+        className="text-sm"
       />
       {searchQuery && (
         <TiDeleteOutline

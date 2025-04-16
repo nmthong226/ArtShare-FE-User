@@ -1,5 +1,6 @@
 import { MEDIA_TYPE } from "@/constants";
 import { Category, Collection, Post, User } from "@/types";
+import { CreateCollectionFormData } from "../components/CreateCollectionDialog";
 
 const mockUser: User = {
   id: "user123",
@@ -373,6 +374,7 @@ export const mockCollections: Collection[] = [
     id: 1,
     name: "Amazing Vistas",
     description: "Collection of breathtaking landscape shots.",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 15),
     updated_at: new Date(),
@@ -382,6 +384,7 @@ export const mockCollections: Collection[] = [
     id: 2,
     name: "Urban Exploration",
     description: "Capturing the essence of city life.",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 10),
     updated_at: new Date(),
@@ -390,6 +393,7 @@ export const mockCollections: Collection[] = [
   {
     id: 3,
     name: "Creative Experiments",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 8),
     updated_at: new Date(),
@@ -399,6 +403,7 @@ export const mockCollections: Collection[] = [
     id: 4,
     name: "Portraits Showcase",
     description: "Collection for portrait photography.",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 6),
     updated_at: new Date(),
@@ -409,6 +414,7 @@ export const mockCollections: Collection[] = [
     id: 5,
     name: "Nature's Details",
     description: "Close-up shots from the natural world.",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 5),
     updated_at: new Date(),
@@ -418,6 +424,7 @@ export const mockCollections: Collection[] = [
     id: 6,
     name: "Sunny Beaches",
     description: "Views from sandy shores.",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 4),
     updated_at: new Date(),
@@ -427,6 +434,7 @@ export const mockCollections: Collection[] = [
     id: 7,
     name: "Black & White",
     description: "Monochromatic perspectives.",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 3),
     updated_at: new Date(),
@@ -435,6 +443,7 @@ export const mockCollections: Collection[] = [
   {
     id: 8,
     name: "Foodie Pics",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 2),
     updated_at: new Date(),
@@ -444,6 +453,7 @@ export const mockCollections: Collection[] = [
     id: 9,
     name: "Animal Friends",
     description: "Adorable pets and wildlife.",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 1),
     updated_at: new Date(),
@@ -452,6 +462,7 @@ export const mockCollections: Collection[] = [
   {
     id: 10,
     name: "Minimalist Mood",
+    is_private: false,
     user_id: mockUser.id,
     created_at: new Date(Date.now() - 86400000 * 0.5),
     updated_at: new Date(),
@@ -519,4 +530,47 @@ export const removePostFromCollection = async (
   }
 
   return Promise.resolve();
+};
+
+export const createCollection = async (
+  data: CreateCollectionFormData,
+): Promise<Collection> => {
+  console.log(
+    `API: Simulating creation of collection '${data.name}' (Private: ${data.isPrivate})`,
+  );
+  await new Promise((resolve) => setTimeout(resolve, 700));
+
+  if (data.name.toLowerCase().includes("fail")) {
+    console.error(
+      "API: Simulated failure for collection name containing 'fail'",
+    );
+    throw new Error("Simulated API error: Invalid collection name.");
+  }
+
+  const maxId = mockCollections.reduce((max, col) => Math.max(max, col.id), 0);
+  const newId = maxId + 1;
+
+  const newCollection: Collection = {
+    id: newId,
+    name: data.name.trim(),
+    is_private: data.isPrivate,
+    user_id: mockUser.id,
+    posts: [],
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
+
+  mockCollections.push(newCollection);
+
+  mockCollections.sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
+
+  console.log(
+    "API: Simulated creation success. New collection added:",
+    newCollection,
+  );
+
+  return { ...newCollection };
 };

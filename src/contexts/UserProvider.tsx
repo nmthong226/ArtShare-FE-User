@@ -15,6 +15,7 @@ import {
   FacebookAuthProvider,
 } from "firebase/auth";
 import { login, signup } from "@/api/authentication/auth"; // Import your backend login and signup functions
+import { log } from "console";
 
 interface UserContextType {
   user: User | null;
@@ -169,24 +170,23 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       );
       console.log("signupResopnse: ", signupResponse);
       const token = await user.getIdToken();
-      localStorage.setItem("accessToken", token);
       let loginResponse = null;
-      if (signupResponse.success) {
+      localStorage.setItem("accessToken", token);      
+      if (signupResponse.message_type === "USER_ALREADY_EXIST") {
         loginResponse = await login(token);
       }
       setUser({
         id: user.uid,
         name: user.displayName || "Unknown",
         email: user.email || "Unknown",
-        username: "", // Add the username property with a default value
+        username: "",
       });
-      setToken(token);
-      localStorage.setItem("accessToken", token);
-      // Call backend login API after Firebase authentication
-      if (loginResponse && loginResponse.success) {
-        window.location.href = "/home"; // Redirect to home
+      if (loginResponse && loginResponse.access_token) {
+        setToken(loginResponse.access_token);
+        localStorage.setItem("accessToken", loginResponse.access_token);
+        window.location.href = "/home";
       }
-      return token; // Return the token
+      return token;
     } catch (error) {
       setError((error as Error).message);
       throw error; // Rethrow the error to maintain the Promise<string> contract

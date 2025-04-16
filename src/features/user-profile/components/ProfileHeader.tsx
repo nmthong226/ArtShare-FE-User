@@ -17,7 +17,7 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({ name, avatarUrl, isFollowing })
     <div className="p-4 flex items-start justify-between">
       <div className="flex items-center gap-3">
         {/* Profile picture */}
-        <div className="w-30 h-30 rounded-full overflow-hidden border-4 border-black">
+        <div className="w-35 h-35 rounded-full overflow-hidden border-4 border-black">
           <img
             src={avatarUrl || "/placeholder.svg"}
             alt={`${name}'s profile picture`}
@@ -27,24 +27,24 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({ name, avatarUrl, isFollowing })
       </div>
       <div className="flex items-center gap-2">
       <Button
-      variant="ghost"
-      size="lg"
-      className="rounded-full cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
+          variant="ghost"
+          size="lg"
+          className="rounded-full cursor-pointer bg-blue-500 hover:bg-blue-700 text-black dark:text-white"
           >
-      <Mail className="h-4 w-4" color={iconColor} />
+          <Mail className="h-4 w-4" color={iconColor} />
       <span className="sr-only">Message</span>
     </Button>
         <Button
-          variant={isFollowing ? "outline" : "default"}
+          variant={isFollowing ? "outline" : "ghost"}
           size="lg"
-          className={`rounded-full ${isFollowing ? "bg-transparent border border-gray-600 hover:bg-gray-800 text-white" : "bg-blue-500 hover:bg-blue-600 cursor-pointer"}`}
+          className={`rounded-full ${isFollowing ? "bg-transparent border border-gray-600 hover:bg-gray-800 text-black dark:text-white" : "bg-blue-500 hover:bg-blue-600 cursor-pointer"}`}
         >
           {isFollowing ? "Following" : "Follow"}
         </Button>
         <Button
-          variant="outline"
-          size="icon"
-          className="rounded-full bg-transparent border border-gray-600 hover:bg-gray-800"
+          variant="ghost"
+          size="lg"
+          className="rounded-full cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
         >
           <MoreHorizontal className="h-4 w-4" color={iconColor} />
           <span className="sr-only">More options</span>

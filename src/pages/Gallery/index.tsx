@@ -178,7 +178,7 @@ const Gallery: React.FC = () => {
       <div className="top-16 z-50 sticky flex flex-col gap-4 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950 p-4">
         <div className="flex items-center gap-6 w-full categories-bar">
           <Button
-            className="flex flex-shrink-0 gap-2 dark:bg-mountain-900 shadow-none p-2 rounded-lg min-w-auto aspect-[1/1] font-normal text-mountain-800 dark:text-mountain-50 normal-case all-channels-btn"
+            className="flex flex-shrink-0 gap-2 dark:bg-mountain-900 shadow-none p-2 rounded-lg min-w-auto aspect-[1/1] font-normal  dark:text-mountain-50 normal-case all-channels-btn"
             variant="contained"
             disableElevation
             onClick={handleToggleCP}
@@ -226,7 +226,7 @@ const Gallery: React.FC = () => {
           </div>
 
           <Button
-            className="flex-shrink-0 p-2 rounded-lg min-w-auto aspect-[1/1] spread-btn dark:bg-mountain-900 text-mountain-800 dark:text-mountain-50"
+            className="flex-shrink-0 p-2 rounded-lg min-w-auto aspect-[1/1] spread-btn dark:bg-mountain-900  dark:text-mountain-50"
             variant="contained"
             disableElevation
             onClick={handleTogglePP}

@@ -1,4 +1,4 @@
-import { Category, RawCategory } from "./category";
+import { Category } from "./category";
 import { Media } from "./media";
 import { User } from "./user";
 

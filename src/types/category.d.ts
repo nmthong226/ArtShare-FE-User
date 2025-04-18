@@ -1,7 +1,6 @@
 export interface Category {
-  id: number;
-  name: string;
-  cateName: string;
+  cate_id: number;
+  cate_name: string;
   url: string;
-  createdAt: Date;
+  created_at: Date;
 }

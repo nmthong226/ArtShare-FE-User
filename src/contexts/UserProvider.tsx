@@ -15,7 +15,6 @@ import {
   FacebookAuthProvider,
 } from "firebase/auth";
 import { login, signup } from "@/api/authentication/auth"; // Import your backend login and signup functions
-import { u } from "node_modules/framer-motion/dist/types.d-B50aGbjN";
 
 interface UserContextType {
   user: User | null;

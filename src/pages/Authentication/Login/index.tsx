@@ -6,13 +6,12 @@ import { FaApple } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
+import { useUser } from "@/contexts/UserProvider";
 import { AxiosError } from "axios";
 
-// import { login } from "@/api/authentication/auth"; // Import the login API function
 
 const Login = () => {
-  const { loginWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Using the UserProvider context
+  const { loginWithEmail, authenWithGoogle, signUpWithFacebook } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -23,7 +22,7 @@ const Login = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // Clear previous error
+    setError("");
     setEmailError("");
     setPasswordError("");
     try {
@@ -63,7 +62,7 @@ const Login = () => {
   const handleGoogleLogin = async () => {
     setError(""); // Clear previous error
     try {
-      await signUpWithGoogle(); // Call Google login function from UserProvider
+      await authenWithGoogle(); // Call Google login function from UserProvider
       navigate("/explore"); // Redirect after successful login
     } catch (error) {
       let message = "Something went wrong. Please try again.";

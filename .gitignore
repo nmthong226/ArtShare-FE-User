@@ -26,5 +26,5 @@ dist-ssr
 .nyc_output/
 coverage/
 
-# Ignore assets folder in gen-art feature
-src/features/gen-art/assets/
+# # Ignore assets folder in gen-art feature
+# src/features/gen-art/assets/

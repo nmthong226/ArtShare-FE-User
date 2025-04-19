@@ -25,3 +25,4 @@ dist-ssr
 
 .nyc_output/
 coverage/
+package-lock.json

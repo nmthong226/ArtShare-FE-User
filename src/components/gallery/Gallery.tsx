@@ -155,7 +155,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
   // );
 
   return (
-    <div className="">
+    <div>
       <RowsPhotoAlbum
         spacing={8}
         rowConstraints={{ singleRowMaxHeight: 256 }}

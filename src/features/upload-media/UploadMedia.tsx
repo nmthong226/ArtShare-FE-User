@@ -55,7 +55,8 @@ const UploadMedia: React.FC = () => {
 
     formData.append("title", title);
     if (description) formData.append("description", description);
-    formData.append("cate_ids", JSON.stringify([1, 2]));
+    // TODO: delete this when we have backend for categories
+    formData.append("ids", JSON.stringify([]));
     if (videoUrl) formData.append("video_url", videoUrl);
     if (thumbnailUrl) formData.append("thumbnail_url", thumbnailUrl);
     if (imageFiles) {

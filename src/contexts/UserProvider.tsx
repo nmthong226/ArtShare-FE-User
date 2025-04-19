@@ -19,7 +19,6 @@ import { log } from "console";
 
 interface UserContextType {
   user: User | null;
-  token: string | null;
   error: string | null;
   loading: boolean | null;
   // Updated to return a Promise<string> (token)
@@ -31,12 +30,10 @@ interface UserContextType {
   // Updated to return a Promise<string> (token)
   loginWithEmail: (email: string, password: string) => Promise<string>;
   logout: () => void;
-  signUpWithGoogle: () => Promise<string>;
-  loginWithGoogle: () => void;
+  authenWithGoogle: () => Promise<void>;
   signUpWithFacebook: () => void;
   loginWithFacebook: () => void;
   setUser: (user: User | null) => void;
-  setToken: (token: string | null) => void;
   setError: (error: string) => void;
 }
 
@@ -44,7 +41,6 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true); // Add loading state
 
@@ -60,16 +56,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
               username: "",
             };
             setUser(userData);
-
-            const idToken = await firebaseUser.getIdToken();
-            setToken(idToken);
           } catch (err) {
             console.error("Error retrieving user token:", err);
             setError("Failed to retrieve user token.");
           }
         } else {
           setUser(null);
-          setToken(null);
         }
         setLoading(false); // Authentication check completed
       },
@@ -106,7 +98,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       // Retrieve and set the token
       const token = await user.getIdToken();
       localStorage.setItem("accessToken", token);
-      setToken(token);
 
       // Return the token for further processing (e.g., navigation)
       return token;
@@ -139,7 +130,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         email: user.email || "Unknown",
         username: "", // Add the username property
       });
-      setToken(token);
       const backendResponse = await login(token);
       if (backendResponse) {
         return token;
@@ -155,41 +145,37 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Google Sign-Up or Login
-  const signUpWithGoogle = async (): Promise<string> => {
-    const provider = new GoogleAuthProvider();
+  const authenWithGoogle = async (): Promise<void> => {
     try {
-      const userCredential = await signInWithPopup(auth, provider);
-      // call api to check if not exist by email, create user with email
-      // signup nestjs
-      const user = userCredential.user;
-      const signupResponse = await signup(
-        user.uid,
-        user.email!,
-        "",
-        user.displayName || ""
-      );
-      console.log("signupResopnse: ", signupResponse);
-      const token = await user.getIdToken();
-      let loginResponse = null;
-      localStorage.setItem("accessToken", token);      
-      if (signupResponse.message_type === "USER_ALREADY_EXIST") {
-        loginResponse = await login(token);
+      const { operationType, user: googleUser } = await signInWithPopup(auth, new GoogleAuthProvider());
+      console.log("Google sign-in operation type:", operationType);
+
+      if (operationType !== "signIn") {
+        await signup(
+          googleUser.uid,
+          googleUser.email!,
+          "",
+          googleUser.displayName || ""
+        );
       }
+      const googleToken = await googleUser.getIdToken();
+      const loginResponse = await login(googleToken);
+      console.log("Login response:", loginResponse);
+
+      localStorage.setItem("accessToken", loginResponse.access_token);
       setUser({
-        id: user.uid,
-        name: user.displayName || "Unknown",
-        email: user.email || "Unknown",
+        id: googleUser.uid,
+        name: googleUser.displayName || "Unknown",
+        email: googleUser.email || "Unknown",
         username: "",
       });
-      if (loginResponse && loginResponse.access_token) {
-        setToken(loginResponse.access_token);
-        localStorage.setItem("accessToken", loginResponse.access_token);
-        window.location.href = "/home";
-      }
-      return token;
+
+      console.log("User data after Google sign-in:", user);
+
     } catch (error) {
       setError((error as Error).message);
-      throw error; // Rethrow the error to maintain the Promise<string> contract
+      console.error("Error during Google sign-in:", error);
+      throw error;
     }
   };
 
@@ -206,7 +192,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         email: user.email || "Unknown",
         username: "", // Add the username property with a default value
       });
-      setToken(token);
       // Call backend login API after Firebase authentication
       const backendResponse = await login(token);
       if (backendResponse.success) {
@@ -235,7 +220,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     try {
       await signOut(auth);
       setUser(null);
-      setToken(null);
     } catch (error) {
       setError((error as Error).message);
     }
@@ -245,18 +229,15 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     <UserContext.Provider
       value={{
         user,
-        token,
         error,
         loading,
         loginWithEmail,
         signUpWithEmail,
         logout,
-        signUpWithGoogle,
-        loginWithGoogle: signUpWithGoogle, // Reusing the same function for Google login
+        authenWithGoogle,
         signUpWithFacebook,
         loginWithFacebook: signUpWithFacebook, // Reusing the same function for Facebook login
         setUser,
-        setToken,
         setError,
       }}
     >

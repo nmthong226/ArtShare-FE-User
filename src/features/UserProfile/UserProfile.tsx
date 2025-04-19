@@ -8,6 +8,7 @@ const UserProfile = () => {
   const { username } = useParams();
   const { user } = useUser();
   const isOwner = user?.username === username;
+
   const [selectedTab, setSelectedTab] = useState(0);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {

@@ -24,7 +24,7 @@ import Shop from "@/pages/Shop";
 import ArtGeneration from "@/pages/ArtGeneration";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/pages/Post";
-import UploadMedia from "@/features/upload-media/UploadMedia";
+import UploadMedia from "@/features/post-management/UploadPost";
 import UserProfile from "@/features/UserProfile/UserProfile";
 import MatureContentPage from "./pages/MatureContent/MatureContent";
 
@@ -59,9 +59,9 @@ const InAppPrivateRoutes = [
 
 const App: React.FC = () => {
   return (
-    <UserProvider>
-      <LanguageProvider>
-        <Router>
+    <Router>
+      <UserProvider>
+        <LanguageProvider>
           <RootLayout>
             <Routes>
               {/* Public Auth Routes */}
@@ -109,9 +109,9 @@ const App: React.FC = () => {
               <Route path="/" element={<LandingPage />} />
             </Routes>
           </RootLayout>
-        </Router>
-      </LanguageProvider>
-    </UserProvider>
+        </LanguageProvider>
+      </UserProvider>
+    </Router>
   );
 };
 

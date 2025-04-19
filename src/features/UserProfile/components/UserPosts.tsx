@@ -1,29 +1,31 @@
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useParams } from "react-router-dom";
 import Link from "@mui/material/Link";
 import { AiOutlineLike } from "react-icons/ai";
 import { BiCommentDetail } from "react-icons/bi";
 import { HiOutlineEye } from "react-icons/hi";
-
-const posts = [
-  {
-    id: 2,
-    username: "Jade",
-    handle: "@itsjade",
-    time: "19hr",
-    text: "Testtttt",
-    image: "/logo_app_v_101.png",
-  },
-  {
-    id: 3,
-    username: "Jade",
-    handle: "@itsjade",
-    time: "4d",
-    text: "",
-    image: "/logo_app_v_101.png",
-  },
-];
+import { useEffect, useState } from "react";
+import { fetchUserPosts } from "../api/get-posts-by-user";
+import { Post } from "@/types";
 
 const UserPosts = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const { username } = useParams<{ username: string }>();
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const userPosts: Post[] = await fetchUserPosts(username!, 1);
+        console.log("@@ User posts", userPosts);
+
+        setPosts(userPosts);
+      } catch (error) {
+        console.error("Error fetching user posts:", error);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
   if (posts.length === 0) {
     return (
       <div className="w-full flex items-center justify-center text-gray-400 text-sm">
@@ -43,8 +45,8 @@ const UserPosts = () => {
           underline="none"
         >
           <img
-            src={post.image}
-            alt={post.text || post.username}
+            src={post.thumbnail_url}
+            alt={post.title}
             className="object-cover w-full h-full transition-transform duration-300 "
           />
 
@@ -52,11 +54,9 @@ const UserPosts = () => {
             <div className="flex justify-between items-end w-full">
               <div>
                 <p className="font-medium truncate">
-                  {post.text || "Untitled"}
+                  {post.title || "Untitled"}
                 </p>
-                <p className="text-xs text-gray-300 truncate">
-                  @{post.username}
-                </p>
+                <p className="text-xs text-gray-300 truncate">@{post.user}</p>
               </div>
               <div className="flex flex-col items-end space-y-1 text-xs">
                 <div className="flex items-center space-x-1">

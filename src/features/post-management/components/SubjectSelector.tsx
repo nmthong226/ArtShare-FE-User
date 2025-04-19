@@ -241,7 +241,7 @@ export default function SubjectSelector() {
                       key={idx}
                       src={url}
                       alt={`Example ${idx}`}
-                      className="rounded w-24 h-24 object-cover"
+                      className="rounded w-40 h-40 object-cover"
                     />
                   ))}
                 </div>

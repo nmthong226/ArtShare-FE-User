@@ -143,7 +143,7 @@ export const lightTheme = createTheme({
           "&.Mui-checked": {
             color: "#a5b4fc",
           },
-          "&.Mui-checked + .MuiSwitch-track": {
+          "&.Mui-checked  .MuiSwitch-track": {
             backgroundColor: "#a5b4fc",
           },
         },
@@ -222,7 +222,34 @@ export const lightTheme = createTheme({
         },
       },
     },
-    
+    // Menus
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#ffffff",
+          border: "1px solid #d1d5db",
+          boxShadow: "0 2px 8px rgba(0,0,0,.06)",
+          "& .MuiMenuItem-root": {
+            fontSize: 14,
+            fontWeight: 500,
+            color: "#111827",
+            transition: "background-color .15s",
+            "&:hover": { backgroundColor: "#f3f4f6" }, // hover tint
+          },
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          "&.danger": {
+            // optional “Delete” utility class
+            color: "#ef4444",
+            "&:hover": { backgroundColor: "rgba(239,68,68,.08)" },
+          },
+        },
+      },
+    },
   },
 });
 
@@ -352,6 +379,32 @@ export const darkTheme = createTheme({
         },
       },
     },
-    
+    // Menus
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#262626",
+          border: "1px solid #374151",
+          boxShadow: "0 2px 8px rgba(0,0,0,.5)",
+          "& .MuiMenuItem-root": {
+            fontSize: 14,
+            fontWeight: 500,
+            color: "#ffffff",
+            transition: "background-color .15s",
+            "&:hover": { backgroundColor: "rgba(255,255,255,.08)" },
+          },
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          "&.danger": {
+            color: "#ef4444",
+            "&:hover": { backgroundColor: "rgba(239,68,68,.16)" },
+          },
+        },
+      },
+    },
   },
 });

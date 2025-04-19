@@ -266,7 +266,7 @@ const CollectionPage: React.FC = () => {
         mb={4}
       >
         <Typography variant="h5" component="h1" fontWeight="medium">
-          My Collections
+          Collections
         </Typography>
         <SearchInput
           searchQuery={searchQuery}

@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { CheckIcon, PlusCircleIcon, X } from "lucide-react";
 
-import { SearchInput } from "../SearchInput";
+import { SearchInput } from "../../../components/SearchInput";
 
 export interface SavePostDialogProps {
   open: boolean;

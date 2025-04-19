@@ -11,11 +11,12 @@ import ReactTimeAgo from "react-time-ago";
 import { Post } from "@/types";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
 import { SavePostDialog, DialogCollection } from "./SavePostDialog";
+
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import {
   CreateCollectionDialog,
   CreateCollectionFormData,
-} from "@/features/collections/components/CreateCollectionDialog";
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+} from "@/features/collection/components/CreateCollectionDialog";
 
 const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 

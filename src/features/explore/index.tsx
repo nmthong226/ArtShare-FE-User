@@ -9,7 +9,7 @@ import { SearchContext } from "@/layouts/public/InAppLayout";
 import { categoriesData, propsData } from "@/components/categories/mocks";
 import { Post } from "@/types";
 import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
-import { fetchPosts } from "@/components/gallery/api/post";
+import { fetchPosts } from "./api/get-post";
 
 const getMediaDimensions = (
   url: string,
@@ -30,7 +30,7 @@ const getMediaDimensions = (
   });
 };
 
-const Gallery: React.FC = () => {
+const Explore: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [openCP, setOpenCP] = useState(false);
   const [openPP, setOpenPP] = useState(false);
@@ -286,4 +286,4 @@ const Gallery: React.FC = () => {
   );
 };
 
-export default Gallery;
+export default Explore;

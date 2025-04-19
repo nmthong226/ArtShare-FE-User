@@ -28,6 +28,7 @@ api.interceptors.response.use(
   },
   (error: AxiosError) => {
     if (error.response?.status === 401) {
+      console.error("Unauthorized access - redirecting to login from baseApi.ts");
       window.location.href = "/login";
     }
     return Promise.reject(error);

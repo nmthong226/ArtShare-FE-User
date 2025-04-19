@@ -1,3 +1,4 @@
+import { Post } from "@/types";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { Category } from "@/types/category";
@@ -9,9 +10,8 @@ export const convertCategory = (cat: any): Category => ({
   createdAt: cat.createdAt,
 });
 
-export const mappedCategoryPost = (data: any) => ({
+export const mappedCategoryPost = (data: Post) => ({
   ...data,
-  categories: data.categories.map(convertCategory),
 });
 
 export function cn(...inputs: ClassValue[]) {

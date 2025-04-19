@@ -1,10 +1,10 @@
 import { Category } from "@/types/category";
 
 interface PostTagsProps {
-  categories: Category[];
+  categories?: Category[];
 }
 
-const PostTags: React.FC<PostTagsProps> = ({ categories }) => {
+const PostTags: React.FC<PostTagsProps> = ({ categories = [] }) => {
   return (
     <div className="flex flex-col gap-4 bg-white px-4 py-6 rounded-2xl">
       <div className="font-bold text-xl">Categories</div>

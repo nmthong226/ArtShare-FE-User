@@ -48,7 +48,8 @@ const categoryData: Category[] = [
     id: 1,
     name: "Illustration",
     url: "example.com/category/art",
-    createdAt: new Date(),
+    type: "GENRE",
+    created_at: new Date(),
   },
 ];
 

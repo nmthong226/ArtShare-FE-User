@@ -1,15 +1,15 @@
-import PostInfo from "@/components/posts/PostInfo";
-import PostAssets from "@/components/posts/PostAssets";
-import PostArtist from "@/components/posts/PostArtist";
-import PostComments from "@/components/posts/PostComments";
-import { fetchPost } from "@/components/posts/api/post";
+import PostInfo from "@/features/post/components/PostInfo";
+import PostAssets from "@/features/post/components/PostAssets";
+import PostArtist from "@/features/post/components/PostArtist";
+import PostComments from "@/features/post/components/PostComments";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import PostTags from "@/components/posts/PostTags";
-import PostMoreByArtist from "@/components/posts/PostMoreByArtist";
+import PostTags from "@/features/post/components/PostTags";
+import PostMoreByArtist from "@/features/post/components/PostMoreByArtist";
 // import PostShare from "@/components/posts/PostShare";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
+import { fetchPost } from "./mocks/api";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();

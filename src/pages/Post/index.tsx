@@ -2,7 +2,7 @@ import PostInfo from "@/components/posts/PostInfo";
 import PostAssets from "@/components/posts/PostAssets";
 import PostArtist from "@/components/posts/PostArtist";
 import PostComments from "@/components/posts/PostComments";
-import { fetchPost } from "@/components/post/api/postService";
+import { fetchPost } from "@/components/post/api/get-post";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import PostTags from "@/components/posts/PostTags";

@@ -1,19 +1,20 @@
 //Core
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 //Icons
-import { IoIosSquareOutline } from "react-icons/io";
-import { IoCopyOutline } from "react-icons/io5";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { FiDownload } from "react-icons/fi";
-import { RiFolderUploadLine } from "react-icons/ri";
 import { FiTrash2 } from "react-icons/fi";
-
-//Libs
-import Slider from "react-slick";
 
 //Components
 import { Button, ImageList, ImageListItem } from '@mui/material';
+import GenImage from './GenImage';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import JSZip from 'jszip';
+import { saveAs } from 'file-saver';
 import {
     Dialog,
     DialogContent,
@@ -22,203 +23,155 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from "@/components/ui/avatar"
 
 //Assets
-import example_1 from "../assets/1.webp"
+interface promptResultImage {
+    id: string,
+    url: string
+}
 
 interface promptResultProps {
     prompt: string,
-    images: string[],
+    images: promptResultImage[],
+    generating: boolean | null,
+    progress?: number[] | null,
+    index?: number;
+    resultId?: string;
+    onDelete?: (index: number) => void;
+    onDeleteSingle?: (resultId: string, imageIndex: string) => void;
 }
 
-const PromptResult: React.FC<promptResultProps> = ({ prompt, images }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+const LoadingCell = ({ percent }: { percent: number }) => (
+    <div className='relative flex justify-center items-center bg-mountain-100 rounded-[8px] h-full'>
+        <div className='relative mx-auto border-4 border-t-blue-600 border-blue-300 rounded-full w-16 h-16 animate-spin' />
+        <p className='absolute font-medium text-gray-700 text-sm'>{percent}%</p>
+    </div>
+);
 
-    const handlePrev = () => {
-        setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating, resultId, progress, index, onDelete, onDeleteSingle }) => {
+    const [open, setOpen] = useState(false);
+
+    const handleDownloadAll = async () => {
+        const zip = new JSZip();
+        await Promise.all(
+            images.map(async ({ id, url }, index) => {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                zip.file(`image-${id || index + 1}.jpg`, blob);
+            })
+        );
+
+        const zipBlob = await zip.generateAsync({ type: 'blob' });
+        saveAs(zipBlob, 'images.zip');
     };
 
-    const handleNext = () => {
-        setCurrentIndex((prev) => (prev + 1) % images.length);
-    };
 
-    var settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1
-    };
-    return (
-        <div className='flex flex-col space-y-2'>
-            <div className='flex justify-between items-center space-x-2 w-full'>
-                <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span>{prompt}</p>
-                <div className='flex items-center space-x-2'>
-                    <Button className='flex bg-mountain-100 w-8' title='Post Media'>
-                        <RiFolderUploadLine className='size-5' />
-                    </Button>
-                    <Button className='flex bg-mountain-100 w-8' title='Download'>
-                        <FiDownload className='size-5' />
-                    </Button>
-                    <Button className='flex bg-mountain-100 w-4'>
-                        <FiTrash2 className='size-5 text-red-900' />
-                    </Button>
-                </div>
-            </div>
-            <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
-                {images.map((img, index) => (
-                    <ImageListItem key={index}>
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <img
-                                    src={img}
-                                    alt={`Image ${index + 1}`}
-                                    loading="lazy"
-                                    className='shadow-md cursor-pointer'
-                                    style={{ borderRadius: '8px' }}
-                                    onClick={() => setCurrentIndex(index)}
-                                />
-                            </DialogTrigger>
-                            <DialogContent className='p-0 border-0 rounded-xl min-w-7xl'>
-                                <DialogHeader hidden>
-                                    <DialogTitle>Image Preview</DialogTitle>
-                                    <DialogDescription>Image Description</DialogDescription>
-                                </DialogHeader>
-                                <div className='relative flex h-[680px]'>
-                                    <div className='relative bg-mountain-100 rounded-l-xl w-[65%] h-[680px] overflow-hidden'>
-                                        {/* Left Arrow */}
-                                        <div
-                                            onClick={handlePrev}
-                                            className='top-1/2 left-4 z-50 absolute flex justify-center items-center bg-white hover:bg-mountain-50 rounded-full w-10 h-10 hover:scale-105 -translate-y-1/2 duration-300 ease-in-out cursor-pointer'
-                                        >
-                                            <FaChevronLeft />
-                                        </div>
-                                        {/* Image Slider */}
-                                        <Slider {...settings}>
-                                            <div className="flex justify-center items-center w-full h-full">
-                                                <div
-                                                    className="flex h-full transition-transform duration-500 ease-in-out"
-                                                    style={{
-                                                        transform: `translateX(-${currentIndex * 100}%)`,
-                                                        width: `${images.length * 100}%`,
-                                                    }}
-                                                >
-                                                    {images.map((_img, index) => (
-                                                        <div key={index} className="flex flex-shrink-0 justify-center items-center w-full h-full">
-                                                            <img
-                                                                src={_img}
-                                                                alt={`Preview ${index}`}
-                                                                className="max-w-full max-h-[680px] object-contain"
-                                                            />
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </Slider>
-                                        {/* Right Arrow */}
-                                        <div
-                                            onClick={handleNext}
-                                            className='top-1/2 right-4 z-50 absolute flex justify-center items-center bg-white hover:bg-mountain-50 rounded-full w-10 h-10 hover:scale-105 -translate-y-1/2 duration-300 ease-in-out cursor-pointer'
-                                        >
-                                            <FaChevronRight />
-                                        </div>
-                                    </div>
-                                    <div className='flex flex-col justify-between w-[35%] h-full'>
-                                        <div>
-                                            <div className='flex justify-between items-end p-4 border-mountain-100 border-b w-full h-28'>
-                                                <div className='flex justify-between items-center w-full'>
-                                                    <div className='flex items-center space-x-2'>
-                                                        <Avatar className='size-12'>
-                                                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                                                            <AvatarFallback>CN</AvatarFallback>
-                                                        </Avatar>
-                                                        <p className='font-medium'>Nguyễn Minh Thông</p>
-                                                    </div>
-                                                    <div className='flex'>
-                                                        <Button title='Download'>
-                                                            <FiDownload className='size-5' />
-                                                        </Button>
-                                                        <Button title='Delete'>
-                                                            <FiTrash2 className='size-5' />
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className='flex flex-col space-y-2 p-4 w-full'>
-                                                <div className='flex justify-between items-center w-full'>
-                                                    <p className='font-medium'>Prompt</p>
-                                                    <Button title='Copy' className='bg-mountain-100'>
-                                                        <IoCopyOutline className='size-5' />
-                                                    </Button>
-                                                </div>
-                                                <p className='text-sm line-clamp-2'>{prompt}</p>
-                                            </div>
-                                            <div className='flex space-x-10 p-4 w-full'>
-                                                <div className='flex flex-col space-y-2'>
-                                                    <div className='flex justify-between items-center w-full'>
-                                                        <p className='font-medium'>Model</p>
-                                                    </div>
-                                                    <div className='flex items-center space-x-2'>
-                                                        <img src={example_1} className='rounded-xs w-5 h-5' />
-                                                        <p className='text-mountain-600'>Ultra Realism</p>
-                                                    </div>
-                                                </div>
-                                                <div className='flex flex-col space-y-2'>
-                                                    <div className='flex justify-between items-center w-full'>
-                                                        <p className='font-medium'>Aspect Ratio</p>
-                                                    </div>
-                                                    <div className='flex items-center space-x-2'>
-                                                        <IoIosSquareOutline className='size-5' />
-                                                        <p className='text-mountain-600'>1:1</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className='flex space-x-10 p-4 w-full'>
-                                                <div className='flex flex-col space-y-2'>
-                                                    <div className='flex justify-between items-center w-full'>
-                                                        <p className='font-medium'>Styles</p>
-                                                    </div>
-                                                    <div className='flex items-center space-x-2'>
-                                                        <p className='text-mountain-600'>Default</p>
-                                                    </div>
-                                                </div>
-                                                <div className='flex flex-col space-y-2'>
-                                                    <div className='flex justify-between items-center w-full'>
-                                                        <p className='font-medium'>Lighting</p>
-                                                    </div>
-                                                    <div className='flex items-center space-x-2'>
-                                                        <p className='text-mountain-600'>Default</p>
-                                                    </div>
-                                                </div>
-                                                <div className='flex flex-col space-y-2'>
-                                                    <div className='flex justify-between items-center w-full'>
-                                                        <p className='font-medium'>Camera</p>
-                                                    </div>
-                                                    <div className='flex items-center space-x-2'>
-                                                        <p className='text-mountain-600'>Default</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className='p-2'>
-                                            <Button className='bg-indigo-200 shadow-sm border border-mountain-300 w-full h-12 font-normal'>
-                                                <RiFolderUploadLine className='mr-2 size-5' />
-                                                <p>Post My Media</p>
+    useEffect(() => {
+        let timeout: NodeJS.Timeout;
+
+        if (open) {
+            timeout = setTimeout(() => {
+                onDelete?.(index!); // Trigger delete
+                setOpen(false); // Close dialog after delete
+            }, 2000);
+        }
+
+        return () => clearTimeout(timeout);
+    }, [open]);
+
+    if (generating === false) {
+        return (
+            <div className='flex flex-col space-y-2 w-full'>
+                <div className='flex justify-between items-center space-x-2 w-full'>
+                    <p className='line-clamp-1'><span className='mr-2 font-sans font-medium'>Prompt</span>{prompt}</p>
+                    <div className='flex items-center space-x-2'>
+                        <Button title='Download All' className='bg-mountain-100' onClick={handleDownloadAll}>
+                            <FiDownload className='size-5' />
+                        </Button>
+                        <Popover open={open} onOpenChange={setOpen}>
+                            <PopoverTrigger asChild>
+                                <Button className='flex bg-mountain-100 w-4'>
+                                    <FiTrash2 className='size-5 text-red-900' />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent className="dark:bg-mountain-900 mt-2 mr-6 p-2 border-mountain-100 dark:border-mountain-700 w-48">
+                                <div className="flex flex-col space-y-2">
+                                    <p className='text-sm'>Are you sure to delete?</p>
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button className='bg-mountain-100'>
+                                                <FiTrash2 className='mr-2 size-5' />
+                                                <p className='font-normal'>Delete All</p>
                                             </Button>
-                                        </div>
-                                    </div>
+                                        </DialogTrigger>
+                                        <DialogContent className="flex justify-center sm:max-w-[320px] h-fit cursor-not-allowed" hideCloseButton>
+                                            <DialogHeader>
+                                                <DialogDescription className='flex justify-center items-center space-x-4'>
+                                                    <div className='relative flex justify-center items-center rounded-[8px] h-full'>
+                                                        <div className='relative mx-auto border-4 border-t-blue-600 border-blue-300 rounded-full w-10 h-10 animate-spin' />
+                                                    </div>
+                                                    <DialogTitle className='font-normal text-base text-center'>Deleting These Images</DialogTitle>
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                        </DialogContent>
+                                    </Dialog>
                                 </div>
-                            </DialogContent>
-                        </Dialog>
-                    </ImageListItem>
-                ))}
-            </ImageList>
-        </div>
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </div>
+                <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
+                    {images.map((img, index) => (
+                        <ImageListItem key={index}>
+                            <GenImage
+                                image={img.url}
+                                imageId={img.id}
+                                images={images}
+                                prompt={prompt}
+                                index={index}
+                                onDelete={onDeleteSingle!}
+                                resultId={resultId!} />
+                        </ImageListItem>
+                    ))}
+                </ImageList>
+            </div>
+        )
+    }
+    return (
+        <>
+            {generating && (
+                <div className='flex flex-col space-y-2 w-full'>
+                    <div className='flex justify-between items-center space-x-2 w-full'>
+                        <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span>{prompt}</p>
+                        <div className='flex items-center space-x-2'>
+                            <Button className='flex bg-mountain-100 w-8' title='Download'>
+                                <FiDownload className='size-5' />
+                            </Button>
+                            <Button className='flex bg-mountain-100 w-4'>
+                                <FiTrash2 className='size-5 text-red-900' />
+                            </Button>
+                        </div>
+                    </div>
+                    <ImageList cols={4} gap={8} sx={{ width: '100%', minHeight: '268px' }}>
+                        {images.map((img, imgIndex) => (
+                            <ImageListItem key={index}>
+                                {progress && progress[imgIndex] === 100 ? (
+                                    <GenImage
+                                        image={img.url}
+                                        imageId={img.id}
+                                        images={images}
+                                        prompt={prompt}
+                                        index={imgIndex}
+                                        resultId={resultId!} />
+                                ) : (
+                                    <LoadingCell percent={progress![imgIndex]} />
+                                )}
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                </div>
+            )}
+        </>
     )
 }
 

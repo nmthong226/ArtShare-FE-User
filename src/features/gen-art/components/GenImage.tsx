@@ -99,14 +99,25 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
     return (
         <Dialog open={openDiaLog} onOpenChange={setOpenDiaLog}>
             <DialogTrigger asChild>
-                <img
-                    src={image}
-                    alt={`Image ${imageId}`}
-                    loading="lazy"
-                    className='shadow-md cursor-pointer'
-                    style={{ borderRadius: '8px' }}
-                    onClick={() => { setCurrentIndex(index), setOpenDiaLog(true) }}
-                />
+                <div className='group relative'>
+                    <img
+                        src={image}
+                        alt={`Image ${imageId}`}
+                        loading="lazy"
+                        className='shadow-md cursor-pointer'
+                        style={{ borderRadius: '8px' }}
+                        onClick={() => { setCurrentIndex(index), setOpenDiaLog(true) }}
+                    />
+                    <div className='right-2 bottom-2 absolute flex'>
+                        <div onClick={(e) => {
+                            e.stopPropagation(); // Prevent opening dialog
+                            handleDownload();
+                        }}
+                            className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
+                            <FiDownload className='text-mountain-600' />
+                        </div>
+                    </div>
+                </div>
             </DialogTrigger>
             <DialogContent className='p-0 border-0 rounded-xl min-w-7xl'>
                 <DialogHeader hidden>
@@ -206,6 +217,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
                                         </Button>
                                         <Popover open={open} onOpenChange={setOpen}>
                                             <PopoverTrigger asChild>
+                                                
                                                 <Button className='flex w-4'>
                                                     <FiTrash2 className='size-5' />
                                                 </Button>

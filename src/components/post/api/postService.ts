@@ -1,11 +1,5 @@
 import { MEDIA_TYPE } from "@/constants";
 import { Category, Post, User, Media } from "@/types";
-import { CategoryType } from "@/types/category";
-
-// enum MEDIA_TYPE {
-//   IMAGE = "image",
-//   VIDEO = "video",
-// }
 
 const mediaData: Media[] = [
   {
@@ -57,7 +51,7 @@ const categoryData: Category[] = [
       "https://cdna.artstation.com/p/categories/example_images/000/000/136/thumb/daniel-lugo-azuluz-3.jpg?1586719763",
       "https://cdna.artstation.com/p/categories/example_images/000/000/137/thumb/Screen%20Shot%202020-04-12%20at%203.30.39%20PM.png?1586719850",
     ],
-    cateType: CategoryType.ATTRIBUTE,
+    cateType: "ATTRIBUTE",
     cateDescription: "Artwork with a focus on animated graphics or text.",
     created_at: new Date(),
   },

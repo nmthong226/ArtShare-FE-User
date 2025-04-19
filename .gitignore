@@ -27,4 +27,4 @@ dist-ssr
 coverage/
 
 # # Ignore assets folder in gen-art feature
-# src/features/gen-art/assets/
+src/features/gen-art/assets/

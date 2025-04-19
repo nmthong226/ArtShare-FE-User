@@ -73,12 +73,6 @@ const postData: Post = {
   categories: categoryData,
 };
 
-export const fetchPost = async (postId: number) => {
-  console.log(`Fetching post with ID: ${postId}`);
-  // return await api.get<Post>(`?postId=${postId}`);
-  return { data: postData };
-};
-
 export const fetchPosts = async (
   artistUsername: string,
   page: number,

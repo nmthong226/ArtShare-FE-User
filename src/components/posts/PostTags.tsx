@@ -11,10 +11,10 @@ const PostTags: React.FC<PostTagsProps> = ({ categories }) => {
       <div className="flex flex-wrap gap-2">
         {categories.map((category) => (
           <div
-            key={category.cate_id}
+            key={category.id}
             className="bg-mountain-50 px-2 py-1 rounded text-xs"
           >
-            {category.cate_name}
+            {category.cateName}
           </div>
         ))}
       </div>

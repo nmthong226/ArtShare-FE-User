@@ -20,7 +20,7 @@ import {
   createCollection,
   removePostFromCollection,
   renameCollection,
-} from "./api/mockApi";
+} from "./mocks/api";
 import { CollectionSlider } from "./components/CollectionSlider";
 import { CollectionTitle } from "./components/CollectionTitle";
 import { CollectionGallery } from "./components/CollectionGallery";

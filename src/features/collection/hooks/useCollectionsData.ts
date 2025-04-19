@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Collection, Post } from "@/types";
-import { fetchCollectionsWithPosts } from "../api/mockApi";
+import { fetchCollectionsWithPosts } from "../mocks/api";
 
 export interface UseCollectionsDataResult {
   collections: Collection[];

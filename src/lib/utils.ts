@@ -7,7 +7,8 @@ export const convertCategory = (cat: any): Category => ({
   id: cat.id,
   name: cat.name,
   url: cat.url,
-  createdAt: cat.createdAt,
+  type: cat.type,
+  created_at: cat.createdAt,
 });
 
 export const mappedCategoryPost = (data: Post) => ({

@@ -3,7 +3,6 @@ import api from "@/api/baseApi";
 interface UserProfile {
   username: string;
   email: string;
-  username: string | null;
   profile_picture_url: string | null;
   bio: string | null;
   following_count: number;

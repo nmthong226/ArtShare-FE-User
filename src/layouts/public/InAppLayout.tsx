@@ -52,6 +52,7 @@ import { FiLogIn } from "react-icons/fi";
 import { IoMailOutline } from "react-icons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { FaRegPenToSquare } from "react-icons/fa6";
+import { User } from "@/types";
 
 const UserFunctionality: React.FC<{
   user?: User | null;

@@ -26,7 +26,7 @@ const Login = () => {
     setPasswordError("");
     try {
       await loginWithEmail(email, password);
-      navigate("/gallery");
+      navigate("/explore");
     } catch (err) {
       let errorMessage = "";
       if (err instanceof AxiosError) {
@@ -61,7 +61,7 @@ const Login = () => {
     setError(""); // Clear previous error
     try {
       await authenWithGoogle(); // Call Google login function from UserProvider
-      // navigate("/explore"); // Redirect after successful login
+      navigate("/explore"); // Redirect after successful login
     } catch (error) {
       let message = "Something went wrong. Please try again.";
       if (error instanceof AxiosError) {

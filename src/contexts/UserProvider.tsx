@@ -15,6 +15,10 @@ import {
   FacebookAuthProvider,
 } from "firebase/auth";
 import { login, signup } from "@/api/authentication/auth"; // Import your backend login and signup functions
+import { User } from "@/types";
+import { getUserProfile } from "@/features/UserProfile/api/get-user-profile";
+import { useNavigate } from "react-router-dom";
+import api from "@/api/baseApi";
 
 interface UserContextType {
   user: User | null;
@@ -24,7 +28,7 @@ interface UserContextType {
   signUpWithEmail: (
     email: string,
     password: string,
-    username: string
+    username: string,
   ) => Promise<string>;
   // Updated to return a Promise<string> (token)
   loginWithEmail: (email: string, password: string) => Promise<string>;
@@ -39,22 +43,27 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true); // Add loading state
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(
+    const unsubscribe = auth.onIdTokenChanged(
       async (firebaseUser) => {
         if (firebaseUser) {
           try {
-            const userData: User = {
-              id: firebaseUser.uid,
-              name: firebaseUser.displayName || "Unknown",
-              email: firebaseUser.email || "Unknown",
-              username: "",
-            };
-            setUser(userData);
+            // 1. Get Firebase token
+            const fbToken = await firebaseUser.getIdToken();
+            // 2. Exchange it for your backend JWT
+            const { access_token } = await login(fbToken);
+            // 3. Store and install the backend token
+            localStorage.setItem("accessToken", access_token);
+            api.defaults.headers.common["Authorization"] =
+              `Bearer ${access_token}`;
+            // 4. Now call the protected endpoint
+            const data = await getUserProfile();
+            setUser(data);
           } catch (err) {
             console.error("Error retrieving user token:", err);
             setError("Failed to retrieve user token.");
@@ -67,7 +76,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       (err) => {
         setError(err.message);
         setLoading(false);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -77,14 +86,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const signUpWithEmail = async (
     email: string,
     password: string,
-    username: string
+    username: string,
   ): Promise<string> => {
     try {
       // Create user with Firebase
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 
@@ -96,8 +105,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       // Retrieve and set the token
       const token = await user.getIdToken();
-      localStorage.setItem("accessToken", token);
-
       // Return the token for further processing (e.g., navigation)
       return token;
     } catch (error) {
@@ -107,13 +114,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
   const loginWithEmail = async (
     email: string,
-    password: string
+    password: string,
   ): Promise<string> => {
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
       if (!user?.emailVerified) {
@@ -121,14 +128,11 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         setError(errMsg);
         throw new Error(errMsg);
       }
+
+      const data = await getUserProfile();
+      setUser(data);
       const token = await user.getIdToken();
-      localStorage.setItem("accessToken", token);
-      setUser({
-        id: user.uid,
-        name: user.displayName || "Unknown",
-        email: user.email || "Unknown",
-        username: "", // Add the username property
-      });
+
       const backendResponse = await login(token);
       if (backendResponse) {
         return token;
@@ -146,7 +150,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   // Google Sign-Up or Login
   const authenWithGoogle = async (): Promise<void> => {
     try {
-      const { operationType, user: googleUser } = await signInWithPopup(auth, new GoogleAuthProvider());
+      const { operationType, user: googleUser } = await signInWithPopup(
+        auth,
+        new GoogleAuthProvider(),
+      );
       console.log("Google sign-in operation type:", operationType);
 
       if (operationType !== "signIn") {
@@ -154,7 +161,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           googleUser.uid,
           googleUser.email!,
           "",
-          googleUser.displayName || ""
+          googleUser.displayName || "",
         );
       }
       const googleToken = await googleUser.getIdToken();
@@ -162,15 +169,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       console.log("Login response:", loginResponse);
 
       localStorage.setItem("accessToken", loginResponse.access_token);
-      setUser({
-        id: googleUser.uid,
-        name: googleUser.displayName || "Unknown",
-        email: googleUser.email || "Unknown",
-        username: "",
-      });
-
-      console.log("User data after Google sign-in:", user);
-
+      const data = await getUserProfile();
+      setUser(data);
     } catch (error) {
       setError((error as Error).message);
       console.error("Error during Google sign-in:", error);
@@ -185,26 +185,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const userCredential = await signInWithPopup(auth, provider);
       const user = userCredential.user;
       const token = await user.getIdToken();
-      setUser({
-        id: user.uid,
-        name: user.displayName || "Unknown",
-        email: user.email || "Unknown",
-        username: "", // Add the username property with a default value
-      });
+
       // Call backend login API after Firebase authentication
       const backendResponse = await login(token);
       if (backendResponse.success) {
-        window.location.href = "/home"; // Redirect to home
+        navigate("/home", { replace: true }); // Redirect to home
       } else {
         // Handle new user registration
         const signupResponse = await signup(
           user.uid,
           user.email!,
           "",
-          user.displayName || ""
+          user.displayName || "",
         );
         if (signupResponse.success) {
-          window.location.href = "/home"; // Redirect to home after registration
+          navigate("/home", { replace: true }); // Redirect to home after registration
         } else {
           setError("Error with Facebook login.");
         }

@@ -79,11 +79,9 @@ const UserInAppConfigs = () => {
                 </Avatar>
                 <div className="flex flex-col">
                   <p className="text-mountain-950 dark:text-mountain-50">
-                    {user.name || "User Sample"}
+                    {user.username}
                   </p>
-                  <p className="text-mountain-500 text-xs">
-                    {user.email || "example123@gmail.com"}
-                  </p>
+                  <p className="text-mountain-500 text-xs">{user.email}</p>
                 </div>
               </div>
             </div>

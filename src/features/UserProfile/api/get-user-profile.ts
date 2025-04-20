@@ -11,7 +11,7 @@ import { User } from "@/types";
 export const getUserProfile = async (): Promise<User> => {
   try {
     const response = await api.get<User>("/users/profile");
-    console.log("@@user data", response.data);
+    // console.log("@@user data", response.data);
     return response.data;
   } catch (error) {
     console.error("getUserProfile error:", error);

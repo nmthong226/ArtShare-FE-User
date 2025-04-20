@@ -34,22 +34,32 @@ export function useImageFilesHandler(
   };
 
   const handleRemoveImagePreview = (preview: File) => {
-    const newImagePreviewMap = new Map(imageFilesPreview);
-    URL.revokeObjectURL(newImagePreviewMap.get(preview)!);
-    newImagePreviewMap.delete(preview);
-    setImageFilesPreview(newImagePreviewMap);
-
-    setImageFiles((prevFiles: File[]) =>
-      prevFiles.filter((file) => file !== preview),
-    );
-
-    // no images and video -> remove thumbnail
-    if (newImagePreviewMap.size === 0 && !videoPreviewUrl) {
-      setThumbnailFile(undefined, true);
+    // 1️⃣ Revoke only real blob URLs
+    const url = imageFilesPreview.get(preview);
+    if (url?.startsWith("blob:")) {
+      URL.revokeObjectURL(url);
     }
 
+    // 2️⃣ Delete that one file from the Map
+    const newMap = new Map(imageFilesPreview);
+    newMap.delete(preview);
+    setImageFilesPreview(newMap);
+
+    // 3️⃣ Sync your File[] state
+    setImageFiles((files) => files.filter((f) => f !== preview));
+
+    // 4️⃣ If you just removed the currently‑shown preview, pick a new one
     if (selectedPreview === preview) {
-      setSelectedPreview(undefined);
+      const next = newMap.keys().next().value as File | undefined;
+      setSelectedPreview(next);
+      if (next) {
+        setThumbnailFile(next, true);
+      }
+    }
+
+    // 5️⃣ If nothing’s left (and no video), clear the thumbnail entirely
+    if (newMap.size === 0 && !videoPreviewUrl) {
+      setThumbnailFile(undefined, true);
     }
   };
 

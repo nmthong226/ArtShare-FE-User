@@ -1,103 +1,43 @@
 import { useParams } from "react-router-dom";
 import { useUser } from "@/contexts/UserProvider";
 import UserPosts from "@/features/UserProfile/components/UserPosts";
-import { Box, Typography, Avatar, Button, Tabs, Tab } from "@mui/material";
+import { Box, Tabs, Tab } from "@mui/material";
 import { useState } from "react";
+import { UserProfileCard } from "../user-profile/UserProfileCard";
 
 const UserProfile = () => {
   const { username } = useParams();
   const { user } = useUser();
   const isOwner = user?.username === username;
-
   const [selectedTab, setSelectedTab] = useState(0);
-
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
   };
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "background.default",
-        color: "text.primary",
-        minHeight: "100vh",
-        py: 4,
-        px: { xs: 2, sm: 6, md: 4, lg: 6 },
-      }}
-    >
-      {/* Container for Profile + Posts */}
+    <Box className="sm:px-6 md:px-4 lg:px-6 py-4 bg-mountain-1000 text-white">
+      {/* Container for Posts + Profile Sidebar */}
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
           gap: 4,
+          minHeight: "100vh",
         }}
       >
         {/* TOP SECTION: Profile card */}
         <Box
+          className="w-full bg-mountain-950 rounded-lg p-8"
           sx={{
-            width: "100%",
-            backgroundColor: "background.paper",
-            borderRadius: 2,
-            p: 4,
             overflowY: "auto",
           }}
         >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              textAlign: "center",
-              gap: 2,
-            }}
-          >
-            <Avatar sx={{ width: 80, height: 80 }} />
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              Jade
-            </Typography>
-            <Box sx={{ width: "100%", textAlign: "center" }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  whiteSpace: "normal",
-                  wordBreak: "break-word",
-                  maxWidth: "100%",
-                  color: "text.secondary",
-                }}
-              >
-                @{username}
-              </Typography>
-            </Box>
-            <Typography sx={{ fontSize: "0.875rem", color: "text.secondary" }}>
-              0 Following · 0 Followers
-            </Typography>
-            {isOwner ? (
-              <Button variant="contained" fullWidth>
-                Edit Profile
-              </Button>
-            ) : (
-              <Box sx={{ display: "flex", gap: 2, width: "100%" }}>
-                <Button variant="contained" fullWidth>
-                  Follow
-                </Button>
-                <Button variant="outlined" fullWidth>
-                  Message
-                </Button>
-              </Box>
-            )}
-          </Box>
-          <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" sx={{ color: "text.secondary" }}>
-              Concept Designer with over 16 years crafting immersive visual
-              narratives...
-            </Typography>
-          </Box>
+          <UserProfileCard />
         </Box>
 
         {/* BOTTOM SECTION: Posts */}
-        <Box sx={{ width: "100%" }}>
-          <Box sx={{ mb: 3 }}>
+        <Box className="w-full">
+          <Box className="mb-6">
             <Tabs
               value={selectedTab}
               onChange={handleTabChange}
@@ -105,7 +45,9 @@ const UserProfile = () => {
               indicatorColor="primary"
               sx={{
                 minHeight: 0,
-                ".MuiTabs-flexContainer": { gap: 2 },
+                ".MuiTabs-flexContainer": {
+                  gap: 2,
+                },
               }}
             >
               <Tab
@@ -118,14 +60,8 @@ const UserProfile = () => {
               />
             </Tabs>
           </Box>
-          {selectedTab === 0 && <UserPosts />}
-          {selectedTab === 1 && (
-            <Box sx={{ textAlign: "center" }}>
-              <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                No blogs available.
-              </Typography>
-            </Box>
-          )}
+
+          <UserPosts />
         </Box>
       </Box>
     </Box>

@@ -107,7 +107,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               {postData.description}
             </AnyShowMoreText>
             <div className="text-xs italic">
-              Posted <ReactTimeAgo date={postData.created_at} />
+              Posted <ReactTimeAgo date={new Date(postData.created_at)} />
             </div>
           </div>
           <Divider className="border-0.5" />

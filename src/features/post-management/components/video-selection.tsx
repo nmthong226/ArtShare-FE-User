@@ -5,8 +5,9 @@ import {
   DeleteOutlineOutlined,
   ReplayOutlined,
 } from "@mui/icons-material";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Media } from "@/types";
+import { MEDIA_TYPE } from "@/constants";
 
 export default function VideoSelection({
   imageFilesPreview,
@@ -26,7 +27,7 @@ export default function VideoSelection({
   initialMedias?: Media[];
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
-
+  const [isVideoManuallyRemoved, setIsVideoManuallyRemoved] = useState(false);
   const { handleVideoFileChange, handleRemoveVideoPreview } =
     useVideoFileHandler(
       setVideoFile,
@@ -37,13 +38,24 @@ export default function VideoSelection({
     );
 
   useEffect(() => {
-    if (!initialMedias) return;
+    if (!initialMedias || videoPreviewUrl || isVideoManuallyRemoved) return;
 
-    const video = initialMedias.find((m) => m.media_type === "VIDEO");
+    const video = initialMedias.find((m) => m.media_type === MEDIA_TYPE.VIDEO);
     if (video) {
       setVideoPreviewUrl(video.url);
+
+      const dummyFile = new File([""], "existing_video.mp4", {
+        type: "video/mp4",
+      });
+      setVideoFile(dummyFile);
     }
-  }, [initialMedias]);
+  }, [
+    initialMedias,
+    videoPreviewUrl,
+    isVideoManuallyRemoved, // depend on this!
+    setVideoFile,
+    setVideoPreviewUrl,
+  ]);
 
   return (
     <Box
@@ -94,7 +106,10 @@ export default function VideoSelection({
               variant="text"
               size="small"
               startIcon={<DeleteOutlineOutlined sx={{ fontSize: 18 }} />}
-              onClick={handleRemoveVideoPreview}
+              onClick={() => {
+                handleRemoveVideoPreview();
+                setIsVideoManuallyRemoved(true);
+              }}
               sx={{
                 backgroundColor: "transparent",
                 color: "white",

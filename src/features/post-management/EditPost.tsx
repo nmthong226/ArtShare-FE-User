@@ -23,6 +23,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
 import { nanoid } from "nanoid";
 import { Category, Post } from "@/types";
+import { MEDIA_TYPE } from "@/constants";
 
 const VIDEO_STORAGE_DIRECTORY = "posts";
 
@@ -35,7 +36,6 @@ const EditPost: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
   const location = useLocation();
   const passedPostData = location.state?.postData as Post | undefined;
-
   const {
     data: postData,
     isLoading: isPostLoading,
@@ -73,18 +73,32 @@ const EditPost: React.FC = () => {
   const [lastZoom, setLastZoom] = useState(1);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
+  const [existingVideoUrl, setExistingVideoUrl] = useState<string>();
 
   /** ─────────────────── preload fetched post into state ─────────────────── */
   useEffect(() => {
     if (!postData) return;
 
+    // Populate form state
     setTitle(postData.title);
     setDescription(postData.description ?? "");
     setIsMature(postData.is_mature);
     setAiCreated(postData.ai_created);
 
-    // For simplicity we do not download media files. Users can add/remove files; unchanged media IDs are retained on backend.
-    // But we still want to show current thumbnail preview – handled by UploadForm via thumbnailUrl prop.
+    // 🟣 Extract only image URLs to preserve
+    const existingImages = postData.medias.filter(
+      (m) => m.media_type === MEDIA_TYPE.IMAGE,
+    );
+    setExistingImageUrls(existingImages.map((img) => img.url));
+
+    // 🟣 grab existing video
+    const ev = postData.medias.find((m) => m.media_type === MEDIA_TYPE.VIDEO);
+    if (ev) {
+      setExistingVideoUrl(ev.url);
+      // create a dummy File so handleUploadVideo can detect “existing”
+      setVideoFile(new File([], "existing_video.mp4", { type: "video/mp4" }));
+    }
   }, [postData]);
 
   /** ─────────────────── helpers ─────────────────── */
@@ -100,9 +114,16 @@ const EditPost: React.FC = () => {
       "cate_ids",
       JSON.stringify(data!.categories.map((cat: Category) => cat.id)),
     );
-    if (videoUrl) formData.append("video_url", videoUrl);
+    const finalVideoUrl = videoUrl ?? existingVideoUrl;
+    if (finalVideoUrl) {
+      formData.append("video_url", finalVideoUrl);
+    }
     if (thumbnailUrl) formData.append("thumbnail_url", thumbnailUrl);
-    imageFiles.forEach((file) => formData.append("images", file));
+    imageFiles
+      .filter((file) => file.size > 0) // ⛔️ exclude dummy
+      .forEach((file) => formData.append("images", file));
+    formData.append("existing_image_urls", JSON.stringify(existingImageUrls));
+
     formData.append("is_mature", String(isMature));
     formData.append("ai_created", String(aiCreated));
     return formData;
@@ -110,6 +131,11 @@ const EditPost: React.FC = () => {
 
   const handleUploadVideo = async (): Promise<string | undefined> => {
     if (!videoFile) return undefined;
+
+    if (videoFile.name.startsWith("existing_video")) {
+      return postData?.medias.find((m) => m.media_type === "VIDEO")?.url;
+    }
+
     const presigned: GetPresignedUrlResponse = await getPresignedUrl(
       `${videoFile.name.split(".")[0]}_${nanoid(6)}`,
       videoFile.type.split("/")[1],
@@ -153,6 +179,12 @@ const EditPost: React.FC = () => {
         handleUploadThumbnail(),
       ]);
       const body = createFormData(postData, videoUrl, thumbnailUrl);
+      console.log("🔹 new videoUrl:", videoUrl);
+      console.log("🔹 existingVideoUrl:", existingVideoUrl);
+      console.log("Video url: ", videoUrl);
+      for (const [key, value] of body.entries()) {
+        console.log(`${key}:`, value);
+      }
 
       await updatePost(parseInt(postId!), body);
       showSnackbar("Post updated successfully", "success");

@@ -7,6 +7,7 @@ import {
 } from "@mui/icons-material";
 import { Media } from "@/types";
 import { useEffect } from "react";
+import { MEDIA_TYPE } from "@/constants";
 
 const MAX_IMAGES = 5;
 
@@ -41,19 +42,35 @@ export default function ImagesSelection({
   );
 
   useEffect(() => {
-    if (!initialMedias) return;
+    if (!initialMedias || imageFilesPreview.size > 0) return;
 
-    const imageMedias = initialMedias.filter((m) => m.media_type === "IMAGE");
+    const imageMedias = initialMedias.filter(
+      (m) => m.media_type === MEDIA_TYPE.IMAGE,
+    );
+    console.log("imageMedias", imageMedias);
+    if (imageMedias.length === 0) return;
+
     const previewMap = new Map<File, string>();
+    const dummyFiles: File[] = [];
 
     imageMedias.forEach((media, index) => {
-      const dummyFile = new File([""], `existing_image_${index}`);
+      const dummyFile = new File([""], `existing_image_${index}`, {
+        type: "image/jpeg",
+      });
+      dummyFiles.push(dummyFile);
       previewMap.set(dummyFile, media.url);
     });
 
     setImageFilesPreview(previewMap);
-    setSelectedPreview(previewMap.keys().next().value);
-  }, [initialMedias, setImageFilesPreview, setSelectedPreview]);
+    setImageFiles(dummyFiles); // ✅ this is crucial
+    setSelectedPreview(dummyFiles[0]);
+  }, [
+    initialMedias,
+    imageFilesPreview,
+    setImageFilesPreview,
+    setImageFiles,
+    setSelectedPreview,
+  ]);
 
   return (
     <Box

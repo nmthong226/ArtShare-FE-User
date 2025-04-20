@@ -11,6 +11,7 @@ export interface Post {
   is_private: boolean;
   like_count: number;
   share_count: number;
+  view_count: number;
   comment_count: number;
   created_at: Date;
   thumbnail_url?: string;

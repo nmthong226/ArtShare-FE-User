@@ -6,31 +6,56 @@ import { HiOutlineEye } from "react-icons/hi";
 import { useEffect, useState } from "react";
 import { fetchUserPosts } from "../api/get-posts-by-user";
 import { Post } from "@/types";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
 const UserPosts = () => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
   const { username } = useParams<{ username: string }>();
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    if (!username) return;
+    (async () => {
       try {
-        const userPosts: Post[] = await fetchUserPosts(username!, 1);
+        setLoadingPosts(true);
+        const userPosts = await fetchUserPosts(username, 1);
         console.log("@@ User posts", userPosts);
-
         setPosts(userPosts);
       } catch (error) {
         console.error("Error fetching user posts:", error);
+      } finally {
+        setLoadingPosts(false);
       }
-    };
+    })();
+  }, [username]);
 
-    fetchPosts();
-  }, []);
+  if (!username) return null;
+
+  if (loadingPosts) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height={200}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   if (posts.length === 0) {
     return (
-      <div className="w-full flex items-center justify-center text-gray-400 text-sm">
-        No posts available.
-      </div>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height={200}
+      >
+        <Typography variant="body2" color="textSecondary">
+          No posts available.
+        </Typography>
+      </Box>
     );
   }
 
@@ -47,7 +72,7 @@ const UserPosts = () => {
           <img
             src={post.thumbnail_url}
             alt={post.title}
-            className="object-cover w-full h-full transition-transform duration-300 "
+            className="object-cover w-full h-full transition-transform duration-300"
           />
 
           <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-b from-transparent via-transparent to-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white p-3">
@@ -56,19 +81,23 @@ const UserPosts = () => {
                 <p className="font-medium truncate">
                   {post.title || "Untitled"}
                 </p>
-                <p className="text-xs text-gray-300 truncate">@{post.user}</p>
+                <p className="text-xs text-gray-300 break-words whitespace-normal">
+                  @{username}
+                </p>
               </div>
               <div className="flex flex-col items-end space-y-1 text-xs">
                 <div className="flex items-center space-x-1">
-                  <span className="font-semibold">9</span>
+                  <span className="font-semibold">{post.like_count}</span>
                   <AiOutlineLike className="size-4" />
                 </div>
                 <div className="flex items-center space-x-1">
-                  <span className="font-semibold">23</span>
+                  <span className="font-semibold">{post.comment_count}</span>
                   <BiCommentDetail className="size-4" />
                 </div>
                 <div className="flex items-center space-x-1">
-                  <span className="font-semibold">1k</span>
+                  <span className="font-semibold">
+                    {post.view_count || "X"}
+                  </span>
                   <HiOutlineEye className="size-4" />
                 </div>
               </div>

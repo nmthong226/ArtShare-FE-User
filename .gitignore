@@ -25,4 +25,5 @@ dist-ssr
 
 .nyc_output/
 coverage/
-package-lock.json
+# we dont use npm 
+package-lock.json  

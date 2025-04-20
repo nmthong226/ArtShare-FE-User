@@ -4,6 +4,7 @@ import UserPosts from "@/features/UserProfile/components/UserPosts";
 import { Box, Tabs, Tab } from "@mui/material";
 import { useState } from "react";
 import { UserProfileCard } from "../user-profile/UserProfileCard";
+import UserBlogs from "./components/UserBlogs";
 
 const UserProfile = () => {
   const { username } = useParams();
@@ -36,8 +37,8 @@ const UserProfile = () => {
         </Box>
 
         {/* BOTTOM SECTION: Posts */}
-        <Box className="w-full">
-          <Box className="mb-6">
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ mb: 3 }}>
             <Tabs
               value={selectedTab}
               onChange={handleTabChange}
@@ -45,9 +46,7 @@ const UserProfile = () => {
               indicatorColor="primary"
               sx={{
                 minHeight: 0,
-                ".MuiTabs-flexContainer": {
-                  gap: 2,
-                },
+                ".MuiTabs-flexContainer": { gap: 2 },
               }}
             >
               <Tab
@@ -60,8 +59,8 @@ const UserProfile = () => {
               />
             </Tabs>
           </Box>
-
-          <UserPosts />
+          {selectedTab === 0 && <UserPosts />}
+          {selectedTab === 1 && <UserBlogs />}
         </Box>
       </Box>
     </Box>

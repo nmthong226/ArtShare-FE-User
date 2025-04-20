@@ -5,7 +5,8 @@ import {
   DeleteOutlineOutlined,
   ReplayOutlined,
 } from "@mui/icons-material";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
+import { Media } from "@/types";
 
 export default function VideoSelection({
   imageFilesPreview,
@@ -14,6 +15,7 @@ export default function VideoSelection({
   setThumbnailFile,
   setVideoPreviewUrl,
   hidden,
+  initialMedias,
 }: {
   imageFilesPreview: Map<File, string>;
   videoPreviewUrl: string | undefined;
@@ -21,6 +23,7 @@ export default function VideoSelection({
   setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
   setVideoPreviewUrl: (url: string | undefined) => void;
   hidden: boolean;
+  initialMedias?: Media[];
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -32,6 +35,15 @@ export default function VideoSelection({
       videoPreviewUrl,
       setVideoPreviewUrl,
     );
+
+  useEffect(() => {
+    if (!initialMedias) return;
+
+    const video = initialMedias.find((m) => m.media_type === "VIDEO");
+    if (video) {
+      setVideoPreviewUrl(video.url);
+    }
+  }, [initialMedias]);
 
   return (
     <Box

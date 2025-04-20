@@ -5,6 +5,8 @@ import {
   Add as AddIcon,
   Close as CloseIcon,
 } from "@mui/icons-material";
+import { Media } from "@/types";
+import { useEffect } from "react";
 
 const MAX_IMAGES = 5;
 
@@ -15,6 +17,7 @@ export default function ImagesSelection({
   setImageFiles,
   setThumbnailFile,
   hidden,
+  initialMedias,
 }: {
   imageFilesPreview: Map<File, string>;
   videoPreviewUrl: string | undefined;
@@ -22,6 +25,7 @@ export default function ImagesSelection({
   setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
   setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
   hidden: boolean;
+  initialMedias?: Media[];
 }) {
   const {
     selectedPreview,
@@ -35,6 +39,21 @@ export default function ImagesSelection({
     setImageFiles,
     setThumbnailFile,
   );
+
+  useEffect(() => {
+    if (!initialMedias) return;
+
+    const imageMedias = initialMedias.filter((m) => m.media_type === "IMAGE");
+    const previewMap = new Map<File, string>();
+
+    imageMedias.forEach((media, index) => {
+      const dummyFile = new File([""], `existing_image_${index}`);
+      previewMap.set(dummyFile, media.url);
+    });
+
+    setImageFilesPreview(previewMap);
+    setSelectedPreview(previewMap.keys().next().value);
+  }, [initialMedias, setImageFilesPreview, setSelectedPreview]);
 
   return (
     <Box

@@ -24,13 +24,14 @@ import Shop from "@/pages/Shop";
 import ArtGeneration from "@/pages/ArtGeneration";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/pages/Post";
-import UploadMedia from "@/features/post-management/UploadPost";
+import UploadPost from "@/features/post-management/UploadPost";
 import UserProfile from "@/features/UserProfile/UserProfile";
 import MatureContentPage from "./pages/MatureContent/MatureContent";
 
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
+import EditPost from "./features/post-management/EditPost";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -52,9 +53,10 @@ const InAppPublicRoutes = [
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/posts/new", element: <UploadMedia /> },
+  { path: "/posts/new", element: <UploadPost /> },
   { path: "/create-art", element: <ArtGeneration /> },
   { path: "/artgen", element: <ArtGeneration /> },
+  { path: "/post/:postId/edit", element: <EditPost /> },
 ];
 
 const App: React.FC = () => {

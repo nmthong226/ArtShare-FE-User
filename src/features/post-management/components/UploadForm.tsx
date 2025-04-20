@@ -18,28 +18,6 @@ import {
 } from "@mui/icons-material";
 import { ImageUpIcon } from "lucide-react";
 import { ImageCropperModal } from "@/components/ui/image-cropper-modal";
-// import SearchIcon from "@mui/icons-material/Search";
-// import CloseIcon from "@mui/icons-material/Close";
-
-// // TODO: Define Art Types : Fetch from API
-// const artTypes = [
-//   {
-//     name: "Abstract",
-//     description: "Artwork that focuses on shapes, colors, and forms.",
-//     images: [
-//       "https://example.com/image1.jpg",
-//       "https://example.com/image2.jpg",
-//     ],
-//   },
-//   {
-//     name: "Anatomy",
-//     description: "Anatomical studies of humans and animals.",
-//     images: [
-//       "https://example.com/image3.jpg",
-//       "https://example.com/image4.jpg",
-//     ],
-//   },
-// ];
 
 const UploadForm: React.FC<{
   thumbnailFile: File | undefined;
@@ -59,6 +37,7 @@ const UploadForm: React.FC<{
   lastZoom: number;
   setLastCrop: (value: { x: number; y: number }) => void;
   setLastZoom: (value: number) => void;
+  existingThumbnailUrl?: string;
 }> = ({
   thumbnailFile,
   setOriginalThumbnailFile,
@@ -77,6 +56,7 @@ const UploadForm: React.FC<{
   lastZoom,
   setLastCrop,
   setLastZoom,
+  existingThumbnailUrl,
 }) => {
   // const [description, setDescription] = useState("");
   const [thumbnailCropOpen, setThumbnailCropOpen] = useState(false);
@@ -270,12 +250,19 @@ const UploadForm: React.FC<{
               alt="Thumbnail"
               className="max-h-64"
             />
+          ) : existingThumbnailUrl ? (
+            <img
+              src={existingThumbnailUrl}
+              alt="Existing Thumbnail"
+              className="max-h-64"
+            />
           ) : (
             <>
               <ImageUpIcon className="text-gray-400 text-4xl" />
               <Typography>Upload file</Typography>
             </>
           )}
+
           <input
             type="file"
             accept="image/*"

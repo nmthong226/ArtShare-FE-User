@@ -14,7 +14,7 @@ import { nanoid } from "nanoid";
 import { useNavigate } from "react-router-dom";
 import MediaSelection from "./components/media-selection";
 
-const UploadMedia: React.FC = () => {
+const UploadPost: React.FC = () => {
   const navigate = useNavigate();
   const { showSnackbar } = useSnackbar();
   const [lastCrop, setLastCrop] = useState<{ x: number; y: number }>({
@@ -56,7 +56,7 @@ const UploadMedia: React.FC = () => {
     formData.append("title", title);
     if (description) formData.append("description", description);
     // TODO: delete this when we have backend for categories
-    formData.append("ids", JSON.stringify([]));
+    // formData.append("ids", JSON.stringify([]));
     if (videoUrl) formData.append("video_url", videoUrl);
     if (thumbnailUrl) formData.append("thumbnail_url", thumbnailUrl);
     if (imageFiles) {
@@ -69,6 +69,28 @@ const UploadMedia: React.FC = () => {
       console.log(`${key}:`, value);
     }
     return formData;
+  };
+
+  const validateVideoDuration = (
+    file: File,
+    maxDurationSec = 60,
+  ): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const videoElement = document.createElement("video");
+      videoElement.preload = "metadata";
+
+      videoElement.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(videoElement.src);
+        const isValid = videoElement.duration <= maxDurationSec;
+        resolve(isValid);
+      };
+
+      videoElement.onerror = () => {
+        resolve(false);
+      };
+
+      videoElement.src = URL.createObjectURL(file);
+    });
   };
 
   // Function to handle the form submission
@@ -84,6 +106,15 @@ const UploadMedia: React.FC = () => {
     if ((!imageFiles || imageFiles.length === 0) && !videoFile) {
       showSnackbar("At least one image or video is required.", "error");
       return;
+    }
+
+    // ✅ Video length validation
+    if (videoFile) {
+      const isVideoValid = await validateVideoDuration(videoFile, 60); // 60 sec max
+      if (!isVideoValid) {
+        showSnackbar("Video length cannot exceed 1 minute.", "error");
+        return;
+      }
     }
 
     try {
@@ -312,4 +343,4 @@ const UploadMedia: React.FC = () => {
   );
 };
 
-export default UploadMedia;
+export default UploadPost;

@@ -42,7 +42,7 @@ export const UserProfileCard = () => {
   return (
     <div>
       <ProfileHeader
-        name={profileData.full_name || "Fullname"}
+        name={profileData.username || "Fullname"}
         username={profileData.username || ""}
         avatarUrl={
           "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-PeikEtNBDB6QS6667WSA8RN6kMQUfR.png"
@@ -50,7 +50,7 @@ export const UserProfileCard = () => {
         isFollowing={false}
       />
       <ProfileInfo
-        name={profileData.full_name || "Phan Trương Quý Hòa"}
+        name={profileData.username || "Phan Trương Quý Hòa"}
         username={profileData.username}
         bio={profileData.bio || ""}
         location={"Vietnam"}

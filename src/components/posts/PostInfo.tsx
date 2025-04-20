@@ -13,6 +13,7 @@ import { useFocusContext } from "@/contexts/focus/useFocusText";
 import { SavePostDialog } from "./SavePostDialog";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { auth } from "@/firebase";
+import { useNavigate } from "react-router-dom";
 
 const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
@@ -21,6 +22,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
   const [openSaveDialog, setOpenSaveDialog] = useState(false);
   const [userLike, setUserLike] = useState(false);
   const [likeCount, setLikeCount] = useState(postData.like_count);
+  const navigate = useNavigate();
 
   // State for the ellipsis menu popover
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
@@ -76,9 +78,9 @@ const PostInfo = ({ postData }: { postData: Post }) => {
   };
 
   const handleEdit = () => {
-    // Insert your edit logic here.
-    console.log("Edit clicked");
-    handleMenuClose();
+    navigate(`/post/${postData.id}/edit`, {
+      state: { postData },
+    });
   };
 
   const handleDelete = () => {

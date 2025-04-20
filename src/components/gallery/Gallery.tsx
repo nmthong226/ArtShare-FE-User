@@ -62,7 +62,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
           return {
             key: post.id.toString(),
             title: post.title || "",
-            author: post.user.full_name || "",
+            author: post.user.username || "",
             src: post.thumbnail_url,
             width: mediaDimensions.width,
             height: mediaDimensions.height,

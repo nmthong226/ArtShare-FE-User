@@ -7,7 +7,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import {
@@ -15,24 +15,27 @@ import {
   GetPresignedUrlResponse,
   uploadFile,
 } from "@/api/storage";
-import { fetchPost } from "@/components/posts/api/post";
+import { fetchPost } from "@/components/post/api/get-post";
 import { updatePost } from "./api/update-post";
 import UploadForm from "./components/UploadForm";
 import MediaSelection from "./components/media-selection";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
 import { nanoid } from "nanoid";
-import { Category } from "@/types";
+import { Category, Post } from "@/types";
 
 const VIDEO_STORAGE_DIRECTORY = "posts";
 
 /**
- * EditPostPage – fully‑screen page that reuses UploadMedia components
+ * EditPostPage – fully‑screen page that reuses UploadPost components
  * Route: /posts/:postId/edit
  */
-const EditPostPage: React.FC = () => {
+const EditPost: React.FC = () => {
   /** ──────────────────── fetch post data ─────────────────── */
   const { postId } = useParams<{ postId: string }>();
+  const location = useLocation();
+  const passedPostData = location.state?.postData as Post | undefined;
+
   const {
     data: postData,
     isLoading: isPostLoading,
@@ -41,12 +44,14 @@ const EditPostPage: React.FC = () => {
     queryKey: ["postData", postId],
     enabled: !!postId,
     queryFn: async () => {
+      if (passedPostData) return passedPostData;
       const res = await fetchPost(parseInt(postId!));
       return mappedCategoryPost(res.data);
     },
+    initialData: passedPostData,
   });
 
-  /** ─────────────────── internal UI state (mirrors UploadMedia) ─────────────────── */
+  /** ─────────────────── internal UI state (mirrors UploadPost) ─────────────────── */
   const navigate = useNavigate();
   const { showSnackbar } = useSnackbar();
 
@@ -162,6 +167,8 @@ const EditPostPage: React.FC = () => {
 
   /** ─────────────────── render ─────────────────── */
   if (isPostLoading) {
+    console.log({ postData, isPostLoading, postError });
+
     return (
       <Box className="flex justify-center items-center h-full">
         <LoadingSpinner />
@@ -264,4 +271,4 @@ const EditPostPage: React.FC = () => {
   );
 };
 
-export default EditPostPage;
+export default EditPost;

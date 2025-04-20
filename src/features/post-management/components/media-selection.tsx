@@ -1,10 +1,11 @@
-import { lazy, useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Box } from "@mui/material";
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
 import TabValue from "../enum/media-tab-value";
 import MediaUploadTab from "./media-upload-tab";
 import ImagesSelection from "./images-selection";
+import { Media } from "@/types";
 
 const VideoSelection = lazy(() => import("./video-selection"));
 
@@ -12,11 +13,13 @@ export default function MediaSelection({
   setVideoFile,
   setImageFiles,
   setThumbnailFile,
+  initialMedias,
 }: {
   setVideoFile: (file: File | undefined) => void;
   imageFiles: File[];
   setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
   setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
+  initialMedias?: Media[];
 }) {
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | undefined>(
     undefined,
@@ -52,15 +55,19 @@ export default function MediaSelection({
         setImageFiles={setImageFiles}
         setThumbnailFile={setThumbnailFile}
         hidden={tabValue !== TabValue.UPLOAD_IMAGE}
+        initialMedias={initialMedias}
       />
-      <VideoSelection
-        imageFilesPreview={imageFilesPreview}
-        videoPreviewUrl={videoPreviewUrl}
-        setVideoFile={setVideoFile}
-        setThumbnailFile={setThumbnailFile}
-        setVideoPreviewUrl={setVideoPreviewUrl}
-        hidden={tabValue !== TabValue.UPLOAD_VIDEO}
-      />
+      <Suspense fallback={<div>Loading video component...</div>}>
+        <VideoSelection
+          imageFilesPreview={imageFilesPreview}
+          videoPreviewUrl={videoPreviewUrl}
+          setVideoFile={setVideoFile}
+          setThumbnailFile={setThumbnailFile}
+          setVideoPreviewUrl={setVideoPreviewUrl}
+          hidden={tabValue !== TabValue.UPLOAD_VIDEO}
+          initialMedias={initialMedias}
+        />
+      </Suspense>
     </Box>
   );
 }

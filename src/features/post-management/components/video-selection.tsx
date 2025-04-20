@@ -163,6 +163,16 @@ export default function VideoSelection({
           <Typography variant="body1" className="text-center">
             or drag and drop here
           </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              fontStyle: "italic",
+              color: "text.secondary",
+              mt: 0.5,
+            }}
+          >
+            * Our video upload only allows max 1 minute in length.
+          </Typography>
         </>
       )}
     </Box>

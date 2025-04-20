@@ -36,13 +36,34 @@ export default function useVideoFileHandler(
     }, "image/png");
   };
 
+  const validateVideoDuration = (
+    file: File,
+    maxDurationSec = 60,
+  ): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const videoElement = document.createElement("video");
+      videoElement.preload = "metadata";
+      videoElement.onloadedmetadata = () => {
+        URL.revokeObjectURL(videoElement.src);
+        resolve(videoElement.duration <= maxDurationSec);
+      };
+      videoElement.onerror = () => resolve(false);
+      videoElement.src = URL.createObjectURL(file);
+    });
+  };
+
   const handleVideoFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const newFiles = event.target.files;
     if (!newFiles || newFiles.length === 0) return;
-
     const file = newFiles[0];
+
+    const isValidDuration = await validateVideoDuration(file, 60);
+    if (!isValidDuration) {
+      showSnackbar("Video length cannot exceed 1 minute.", "error");
+      return;
+    }
     setVideoFile(file);
     const url = URL.createObjectURL(file);
     setVideoPreviewUrl(url);

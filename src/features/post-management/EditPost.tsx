@@ -179,12 +179,6 @@ const EditPost: React.FC = () => {
         handleUploadThumbnail(),
       ]);
       const body = createFormData(postData, videoUrl, thumbnailUrl);
-      console.log("🔹 new videoUrl:", videoUrl);
-      console.log("🔹 existingVideoUrl:", existingVideoUrl);
-      console.log("Video url: ", videoUrl);
-      for (const [key, value] of body.entries()) {
-        console.log(`${key}:`, value);
-      }
 
       await updatePost(parseInt(postId!), body);
       showSnackbar("Post updated successfully", "success");

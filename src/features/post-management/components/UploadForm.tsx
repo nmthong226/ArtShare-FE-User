@@ -68,17 +68,12 @@ const UploadForm: React.FC<{
     if (!thumbnailCropOpen || !originalThumbnailFile) return;
 
     const url = URL.createObjectURL(originalThumbnailFile);
-    console.log("🟢 thumbnail url", url);
     setInitialThumbnailUrl(url);
 
     return () => {
       URL.revokeObjectURL(url);
     };
   }, [thumbnailCropOpen, originalThumbnailFile]);
-
-  useEffect(() => {
-    console.log("📤 Sending crop/zoom to modal:", lastCrop, lastZoom);
-  }, [lastCrop, lastZoom]);
 
   return (
     <Box className="space-y-3 mx-auto w-full dark:text-white text-left">

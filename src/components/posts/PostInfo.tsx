@@ -12,14 +12,15 @@ import { Post } from "@/types";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
 import { SavePostDialog } from "./SavePostDialog";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
-
+import { likePost } from "../post/api/likePost";
+import { User } from "firebase/auth";
 const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 const PostInfo = ({ postData }: { postData: Post }) => {
   const { postCommentsRef } = useFocusContext();
   const [open, setOpen] = useState(false);
-
   const [userLike, setUserLike] = useState(false);
+  const [likeCount, setLikeCount] = useState(postData.like_count);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -35,17 +36,26 @@ const PostInfo = ({ postData }: { postData: Post }) => {
     }
   };
 
-  const [likeCount, setLikeCount] = useState(postData.like_count);
+  const handleLikeClick = async () => {
+    try {
+      // Call the likePost API
+      console.log(postData.id);
+      await likePost(postData.id);
 
-  const handleLikeClick = () => {
-    if (userLike) {
-      if (likeCount > 0) {
-        setLikeCount(likeCount - 1);
+      // Update like count based on userLike state
+      if (userLike) {
+        if (likeCount > 0) {
+          setLikeCount(likeCount - 1); // Decrease the like count
+        }
+      } else {
+        setLikeCount(likeCount + 1); // Increase the like count
       }
-    } else {
-      setLikeCount(likeCount + 1); // Increase like count if not liked
+
+      // Toggle user like state
+      setUserLike(!userLike);
+    } catch (error) {
+      console.error("Error liking the post:", error);
     }
-    setUserLike(!userLike); // Toggle user like state
   };
 
   return (
@@ -100,13 +110,9 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               onClick={handleLikeClick}
             >
               {userLike ? (
-                <>
-                  <AiFillLike className="size-6" />
-                </>
+                <AiFillLike className="size-6" />
               ) : (
-                <>
-                  <AiOutlineLike className="size-6" />
-                </>
+                <AiOutlineLike className="size-6" />
               )}
             </Button>
             <Button

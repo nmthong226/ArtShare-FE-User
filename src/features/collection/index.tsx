@@ -13,21 +13,18 @@ import {
   SelectedCollectionId,
   SliderItem,
   SliderItemCollection,
-} from "./types/collectionTypes";
+} from "./types/collection";
 import { useCollectionsData } from "./hooks/useCollectionsData";
 import { useGalleryPhotos } from "./hooks/useGalleryPhotos";
 import {
-  createCollection,
+  deleteCollection,
   removePostFromCollection,
-  renameCollection,
-} from "./mocks/api";
+  updateCollection,
+} from "./api/collection.api";
 import { CollectionSlider } from "./components/CollectionSlider";
 import { CollectionTitle } from "./components/CollectionTitle";
 import { CollectionGallery } from "./components/CollectionGallery";
-import {
-  CreateCollectionDialog,
-  CreateCollectionFormData,
-} from "./components/CreateCollectionDialog";
+import { CreateCollectionDialog } from "./components/CreateCollectionDialog";
 import { SearchInput } from "@/components/SearchInput";
 
 const CollectionPage: React.FC = () => {
@@ -153,26 +150,14 @@ const CollectionPage: React.FC = () => {
   }, []);
 
   const handleCreateCollection = useCallback(
-    async (data: CreateCollectionFormData) => {
+    async (newCollection: Collection) => {
       setActionError(null);
 
-      try {
-        const newCollection: Collection = await createCollection(data);
+      setCollections((prevCollections) => [...prevCollections, newCollection]);
 
-        setCollections((prevCollections) => [
-          ...prevCollections,
-          newCollection,
-        ]);
+      setSelectedCollectionId(newCollection.id);
 
-        setSelectedCollectionId(newCollection.id);
-
-        handleCloseCreateDialog();
-      } catch (err) {
-        console.error("Error creating collection:", err);
-        const errorMsg =
-          err instanceof Error ? err.message : "Failed to create collection.";
-        setActionError(errorMsg);
-      }
+      handleCloseCreateDialog();
     },
     [setCollections, handleCloseCreateDialog],
   );
@@ -183,7 +168,7 @@ const CollectionPage: React.FC = () => {
 
       setActionError(null);
       try {
-        await renameCollection(currentCollection.id, newName);
+        await updateCollection(currentCollection.id, { name: newName });
 
         setCollections((prevCollections) =>
           prevCollections.map((col) =>
@@ -235,6 +220,53 @@ const CollectionPage: React.FC = () => {
     [selectedCollectionId, collections, setCollections],
   );
 
+  const handleRemoveCollection = useCallback(
+    async (collectionIdToRemove: number) => {
+      const collectionToRemove = collections.find(
+        (c) => c.id === collectionIdToRemove,
+      );
+      if (!collectionToRemove) return;
+
+      const confirmed = window.confirm(
+        `Are you sure you want to delete the collection "${collectionToRemove.name}"? This action cannot be undone.`,
+      );
+
+      if (!confirmed) {
+        return;
+      }
+
+      setActionError(null);
+      const originalCollections = [...collections];
+
+      setCollections((prev) =>
+        prev.filter((c) => c.id !== collectionIdToRemove),
+      );
+
+      if (selectedCollectionId === collectionIdToRemove) {
+        setSelectedCollectionId("all");
+      }
+
+      try {
+        await deleteCollection(collectionIdToRemove);
+      } catch (err) {
+        console.error("Error deleting collection:", err);
+        const errorMsg =
+          err instanceof Error ? err.message : "Failed to delete collection.";
+        setActionError(errorMsg);
+
+        setCollections(originalCollections);
+
+        if (
+          selectedCollectionId === "all" &&
+          originalCollections.some((c) => c.id === collectionIdToRemove)
+        ) {
+          setSelectedCollectionId(collectionIdToRemove);
+        }
+      }
+    },
+    [collections, setCollections, selectedCollectionId],
+  );
+
   const galleryTitle = useMemo(() => {
     if (
       loadingCollections &&
@@ -283,6 +315,7 @@ const CollectionPage: React.FC = () => {
           loading={loadingCollections}
           onSelect={handleCollectionSelect}
           onAdd={handleAddCollectionClick}
+          onRemove={handleRemoveCollection}
         />
       </Box>
 
@@ -332,7 +365,8 @@ const CollectionPage: React.FC = () => {
       <CreateCollectionDialog
         open={isCreateDialogOpen}
         onClose={handleCloseCreateDialog}
-        onCreate={handleCreateCollection}
+        onSuccess={handleCreateCollection}
+        existingCollectionNames={collections.map((c) => c.name)}
       />
     </Container>
   );

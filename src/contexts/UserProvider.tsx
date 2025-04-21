@@ -13,6 +13,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   FacebookAuthProvider,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import { login, signup } from "@/api/authentication/auth"; // Import your backend login and signup functions
 import { User } from "@/types";
@@ -25,7 +26,7 @@ interface UserContextType {
   signUpWithEmail: (
     email: string,
     password: string,
-    username: string
+    username: string,
   ) => Promise<string>;
   // Updated to return a Promise<string> (token)
   loginWithEmail: (email: string, password: string) => Promise<string>;
@@ -68,7 +69,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       (err) => {
         setError(err.message);
         setLoading(false);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -78,14 +79,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const signUpWithEmail = async (
     email: string,
     password: string,
-    username: string
+    username: string,
   ): Promise<string> => {
     try {
       // Create user with Firebase
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
 
@@ -108,13 +109,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
   const loginWithEmail = async (
     email: string,
-    password: string
+    password: string,
   ): Promise<string> => {
     try {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = userCredential.user;
       if (!user?.emailVerified) {
@@ -147,16 +148,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   // Google Sign-Up or Login
   const authenWithGoogle = async (): Promise<void> => {
     try {
-      const { operationType, user: googleUser } = await signInWithPopup(auth, new GoogleAuthProvider());
-      console.log("Google sign-in operation type:", operationType);
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+      const { user: googleUser } = result;
+      const { isNewUser } = getAdditionalUserInfo(result)!;
 
-      if (operationType !== "signIn") {
+      if (isNewUser) {
         await signup(
           googleUser.uid,
           googleUser.email!,
           "",
-          googleUser.displayName || ""
+          googleUser.displayName || "",
         );
+        console.log("signup");
       }
       const googleToken = await googleUser.getIdToken();
       const loginResponse = await login(googleToken);
@@ -171,7 +174,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       });
 
       console.log("User data after Google sign-in:", user);
-
     } catch (error) {
       setError((error as Error).message);
       console.error("Error during Google sign-in:", error);
@@ -202,7 +204,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           user.uid,
           user.email!,
           "",
-          user.displayName || ""
+          user.displayName || "",
         );
         if (signupResponse.success) {
           window.location.href = "/home"; // Redirect to home after registration

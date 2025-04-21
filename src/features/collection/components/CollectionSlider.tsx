@@ -8,10 +8,12 @@ import {
   CircularProgress,
   CardActionArea,
   Paper,
+  Tooltip,
+  IconButton,
 } from "@mui/material";
-import { FiPlus as AddIcon } from "react-icons/fi";
+import { FiPlus as AddIcon, FiX as DeleteIcon } from "react-icons/fi";
 import { HorizontalSlider } from "@/components/HorizontalSlider";
-import { SelectedCollectionId, SliderItem } from "../types/collectionTypes";
+import { SelectedCollectionId, SliderItem } from "../types/collection";
 
 const CARD_MIN_WIDTH = 256;
 
@@ -21,6 +23,7 @@ interface CollectionSliderProps {
   loading: boolean;
   onSelect: (id: SelectedCollectionId) => void;
   onAdd: () => void;
+  onRemove: (id: number) => void;
 }
 
 const getSliderItemId = (item: SliderItem): string => {
@@ -42,6 +45,7 @@ const renderSliderItem = (
   loadingCollections: boolean,
   onSelect: (id: SelectedCollectionId) => void,
   onAdd: () => void,
+  onRemove: (id: number) => void,
 ) => {
   const baseCardSx = {
     width: CARD_MIN_WIDTH,
@@ -50,9 +54,9 @@ const renderSliderItem = (
     display: "flex",
     flexDirection: "column",
     transition: "box-shadow 0.3s, border-color 0.3s",
-    overflow: "hidden",
     height: "100%",
     "&:hover": { boxShadow: 3 },
+    overflow: "hidden",
   };
 
   switch (item.type) {
@@ -64,6 +68,7 @@ const renderSliderItem = (
       const title = item.type === "all" ? "All Posts" : item.name;
       const itemId = item.type === "all" ? "all" : item.id;
       const thumbnailUrl = item.thumbnailUrl;
+      const isCollection = item.type === "collection";
 
       return (
         <Card
@@ -73,8 +78,44 @@ const renderSliderItem = (
             ...baseCardSx,
             borderColor: isSelected ? "primary.main" : "grey.300",
             borderWidth: isSelected ? 2 : 1,
+            position: "relative",
           }}
         >
+          {/* --- Remove Button --- */}
+          {isCollection && (
+            <Tooltip title="Remove collection">
+              <IconButton
+                aria-label="Remove collection"
+                size="small"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemove(item.id);
+                }}
+                className="collection-delete-button"
+                sx={{
+                  position: "absolute",
+                  top: 4,
+                  right: 4,
+                  zIndex: 10,
+                  color: "white",
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  opacity: 0,
+                  transition: "opacity 0.2s ease-in-out",
+                  "&:hover": {
+                    backgroundColor: "rgba(200, 0, 0, 0.8)",
+                    opacity: 1,
+                  },
+                  ".group:hover &": {
+                    opacity: 1,
+                  },
+                }}
+              >
+                <DeleteIcon fontSize={16} />
+                {/* Slightly smaller icon */}
+              </IconButton>
+            </Tooltip>
+          )}
+          {/* --- End Remove Button --- */}
           <CardActionArea
             onClick={() => onSelect(itemId)}
             disabled={loadingCollections}
@@ -172,6 +213,7 @@ export const CollectionSlider: React.FC<CollectionSliderProps> = ({
   loading,
   onSelect,
   onAdd,
+  onRemove,
 }) => {
   if (loading && items.length === 0) {
     return (
@@ -205,7 +247,7 @@ export const CollectionSlider: React.FC<CollectionSliderProps> = ({
     <HorizontalSlider
       data={items}
       renderItem={(item) =>
-        renderSliderItem(item, selectedId, loading, onSelect, onAdd)
+        renderSliderItem(item, selectedId, loading, onSelect, onAdd, onRemove)
       }
       getItemId={getSliderItemId}
       wrapperClassName="collection-slider"

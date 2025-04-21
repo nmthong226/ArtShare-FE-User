@@ -19,7 +19,7 @@ import { AiOutlineLike } from "react-icons/ai";
 import { BiCommentDetail } from "react-icons/bi";
 import { HiOutlineEye } from "react-icons/hi";
 import { GalleryPhoto } from "@/components/gallery/Gallery";
-import { SelectedCollectionId } from "../types/collectionTypes";
+import { SelectedCollectionId } from "../types/collection";
 
 export interface CollectionImageRendererOptions {
   onRemovePost: (postId: number) => void;

@@ -8,7 +8,7 @@ import {
 } from "./CollectionImageRenderer";
 
 import { RenderPhotoContext } from "react-photo-album";
-import { SelectedCollectionId } from "../types/collectionTypes";
+import { SelectedCollectionId } from "../types/collection";
 
 interface CollectionGalleryProps {
   photos: GalleryPhoto[];

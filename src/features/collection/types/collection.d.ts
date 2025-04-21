@@ -24,3 +24,10 @@ export type SliderItemAdd = {
   type: "add";
 };
 export type SliderItem = SliderItemAll | SliderItemCollection | SliderItemAdd;
+
+export interface UpdateCollectionData {
+  name?: string;
+  description?: string;
+  isPrivate?: boolean;
+  thumbnailUrl?: string;
+}

@@ -1,3 +1,5 @@
+// TODO: remove this unused file
+
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 
 export default function useVideoFileHandler(

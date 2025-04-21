@@ -35,7 +35,6 @@ const PostInfo = ({ postData }: { postData: Post }) => {
   // Compare postData.user_id to currentUser.uid to determine ownership.
 
   const isOwner = currentUser && postData.user_id === currentUser.uid;
-  console.log("@@@ Test owner", postData.user_id, currentUser?.uid, isOwner);
 
   const handleClickOpen = () => {
     setOpenSaveDialog(true);

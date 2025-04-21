@@ -1,3 +1,5 @@
+// TODO: remove this unused file
+
 import { useState } from "react";
 
 export function useImageFilesHandler(
@@ -6,6 +8,7 @@ export function useImageFilesHandler(
   setImageFilesPreview: (map: Map<File, string>) => void,
   setImageFiles: React.Dispatch<React.SetStateAction<File[]>>,
   setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void,
+  setExistingImageUrls: React.Dispatch<React.SetStateAction<string[]>>,
 ) {
   const [selectedPreview, setSelectedPreview] = useState<File | undefined>(
     undefined,
@@ -34,30 +37,33 @@ export function useImageFilesHandler(
   };
 
   const handleRemoveImagePreview = (preview: File) => {
-    // 1️⃣ Revoke only real blob URLs
+    // 💥 Remove from existingImageUrls if it wasn’t a blob URL
     const url = imageFilesPreview.get(preview);
+    if (url && !url.startsWith("blob:")) {
+      setExistingImageUrls((prev) => prev.filter((u) => u !== url));
+    }
+
+    // 🔄 Revoke object URL if needed
     if (url?.startsWith("blob:")) {
       URL.revokeObjectURL(url);
     }
 
-    // 2️⃣ Delete that one file from the Map
+    // 1️⃣ Remove from your Map
     const newMap = new Map(imageFilesPreview);
     newMap.delete(preview);
     setImageFilesPreview(newMap);
 
-    // 3️⃣ Sync your File[] state
+    // 2️⃣ Remove from your File[] state
     setImageFiles((files) => files.filter((f) => f !== preview));
 
-    // 4️⃣ If you just removed the currently‑shown preview, pick a new one
+    // 3️⃣ Adjust selected preview if needed
     if (selectedPreview === preview) {
       const next = newMap.keys().next().value as File | undefined;
       setSelectedPreview(next);
-      if (next) {
-        setThumbnailFile(next, true);
-      }
+      if (next) setThumbnailFile(next, true);
     }
 
-    // 5️⃣ If nothing’s left (and no video), clear the thumbnail entirely
+    // 4️⃣ If nothing’s left (and no video), clear the thumbnail
     if (newMap.size === 0 && !videoPreviewUrl) {
       setThumbnailFile(undefined, true);
     }

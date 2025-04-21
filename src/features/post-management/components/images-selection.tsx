@@ -1,3 +1,5 @@
+// TODO: remove this unused file
+
 import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import { useImageFilesHandler } from "../hooks/use-image-files";
 import {
@@ -6,7 +8,7 @@ import {
   Close as CloseIcon,
 } from "@mui/icons-material";
 import { Media } from "@/types";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { MEDIA_TYPE } from "@/constants";
 
 const MAX_IMAGES = 5;
@@ -19,6 +21,7 @@ export default function ImagesSelection({
   setThumbnailFile,
   hidden,
   initialMedias,
+  setExistingImageUrls,
 }: {
   imageFilesPreview: Map<File, string>;
   videoPreviewUrl: string | undefined;
@@ -27,6 +30,7 @@ export default function ImagesSelection({
   setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
   hidden: boolean;
   initialMedias?: Media[];
+  setExistingImageUrls: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const {
     selectedPreview,
@@ -39,10 +43,12 @@ export default function ImagesSelection({
     setImageFilesPreview,
     setImageFiles,
     setThumbnailFile,
+    setExistingImageUrls,
   );
+  const didInit = useRef(false);
 
   useEffect(() => {
-    if (!initialMedias || imageFilesPreview.size > 0) return;
+    if (!initialMedias || didInit.current) return;
 
     const imageMedias = initialMedias.filter(
       (m) => m.media_type === MEDIA_TYPE.IMAGE,
@@ -62,8 +68,9 @@ export default function ImagesSelection({
     });
 
     setImageFilesPreview(previewMap);
-    setImageFiles(dummyFiles); // ✅ this is crucial
+    setImageFiles(dummyFiles);
     setSelectedPreview(dummyFiles[0]);
+    didInit.current = true;
   }, [
     initialMedias,
     imageFilesPreview,

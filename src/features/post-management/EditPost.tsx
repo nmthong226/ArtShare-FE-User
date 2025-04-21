@@ -115,14 +115,16 @@ const EditPost: React.FC = () => {
       JSON.stringify(data!.categories.map((cat: Category) => cat.id)),
     );
     const finalVideoUrl = videoUrl ?? existingVideoUrl;
-    if (finalVideoUrl) {
-      formData.append("video_url", finalVideoUrl);
-    }
+    formData.append("video_url", finalVideoUrl ?? "");
+
     if (thumbnailUrl) formData.append("thumbnail_url", thumbnailUrl);
     imageFiles
       .filter((file) => file.size > 0) // ⛔️ exclude dummy
       .forEach((file) => formData.append("images", file));
-    formData.append("existing_image_urls", JSON.stringify(existingImageUrls));
+
+    if (existingImageUrls.length > 0) {
+      formData.append("existing_image_urls", JSON.stringify(existingImageUrls));
+    }
 
     formData.append("is_mature", String(isMature));
     formData.append("ai_created", String(aiCreated));
@@ -179,7 +181,10 @@ const EditPost: React.FC = () => {
         handleUploadThumbnail(),
       ]);
       const body = createFormData(postData, videoUrl, thumbnailUrl);
-
+      for (const [key, value] of body.entries()) {
+        // Note: value could be a File or a string
+        console.log(key, value);
+      }
       await updatePost(parseInt(postId!), body);
       showSnackbar("Post updated successfully", "success");
       navigate(`/posts/${postId}`);
@@ -235,11 +240,12 @@ const EditPost: React.FC = () => {
       >
         {/* LEFT: Media selection */}
         <MediaSelection
-          imageFiles={imageFiles}
           setImageFiles={setImageFiles}
           setVideoFile={setVideoFile}
           setThumbnailFile={(f) => setThumbnailFile(f)}
           initialMedias={postData.medias}
+          setExistingImageUrls={setExistingImageUrls}
+          setExistingVideoUrl={setExistingVideoUrl}
         />
 
         {/* RIGHT: form */}

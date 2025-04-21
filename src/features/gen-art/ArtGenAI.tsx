@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 //Components
-import { Button, TextareaAutosize } from '@mui/material';
+import { Button, CircularProgress, TextareaAutosize } from '@mui/material';
 import PromptResult from './components/PromptResult';
 import TokenPopover from './components/TokenPopover';
 import SettingsPanel from './components/SettingsPanel/SettingsPanel';
@@ -122,6 +122,16 @@ const ArtGenAI = () => {
     const [generatingImage, setGeneratingImage] = useState<boolean | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        // Simulate loading or replace with your actual fetch call
+        const timer = setTimeout(() => {
+            setLoading(false); // Set to false after data is fetched
+        }, 1500); // Adjust time or remove if you have real async logic
+
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleGenerate = () => {
         if (!userPrompt.trim()) return;
@@ -258,39 +268,50 @@ const ArtGenAI = () => {
             </div>
             <div className='relative flex justify-end w-full h-full'>
                 <div className={`flex relative h-full custom-scrollbar flex-col ${expanded ? 'w-[78%]' : 'w-full delay-300'} items-start transition-all duration-200 ease-in-out`}>
-                    <div
-                        ref={scrollRef}
-                        className='flex flex-col space-y-10 pr-4 w-full h-full overflow-y-auto custom-scrollbar'>
-                        {promptResults.map((result, index) => (
-                            <PromptResult
-                                key={index}
-                                prompt={result.prompt}
-                                images={result.images}
-                                generating={false}
-                                index={index}
-                                onDelete={() => handleDeleteResult(result.id)}
-                                onDeleteSingle={handleDeleteSingleResult}
-                                resultId={result.id}
-                            />
-                        ))}
-                        {/* Render current in-progress generation */}
-                        {generatingImage && (
-                            <PromptResult
-                                prompt={" " + committedPrompt}
-                                images={result3_images} // This can be [] or placeholder thumbnails
-                                generating={true}
-                                progress={loadingProgress}
-                            />
-                        )}
-                        <div className='flex flex-col space-y-2'>
-                            <div className='flex h-64' />
+                    {loading ? (
+                        <div className="flex justify-center items-start mt-4 w-full h-full">
+                            <div className='flex items-center space-x-4'>
+                                <CircularProgress size={32} thickness={4} />
+                                <p className='text-sm'>Loading...</p>
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div ref={scrollRef} className='flex flex-col space-y-10 pr-4 w-full h-full overflow-y-auto custom-scrollbar'>
+                            {promptResults.map((result, index) => (
+                                <PromptResult
+                                    key={index}
+                                    prompt={result.prompt}
+                                    images={result.images}
+                                    generating={false}
+                                    index={index}
+                                    onDelete={() => handleDeleteResult(result.id)}
+                                    onDeleteSingle={handleDeleteSingleResult}
+                                    resultId={result.id}
+                                />
+                            ))}
+                            {generatingImage && (
+                                <>
+                                    <PromptResult
+                                        prompt={" " + committedPrompt}
+                                        images={result3_images}
+                                        generating={true}
+                                        progress={loadingProgress}
+                                    />
+                                    <div className='flex justify-center items-center py-10'>
+                                        <CircularProgress size={32} thickness={4} />
+                                    </div>
+                                </>
+                            )}
+                            <div className='flex flex-col space-y-2'>
+                                <div className='flex h-64' />
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <div className='bottom-0 z-0 absolute flex bg-white blur-3xl w-full h-40' />
             </div>
             {/* Prompt Chat */}
-            <div className={`flex bottom-4 items-end left-1/2 z-50 absolute transform duration-300 ease-in-out ${expanded ? '-translate-x-1/4': '-translate-x-1/2  delay-300'}`}>
+            <div className={`flex bottom-4 items-end left-1/2 z-50 absolute transform duration-300 ease-in-out ${expanded ? '-translate-x-1/4' : '-translate-x-1/2  delay-300'}`}>
                 <div className={`flex flex-col bg-white border ${promptExpanded ? 'border-indigo-600 shadow-lg' : 'border-mountain-300 shadow-md'} rounded-xl w-[720px] relative`}>
                     <div
                         className={`flex bg-white rounded-xl w-[719px] border-0 rounded-b-none overflow-hidden transition-all duration-400 ease-in-out transform

@@ -17,11 +17,6 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar"
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
 
 //Assets
 import example_1 from "../assets/1.webp"
@@ -29,11 +24,13 @@ import example_1 from "../assets/1.webp"
 //Icons
 import { IoIosSquareOutline } from "react-icons/io";
 import { IoCopyOutline } from "react-icons/io5";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-import { Button } from '@mui/material';
+import { FaChevronLeft, FaChevronRight, FaRegPenToSquare } from "react-icons/fa6";
+import { Button, Tooltip } from '@mui/material';
 import { FiDownload } from "react-icons/fi";
 import { RiFolderUploadLine } from "react-icons/ri";
 import { FiTrash2 } from "react-icons/fi";
+import { useNavigate } from 'react-router-dom';
+import DeleteButton from './DeleteConfirmation';
 
 interface PromptResult {
     id: string,
@@ -54,9 +51,11 @@ const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 
 const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, images, prompt, onDelete }) => {
+    const [deleteImage, setDeleteImage] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [open, setOpen] = useState(false);
     const [openDiaLog, setOpenDiaLog] = useState(false);
+    const navigate = useNavigate();
 
     const handlePrev = () => {
         setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
@@ -82,6 +81,10 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
         document.body.removeChild(link);
     };
 
+    const handleNavigateToEdit = () => {
+        navigate("/edit-image");
+    };
+
     useEffect(() => {
         let timeout: NodeJS.Timeout;
 
@@ -96,26 +99,87 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
         return () => clearTimeout(timeout);
     }, [open]);
 
+    const handleDelete = () => {
+        let timeout: NodeJS.Timeout;
+        timeout = setTimeout(() => {
+            onDelete?.(resultId, imageId);
+            setOpen(false);
+            setDeleteImage(false);
+        }, 2000);
+    }
+
     return (
         <Dialog open={openDiaLog} onOpenChange={setOpenDiaLog}>
             <DialogTrigger asChild>
                 <div className='group relative'>
-                    <img
-                        src={image}
-                        alt={`Image ${imageId}`}
-                        loading="lazy"
-                        className='shadow-md cursor-pointer'
-                        style={{ borderRadius: '8px' }}
-                        onClick={() => { setCurrentIndex(index), setOpenDiaLog(true) }}
-                    />
-                    <div className='right-2 bottom-2 absolute flex'>
-                        <div onClick={(e) => {
-                            e.stopPropagation(); // Prevent opening dialog
-                            handleDownload();
-                        }}
-                            className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
-                            <FiDownload className='text-mountain-600' />
-                        </div>
+                    <div className='relative flex'>
+                        <img
+                            src={image}
+                            alt={`Image ${imageId}`}
+                            loading="lazy"
+                            className='relative shadow-md cursor-pointer'
+                            style={{ borderRadius: '8px' }}
+                            onClick={() => { setCurrentIndex(index), setOpenDiaLog(true) }}
+                        />
+                        {deleteImage === true && (
+                            <div className='absolute flex justify-center items-center bg-black/20 w-full h-full'>
+                                <div className='flex flex-col space-y-2 bg-white p-2 rounded-lg h-fit'>
+                                    <p className='text-sm'>Are you sure to delete?</p>
+                                    <Dialog>
+                                        <DialogTrigger asChild>
+                                            <Button className='bg-mountain-100' onClick={(e) => {
+                                                e.stopPropagation(); // Prevent opening dialog
+                                                handleDelete();
+                                            }}>
+                                                <FiTrash2 className='mr-2 size-5' />
+                                                <p className='font-normal'>Delete This</p>
+                                            </Button>
+                                        </DialogTrigger>
+                                        <DialogContent className="flex justify-center sm:max-w-[320px] h-fit cursor-not-allowed" hideCloseButton>
+                                            <DialogHeader>
+                                                <DialogDescription className='flex justify-center items-center space-x-4'>
+                                                    <div className='relative flex justify-center items-center rounded-[8px] h-full'>
+                                                        <div className='relative mx-auto border-4 border-t-blue-600 border-blue-300 rounded-full w-10 h-10 animate-spin' />
+                                                    </div>
+                                                    <DialogTitle className='font-normal text-base text-center'>Deleting This Image</DialogTitle>
+                                                </DialogDescription>
+                                            </DialogHeader>
+                                        </DialogContent>
+                                    </Dialog>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className='bottom-2 left-2 absolute flex'>
+                        <Tooltip title="Download">
+                            <div onClick={(e) => {
+                                e.stopPropagation(); // Prevent opening dialog
+                                handleDownload();
+                            }}
+                                className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
+                                <FiDownload className='text-mountain-600' />
+                            </div>
+                        </Tooltip>
+                    </div>
+                    <div className='right-2 bottom-2 absolute flex space-x-2'>
+                        <Tooltip title="Edit">
+                            <div onClick={(e) => {
+                                e.stopPropagation(); // Prevent opening dialog
+                                handleNavigateToEdit();
+                            }}
+                                className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
+                                <FaRegPenToSquare className='size-4 text-mountain-600' />
+                            </div>
+                        </Tooltip>
+                        <Tooltip title="Delete">
+                            <div onClick={(e) => {
+                                e.stopPropagation(); // Prevent opening dialog
+                                setDeleteImage(true);
+                            }}
+                                className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
+                                <FiTrash2 className='text-mountain-600' />
+                            </div>
+                        </Tooltip>
                     </div>
                 </div>
             </DialogTrigger>
@@ -215,37 +279,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
                                         <Button title='Download' onClick={handleDownload}>
                                             <FiDownload className='size-5' />
                                         </Button>
-                                        <Popover open={open} onOpenChange={setOpen}>
-                                            <PopoverTrigger asChild>
-                                                
-                                                <Button className='flex w-4'>
-                                                    <FiTrash2 className='size-5' />
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="dark:bg-mountain-900 mt-2 mr-6 p-2 border-mountain-100 dark:border-mountain-700 w-48">
-                                                <div className="flex flex-col space-y-2">
-                                                    <p className='text-sm'>Are you sure to delete?</p>
-                                                    <Dialog>
-                                                        <DialogTrigger asChild>
-                                                            <Button className='bg-mountain-100'>
-                                                                <FiTrash2 className='mr-2 size-5' />
-                                                                <p className='font-normal'>Delete This</p>
-                                                            </Button>
-                                                        </DialogTrigger>
-                                                        <DialogContent className="flex justify-center sm:max-w-[320px] h-fit cursor-not-allowed" hideCloseButton>
-                                                            <DialogHeader>
-                                                                <DialogDescription className='flex justify-center items-center space-x-4'>
-                                                                    <div className='relative flex justify-center items-center rounded-[8px] h-full'>
-                                                                        <div className='relative mx-auto border-4 border-t-blue-600 border-blue-300 rounded-full w-10 h-10 animate-spin' />
-                                                                    </div>
-                                                                    <DialogTitle className='font-normal text-base text-center'>Deleting This Image</DialogTitle>
-                                                                </DialogDescription>
-                                                            </DialogHeader>
-                                                        </DialogContent>
-                                                    </Dialog>
-                                                </div>
-                                            </PopoverContent>
-                                        </Popover>
+                                        <DeleteButton open={open} setOpen={setOpen} />
                                     </div>
                                 </div>
                             </div>

@@ -21,7 +21,7 @@ import Gallery from "./pages/Gallery";
 import Blogs from "./pages/Blogs";
 import Shop from "@/pages/Shop";
 // import SubmitMedia from "@/pages/SubmitMedia";
-import ArtGeneration from "@/pages/ArtGeneration";
+import ArtGeneration from "@/pages/ArtGen";
 import Portfolio from "@/pages/Portfolio";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/pages/Post";
@@ -32,6 +32,7 @@ import MatureContentPage from "./pages/MatureContent/MatureContent";
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
+import ImageEditor from "./pages/EditImage";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -53,9 +54,9 @@ const InAppPublicRoutes = [
 
 const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
-  { path: "/create-art", element: <ArtGeneration /> },
   { path: "/portfolio", element: <Portfolio /> },
-  { path: "/artgen", element: <ArtGeneration /> },
+  { path: "/create-art", element: <ArtGeneration /> },
+  { path: "/edit-image", element: <ImageEditor /> },
   { path: "/:username", element: <UserProfile /> },
 ];
 

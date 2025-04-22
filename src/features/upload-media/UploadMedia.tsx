@@ -217,8 +217,8 @@ const UploadMedia: React.FC = () => {
         </Backdrop>
       )}
 
-      <Box
-        className="w-full px-6 py-3 border-b border-mountain-200 dark:border-mountain-700 bg-white dark:bg-mountain-900 shadow-sm"
+      {/* <Box
+        className="bg-white dark:bg-mountain-900 shadow-sm px-6 py-3 border-mountain-200 dark:border-mountain-700 border-b w-full"
         sx={{
           display: "flex",
           alignItems: "center",
@@ -230,14 +230,14 @@ const UploadMedia: React.FC = () => {
       >
         <Typography
           variant="h6"
-          className="text-gray-900 dark:text-white font-semibold"
+          className="font-semibold text-gray-900 dark:text-white"
         >
           Create Post
         </Typography>
-      </Box>
+      </Box> */}
 
       <Box
-        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem-56px)]"
+        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem)]"
         style={{ overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}

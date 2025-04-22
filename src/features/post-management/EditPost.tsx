@@ -223,16 +223,6 @@ const EditPost: React.FC = () => {
         </Backdrop>
       )}
 
-      {/* Header */}
-      <Box className="w-full px-6 py-3 border-b border-mountain-200 dark:border-mountain-700 bg-white dark:bg-mountain-900 shadow-sm sticky top-0 z-10 flex items-center justify-between">
-        <Typography
-          variant="h6"
-          className="text-gray-900 dark:text-white font-semibold"
-        >
-          Edit Post
-        </Typography>
-      </Box>
-
       {/* Body */}
       <Box
         className="flex gap-3 p-4 w-full h-[calc(100vh-4rem-56px)]"

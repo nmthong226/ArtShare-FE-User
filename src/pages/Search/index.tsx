@@ -139,7 +139,7 @@ const Search = () => {
         <div className="flex justify-center items-center w-full h-12">
           {selectedCategories.length > 0 ? (
             <>
-              <p className="mr-2 text-mountain-400">Include: </p>
+              <p className="mr-2 text-mountain-400">In: </p>
               <CategoryList selectedCategories={selectedCategories} setSelectedCategories={setSelectedCategories}/>
             </>
           ) : (

@@ -11,8 +11,8 @@ import { TbCategory } from "react-icons/tb";
 import { DataPopper } from "@/components/categories/Categories";
 import { categoriesData } from "@/components/categories/mocks";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import SortMenu from "@/components/dropdowns/Sort";
+import CategoryList from "@/components/filters/Filter";
 
 const Search = () => {
   const { query, setQuery } = useSearch();
@@ -140,19 +140,7 @@ const Search = () => {
           {selectedCategories.length > 0 ? (
             <>
               <p className="mr-2 text-mountain-400">Include: </p>
-              {selectedCategories.map((cate, index) => (
-                <div key={index} className="flex justify-center items-center bg-white shadow mx-1 px-4 rounded-lg h-10">
-                  <p className="mr-2 text-sm">{cate}</p>
-                  <X
-                    className="size-4 text-mountain-400 hover:text-red-600 cursor-pointer"
-                    onClick={() =>
-                      setSelectedCategories((prev) =>
-                        prev.filter((c) => c !== cate)
-                      )
-                    }
-                  />
-                </div>
-              ))}
+              <CategoryList selectedCategories={selectedCategories} setSelectedCategories={setSelectedCategories}/>
             </>
           ) : (
             <div className="text-mountain-400">Tips: Want more specific results? Try adding filters.</div>

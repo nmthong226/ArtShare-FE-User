@@ -19,20 +19,14 @@ const Search = () => {
   const [inputValue, setInputValue] = useState(query);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [showChannelDropdown, setShowChannelDropdown] = useState(false);
+  const [, setShowChannelDropdown] = useState(false);
   const [tab, setTab] = useState<string>("posts");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [searchParams, setSearchParams] = useSearchParams();
   const [openCP, setOpenCP] = useState(false);
-  const [openPP, setOpenPP] = useState(false);
   const [anchorElCP, setAnchorElCP] = useState<null | HTMLElement>(null);
-  const [anchorElPP, setAnchorElPP] = useState<null | HTMLElement>(null);
   const [sort, setSort] = useState("Sort by Relevance");
 
-  const handleTogglePP = () => (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorElPP(event.currentTarget);
-    setOpenPP((prevOpen) => !prevOpen);
-  };
 
   const handleToggleCP = () => (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorElCP(event.currentTarget);

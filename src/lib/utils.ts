@@ -1,20 +1,11 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { Category } from "@/types/category";
+import { Post } from "@/types";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-export const convertCategory = (cat: any): Category => ({
-  id: cat.id,
-  cateName: cat.cate_name,
-  name: cat.name,
-  url: cat.url,
-  createdAt: cat.createdAt
-});
-
-export const mappedCategoryPost = (data: any) => ({
+export const mappedCategoryPost = (data: Post) => ({
   ...data,
-  categories: data.categories.map(convertCategory),
 });
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }

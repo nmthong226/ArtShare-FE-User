@@ -45,7 +45,9 @@ const PostArtist = ({ artist }: { artist: User }) => {
               )}
             </div>
             <div className="flex flex-col pt-0.5">
-              <div className="font-bold text-xl">{artist.fullName || "Mock User"}</div>
+              <div className="font-bold text-xl">
+                {artist.fullName || "Mock User"}
+              </div>
               {/* <div className="text-sm line-clamp-1">@{artist.username}</div> */}
               <div className="text-sm line-clamp-1">@{"nickname"}</div>
             </div>

@@ -1,11 +1,6 @@
 import { MEDIA_TYPE } from "@/constants";
 import { Category, Post, User, Media } from "@/types";
 
-// enum MEDIA_TYPE {
-//   IMAGE = "image",
-//   VIDEO = "video",
-// }
-
 const mediaData: Media[] = [
   {
     media_type: MEDIA_TYPE.IMAGE,
@@ -15,7 +10,7 @@ const mediaData: Media[] = [
     downloads: 100,
     created_at: new Date(),
     id: 1,
-    post_id: 1
+    post_id: 1,
   },
   {
     media_type: MEDIA_TYPE.IMAGE,
@@ -25,7 +20,7 @@ const mediaData: Media[] = [
     downloads: 100,
     created_at: new Date(),
     id: 2,
-    post_id: 1
+    post_id: 1,
   },
   {
     media_type: MEDIA_TYPE.IMAGE,
@@ -35,7 +30,7 @@ const mediaData: Media[] = [
     downloads: 100,
     created_at: new Date(),
     id: 3,
-    post_id: 1
+    post_id: 1,
   },
 ];
 
@@ -49,10 +44,16 @@ const userData: User = {
 const categoryData: Category[] = [
   {
     id: 1,
-    name: "Illustration",
-    cateName: "Art",
-    url: "example.com/category/art",
-    createdAt: new Date(),
+    cateName: "Motion Graphics",
+    urls: [
+      "https://cdna.artstation.com/p/categories/example_images/000/000/134/thumb/fabian-vazquez-storyboard.jpg?1586719728",
+      "https://cdnb.artstation.com/p/categories/example_images/000/000/135/thumb/mike-howie-planetsidearena-logo-concepts-colour.jpg?1586719740",
+      "https://cdna.artstation.com/p/categories/example_images/000/000/136/thumb/daniel-lugo-azuluz-3.jpg?1586719763",
+      "https://cdna.artstation.com/p/categories/example_images/000/000/137/thumb/Screen%20Shot%202020-04-12%20at%203.30.39%20PM.png?1586719850",
+    ],
+    cateType: "ATTRIBUTE",
+    cateDescription: "Artwork with a focus on animated graphics or text.",
+    created_at: new Date(),
   },
 ];
 
@@ -72,19 +73,14 @@ const postData: Post = {
   categories: categoryData,
 };
 
-
-export const fetchPost = async (postId: number) => {
-  console.log(`Fetching post with ID: ${postId}`);
-  // return await api.get<Post>(`?postId=${postId}`);
-  return { data: postData };
-};
-
 export const fetchPosts = async (
   artistUsername: string,
   page: number,
-  pageSize: number = 10
+  pageSize: number = 10,
 ) => {
-  console.log(`Fetching posts for ${artistUsername} on page ${page} with page size ${pageSize}`);
+  console.log(
+    `Fetching posts for ${artistUsername} on page ${page} with page size ${pageSize}`,
+  );
   // return await api.get<Post[]>(`?username${artistUsername}?page=${page}?pageSize=${pageSize}`);
   return {
     data: Array.from({ length: 9 }).map(() => postData),

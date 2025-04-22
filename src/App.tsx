@@ -25,7 +25,7 @@ import ArtGeneration from "@/pages/ArtGen";
 import Portfolio from "@/pages/Portfolio";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/pages/Post";
-import UploadMedia from "@/features/upload-media";
+import UploadMedia from "@/features/upload-media/UploadMedia";
 import UserProfile from "@/pages/UserManagement/UserProfile";
 import MatureContentPage from "./pages/MatureContent/MatureContent";
 

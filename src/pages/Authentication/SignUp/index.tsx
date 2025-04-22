@@ -6,11 +6,11 @@ import { FaApple } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/contexts/UserProvider"; // Import the UserProvider hook
+import { useUser } from "@/contexts/UserProvider";
 import { AxiosError } from "axios";
 
 const SignUp = () => {
-  const { signUpWithEmail, signUpWithGoogle, signUpWithFacebook } = useUser(); // Use UserProvider context
+  const { signUpWithEmail, authenWithGoogle, signUpWithFacebook } = useUser();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username] = useState("");
@@ -55,7 +55,7 @@ const SignUp = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      await signUpWithGoogle(); // Call Google login function from UserProvider
+      await authenWithGoogle();
       navigate("/explore"); // Redirect after successful login
     } catch (error) {
       let message = "Something went wrong. Please try again.";

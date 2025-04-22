@@ -247,7 +247,7 @@ const ArtGenAI = () => {
     };
 
     return (
-        <div className='relative flex flex-col space-y-4 w-full h-[calc(100vh-5rem)] overflow-y-hidden'>
+        <div className='relative flex flex-col space-y-4 w-full h-full overflow-y-hidden'>
             <SettingsPanel isExpanded={expanded} setIsExpanded={setExpanded} />
             <div className='flex justify-end pr-4 w-full h-fit'>
                 <div className='flex items-center space-x-2 bg-white shadow-md p-2 rounded-xl w-fit h-13'>

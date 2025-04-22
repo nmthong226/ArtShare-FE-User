@@ -13,6 +13,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   FacebookAuthProvider,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import { login, signup } from "@/api/authentication/auth"; // Import your backend login and signup functions
 import { User } from "@/types";
@@ -156,13 +157,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       );
       console.log("Google sign-in operation type:", operationType);
 
-      if (operationType !== "signIn") {
+      if (isNewUser) {
         await signup(
           googleUser.uid,
           googleUser.email!,
           "",
           googleUser.displayName || "",
         );
+        console.log("signup");
       }
       const googleToken = await googleUser.getIdToken();
       const loginResponse = await login(googleToken);

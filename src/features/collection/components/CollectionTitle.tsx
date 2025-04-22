@@ -8,9 +8,11 @@ import {
   CircularProgress,
   Stack,
 } from "@mui/material";
-import { FiEdit as EditIcon } from "react-icons/fi";
-import { FiCheck  as SaveIcon } from "react-icons/fi";
-import { FiX  as CancelIcon } from "react-icons/fi";
+import {
+  FiEdit as EditIcon,
+  FiCheck as SaveIcon,
+  FiX as CancelIcon,
+} from "react-icons/fi";
 
 interface CollectionTitleProps {
   title: string;
@@ -19,6 +21,10 @@ interface CollectionTitleProps {
   isLoading?: boolean;
   error?: string | null;
   onSave: (newName: string) => Promise<void>;
+  isEditing: boolean;
+  onEditRequest: () => void;
+  onEditCancel: () => void;
+  existingCollectionNames: string[];
 }
 
 export const CollectionTitle: React.FC<CollectionTitleProps> = ({
@@ -28,8 +34,11 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
   isLoading = false,
   error,
   onSave,
+  isEditing,
+  onEditRequest,
+  onEditCancel,
+  existingCollectionNames,
 }) => {
-  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editedTitle, setEditedTitle] = useState<string>(title);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -38,37 +47,52 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
   useEffect(() => {
     if (!isEditing) {
       setEditedTitle(title);
-    }
-  }, [title, isEditing]);
-
-  const handleEditClick = useCallback(() => {
-    if (!isLoading) {
-      setEditedTitle(title);
-      setIsEditing(true);
-      setIsHovered(false);
       setSaveError(null);
     }
-  }, [title, isLoading]);
 
-  const handleCancel = useCallback(() => {
-    setIsEditing(false);
     setEditedTitle(title);
-    setIsSaving(false);
-    setSaveError(null);
-  }, [title]);
+  }, [title, isEditing]);
+
+  const requestEditMode = useCallback(() => {
+    if (!isLoading) {
+      setEditedTitle(title);
+      setSaveError(null);
+      onEditRequest();
+      setIsHovered(false);
+    }
+  }, [title, isLoading, onEditRequest]);
+
+  const cancelEditMode = useCallback(() => {
+    onEditCancel();
+  }, [onEditCancel]);
 
   const handleSave = useCallback(async () => {
-    const newName = editedTitle.trim();
-    if (newName === "" || newName === title) {
-      handleCancel();
+    const newNameTrimmed = editedTitle.trim();
+
+    if (newNameTrimmed === "" || newNameTrimmed === title) {
+      cancelEditMode();
+      return;
+    }
+
+    const lowerCaseNewName = newNameTrimmed.toLowerCase();
+    const lowerCaseOriginalName = title.toLowerCase();
+
+    const isDuplicate = existingCollectionNames.some(
+      (existingName) =>
+        existingName.toLowerCase() === lowerCaseNewName &&
+        existingName.toLowerCase() !== lowerCaseOriginalName,
+    );
+
+    if (isDuplicate) {
+      setSaveError("A collection with this name already exists.");
+      setIsSaving(false);
       return;
     }
 
     setIsSaving(true);
     setSaveError(null);
     try {
-      await onSave(newName);
-      setIsEditing(false);
+      await onSave(newNameTrimmed);
     } catch (err) {
       console.error("Error saving title:", err);
       setSaveError(
@@ -77,7 +101,7 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
     } finally {
       setIsSaving(false);
     }
-  }, [editedTitle, title, onSave, handleCancel]);
+  }, [editedTitle, title, onSave, cancelEditMode, existingCollectionNames]);
 
   const displayError = error || saveError;
 
@@ -90,8 +114,10 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <Stack direction="row" alignItems="center" spacing={1}>
+        {/* Check the isEditing prop passed from parent */}
         {isEditing && isEditable ? (
           <>
+            {/* Text Field */}
             <TextField
               value={editedTitle}
               onChange={(e) => setEditedTitle(e.target.value)}
@@ -100,14 +126,17 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
               autoFocus
               disabled={isSaving || isLoading}
               onKeyDown={(e) => {
-                if (e.key === "Enter") handleSave();
-                if (e.key === "Escape") handleCancel();
+                if (e.key === "Enter" && !isSaving) handleSave();
+                if (e.key === "Escape" && !isSaving) cancelEditMode();
               }}
               error={!!saveError}
               sx={{ flexGrow: 1, maxWidth: 400 }}
             />
+            {/* Save Button */}
             <Tooltip title="Save Changes">
               <span>
+                {" "}
+                {/* Span needed for tooltip on disabled button */}
                 <IconButton
                   size="small"
                   onClick={handleSave}
@@ -126,11 +155,14 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
                 </IconButton>
               </span>
             </Tooltip>
+            {/* Cancel Button */}
             <Tooltip title="Cancel Edit">
               <span>
+                {" "}
+                {/* Span needed for tooltip on disabled button */}
                 <IconButton
                   size="small"
-                  onClick={handleCancel}
+                  onClick={cancelEditMode}
                   disabled={isSaving || isLoading}
                 >
                   <CancelIcon fontSize={20} />
@@ -140,9 +172,12 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
           </>
         ) : (
           <>
-            <Typography variant="h5" component="h2" fontWeight="medium" noWrap>
+            {/* Display Mode */}
+            <Typography variant="h6" component="h2" fontWeight="normal" noWrap>
+              {/* Show parent loading state if provided */}
               {isLoading ? "Loading Title..." : title}
             </Typography>
+            {/* Item Count (only show if not loading) */}
             {!isLoading && (
               <Typography
                 variant="body1"
@@ -152,11 +187,12 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
                 ({itemCountText})
               </Typography>
             )}
+            {/* Edit Button (only show if editable and not loading) */}
             {isEditable && !isLoading && (
               <Tooltip title="Rename Collection">
                 <IconButton
                   size="small"
-                  onClick={handleEditClick}
+                  onClick={requestEditMode}
                   sx={{
                     opacity: isHovered ? 1 : 0,
                     transition: "opacity 0.2s ease-in-out",
@@ -170,10 +206,10 @@ export const CollectionTitle: React.FC<CollectionTitleProps> = ({
         )}
       </Stack>
 
-      {/* Error Display Area */}
+      {/* Error Display Area - shows combined error */}
       {displayError && (
         <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-          Error: {displayError}
+          {displayError}
         </Typography>
       )}
     </Box>

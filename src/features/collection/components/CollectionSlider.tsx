@@ -50,6 +50,7 @@ const renderSliderItem = (
   const baseCardSx = {
     width: CARD_MIN_WIDTH,
     minWidth: CARD_MIN_WIDTH,
+    minHeight: 220,
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
@@ -65,7 +66,7 @@ const renderSliderItem = (
       const isSelected =
         (item.type === "all" && selectedId === "all") ||
         (item.type === "collection" && selectedId === item.id);
-      const title = item.type === "all" ? "All Posts" : item.name;
+      const title = item.type === "all" ? "All" : item.name;
       const itemId = item.type === "all" ? "all" : item.id;
       const thumbnailUrl = item.thumbnailUrl;
       const isCollection = item.type === "collection";

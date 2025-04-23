@@ -199,19 +199,15 @@ const Explore: React.FC = () => {
           <Button
             className={`all-channels-btn flex gap-2 flex-shrink-0 rounded-lg p-2 ${
               selectedCategories.length === 0
-                ? "bg-mountain-200 dark:bg-mountain-800"
+                ? " dark:bg-mountain-800"
                 : "dark:bg-mountain-900"
-            } text-gray-800 dark:text-mountain-200 normal-case font-normal shadow-none`}
+            }  dark:text-mountain-200 normal-case font-normal shadow-none`}
             variant={selectedCategories.length === 0 ? "contained" : "outlined"}
             onClick={() => setSelectedCategories([])}
             disableElevation={selectedCategories.length === 0}
           >
             <div
-              className={`p-2 rounded aspect-[1/1] ${
-                selectedCategories.length === 0
-                  ? "bg-primary-500 text-white"
-                  : "bg-mountain-100 dark:bg-mountain-700"
-              }`}
+              className={`p-2 rounded aspect-[1/1] ${selectedCategories.length === 0 ? "text-indigo-400 bg-mountain-50" : "text-mountain-900 bg-mountain-200"} dark:bg-mountain-700 `}
             >
               <LoaderPinwheel size={16} />
             </div>

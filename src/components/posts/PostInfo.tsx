@@ -6,14 +6,14 @@ import {
   Share2,
 } from "lucide-react";
 import ShowMoreText from "react-show-more-text";
-import { ElementType, useState } from "react";
+import { ElementType, useState, useEffect } from "react";
 import ReactTimeAgo from "react-time-ago";
 import { Post } from "@/types";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
 import { SavePostDialog } from "./SavePostDialog";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { likePost } from "../post/api/likePost";
-import { User } from "firebase/auth";
+import { unlikePost } from "../post/api/unlikePost";
 const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 const PostInfo = ({ postData }: { postData: Post }) => {
@@ -21,6 +21,14 @@ const PostInfo = ({ postData }: { postData: Post }) => {
   const [open, setOpen] = useState(false);
   const [userLike, setUserLike] = useState(false);
   const [likeCount, setLikeCount] = useState(postData.like_count);
+
+  useEffect(() => {
+    // Check localStorage for like state on initial load
+    const likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
+    if (likedPosts.includes(postData.id)) {
+      setUserLike(true);
+    }
+  }, [postData.id]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -38,23 +46,32 @@ const PostInfo = ({ postData }: { postData: Post }) => {
 
   const handleLikeClick = async () => {
     try {
-      // Call the likePost API
-      console.log(postData.id);
-      await likePost(postData.id);
-
-      // Update like count based on userLike state
       if (userLike) {
+        // User is currently liking the post, so unlike it
+        await unlikePost(postData.id);
         if (likeCount > 0) {
           setLikeCount(likeCount - 1); // Decrease the like count
         }
+
+        // Update localStorage
+        let likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
+        likedPosts = likedPosts.filter((id: number) => id !== postData.id);
+        localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
       } else {
+        // User is not liking the post, so like it
+        await likePost(postData.id);
         setLikeCount(likeCount + 1); // Increase the like count
+
+        // Update localStorage
+        let likedPosts = JSON.parse(localStorage.getItem("likedPosts") || "[]");
+        likedPosts.push(postData.id);
+        localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
       }
 
       // Toggle user like state
       setUserLike(!userLike);
     } catch (error) {
-      console.error("Error liking the post:", error);
+      console.error("Error updating the like status:", error);
     }
   };
 

@@ -1,4 +1,4 @@
-import { Button, CardContent, Divider } from "@mui/material";
+import { Backdrop, Button, CardContent, CircularProgress, Divider, Menu, MenuItem, Typography } from "@mui/material";
 import {
   MessageSquareText,
   Bookmark,
@@ -10,13 +10,15 @@ import { ElementType, useState, useEffect, useCallback } from "react";
 import ReactTimeAgo from "react-time-ago";
 import { Post, Collection } from "@/types";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
-
 import { SavePostDialog } from "./SavePostDialog";
 import { CreateCollectionDialog } from "@/features/collection/components/CreateCollectionDialog";
-
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { fetchCollectionsForDialog } from "../api/collection.api";
 import { LikesDialog } from "@/components/like/LikesDialog";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
+import { auth } from "@/firebase";
+import { useNavigate } from "react-router-dom";
+import { deletePost } from "@/api/post/post";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
 
 interface SimpleCollection {
   id: number;
@@ -27,7 +29,6 @@ const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 const PostInfo = ({ postData }: { postData: Post }) => {
   const { postCommentsRef } = useFocusContext();
-
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isLikesDialogOpen, setIsLikesDialogOpen] = useState(false);
@@ -36,9 +37,23 @@ const PostInfo = ({ postData }: { postData: Post }) => {
   >([]);
   const [isLoadingCollections, setIsLoadingCollections] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
-
   const [userLike, setUserLike] = useState(false);
   const [likeCount, setLikeCount] = useState(postData.like_count);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
+
+  // State for the ellipsis menu popover
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const menuOpen = Boolean(menuAnchorEl);
+
+  // Get current Firebase user
+
+  const currentUser = auth.currentUser;
+
+  // Compare postData.user_id to currentUser.uid to determine ownership.
+
+  const isOwner = currentUser && postData.user_id === currentUser.uid;
 
   useEffect(() => {
     const loadCollectionNames = async () => {
@@ -119,6 +134,44 @@ const PostInfo = ({ postData }: { postData: Post }) => {
     );
   };
 
+  // Handlers for the ellipsis menu
+  const handleMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMenuAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
+
+  const handleReport = () => {
+    // Insert your report logic here.
+    console.log("Report clicked");
+    handleMenuClose();
+  };
+
+  const handleEdit = () => {
+    navigate(`/post/${postData.id}/edit`, {
+      state: { postData },
+    });
+  };
+
+  const handleDelete = () => {
+    // Insert your delete logic here.
+    setIsDeleting(true)
+    deletePost(postData.id)
+    .then(() => {
+      navigate(`/${postData.user.username}`)
+    })
+    .catch(() => {
+      showSnackbar("Failed to update post", "error");
+    })
+    .finally(() => {
+      setIsDeleting(false)
+    });
+    console.log("Delete clicked");
+    handleMenuClose();
+  };
+
   if (!postData) return null;
 
   const existingCollectionNames = simpleCollections.map((c) => c.name);
@@ -131,19 +184,29 @@ const PostInfo = ({ postData }: { postData: Post }) => {
 
   return (
     <>
-      <div className="bg-white rounded-2xl overflow-none">
+      <div className="bg-white shadow p-4 rounded-2xl md:rounded-t-none overflow-none">
+        {isDeleting && (
+          <Backdrop
+            open
+            sx={{ color: "#fff", zIndex: (t) => t.zIndex.modal + 1 }}
+          >
+            <CircularProgress color="inherit" />
+            <Typography sx={{ mt: 2 }}>Deleting post…</Typography>
+          </Backdrop>
+        )}
         <CardContent className="flex flex-col gap-4 p-0">
-          {/* Post Title, Description, TimeAgo */}
           <div className="flex flex-col gap-2">
             <div className="font-bold text-xl">{postData.title}</div>
-            {/* Assuming ShowMoreText has correct props passed */}
             <AnyShowMoreText
               lines={3}
               more="Show more"
               less="Show less"
-              anchorClass="text-blue-600 hover:underline cursor-pointer text-sm"
+              className="text-sm break-words"
+              anchorClass="cursor-pointer hover:text-cyan-500 block py-2 underline text-sm"
+              expanded={false}
+              truncatedEndingComponent={"... "}
             >
-              {postData.description || ""}
+              {postData.description}
             </AnyShowMoreText>
             <div className="text-gray-500 text-xs italic">
               Posted{" "}
@@ -165,7 +228,6 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               ))}
           </div>
           <Divider className="border-0.5" />
-          {/* Post Stats */}
           <div className="flex gap-6 text-mountain-950">
             <div
               className={`flex items-center gap-1 text-sm ${likeCount > 0 ? "cursor-pointer hover:underline" : "cursor-default"}`}
@@ -192,7 +254,6 @@ const PostInfo = ({ postData }: { postData: Post }) => {
           </div>
 
           <Divider className="border-0.5" />
-          {/* Action Buttons */}
           <div className="flex justify-between w-full">
             <Button
               className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
@@ -226,20 +287,18 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               <Share2 className="size-5" />
             </Button>
             <Button
-              className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
-              title="More options"
+              className="border-0 min-w-auto aspect-[1/1] text-blue-900"
+              onClick={handleMenuOpen}
             >
               <EllipsisVertical className="size-5" />
             </Button>
           </div>
         </CardContent>
-      </div>
-
-      {/* SavePostDialog */}
-      <SavePostDialog
-        postId={postData.id}
+        {/* Save Post Dialog */}
+        <SavePostDialog
+          postId={postData.id}
         open={isSaveDialogOpen}
-        onClose={handleCloseSaveDialog}
+          onClose={handleCloseSaveDialog}
         onNavigateToCreate={handleNavigateToCreate}
         createDisabled={disableCreate}
         createDisabledReason={createTooltip}
@@ -252,6 +311,23 @@ const PostInfo = ({ postData }: { postData: Post }) => {
         onSuccess={handleCollectionCreated}
         existingCollectionNames={existingCollectionNames}
       />
+      <Menu
+          anchorEl={menuAnchorEl}
+          open={menuOpen}
+          onClose={handleMenuClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          {isOwner ? (
+            <>
+              <MenuItem onClick={handleEdit}>Edit</MenuItem>
+              <MenuItem onClick={handleDelete}>Delete</MenuItem>
+            </>
+          ) : (
+            <MenuItem onClick={handleReport}>Report</MenuItem>
+          )}
+        </Menu>
+      </div>
 
       {/* --- Render Likes Dialog --- */}
       <LikesDialog

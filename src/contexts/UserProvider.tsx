@@ -151,11 +151,14 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   // Google Sign-Up or Login
   const authenWithGoogle = async (): Promise<void> => {
     try {
-      const { operationType, user: googleUser } = await signInWithPopup(
+      const result = await signInWithPopup(
         auth,
         new GoogleAuthProvider(),
       );
+      const { operationType, user: googleUser } = result;
       console.log("Google sign-in operation type:", operationType);
+
+      const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
 
       if (isNewUser) {
         await signup(

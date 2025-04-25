@@ -175,7 +175,7 @@ export default function MediaSelectorPanel({
           onClick={() => setTabValue(TabValue.UPLOAD_VIDEO)}
           icon={<IoVideocam className="mr-2 w-5 h-5 text-sm" />}
           label="Upload video"
-          examples="( .mp4, .avi, .mov, ... )"
+          examples="( .mp4 ... )"
         />
       </div>
       <hr className="mb-3 border-mountain-400 border-t-1 w-full" />

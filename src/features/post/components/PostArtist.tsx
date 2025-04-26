@@ -1,26 +1,14 @@
-import { CardContent, CardHeader, IconButton } from "@mui/material";
-import { X } from "lucide-react";
+import { CardContent } from "@mui/material";
 import Avatar from "boring-avatars";
 import { User } from "@/types";
-import { Link } from "react-router-dom";
 
 const PostArtist = ({ artist }: { artist: User }) => {
   return (
     artist && (
-      <div className="bg-white shadow p-4 md:border-b md:border-b-mountain-200 rounded-2xl md:rounded-b-none overflow-none">
-        <CardHeader
-          className="p-0"
-          action={
-            <Link to="/explore">
-              <IconButton>
-                <X />
-              </IconButton>
-            </Link>
-          }
-        />
+      <div className="bg-white py-4 border-b border-b-mountain-200 rounded-2xl rounded-b-none overflow-none">
         <CardContent className="flex flex-col gap-4 p-0">
           <div className="flex gap-4 cursor-pointer">
-            <div className="relative flex-shrink-0 rounded-full overflow-hidden">
+            <div className="flex-shrink-0 rounded-full overflow-hidden">
               {artist.profile_picture_url ? (
                 <img
                   src={artist.profile_picture_url}

@@ -131,7 +131,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
 
   return (
     <>
-      <div className="bg-white shadow p-4 rounded-2xl md:rounded-t-none overflow-none">
+      <div className="bg-white rounded-2xl overflow-none">
         <CardContent className="flex flex-col gap-4 p-0">
           {/* Post Title, Description, TimeAgo */}
           <div className="flex flex-col gap-2">
@@ -153,10 +153,20 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               />
             </div>
           </div>
+          <div className="flex flex-wrap gap-2">
+            {postData.categories &&
+              postData.categories.map((category) => (
+                <div
+                  key={category.id}
+                  className="bg-mountain-50 px-2 py-1 rounded text-xs"
+                >
+                  {category.name}
+                </div>
+              ))}
+          </div>
           <Divider className="border-0.5" />
           {/* Post Stats */}
           <div className="flex gap-6 text-mountain-950">
-            {/* --- MODIFIED LIKES DIV --- */}
             <div
               className={`flex items-center gap-1 text-sm ${likeCount > 0 ? "cursor-pointer hover:underline" : "cursor-default"}`}
               onClick={handleOpenLikesDialog}
@@ -167,7 +177,6 @@ const PostInfo = ({ postData }: { postData: Post }) => {
                 {likeCount !== 1 ? " Likes" : " Like"}
               </span>
             </div>
-            {/* --- END MODIFIED LIKES DIV --- */}
 
             <div className="flex items-center gap-1 text-sm">
               <p className="font-semibold">{postData.comment_count}</p>
@@ -175,12 +184,13 @@ const PostInfo = ({ postData }: { postData: Post }) => {
                 {postData.comment_count !== 1 ? " Comments" : " Comment"}
               </span>
             </div>
-            {/* Add View Count - You'll need to fetch this data */}
+            {/* Add View Count */}
             {/* <div className="flex items-center gap-1 text-sm">
               <p className="font-semibold">{postData.view_count || 0}</p>
               <span className="text-mountain-600">Views</span>
             </div> */}
           </div>
+
           <Divider className="border-0.5" />
           {/* Action Buttons */}
           <div className="flex justify-between w-full">

@@ -20,10 +20,10 @@ const PostComments = forwardRef(() => {
   }));
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-4 pb-24">
       <div className="font-bold text-sm">COMMENTS</div>
-      <div className="flex flex-col bg-white shadow rounded-2xl">
-        <div className="flex flex-col gap-6 p-4 border-b max-h-[448px] md:max-h-[256px] lg:max-h-[384px] xl:max-h-[448px] overflow-y-scroll">
+      <div className="flex flex-col bg-white">
+        <div className="flex flex-col gap-6">
           {count.map(() => (
             <div className="flex gap-2">
               <div>
@@ -74,7 +74,7 @@ const PostComments = forwardRef(() => {
           ))}
         </div>
 
-        <div className="flex gap-2 p-4">
+        <div className="flex gap-2 p-4 absolute bottom-0 left-0 right-0 bg-white rounded-2xl">
           <TextareaAutosize
             ref={commentInputRef}
             placeholder="Add a comment"

@@ -13,6 +13,7 @@ import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en";
 import vi from "javascript-time-ago/locale/vi";
+import { SettingUserProfileProvider } from "./contexts/SettingUserProfileProvider.tsx";
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(vi);
@@ -27,7 +28,9 @@ createRoot(document.getElementById("root")!).render(
           <AppThemeProvider>
             <SnackbarProvider>
               <FocusProvider>
-                <App />
+                <SettingUserProfileProvider>
+                  <App />
+                </SettingUserProfileProvider>
               </FocusProvider>
             </SnackbarProvider>
           </AppThemeProvider>

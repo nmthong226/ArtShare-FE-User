@@ -32,6 +32,7 @@ import MatureContentPage from "./pages/MatureContent/MatureContent";
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
+import EditUserPage from "./features/edit-user/EditUserPage";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -57,6 +58,7 @@ const InAppPrivateRoutes = [
   { path: "/portfolio", element: <Portfolio /> },
   { path: "/artgen", element: <ArtGeneration /> },
   { path: "/:username", element: <UserProfile /> },
+  {path: "/edit-user", element: <EditUserPage />}
 ];
 
 const App: React.FC = () => {

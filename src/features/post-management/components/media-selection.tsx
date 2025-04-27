@@ -51,6 +51,32 @@ export default function MediaSelectorPanel({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isVideoManuallyRemoved, setIsVideoManuallyRemoved] = useState(false);
 
+  const captureThumbnailFromVideo = (videoElement: HTMLVideoElement) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+
+    const ctx = canvas.getContext("2d", { alpha: true });
+    if (!ctx) {
+      console.error("Failed to get canvas context");
+      return;
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+    canvas.toBlob((blob) => {
+      if (blob) {
+        setThumbnailFile(
+          new File([blob], "thumbnailFromVideo.png", { type: "image/png" }),
+          true,
+        );
+      } else {
+        console.error("Failed to create blob from canvas");
+      }
+    }, "image/png");
+  };
+
   // Load existing media (edit mode)
   useEffect(() => {
     if (!initialMedias || didInit.current) return;
@@ -149,7 +175,23 @@ export default function MediaSelectorPanel({
 
     // auto-thumbnail logic
     if (imageFilesPreview.size === 0) {
-      setThumbnailFile(file, true);
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.src = previewUrl;
+      video.crossOrigin = "anonymous";
+
+      video.onloadeddata = () => {
+        video.currentTime = 0; // Go to the first frame
+      };
+
+      video.onseeked = () => {
+        captureThumbnailFromVideo(video);
+      };
+
+      video.onerror = () => {
+        console.error("Invalid video file.");
+        URL.revokeObjectURL(previewUrl);
+      };
     }
   };
 

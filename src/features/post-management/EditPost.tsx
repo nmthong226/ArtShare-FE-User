@@ -186,7 +186,6 @@ const EditPost: React.FC = () => {
         console.log(key, value);
       }
       await updatePost(parseInt(postId!), body);
-      showSnackbar("Post updated successfully", "success");
       navigate(`/posts/${postId}`);
     } catch (err) {
       console.error(err);
@@ -225,7 +224,7 @@ const EditPost: React.FC = () => {
 
       {/* Body */}
       <Box
-        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem-56px)]"
+        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem)]"
         style={{ overflow: "hidden" }}
       >
         {/* LEFT: Media selection */}

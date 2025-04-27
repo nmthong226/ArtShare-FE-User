@@ -17,10 +17,26 @@ export interface GalleryPhoto extends Photo {
 const getMediaDimensions = (
   url: string,
 ): Promise<{ width: number; height: number }> => {
+  console.log("[getMediaDimensions] Trying to load image from URL:", url);
+
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.onload = () => resolve({ width: img.width, height: img.height });
-    img.onerror = reject;
+
+    img.onload = () => {
+      console.log(
+        `[getMediaDimensions] Successfully loaded image: ${url}, width: ${img.width}, height: ${img.height}`,
+      );
+      resolve({ width: img.width, height: img.height });
+    };
+
+    img.onerror = (error) => {
+      console.error(
+        `[getMediaDimensions] Failed to load image from URL: ${url}`,
+        error,
+      );
+      reject(new Error(`Failed to load image from ${url}`));
+    };
+
     img.src = url;
   });
 };
@@ -50,7 +66,6 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
     retry: 2,
     queryFn: async ({ pageParam = 1 }) => {
       const posts: Post[] = await fetchPosts(pageParam, tab, query, filter);
-      console.log("posts", posts);
       const galleryPhotos = await Promise.all(
         posts.map(async (post) => {
           if (!post.thumbnail_url && post.medias.length === 0) {

@@ -249,13 +249,12 @@ const UploadPost: React.FC = () => {
       )}
 
       <Box
-        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem-56px)]"
+        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem)]"
         style={{ overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}
 
         <MediaSelection
-          imageFiles={imageFiles}
           setImageFiles={setImageFiles}
           setVideoFile={setVideoFile}
           setThumbnailFile={handleThumbnailChange}

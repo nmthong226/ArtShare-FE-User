@@ -13,8 +13,23 @@ import { MEDIA_TYPE } from "@/constants";
 import TabValue from "../enum/media-tab-value";
 import MediaUploadTab from "./media-upload-tab";
 import { Media } from "@/types";
+import AutoSizer from "react-virtualized-auto-sizer";
 
 const MAX_IMAGES = 5;
+
+interface MediaSelectorPanelProps {
+  /* shared props ─────────────────── */
+  setVideoFile: (file?: File) => void;
+  setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
+  setThumbnailFile: (file?: File, isOriginal?: boolean) => void;
+
+  /* edit-only props – now optional ── */
+  setExistingImageUrls?: React.Dispatch<React.SetStateAction<string[]>>;
+  setExistingVideoUrl?: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  >;
+  initialMedias?: Media[];
+}
 
 export default function MediaSelectorPanel({
   setVideoFile,
@@ -23,14 +38,7 @@ export default function MediaSelectorPanel({
   setExistingImageUrls,
   initialMedias,
   setExistingVideoUrl,
-}: {
-  setVideoFile: (file: File | undefined) => void;
-  setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
-  setExistingImageUrls: React.Dispatch<React.SetStateAction<string[]>>;
-  initialMedias?: Media[];
-  setExistingVideoUrl: React.Dispatch<React.SetStateAction<string | undefined>>;
-}) {
+}: MediaSelectorPanelProps) {
   const [tabValue, setTabValue] = useState<TabValue>(TabValue.UPLOAD_IMAGE);
   const [imageFilesPreview, setImageFilesPreview] = useState<Map<File, string>>(
     new Map(),
@@ -65,7 +73,7 @@ export default function MediaSelectorPanel({
     setImageFilesPreview(previewMap);
     setImageFiles(dummyFiles);
     setSelectedPreview(dummyFiles[0]);
-    setExistingImageUrls(imageMedias.map((m) => m.url));
+    setExistingImageUrls?.(imageMedias.map((m) => m.url));
 
     // 🎥 Handle video preload only if not manually removed
     if (!videoPreviewUrl && !isVideoManuallyRemoved) {
@@ -108,7 +116,7 @@ export default function MediaSelectorPanel({
   const handleRemoveImagePreview = (preview: File) => {
     const url = imageFilesPreview.get(preview);
     if (url && !url.startsWith("blob:")) {
-      setExistingImageUrls((prev) => prev.filter((u) => u !== url));
+      setExistingImageUrls?.((prev) => prev.filter((u) => u !== url));
     }
 
     if (url?.startsWith("blob:")) {
@@ -152,7 +160,7 @@ export default function MediaSelectorPanel({
     setVideoPreviewUrl(undefined);
     setVideoFile(undefined);
     setIsVideoManuallyRemoved(true);
-    setExistingVideoUrl(""); // ✅ Reset existing video URL so it won’t get sent again
+    setExistingVideoUrl?.(""); // ✅ Reset existing video URL so it won’t get sent again
 
     if (imageFilesPreview.size === 0) {
       setThumbnailFile(undefined, true);
@@ -162,7 +170,7 @@ export default function MediaSelectorPanel({
   return (
     <Box className="flex flex-col items-start bg-mountain-100 dark:bg-mountain-900 px-6 py-3 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
       {/* Tabs */}
-      <div className="flex gap-x-1 w-full h-14">
+      <div className="flex gap-x-1 w-full mb-3">
         <MediaUploadTab
           isActive={tabValue === TabValue.UPLOAD_IMAGE}
           onClick={() => setTabValue(TabValue.UPLOAD_IMAGE)}
@@ -178,135 +186,156 @@ export default function MediaSelectorPanel({
           examples="( .mp4 ... )"
         />
       </div>
-      <hr className="mb-3 border-mountain-400 border-t-1 w-full" />
+      <hr className="mb-2 border-mountain-400 border-t-1 w-full" />
 
       {/* Images Section */}
       {tabValue === TabValue.UPLOAD_IMAGE && (
-        <Box className="w-full h-full flex flex-col items-center">
-          <Box
-            className="flex justify-between items-center w-full mb-2"
-            sx={{ flexShrink: 0 }}
-          >
-            <Typography className="text-gray-900 dark:text-mountain-200 text-base">
-              {imageFilesPreview.size}/{MAX_IMAGES} images
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              flexGrow: 1,
-              minHeight: 0,
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              overflow: "hidden",
-            }}
-          >
-            {selectedPreview ? (
-              <img
-                src={imageFilesPreview.get(selectedPreview)}
-                alt="Preview"
-                className="w-full object-contain"
-                style={{ maxHeight: "100%", maxWidth: "100%" }}
-              />
-            ) : (
+        <AutoSizer>
+          {({ height, width }) => {
+            const adjustedHeight = Math.max(height - 61, 150);
+            return (
               <Box
-                className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const droppedFiles = e.dataTransfer.files;
-                  if (droppedFiles && droppedFiles.length > 0) {
-                    handleImageFilesChange({
-                      target: { files: droppedFiles },
-                    } as ChangeEvent<HTMLInputElement>);
-                  }
+                sx={{
+                  width,
+                  height: adjustedHeight,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  overflow: "hidden",
+                  minHeight: 0,
                 }}
               >
-                <Button
-                  variant="text"
-                  component="label"
-                  size="small"
-                  className="mb-2 border-mountain-600"
-                  sx={{
-                    backgroundColor: "transparent",
-                    color: "white",
-                    borderRadius: "10px",
-                    border: "1px solid",
-                    textTransform: "none",
-                    "&:hover": { backgroundColor: "transparent" },
-                  }}
-                >
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    hidden
-                    onChange={handleImageFilesChange}
-                  />
-                  <CloudUploadIcon sx={{ mr: 1 }} />
-                  <Typography variant="body1">Upload your art</Typography>
-                </Button>
-                <Typography variant="body1">or drag and drop here</Typography>
-              </Box>
-            )}
-          </Box>
-
-          {/* Carousel */}
-          <Box
-            className="flex gap-2 custom-scrollbar pt-4"
-            sx={{ flexShrink: 0, overflowX: "auto" }}
-          >
-            {Array.from(imageFilesPreview.entries()).map(
-              ([file, previewUrl], i) => (
                 <Box
-                  key={i}
-                  className="relative border-1 rounded-md cursor-pointer bounce-item"
-                  sx={{
-                    borderColor:
-                      selectedPreview === file ? "primary.main" : "transparent",
-                  }}
-                  onClick={() => setSelectedPreview(file)}
+                  className="flex justify-between items-center w-full mb-2"
+                  sx={{ flexShrink: 0 }}
                 >
-                  <Avatar
-                    src={previewUrl}
-                    className="rounded-md"
-                    sx={{ width: 80, height: 80 }}
-                  />
-                  <IconButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleRemoveImagePreview(file);
-                    }}
-                    size="small"
-                    className="-top-2 -right-2 absolute opacity-60 bg-gray-600 hover:bg-gray-400 group"
-                  >
-                    <CloseIcon className="text-white text-sm group-hover:text-black" />
-                  </IconButton>
+                  <Typography className="text-gray-900 dark:text-mountain-200 text-base">
+                    {imageFilesPreview.size}/{MAX_IMAGES} images
+                  </Typography>
                 </Box>
-              ),
-            )}
 
-            <Box
-              className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
-              component="label"
-              hidden={
-                imageFilesPreview.size === 0 ||
-                imageFilesPreview.size === MAX_IMAGES
-              }
-            >
-              <AddIcon fontSize="large" />
-              <input
-                accept="image/*"
-                type="file"
-                multiple
-                hidden
-                onChange={handleImageFilesChange}
-              />
-            </Box>
-          </Box>
-        </Box>
+                <Box
+                  sx={{
+                    flexGrow: 1,
+                    minHeight: 0,
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                  }}
+                >
+                  {selectedPreview ? (
+                    <img
+                      src={imageFilesPreview.get(selectedPreview)}
+                      alt="Preview"
+                      className="w-full object-contain"
+                      style={{ maxHeight: "100%", maxWidth: "100%" }}
+                    />
+                  ) : (
+                    <Box
+                      className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const droppedFiles = e.dataTransfer.files;
+                        if (droppedFiles && droppedFiles.length > 0) {
+                          handleImageFilesChange({
+                            target: { files: droppedFiles },
+                          } as ChangeEvent<HTMLInputElement>);
+                        }
+                      }}
+                    >
+                      <Button
+                        variant="text"
+                        component="label"
+                        size="small"
+                        className="mb-2 border-mountain-600"
+                        sx={{
+                          backgroundColor: "transparent",
+                          color: "white",
+                          borderRadius: "10px",
+                          border: "1px solid",
+                          textTransform: "none",
+                          "&:hover": { backgroundColor: "transparent" },
+                        }}
+                      >
+                        <input
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          hidden
+                          onChange={handleImageFilesChange}
+                        />
+                        <CloudUploadIcon sx={{ mr: 1 }} />
+                        <Typography variant="body1">Upload your art</Typography>
+                      </Button>
+                      <Typography variant="body1">
+                        or drag and drop here
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+
+                {/* Carousel */}
+                <Box
+                  className="flex gap-2 custom-scrollbar pt-4"
+                  sx={{ flexShrink: 0, overflowX: "auto" }}
+                >
+                  {Array.from(imageFilesPreview.entries()).map(
+                    ([file, previewUrl], i) => (
+                      <Box
+                        key={i}
+                        className="relative border-1 rounded-md cursor-pointer bounce-item"
+                        sx={{
+                          borderColor:
+                            selectedPreview === file
+                              ? "primary.main"
+                              : "transparent",
+                        }}
+                        onClick={() => setSelectedPreview(file)}
+                      >
+                        <Avatar
+                          src={previewUrl}
+                          className="rounded-md"
+                          sx={{ width: 80, height: 80 }}
+                        />
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRemoveImagePreview(file);
+                          }}
+                          size="small"
+                          className="-top-2 -right-2 absolute opacity-60 bg-gray-600 hover:bg-gray-400 group"
+                        >
+                          <CloseIcon className="text-white text-sm group-hover:text-black" />
+                        </IconButton>
+                      </Box>
+                    ),
+                  )}
+
+                  <Box
+                    className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
+                    component="label"
+                    hidden={
+                      imageFilesPreview.size === 0 ||
+                      imageFilesPreview.size === MAX_IMAGES
+                    }
+                  >
+                    <AddIcon fontSize="large" />
+                    <input
+                      accept="image/*"
+                      type="file"
+                      multiple
+                      hidden
+                      onChange={handleImageFilesChange}
+                    />
+                  </Box>
+                </Box>
+              </Box>
+            );
+          }}
+        </AutoSizer>
       )}
 
       {/* Video Section */}
@@ -334,7 +363,7 @@ export default function MediaSelectorPanel({
           }}
         >
           {videoPreviewUrl ? (
-            <Box className="flex flex-col gap-2 w-full h-full">
+            <Box className="flex flex-col gap-4 w-full h-full">
               <Box className="flex justify-end gap-2 px-2 pt-2">
                 <Button
                   variant="text"

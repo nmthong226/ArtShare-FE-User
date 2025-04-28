@@ -1,6 +1,6 @@
 import { useRef, forwardRef, useImperativeHandle, useState } from "react";
 import { Button, IconButton, TextareaAutosize } from "@mui/material";
-import { Ellipsis, Dot, SendHorizontal } from "lucide-react";
+import { Ellipsis, Dot, SendHorizontal, ReplyIcon } from "lucide-react";
 import Avatar from "boring-avatars";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
 import { AiFillLike } from "react-icons/ai";
@@ -71,6 +71,16 @@ const PostComments = forwardRef(() => {
     );
   };
 
+  // Handle replying to a comment (UI only, for demonstration)
+  const handleReplyToComment = (commentId: number) => {
+    // For UI demonstration, you can expand the comment input, focus it, etc.
+    console.log(`Replying to comment with id: ${commentId}`);
+    setNewComment(`@${comments.find((c) => c.id === commentId)?.username} `); // Populate input with username
+    if (commentInputRef.current) {
+      commentInputRef.current.focus(); // Focus on the comment input
+    }
+  };
+
   return (
     <div className="flex flex-col gap-1">
       <div className="font-bold text-sm">COMMENTS</div>
@@ -115,6 +125,15 @@ const PostComments = forwardRef(() => {
               <div>
                 <IconButton className="-m-2">
                   <Ellipsis size={16} />
+                </IconButton>
+              </div>
+              {/* Reply button */}
+              <div>
+                <IconButton
+                  className="-m-2"
+                  onClick={() => handleReplyToComment(comment.id)}
+                >
+                  <ReplyIcon size={16} />
                 </IconButton>
               </div>
             </div>

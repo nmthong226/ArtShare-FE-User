@@ -15,7 +15,7 @@ import { LuImagePlus } from "react-icons/lu";
 
 //Assets
 import { trending } from '../../mock/Data.ts';
-import model1_img1 from "../../assets/ModelOptions/mod1_img1.webp";
+const example_1 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/dzu0q9a2zxvtu3w1r29a';
 
 interface TrendingPromptProps {
     selectedTab: string
@@ -130,7 +130,7 @@ const TrendingPrompt: React.FC<TrendingPromptProps> = ({ selectedTab }) => {
                                 <p className='font-medium'>Model</p>
                             </div>
                             <div className='flex items-center space-x-2'>
-                                <img src={model1_img1} className='rounded-xs w-5 h-5' />
+                                <img src={example_1} className='rounded-xs w-5 h-5' />
                                 <p className='text-mountain-600 line-clamp-1'>Ultra Realism</p>
                             </div>
                         </div>

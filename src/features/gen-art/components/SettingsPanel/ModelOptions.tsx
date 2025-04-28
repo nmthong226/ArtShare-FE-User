@@ -69,7 +69,7 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
             <DialogTrigger asChild>
                 <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
                     <div className='flex items-center space-x-2'>
-                        <img src={model.images[0]} className='rounded-xs w-5 h-5' />
+                        <img src={model.images[0]} loading="lazy" className='rounded-xs w-5 h-5' />
                         <p>{model.name}</p>
                     </div>
                     <IoIosArrowForward />
@@ -92,7 +92,7 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                                     return (
                                         <div key={index} className='group flex flex-col items-center space-y-2' onClick={() => setSelectedModel(model)}>
                                             <div className='relative flex w-32 h-32 hover:cursor-pointer'>
-                                                <img src={model.images[0]} className='rounded-lg w-fit h-auto object-cover' />
+                                                <img src={model.images[0]} loading="lazy" className='rounded-lg w-fit h-auto object-cover' />
                                                 {/* Show "Selected ✅" only if selected */}
                                                 {isSelected && (
                                                     <div className='absolute inset-0 flex justify-center items-end bg-gradient-to-b from-black/10 to-black/70 p-2 rounded-lg'>
@@ -111,7 +111,7 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                                     return (
                                         <div key={index} className='group flex flex-col items-center space-y-2' onClick={() => setSelectedModel(model)}>
                                             <div className='relative flex w-32 h-32 hover:cursor-pointer'>
-                                                <img src={model.images[0]} className='rounded-lg w-fit h-auto object-cover' />
+                                                <img src={model.images[0]} loading="lazy" className='rounded-lg w-fit h-auto object-cover' />
                                                 {/* Show "Selected ✅" only if selected */}
                                                 {isSelected && (
                                                     <div className='absolute inset-0 flex justify-center items-end bg-gradient-to-b from-black/10 to-black/70 p-2 rounded-lg'>
@@ -130,7 +130,7 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                                     return (
                                         <div key={index} className='group flex flex-col items-center space-y-2' onClick={() => setSelectedModel(model)}>
                                             <div className='relative flex w-32 h-32 hover:cursor-pointer'>
-                                                <img src={model.images[0]} className='rounded-lg w-fit h-auto object-cover' />
+                                                <img src={model.images[0]} loading="lazy" className='rounded-lg w-fit h-auto object-cover' />
                                                 {/* Show "Selected ✅" only if selected */}
                                                 {isSelected && (
                                                     <div className='absolute inset-0 flex justify-center items-end bg-gradient-to-b from-black/10 to-black/70 p-2 rounded-lg'>
@@ -148,7 +148,7 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                     <div className='flex flex-col items-start space-y-4 py-4 border-mountain-200 w-[307px] overflow-hidden'>
                         <div className='flex justify-center w-full'>
                             <div className='flex w-64 h-64'>
-                                <img src={selectedModel?.images[selectedIndex]} className='rounded-xl w-fit h-auto object-cover' />
+                                <img loading="lazy" src={selectedModel?.images[selectedIndex]} className='rounded-xl w-fit h-auto object-cover' />
                             </div>
                         </div>
                         <div className='flex flex-col px-6 w-full'>
@@ -167,7 +167,7 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                                                 handleSelect(idx);
                                             }}
                                         >
-                                            <img src={img} className="rounded-lg w-fit h-auto object-cover" />
+                                            <img src={img} loading="lazy" className="rounded-lg w-fit h-auto object-cover" />
                                         </div>
                                     ))}
                                 </div>

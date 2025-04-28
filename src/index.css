@@ -168,3 +168,12 @@ body {
 .bounce-item {
   @apply transition-transform hover:-translate-y-1 duration-500 transform;
 }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

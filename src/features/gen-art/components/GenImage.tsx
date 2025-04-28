@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/avatar"
 
 //Assets
-import example_1 from "../assets/1.webp"
+const example_1 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/dzu0q9a2zxvtu3w1r29a';
 
 //Icons
 import { IoIosSquareOutline } from "react-icons/io";

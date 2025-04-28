@@ -6,6 +6,7 @@ import { Button, CircularProgress, TextareaAutosize } from '@mui/material';
 import PromptResult from './components/PromptResult';
 import TokenPopover from './components/TokenPopover';
 import SettingsPanel from './components/SettingsPanel/SettingsPanel';
+import AIBot from './components/AIBot';
 
 //Icons
 import { TbChessQueenFilled } from "react-icons/tb";
@@ -15,41 +16,25 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-//Assets
-import img_1 from "./assets/img_1.png";
-import img_2 from "./assets/img_2.png";
-import img_3 from "./assets/img_3.png";
-import img_4 from "./assets/img_4.png";
-import img_5 from "./assets/img_5.png";
-import img_6 from "./assets/img_6.png";
-import img_7 from "./assets/img_7.png";
-import img_8 from "./assets/img_8.png";
-import img_9 from "./assets/img_9.png";
-import img_10 from "./assets/img_10.png";
-import img_11 from "./assets/img_11.png";
-import img_12 from "./assets/img_12.png";
-import AIBot from './components/AIBot';
-
-
 const result3_images =
     [
         {
             id: '9',
-            url: img_9
+            url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/arasef6bmgopjnqhwzrc'
         },
         {
             id: '10',
-            url: img_10
+            url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/sir6kdbszkcmcmehatdp'
         },
         {
             id: '11',
-            url: img_11
+            url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/g4dzfj4t74rjgjmr6l1r'
         },
         {
             id: '12',
-            url: img_12
+            url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/s9pjhgywgozbske8byog'
         },
-    ];
+    ]
 
 {/*
 A stunning realistic scene featuring a woman astronaut curiously peeking out of 
@@ -70,19 +55,19 @@ const mockUserPromptResults = [
             [
                 {
                     id: '1',
-                    url: img_1
+                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/ymz4f8uldlagpgfosjo5'
                 },
                 {
                     id: '2',
-                    url: img_2
+                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/xw990iearcg71iefho4u'
                 },
                 {
                     id: '3',
-                    url: img_3
+                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/stfmbrgaumkjjfijkyxy'
                 },
                 {
                     id: '4',
-                    url: img_4
+                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/opbbxebjw79xosse6zlz'
                 },
             ]
         // attributes: 'handle later'
@@ -94,19 +79,19 @@ const mockUserPromptResults = [
             [
                 {
                     id: '5',
-                    url: img_5
+                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/au2c5vvtjresit5dqnt5'
                 },
                 {
                     id: '6',
-                    url: img_6
+                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/lhsyjfgg1zz1ejr6hjlh'
                 },
                 {
                     id: '7',
-                    url: img_7
+                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/glxcivoy2s3ant70cgjc'
                 },
                 {
                     id: '8',
-                    url: img_8
+                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/asuz4vezfti3yi3j4m82'
                 },
             ]
     },
@@ -201,19 +186,19 @@ const ArtGenAI = () => {
                                 [
                                     {
                                         id: '9',
-                                        url: img_9
+                                        url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/arasef6bmgopjnqhwzrc'
                                     },
                                     {
                                         id: '10',
-                                        url: img_10
+                                        url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/sir6kdbszkcmcmehatdp'
                                     },
                                     {
                                         id: '11',
-                                        url: img_11
+                                        url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/g4dzfj4t74rjgjmr6l1r'
                                     },
                                     {
                                         id: '12',
-                                        url: img_12
+                                        url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/s9pjhgywgozbske8byog'
                                     },
                                 ]
                         };

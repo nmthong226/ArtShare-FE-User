@@ -14,6 +14,7 @@ import TabValue from "../enum/media-tab-value";
 import MediaUploadTab from "./media-upload-tab";
 import { Media } from "@/types";
 import AutoSizer from "react-virtualized-auto-sizer";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
 
 const MAX_IMAGES = 5;
 
@@ -30,6 +31,22 @@ interface MediaSelectorPanelProps {
   >;
   initialMedias?: Media[];
 }
+
+const validateVideoDuration = (
+  file: File,
+  maxDurationSec = 60,
+): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const videoElement = document.createElement("video");
+    videoElement.preload = "metadata";
+    videoElement.onloadedmetadata = () => {
+      URL.revokeObjectURL(videoElement.src);
+      resolve(videoElement.duration <= maxDurationSec);
+    };
+    videoElement.onerror = () => resolve(false);
+    videoElement.src = URL.createObjectURL(file);
+  });
+};
 
 export default function MediaSelectorPanel({
   setVideoFile,
@@ -50,6 +67,7 @@ export default function MediaSelectorPanel({
   const didInit = useRef(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isVideoManuallyRemoved, setIsVideoManuallyRemoved] = useState(false);
+  const { showSnackbar } = useSnackbar();
 
   const captureThumbnailFromVideo = (videoElement: HTMLVideoElement) => {
     const canvas = document.createElement("canvas");
@@ -165,9 +183,17 @@ export default function MediaSelectorPanel({
     }
   };
 
-  const handleVideoFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleVideoFileChange = async (
+    event: ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    const isValidDuration = await validateVideoDuration(file, 60);
+    if (!isValidDuration) {
+      showSnackbar("Video length cannot exceed 1 minute.", "error");
+      return;
+    }
 
     const previewUrl = URL.createObjectURL(file);
     setVideoFile(file);

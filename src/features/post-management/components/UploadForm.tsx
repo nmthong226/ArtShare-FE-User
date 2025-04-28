@@ -235,7 +235,9 @@ const UploadForm: React.FC<{
         </Typography>
         <Box
           className={`flex flex-col justify-center items-center border ${
-            thumbnailFile ? "border-none" : "border-gray-500 border-dashed"
+            thumbnailFile || existingThumbnailUrl
+              ? "border-none"
+              : "border-gray-500 border-dashed"
           } rounded min-h-32 overflow-hidden`}
           component="label"
         >
@@ -270,7 +272,7 @@ const UploadForm: React.FC<{
             }}
           />
         </Box>
-        {thumbnailFile && (
+        {(thumbnailFile || existingThumbnailUrl) && (
           <div className="flex gap-2">
             <Tooltip title="Crop">
               <IconButton

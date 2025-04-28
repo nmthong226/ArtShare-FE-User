@@ -297,9 +297,6 @@ const ArtGenAI = () => {
                                         generating={true}
                                         progress={loadingProgress}
                                     />
-                                    <div className='flex justify-center items-center py-10'>
-                                        <CircularProgress size={32} thickness={4} />
-                                    </div>
                                 </>
                             )}
                             <div className='flex flex-col space-y-2'>

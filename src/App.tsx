@@ -32,12 +32,14 @@ import MatureContentPage from "./pages/MatureContent/MatureContent";
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
+import Onboarding from "./pages/Authentication/Oboard";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
   { path: "/signup", element: <SignUp /> },
   { path: "/forgot-password", element: <ForgotPassword /> },
   { path: "/auth", element: <AuthAction /> }, // This handles the auth action URL with query parameters
+  { path: "/onboard", element: <Onboarding /> },
 ];
 
 const privateAuthRoute = [

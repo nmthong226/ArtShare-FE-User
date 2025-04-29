@@ -52,7 +52,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           try {
             const userData: User = {
               id: firebaseUser.uid,
-              name: firebaseUser.displayName || "Unknown",
+              full_name: firebaseUser.displayName || "Unknown",
               email: firebaseUser.email || "Unknown",
               username: "",
             };
@@ -127,7 +127,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("accessToken", token);
       setUser({
         id: user.uid,
-        name: user.displayName || "Unknown",
+        full_name: user.displayName || "Unknown",
         email: user.email || "Unknown",
         username: "", // Add the username property
       });
@@ -168,7 +168,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       localStorage.setItem("accessToken", loginResponse.access_token);
       setUser({
         id: googleUser.uid,
-        name: googleUser.displayName || "Unknown",
+        full_name: googleUser.displayName || "Unknown",
         email: googleUser.email || "Unknown",
         username: "",
       });
@@ -190,7 +190,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const token = await user.getIdToken();
       setUser({
         id: user.uid,
-        name: user.displayName || "Unknown",
+        full_name: user.displayName || "Unknown",
         email: user.email || "Unknown",
         username: "", // Add the username property with a default value
       });

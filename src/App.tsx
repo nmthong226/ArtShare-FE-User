@@ -19,7 +19,6 @@ import ForgotPassword from "@/pages/Authentication/ForgotPassword";
 import AccountActivation from "@/pages/Authentication/Activation";
 import Explore from "./features/explore";
 import Blogs from "./pages/Blogs";
-import Shop from "@/pages/Shop";
 import Collection from "./features/collection";
 
 // import SubmitMedia from "@/pages/SubmitMedia";
@@ -53,7 +52,6 @@ const InAppPublicRoutes = [
   { path: "/explore", element: <Explore /> },
   { path: "/posts/:postId", element: <Post /> },
   { path: "/blogs", element: <Blogs /> },
-  { path: "/shop", element: <Shop /> },
   { path: "/search", element: <Search /> },
   { path: "/collections", element: <Collection /> },
 ];

@@ -1,12 +1,20 @@
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+
 //Assets
 import app_logo from "/logo_app_v_101.png";
 
 //Icons
 import { IoIosArrowBack } from "react-icons/io";
 // import { HiOutlineCommandLine } from "react-icons/hi2";
-import { MdOutlineExplore, MdOutlineLibraryBooks } from "react-icons/md";
+import { MdOutlineCollectionsBookmark, MdOutlineExplore, MdOutlineLibraryBooks } from "react-icons/md";
 import { HiOutlineNewspaper } from "react-icons/hi2";
 import { RiImageAiLine } from "react-icons/ri";
+import { LuBookOpenText } from "react-icons/lu";
+import { IoReorderThreeOutline } from "react-icons/io5";
+import { MdDragIndicator } from "react-icons/md";
+import { ChevronRight } from "lucide-react";
+import { LuStarOff } from "react-icons/lu";
 
 //Components
 import {
@@ -14,15 +22,8 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import { MdDragIndicator } from "react-icons/md";
-import { ChevronRight } from "lucide-react";
-import { LuStarOff } from "react-icons/lu";
-// import UserButton from "./user-button";
-import { Link, useLocation } from "react-router-dom";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { IoReorderThreeOutline } from "react-icons/io5";
-import { Tooltip } from "@mui/material";
 import DevNews from "./dev-news";
+import { Tooltip } from "@mui/material";
 
 type SidebarProps = {
   expand: boolean,
@@ -70,23 +71,29 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
             {[
               { icon: MdOutlineExplore, label: 'Explore Arts', href: '/explore' },
               { icon: MdOutlineLibraryBooks, label: 'Read Blogs', href: '/blogs' },
+              { icon: MdOutlineCollectionsBookmark, label: 'My Collections', href: '/collections' },
             ].map((item) => {
               const isActive = pathname === item.href;
               return (
-                <Link
-                  to={item.href}
-                  key={item.label}
-                  className={`${isActive ? 'bg-gray-100 text-black' : 'hover:bg-gray-100 bg-white text-mountain-500'} group flex items-center px-4 rounded-md w-full h-10 hover:text-mountain-950 hover:cursor-pointer`}
+                <Tooltip
+                  title={item.label}
+                  placement="right"
+                  arrow
+                  disableHoverListener={expand}
                 >
-                  <Tooltip title={item.label} placement="right">
+                  <Link
+                    to={item.href}
+                    key={item.label}
+                    className={`${isActive ? 'bg-gray-100 text-black' : 'hover:bg-gray-100 bg-white text-mountain-500'} group flex items-center px-4 rounded-md w-full h-10 hover:text-mountain-950 hover:cursor-pointer`}
+                  >
                     <item.icon className="flex-shrink-0 size-4" />
-                  </Tooltip>
-                  <div className={`overflow-hidden transition-all duration-500 origin-left ${expand ? 'ml-2 w-auto' : 'w-0'}`}>
-                    <p className={`text-nowrap transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-medium text-sm`}>
-                      {item.label}
-                    </p>
-                  </div>
-                </Link>
+                    <div className={`overflow-hidden transition-all duration-500 origin-left ${expand ? 'ml-2 w-auto' : 'w-0'}`}>
+                      <p className={`text-nowrap transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-medium text-sm`}>
+                        {item.label}
+                      </p>
+                    </div>
+                  </Link>
+                </Tooltip>
               )
             })}
           </div>
@@ -141,7 +148,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
               <CollapsibleTrigger asChild>
                 <button className={`group flex px-4 justify-between items-center  hover:bg-gray-100 py-2 rounded-md w-full transition`}>
                   <div className="flex items-center space-x-2">
-                    <MdOutlineLibraryBooks className="size-4" />
+                    <LuBookOpenText className="size-4" />
                     <p className={`text-nowrap text-sm ${pathname === '/blogs/new' || pathname === '/blogs/manage' ? 'text-mountain-950' : 'text-mountain-500'} transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-medium text-sm`}>
                       Blogs
                     </p>

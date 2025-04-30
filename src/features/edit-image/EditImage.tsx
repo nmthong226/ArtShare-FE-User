@@ -40,7 +40,7 @@ const EditImage: React.FC = () => {
 
     //Texts
     const [texts, setTexts] = useState<TextItem[]>([]);
-    const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
+    // const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
 
     const [layers, setLayers] = useState<ImageLayer[]>([{
         id: crypto.randomUUID(),

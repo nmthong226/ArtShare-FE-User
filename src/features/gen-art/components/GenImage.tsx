@@ -100,13 +100,12 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
     }, [open]);
 
     const handleDelete = () => {
-        let timeout: NodeJS.Timeout;
-        timeout = setTimeout(() => {
+        setTimeout(() => {
             onDelete?.(resultId, imageId);
             setOpen(false);
             setDeleteImage(false);
         }, 2000);
-    }
+    };
 
     return (
         <Dialog open={openDiaLog} onOpenChange={setOpenDiaLog}>

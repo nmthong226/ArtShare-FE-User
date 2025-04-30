@@ -7,6 +7,7 @@ import { ImageRenderer } from "./ImageRenderer";
 import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import "react-photo-album/rows.css";
 import { Post } from "@/types";
+import { IoSearchSharp } from "react-icons/io5";
 export interface GalleryPhoto extends Photo {
   title: string;
   author: string;
@@ -25,7 +26,7 @@ const getMediaDimensions = (
   });
 };
 
-const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
+const IGallery = ({ query, filter, showTab = true, }: { query?: string; filter: string[], showTab?: boolean }) => {
   const [tab, setTab] = useState<string>("for-you");
 
   const handleFilterChange = (
@@ -155,7 +156,7 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
   // );
 
   return (
-    <div className="">
+    <div className="mb-8">
       <RowsPhotoAlbum
         spacing={8}
         rowConstraints={{ singleRowMaxHeight: 256 }}
@@ -163,63 +164,78 @@ const IGallery = ({ query, filter }: { query: string; filter: string[] }) => {
         render={{ image: ImageRenderer }}
       />
 
-      <Paper className="bottom-4 left-1/2 z-50 fixed shadow-lg rounded-full -translate-x-1/2 transform">
-        <ToggleButtonGroup
-          className="flex gap-2 m-1.5"
-          size="large"
-          value={tab}
-          exclusive
-          onChange={handleFilterChange}
-        >
-          <ToggleButton
-            value="for-you"
-            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
-            sx={{
-              "&.Mui-selected": {
-                backgroundColor: "#c7d2fe",
-                color: "#000",
-                "&:hover": {
-                  backgroundColor: "#c7d2fe",
-                },
-              },
-              "&:hover": {
-                backgroundColor: "#e0e0e0",
-              },
-            }}
+      {showTab &&
+        <Paper className="bottom-4 left-1/2 z-50 fixed shadow-lg rounded-full -translate-x-1/2 transform">
+          <ToggleButtonGroup
+            className="flex gap-2 m-1.5"
+            size="large"
+            value={tab}
+            exclusive
+            onChange={handleFilterChange}
           >
-            For you
-          </ToggleButton>
-          <ToggleButton
-            value="following"
-            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
-            sx={{
-              "&.Mui-selected": {
-                backgroundColor: "#c7d2fe",
-                color: "#000",
-                "&:hover": {
+            <ToggleButton
+              value="for-you"
+              className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
+              sx={{
+                "&.Mui-selected": {
                   backgroundColor: "#c7d2fe",
+                  color: "#000",
+                  "&:hover": {
+                    backgroundColor: "#c7d2fe",
+                  },
                 },
-              },
-              "&:hover": {
-                backgroundColor: "#e0e0e0",
-              },
-            }}
-          >
-            Following
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </Paper>
-
-      {(isLoading || isFetchingNextPage) && (
-        <div className="m-4 text-center">
-          <LoadingSpinner />
-        </div>
-      )}
-      {isError && (
-        <div className="text-red-500 text-center">
-          {(error as Error).message}
-        </div>
-      )}
+                "&:hover": {
+                  backgroundColor: "#e0e0e0",
+                },
+              }}
+            >
+              For you
+            </ToggleButton>
+            <ToggleButton
+              value="following"
+              className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
+              sx={{
+                "&.Mui-selected": {
+                  backgroundColor: "#c7d2fe",
+                  color: "#000",
+                  "&:hover": {
+                    backgroundColor: "#c7d2fe",
+                  },
+                },
+                "&:hover": {
+                  backgroundColor: "#e0e0e0",
+                },
+              }}
+            >
+              Following
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Paper>
+      }
+      <div className="flex flex-col items-center mt-4 w-full">
+        {(isLoading || isFetchingNextPage) && (
+          <div className="m-4 text-center">
+            <LoadingSpinner />
+          </div>
+        )}
+        {isError && (
+          !query ? (
+            <div className="text-red-500 text-center">
+              {(error as Error).message}
+            </div>
+          ) : (
+            <div className="flex flex-col justify-center items-center">
+              <IoSearchSharp className="mb-4 w-20 h-20 text-mountain-400" />
+              <p className="flex font-semibold text-mountain-800 text-lg">
+                Currently, there is no results for "{query}"
+              </p>
+              <p className="text-mountain-400">
+                Try with another keyword for showing what you want.
+              </p>
+            </div>
+          )
+        )}
+      </div>
     </div>
   );
 };

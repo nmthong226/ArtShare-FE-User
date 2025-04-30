@@ -8,8 +8,8 @@ import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute
 
 // Layout
 import RootLayout from "@/layouts";
-import InAppLayout from "@/layouts/public/InAppLayout";
-import AuthenLayout from "@/layouts/public/AuthenLayout";
+import InAppLayout from "@/layouts/InAppLayout";
+import AuthenLayout from "@/layouts/AuthenLayout";
 
 // Pages / Features
 import LandingPage from "@/pages/Home";
@@ -27,7 +27,6 @@ import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/pages/Post";
 import UploadMedia from "@/features/upload-media/UploadMedia";
 import UserProfile from "@/pages/UserManagement/UserProfile";
-import MatureContentPage from "@/pages/MatureContent/MatureContent";
 import Search from "@/pages/Search";
 
 // Context/Provider
@@ -35,6 +34,7 @@ import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
 import ImageEditor from "./pages/EditImage";
 import { GlobalSearchProvider } from "./contexts/SearchProvider";
+import AILayout from "./layouts/AILayout";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -58,9 +58,12 @@ const InAppPublicRoutes = [
 const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
   { path: "/portfolio", element: <Portfolio /> },
-  { path: "/create-art", element: <ArtGeneration /> },
-  { path: "/edit-image", element: <ImageEditor /> },
-  { path: "/:username", element: <UserProfile /> },
+  { path: "/u/:username", element: <UserProfile /> },
+];
+
+const AIPrivateRoutes = [
+  { path: "/image/tool/text-to-image", element: <ArtGeneration /> },
+  { path: "/image/tool/editor", element: <ImageEditor /> },
 ];
 
 const App: React.FC = () => {
@@ -99,8 +102,6 @@ const App: React.FC = () => {
                     element={<InAppLayout>{element}</InAppLayout>}
                   />
                 ))}
-                <Route path="/mature-content" element={<MatureContentPage />} />
-
                 {InAppPrivateRoutes.map(({ path, element }) => (
                   <Route
                     key={path}
@@ -108,6 +109,17 @@ const App: React.FC = () => {
                     element={
                       <ProtectedInAppRoute>
                         <InAppLayout>{element}</InAppLayout>
+                      </ProtectedInAppRoute>
+                    }
+                  />
+                ))}
+                {AIPrivateRoutes.map(({ path, element }) => (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={
+                      <ProtectedInAppRoute>
+                        <AILayout>{element}</AILayout>
                       </ProtectedInAppRoute>
                     }
                   />

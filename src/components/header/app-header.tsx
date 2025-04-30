@@ -1,18 +1,21 @@
-import { useRef, useState } from 'react'
-import { FiLogIn, FiSearch } from 'react-icons/fi';
-// import { MdExplore, MdLibraryBooks, MdOutlineExplore, MdOutlineLibraryBooks } from 'react-icons/md';
-// import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react'
+import { matchPath, Link, useLocation, useNavigate } from 'react-router-dom';
+
+//Icons
 import { TiDeleteOutline } from 'react-icons/ti';
+import { FiLogIn, FiSearch } from 'react-icons/fi';
+import { InfoIcon } from 'lucide-react';
+import { IoMail, IoMailOutline, IoNotifications, IoNotificationsOutline } from 'react-icons/io5';
+import { BsPen } from 'react-icons/bs';
 
 //Components
 import Tooltip from '@mui/material/Tooltip';
 import UserInAppConfigs from '../popovers/UserInAppConfigs';
 import { Input } from '../ui/input';
-import { InfoIcon } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
 import { Skeleton } from '../ui/skeleton';
-import { BsPen } from 'react-icons/bs';
-import { IoMail, IoMailOutline, IoNotifications, IoNotificationsOutline } from 'react-icons/io5';
+
+//Context
+import { useSearch } from "@/contexts/SearchProvider";
 import { useUser } from '@/contexts/UserProvider';
 
 const UserFunctionality: React.FC<{
@@ -72,13 +75,13 @@ const UserFunctionality: React.FC<{
                 </div>
             </Link>
             <Link
-                to="/updates"
-                className={`hidden xs:flex group items-centerh-full ${location.pathname === "/updates"
+                to="/messages"
+                className={`hidden xs:flex group items-center mr-2 h-full ${location.pathname === "/messages"
                     ? "dark:text-mountain-50 text-mountain-950"
                     : "dark:text-mountain-500 text-mountain-700"
                     }`}
             >
-                <div className="flex items-centerhover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
+                <div className="flex items-center hover:bg-mountain-100 dark:hover:bg-mountain-1000 mt-1 p-2 rounded-lg hover:text-mountain-800 dark:hover:text-mountain-50 hover:cursor-pointer">
                     {location.pathname === "/updates" ? (
                         <IoNotifications className="size-5" />
                     ) : (
@@ -90,20 +93,65 @@ const UserFunctionality: React.FC<{
     );
 };
 
-const Header = () => {
+
+const Header: React.FC = ({ }) => {
     const { user, loading } = useUser();
     const [inputValue, setInputValue] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
-    const [, setQuery] = useState("");
+    const { query, setQuery } = useSearch();
+    const navigate = useNavigate();
+    const location = useLocation();
+    useEffect(() => {
+        console.log("Query updated:", query);
+    }, [query]);
+
+    const routes = [
+        {
+            path: "/explore",
+            label: "Explore Arts",
+            description: "Discover stunning creations shared by artists worldwide"
+        },
+        {
+            path: "/search",
+            label: "Search Page",
+            description: "Finding beautiful creations that you want to view"
+        },
+        {
+            path: "/blogs",
+            label: "Read Blogs",
+            description: "Get inspired by stories, tutorials, and creative journeys"
+        },
+        {
+            path: "/posts/new",
+            label: "Create Post",
+            description: "Share your latest artwork or visual content with the community"
+        },
+        {
+            path: "/posts/:id",
+            label: "Post Details",
+            description: "View artwork in detail and engage with the artist's post"
+        },
+        {
+            path: "/image/tool/create-art",
+            label: "Image Generation",
+            description: "Use AI tools to bring your creative ideas to life"
+        },
+    ];
+
+
+    const matchedRoute = routes.find(route =>
+        matchPath({ path: route.path, end: true }, location.pathname)
+    );
+
     return (
-        <nav className="top-0 z-50 sticky flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-[calc(100vw-16rem)] h-16">
+        <nav className={`top-0 z-50 sticky flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16`}>
             <div className="flex items-center h-full">
                 <div className="flex items-center space-x-1 lg:space-x-2 xl:space-x-4 px-4 h-full">
                     <div className='flex items-center space-x-2'>
                         <span className='flex font-medium text-lg'>
-                            Explore Arts
+                            {matchedRoute?.label || ""}
                         </span>
-                        <Tooltip title="Discover the most beautiful arts">
+                        <Tooltip title={matchedRoute?.description || ""}>
                             <InfoIcon className='size-4' />
                         </Tooltip>
                     </div>
@@ -117,13 +165,15 @@ const Header = () => {
                             onChange={(e) => setInputValue(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") {
+                                    setInputValue("");
                                     setQuery(inputValue);
                                     inputRef.current?.blur();
+                                    navigate(`/search?q=${inputValue}`);
                                 }
                             }}
                         />
                         <TiDeleteOutline
-                            className="right-2 absolute w-5 h-5"
+                            className={`right-2 text-mountain-600 absolute w-5 h-5 ${inputValue.length <= 0 ? "hidden" : "flex"}`}
                             onClick={() => {
                                 setInputValue("");
                                 setQuery("");
@@ -139,7 +189,7 @@ const Header = () => {
                 </div>
             </div>
             <div
-                className={`flex items-center space-x-2 h-full`}
+                className={`flex items-center h-full`}
             >
                 <UserFunctionality user={user!} loading={loading!} />
                 <UserInAppConfigs />

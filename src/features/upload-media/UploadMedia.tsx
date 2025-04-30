@@ -194,7 +194,7 @@ const UploadMedia: React.FC = () => {
   const isMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
 
   return (
-    <Box className="dark:bg-mountain-950 w-full h-full">
+    <Box className="flex dark:bg-mountain-950 w-full">
       {isLoading && (
         <Backdrop
           open
@@ -217,8 +217,8 @@ const UploadMedia: React.FC = () => {
         </Backdrop>
       )}
 
-      <Box
-        className="w-full px-6 py-3 border-b border-mountain-200 dark:border-mountain-700 bg-white dark:bg-mountain-900 shadow-sm"
+      {/* <Box
+        className="bg-white dark:bg-mountain-900 shadow-sm px-6 py-3 border-mountain-200 dark:border-mountain-700 border-b w-full"
         sx={{
           display: "flex",
           alignItems: "center",
@@ -230,14 +230,14 @@ const UploadMedia: React.FC = () => {
       >
         <Typography
           variant="h6"
-          className="text-gray-900 dark:text-white font-semibold"
+          className="font-semibold text-gray-900 dark:text-white"
         >
           Create Post
         </Typography>
-      </Box>
+      </Box> */}
 
       <Box
-        className="flex gap-3 p-4 w-full h-[calc(100vh-4rem-56px)]"
+        className="flex gap-3 py-4 pl-4 w-full h-[calc(100vh-4rem)]"
         style={{ overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}
@@ -249,7 +249,7 @@ const UploadMedia: React.FC = () => {
           setThumbnailFile={handleThumbnailChange}
         />
         {/* RIGHT COLUMN: FORM FIELDS & ACTIONS */}
-        <Box className="flex flex-col space-y-3 w-[50%]">
+        <Box className="flex flex-col space-y-3 w-[40%]">
           {/* <Box className="mb-2">
             <UploadToggle
               isImageUpload={isImageUpload}
@@ -257,7 +257,7 @@ const UploadMedia: React.FC = () => {
             />
           </Box> */}
           {/* Form fields */}
-          <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
+          <Box className="rounded-md overflow-y-auto custom-scrollbar">
             <UploadForm
               thumbnailFile={thumbnailFile}
               setOriginalThumbnailFile={setOriginalThumbnailFile}
@@ -282,7 +282,7 @@ const UploadMedia: React.FC = () => {
           <hr className="border-mountain-300 dark:border-mountain-700 border-t-1 w-full" />
 
           {/* Bottom actions */}
-          <Box className="flex justify-between mt-auto pr-4 w-full">
+          <Box className="flex justify-between mt-auto w-full">
             <Button
               variant="contained"
               onClick={handleSubmit}

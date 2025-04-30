@@ -19,6 +19,7 @@ import "react-horizontal-scrolling-menu/dist/styles.css";
 import "./Categories.css";
 import { FiSearch } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
+import { cn } from "@/lib/utils";
 
 interface CategoriesProps {
   onSelectCategory: (categoryName: string) => void;
@@ -34,6 +35,7 @@ interface DataPopperProps {
   data: { name: string; thumbnail?: string }[];
   renderItem: string;
   placement?: PopperPlacementType;
+  className?: string;
 }
 
 const LeftArrow = () => {
@@ -46,7 +48,7 @@ const LeftArrow = () => {
         color="primary"
         disableElevation
         disabled={isFirstItemVisible}
-        className="min-w-auto aspect-[1/1] p-1 rounded-full"
+        className="p-1 rounded-full min-w-auto aspect-[1/1]"
         onClick={() => visibility.scrollPrev()}
       >
         <ChevronLeft size={16} />
@@ -65,7 +67,7 @@ const RightArrow = () => {
         color="primary"
         disableElevation
         disabled={isLastItemVisible}
-        className="min-w-auto aspect-[1/1] p-1 rounded-full"
+        className="p-1 rounded-full min-w-auto aspect-[1/1]"
         onClick={() => visibility.scrollNext()}
       >
         <ChevronRight size={16} />
@@ -103,9 +105,9 @@ export const Categories: React.FC<CategoriesProps> = ({
           >
             <img
               src={category.thumbnail}
-              className="object-cover object-center w-12 aspect-[1/1] rounded-lg border"
+              className="border rounded-lg w-12 object-center object-cover aspect-[1/1]"
             />
-            <span className="text-sm text-gray-800 line-clamp-2">
+            <span className="text-gray-800 text-sm line-clamp-2">
               {category.name}
             </span>
           </div>
@@ -131,10 +133,10 @@ const renderCategoryItem = (
       <img
         src={item.thumbnail}
         alt={item.name}
-        className="object-cover object-center w-12 aspect-[1/1] rounded-lg"
+        className="rounded-lg w-12 object-center object-cover aspect-[1/1]"
       />
     )}
-    <span className="text-sm text-gray-800 text-wrap">{item.name}</span>
+    <span className="text-gray-800 text-sm text-wrap">{item.name}</span>
   </div>
 );
 
@@ -145,7 +147,7 @@ const renderPropItem = (
 ) => (
   <div
     key={item.name}
-    className="flex items-center cursor-pointer hover:bg-mountain-100 rounded-lg p-2 gap-2"
+    className="flex items-center gap-2 hover:bg-mountain-100 p-2 rounded-lg cursor-pointer"
     onClick={onClick}
   >
     <input
@@ -157,7 +159,7 @@ const renderPropItem = (
     />
     <label
       htmlFor={item.name}
-      className="text-sm text-gray-800 w-full pointer-events-none"
+      className="w-full text-gray-800 text-sm pointer-events-none"
     >
       {item.name}
     </label>
@@ -173,6 +175,7 @@ export const DataPopper: React.FC<DataPopperProps> = ({
   data,
   renderItem,
   placement,
+  className
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedData, setSelectedData] = useState<string[]>(selectedDataProp);
@@ -196,12 +199,12 @@ export const DataPopper: React.FC<DataPopperProps> = ({
       anchorEl={anchorEl}
       placement={placement}
       transition
-      className="mr-4 mt-4"
+      className="mt-4 mr-4"
     >
       {({ TransitionProps }) => (
         <Fade {...TransitionProps} timeout={350}>
-          <Paper className="max-h-[70vh] overflow-y-auto w-72 rounded-lg">
-            <div className="sticky top-0 bg-white p-4 w-full border-b">
+          <Paper className={cn('rounded-lg w-72 max-h-[70vh] overflow-y-auto custom-scrollbar', className)}>
+            <div className="top-0 sticky bg-white p-4 border-b w-full">
               <div className="relative flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl h-10 text-mountain-500">
                 <FiSearch className="left-2 absolute w-5 h-5" />
                 <Input
@@ -232,7 +235,7 @@ export const DataPopper: React.FC<DataPopperProps> = ({
                 )}
             </div>
 
-            <div className="sticky bottom-0 bg-white p-4 flex justify-end gap-2 border-t">
+            <div className="bottom-0 sticky flex justify-end gap-2 bg-white p-4 border-t">
               <Button
                 variant="outlined"
                 onClick={() => {

@@ -1,11 +1,10 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import IGallery from "@/components/gallery/Gallery";
 import { Categories, DataPopper } from "@/components/categories/Categories";
 
 import { Button } from "@mui/material";
 
 import { Ellipsis, LoaderPinwheel } from "lucide-react";
-import { SearchContext } from "@/layouts/public/InAppLayout";
 import { categoriesData, propsData } from "@/components/categories/mocks";
 import { BsFilter } from "react-icons/bs";
 
@@ -15,7 +14,6 @@ const Gallery: React.FC = () => {
   const [openPP, setOpenPP] = useState(false);
   const [anchorElCP, setAnchorElCP] = useState<null | HTMLElement>(null);
   const [anchorElPP, setAnchorElPP] = useState<null | HTMLElement>(null);
-  const { query } = useContext(SearchContext);
 
   const handleCategoriesChange = (categoryName: string) => {
     setSelectedCategories((prev) => {
@@ -101,7 +99,8 @@ const Gallery: React.FC = () => {
         </div>
       </div>
       <div className="p-4 gallery-area">
-        <IGallery query={query} filter={selectedCategories}/>
+        {/* <IGallery query={query} filter={selectedCategories}/> */}
+        <IGallery filter={selectedCategories}/>
       </div>
     </div>
   );

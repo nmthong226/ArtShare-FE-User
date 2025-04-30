@@ -29,7 +29,7 @@ const UploadPost: React.FC = () => {
   const [title, setTitle] = useState("");
   // Thumbnail states
   const [isSubmitted, setIsSubmitted] = useState(false);
-  // const [cate_ids, setCateIds] = useState<number[]>([]);
+  const [cate_ids, setCateIds] = useState<number[]>([]);
   const [description, setDescription] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
@@ -185,7 +185,7 @@ const UploadPost: React.FC = () => {
       thumbnailUrl,
       isMature,
       aiCreated,
-      // cate_ids,
+      cate_ids,
     );
 
     try {
@@ -278,7 +278,7 @@ const UploadPost: React.FC = () => {
               setOriginalThumbnailFile={setOriginalThumbnailFile}
               onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
-              // setCateIds={setCateIds}
+              setCateIds={setCateIds}
               title={title}
               setTitle={setTitle}
               description={description}

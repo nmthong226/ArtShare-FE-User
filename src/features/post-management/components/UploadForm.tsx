@@ -10,8 +10,7 @@ import {
   FormControl,
   Tooltip,
 } from "@mui/material";
-// TODO: uncomment this
-// import SubjectSelector from "./SubjectSelector";
+import SubjectSelector from "./SubjectSelector";
 import {
   Crop,
   ErrorOutlineOutlined,
@@ -24,7 +23,7 @@ const UploadForm: React.FC<{
   thumbnailFile: File | undefined;
   onThumbnailChange: (file: File | undefined, isOriginal?: boolean) => void;
   isSubmitted: boolean;
-  // setCateIds: (value: number[]) => void;
+  setCateIds: (value: number[]) => void;
   title: string;
   setTitle: (value: string) => void;
   description: string;
@@ -45,8 +44,7 @@ const UploadForm: React.FC<{
   setOriginalThumbnailFile,
   onThumbnailChange,
   isSubmitted,
-  // TODO: uncomment this
-  // setCateIds,
+  setCateIds,
   title,
   setTitle,
   description,
@@ -327,7 +325,7 @@ const UploadForm: React.FC<{
           {/* Dialog for Selection */}
           <Box className="space-y-1 px-3 pb-3">
             {/** TODO: uncomment this */}
-            {/* <SubjectSelector setCateIds={setCateIds} /> */}
+            <SubjectSelector setCateIds={setCateIds} />
           </Box>
         </Box>
 

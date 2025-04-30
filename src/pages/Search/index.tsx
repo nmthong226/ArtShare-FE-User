@@ -1,22 +1,33 @@
-import { useSearchParams } from "react-router-dom";
-import { Input } from "@/components/ui/input";
+//Core
 import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+
+//Icons
 import { FiSearch } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
 import { BsFilter } from "react-icons/bs";
-import { useSearch } from "@/contexts/SearchProvider";
-import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { TbCategory } from "react-icons/tb";
+
+//Context
+import { useSearch } from "@/contexts/SearchProvider";
+
+//Components
+import { Input } from "@/components/ui/input";
+import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
 import { DataPopper } from "@/components/categories/Categories";
 import { categoriesData } from "@/components/categories/mocks";
 import { Button } from "@/components/ui/button";
 import SortMenu from "@/components/dropdowns/Sort";
 import CategoryList from "@/components/filters/Filter";
+
+//Libs/Utils/Helpers
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { Post } from "@/types";
-import { fetchPosts } from "@/features/explore/api/get-post";
 import { getMediaDimensions } from "@/utils/helpers/gallery.helper";
+import { fetchPosts } from "@/features/explore/api/get-post";
+
+//Types
+import { Post } from "@/types";
 
 const Search = () => {
   const { query, setQuery } = useSearch();
@@ -42,8 +53,6 @@ const Search = () => {
     console.log("Search query changed:", query);
   }, [query]);
 
-  const [openPP, setOpenPP] = useState(false);
-  const [anchorElPP, setAnchorElPP] = useState<null | HTMLElement>(null);
   const galleryAreaRef = useRef<HTMLDivElement>(null);
   const {
     data,
@@ -105,31 +114,10 @@ const Search = () => {
     },
   });
 
-  const handleCategoriesChange = (categoryName: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(categoryName)
-        ? prev.filter((cat) => cat !== categoryName)
-        : [...prev, categoryName],
-    );
-  };
 
   const handleToggleCP = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorElCP(event.currentTarget);
     setOpenCP((prevOpen) => !prevOpen);
-  };
-
-  const handleTogglePP = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorElPP(event.currentTarget);
-    setOpenPP((prevOpen) => !prevOpen);
-  };
-
-  const handleTabChange = (
-    _: React.MouseEvent<HTMLElement>,
-    newTab: string | null,
-  ) => {
-    if (newTab) {
-      setTab(newTab);
-    }
   };
 
   useEffect(() => {

@@ -27,3 +27,5 @@ dist-ssr
 coverage/
 # we dont use npm 
 package-lock.json  
+
+db

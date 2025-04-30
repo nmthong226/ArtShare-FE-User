@@ -15,14 +15,14 @@ import {
   GetPresignedUrlResponse,
   uploadFile,
 } from "@/api/storage";
-import { fetchPost } from "@/components/post/api/get-post";
+import { fetchPost } from "../post/api/post.api";
 import { updatePost } from "./api/update-post";
 import UploadForm from "./components/UploadForm";
 import MediaSelection from "./components/media-selection";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
 import { nanoid } from "nanoid";
-import { Category, Post } from "@/types";
+import { Post } from "@/types";
 import { MEDIA_TYPE } from "@/constants";
 
 const VIDEO_STORAGE_DIRECTORY = "posts";
@@ -103,17 +103,19 @@ const EditPost: React.FC = () => {
 
   /** ─────────────────── helpers ─────────────────── */
   const createFormData = (
-    data: typeof postData,
+    // TODO: uncomment this
+    // data: typeof postData,
     videoUrl?: string,
     thumbnailUrl?: string,
   ) => {
     const formData = new FormData();
     formData.append("title", title);
     if (description) formData.append("description", description);
-    formData.append(
+    // TODO: uncomment this
+    /*  formData.append(
       "cate_ids",
       JSON.stringify(data!.categories.map((cat: Category) => cat.id)),
-    );
+    ); */
     const finalVideoUrl = videoUrl ?? existingVideoUrl;
     formData.append("video_url", finalVideoUrl ?? "");
 
@@ -180,7 +182,10 @@ const EditPost: React.FC = () => {
         handleUploadVideo(),
         handleUploadThumbnail(),
       ]);
-      const body = createFormData(postData, videoUrl, thumbnailUrl);
+      // TODO: uncomment this
+      // const body = createFormData(postData, videoUrl, thumbnailUrl);
+      const body = createFormData(videoUrl, thumbnailUrl);
+
       for (const [key, value] of body.entries()) {
         // Note: value could be a File or a string
         console.log(key, value);

@@ -1,6 +1,6 @@
 import { User } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPosts } from "../mocks/api";
+import { fetchPostsByArtist } from "@/features/explore/api/get-post";
 
 const PostMoreByArtist = ({ artist }: { artist: User }) => {
   const {
@@ -10,10 +10,7 @@ const PostMoreByArtist = ({ artist }: { artist: User }) => {
   } = useQuery({
     queryKey: ["posts", artist.username],
     retry: 2,
-    queryFn: async () => {
-      const response = await fetchPosts(artist.username, 1);
-      return response.data;
-    },
+    queryFn: () => fetchPostsByArtist(artist.username, 1),
   });
 
   if (isLoading) {

@@ -9,7 +9,7 @@ import PostMoreByArtist from "@/features/post/components/PostMoreByArtist";
 // import PostShare from "@/components/posts/PostShare";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
-import { fetchPost } from "./mocks/api";
+import { fetchPost } from "./api/post.api";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();

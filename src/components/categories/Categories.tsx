@@ -1,10 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { ChevronRight, ChevronLeft } from "lucide-react";
-import {
-  ScrollMenu,
-  VisibilityContext,
-  type publicApiType,
-} from "react-horizontal-scrolling-menu";
+import React, { useEffect, useState } from "react";
 import { categoriesData } from "./mocks";
 import {
   Button,
@@ -19,6 +13,7 @@ import "react-horizontal-scrolling-menu/dist/styles.css";
 import "./Categories.css";
 import { FiSearch } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
+import { HorizontalSlider } from "../HorizontalSlider";
 import { cn } from "@/lib/utils";
 
 interface CategoriesProps {
@@ -38,89 +33,59 @@ interface DataPopperProps {
   className?: string;
 }
 
-const LeftArrow = () => {
-  const visibility = useContext<publicApiType>(VisibilityContext);
-  const isFirstItemVisible = visibility.useIsVisible("first", true);
-  return (
-    <div className="flex items-center">
-      <Button
-        variant="contained"
-        color="primary"
-        disableElevation
-        disabled={isFirstItemVisible}
-        className="p-1 rounded-full min-w-auto aspect-[1/1]"
-        onClick={() => visibility.scrollPrev()}
-      >
-        <ChevronLeft size={16} />
-      </Button>
-    </div>
-  );
-};
-
-const RightArrow = () => {
-  const visibility = useContext<publicApiType>(VisibilityContext);
-  const isLastItemVisible = visibility.useIsVisible("last", false);
-  return (
-    <div className="flex items-center">
-      <Button
-        variant="contained"
-        color="primary"
-        disableElevation
-        disabled={isLastItemVisible}
-        className="p-1 rounded-full min-w-auto aspect-[1/1]"
-        onClick={() => visibility.scrollNext()}
-      >
-        <ChevronRight size={16} />
-      </Button>
-    </div>
-  );
-};
-
 export const Categories: React.FC<CategoriesProps> = ({
   onSelectCategory,
   selectedCategories,
 }) => {
+  const renderCategoryItem = (category: {
+    name: string;
+    thumbnail?: string;
+  }) => {
+    const isSelected = selectedCategories.includes(category.name);
+    return (
+      <div
+        className={`category-item max-w-48 flex justify-center items-center ${
+          isSelected
+            ? "bg-mountain-200 dark:bg-mountain-800"
+            : "hover:bg-mountain-100 dark:hover:bg-mountain-900"
+        } cursor-pointer rounded-lg p-2 gap-2 border ${
+          isSelected ? "border-primary-500" : "border-transparent"
+        }`}
+        onClick={() => onSelectCategory(category.name)}
+        title={category.name}
+      >
+        {category.thumbnail && (
+          <img
+            src={category.thumbnail}
+            alt={category.name}
+            className="border dark:border-mountain-700 rounded-lg w-10 h-10 object-center object-cover aspect-[1/1]"
+            loading="lazy"
+          />
+        )}
+        <span className="text-mountain-800 dark:text-mountain-200 text-sm line-clamp-2">
+          {category.name}
+        </span>
+      </div>
+    );
+  };
 
-  const handleCategoryClick = (categoryName: string) => {
-    onSelectCategory(categoryName);
+  const getCategoryId = (category: { name: string; thumbnail?: string }) => {
+    return category.name;
   };
 
   return (
-    <>
-      {/* First ScrollMenu - Categories */}
-      <ScrollMenu
-        LeftArrow={LeftArrow}
-        RightArrow={RightArrow}
-        itemClassName="flex-shrink-0 flex items-center mx-1"
-      >
-        {categoriesData.map((category) => (
-          <div
-            key={category.name}
-            className={`max-w-48 flex justify-center items-center ${
-              selectedCategories.includes(category.name)
-                ? "bg-mountain-200"
-                : "hover:bg-mountain-200"
-            } cursor-pointer rounded-lg p-2 gap-2`}
-            onClick={() => handleCategoryClick(category.name)}
-          >
-            <img
-              src={category.thumbnail}
-              className="border rounded-lg w-12 object-center object-cover aspect-[1/1]"
-            />
-            <span className="text-gray-800 text-sm line-clamp-2">
-              {category.name}
-            </span>
-          </div>
-        ))}
-      </ScrollMenu>
-    </>
+    <HorizontalSlider
+      data={categoriesData}
+      renderItem={renderCategoryItem}
+      getItemId={getCategoryId}
+    />
   );
 };
 
 const renderCategoryItem = (
   item: { name: string; thumbnail?: string },
   isSelected: boolean,
-  onClick: () => void
+  onClick: () => void,
 ) => (
   <div
     key={item.name}
@@ -143,7 +108,7 @@ const renderCategoryItem = (
 const renderPropItem = (
   item: { name: string; thumbnail?: string },
   isSelected: boolean,
-  onClick: () => void
+  onClick: () => void,
 ) => (
   <div
     key={item.name}
@@ -188,7 +153,7 @@ export const DataPopper: React.FC<DataPopperProps> = ({
     setSelectedData((prev) =>
       prev.includes(name)
         ? prev.filter((item) => item !== name)
-        : [...prev, name]
+        : [...prev, name],
     );
   };
 
@@ -224,14 +189,16 @@ export const DataPopper: React.FC<DataPopperProps> = ({
             <div className="px-4">
               {data
                 .filter((item) =>
-                  item.name.toLowerCase().includes(searchQuery.toLowerCase())
+                  item.name.toLowerCase().includes(searchQuery.toLowerCase()),
                 )
                 .map((item) =>
-                  (renderItem === "category" ? renderCategoryItem : renderPropItem)(
+                  (renderItem === "category"
+                    ? renderCategoryItem
+                    : renderPropItem)(
                     item,
                     selectedData.includes(item.name),
-                    () => handleDataClick(item.name)
-                  )
+                    () => handleDataClick(item.name),
+                  ),
                 )}
             </div>
 

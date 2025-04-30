@@ -1,241 +1,94 @@
-import React, { useEffect, useState } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchPosts } from "./api/post";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { Photo, RowsPhotoAlbum } from "react-photo-album";
-import { ImageRenderer } from "./ImageRenderer";
-import { Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import React from "react";
+
+import { Photo, RowsPhotoAlbum, RenderPhotoContext } from "react-photo-album";
 import "react-photo-album/rows.css";
-import { Post } from "@/types";
-import { IoSearchSharp } from "react-icons/io5";
+
+import { ImageRenderer } from "./ImageRenderer";
+import LoadingSpinner from "@/components/LoadingSpinner";
+
 export interface GalleryPhoto extends Photo {
+  key: string;
   title: string;
   author: string;
   postLength: number;
   postId: number;
 }
 
-const getMediaDimensions = (
-  url: string,
-): Promise<{ width: number; height: number }> => {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve({ width: img.width, height: img.height });
-    img.onerror = reject;
-    img.src = url;
-  });
-};
+interface IGalleryProps {
+  photos: GalleryPhoto[];
+  isLoading: boolean;
+  isFetchingNextPage: boolean;
+  isError: boolean;
+  error: Error | null;
 
-const IGallery = ({ query, filter, showTab = true, }: { query?: string; filter: string[], showTab?: boolean }) => {
-  const [tab, setTab] = useState<string>("for-you");
+  /**
+   * Optional custom rendering function for each photo.
+   * If not provided, defaults to the basic ImageRenderer.
+   * The function receives RenderPhotoProps<GalleryPhoto> from react-photo-album.
+   */
+  renderPhoto?: (
+    _: unknown,
+    context: RenderPhotoContext<GalleryPhoto>,
+  ) => React.ReactNode;
+}
 
-  const handleFilterChange = (
-    _: React.MouseEvent<HTMLElement>,
-    newFilter: string,
-  ) => {
-    if (newFilter) {
-      setTab(newFilter);
-    }
-  };
+const IGallery: React.FC<IGalleryProps> = ({
+  photos,
+  isLoading,
+  isFetchingNextPage,
+  isError,
+  error,
 
-  const {
-    data,
-    error,
-    isError,
-    isLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["posts", tab, query, filter],
-    retry: 2,
-    queryFn: async ({ pageParam = 1 }) => {
-      const posts: Post[] = await fetchPosts(pageParam, tab, query, filter);
-      console.log("posts", posts);
-      const galleryPhotos = await Promise.all(
-        posts.map(async (post) => {
-          if (!post.thumbnail_url && post.medias.length === 0) {
-            return null;
-          }
-          const mediaDimensions = await getMediaDimensions(
-            post.thumbnail_url || post.medias[0].url,
-          );
-          return {
-            key: post.id.toString(),
-            title: post.title || "",
-            author: post.user.full_name || "",
-            src: post.thumbnail_url,
-            width: mediaDimensions.width,
-            height: mediaDimensions.height,
-            postLength: post.medias.length,
-            postId: post.id,
-          };
-        }),
-      );
-      return galleryPhotos;
-    },
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, pages) =>
-      lastPage.length > 0 ? pages.length + 1 : undefined,
-  });
+  renderPhoto,
+}) => {
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
-  console.log("data", data);
+  if (isError && !isLoading && photos.length === 0) {
+    return (
+      <div className="p-4 text-red-500 text-center">
+        Error loading posts: {error?.message || "Unknown error"}
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    const debounce = <T extends unknown[]>(
-      func: (...args: T) => void,
-      delay: number,
-    ): ((...args: T) => void) => {
-      let timeoutId: number | null = null;
+  if (!isLoading && photos.length === 0 && !isFetchingNextPage) {
+    return (
+      <div className="p-4 text-gray-500 text-center">
+        No posts found matching your criteria.
+      </div>
+    );
+  }
 
-      return (...args: T) => {
-        if (timeoutId !== null) {
-          clearTimeout(timeoutId);
-        }
-        timeoutId = window.setTimeout(() => func(...args), delay);
-      };
-    };
-
-    const handleScroll = debounce(() => {
-      const scrollThreshold = 100;
-      const galleryArea = document.querySelector(".gallery-area");
-
-      if (galleryArea instanceof HTMLElement) {
-        const scrolledFromTop = galleryArea.scrollTop;
-        const galleryHeight = galleryArea.offsetHeight;
-        const scrollableHeight = galleryArea.scrollHeight;
-
-        if (
-          galleryHeight + scrolledFromTop >=
-          scrollableHeight - scrollThreshold
-        ) {
-          if (hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
-          }
-        }
-      } else {
-        console.warn(
-          "Element with class 'gallery-area' not found or is not an HTMLElement.",
-        );
-      }
-    }, 10);
-
-    const checkContentHeight = debounce(() => {
-      const galleryArea = document.querySelector(".gallery-area");
-
-      if (galleryArea instanceof HTMLElement) {
-        const galleryHeight = galleryArea.offsetHeight;
-        const windowHeight = window.innerHeight;
-
-        if (galleryHeight < windowHeight) {
-          if (hasNextPage && !isFetchingNextPage) {
-            fetchNextPage();
-          }
-        }
-      } else {
-        console.warn(
-          "Element with class 'gallery-area' is not an HTMLElement or was not found.",
-        );
-      }
-    }, 200);
-
-    window.addEventListener("scroll", handleScroll);
-    window.addEventListener("resize", checkContentHeight);
-    checkContentHeight();
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", checkContentHeight);
-    };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
-
-  const galleryPhotos = data ? data.pages.flat() : [];
-
-  // const uniqueGalleryPhotos = Array.from(
-  //   new Map(galleryPhotos.map((photo) => [photo.key, photo])).values()
-  // );
+  const effectiveRenderPhoto = renderPhoto ? renderPhoto : ImageRenderer;
 
   return (
-    <div className="mb-8">
+    <div className="relative pb-20">
+      {/* Padding at the bottom for the spinner */}
       <RowsPhotoAlbum
         spacing={8}
+        targetRowHeight={256}
         rowConstraints={{ singleRowMaxHeight: 256 }}
-        photos={galleryPhotos as GalleryPhoto[]}
-        render={{ image: ImageRenderer }}
+        photos={photos}
+        render={{ image: effectiveRenderPhoto }}
       />
-
-      {showTab &&
-        <Paper className="bottom-4 left-1/2 z-50 fixed shadow-lg rounded-full -translate-x-1/2 transform">
-          <ToggleButtonGroup
-            className="flex gap-2 m-1.5"
-            size="large"
-            value={tab}
-            exclusive
-            onChange={handleFilterChange}
-          >
-            <ToggleButton
-              value="for-you"
-              className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
-              sx={{
-                "&.Mui-selected": {
-                  backgroundColor: "#c7d2fe",
-                  color: "#000",
-                  "&:hover": {
-                    backgroundColor: "#c7d2fe",
-                  },
-                },
-                "&:hover": {
-                  backgroundColor: "#e0e0e0",
-                },
-              }}
-            >
-              For you
-            </ToggleButton>
-            <ToggleButton
-              value="following"
-              className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case transition duration-300 ease-in-out transform"
-              sx={{
-                "&.Mui-selected": {
-                  backgroundColor: "#c7d2fe",
-                  color: "#000",
-                  "&:hover": {
-                    backgroundColor: "#c7d2fe",
-                  },
-                },
-                "&:hover": {
-                  backgroundColor: "#e0e0e0",
-                },
-              }}
-            >
-              Following
-            </ToggleButton>
-          </ToggleButtonGroup>
-        </Paper>
-      }
-      <div className="flex flex-col items-center mt-4 w-full">
-        {(isLoading || isFetchingNextPage) && (
-          <div className="m-4 text-center">
-            <LoadingSpinner />
-          </div>
-        )}
-        {isError && (
-          !query ? (
-            <div className="text-red-500 text-center">
-              {(error as Error).message}
-            </div>
-          ) : (
-            <div className="flex flex-col justify-center items-center">
-              <IoSearchSharp className="mb-4 w-20 h-20 text-mountain-400" />
-              <p className="flex font-semibold text-mountain-800 text-lg">
-                Currently, there is no results for "{query}"
-              </p>
-              <p className="text-mountain-400">
-                Try with another keyword for showing what you want.
-              </p>
-            </div>
-          )
-        )}
-      </div>
+      {/* --- Loading More Spinner --- */}
+      {isFetchingNextPage && (
+        <div className="my-4 text-center">
+          <LoadingSpinner />
+        </div>
+      )}
+      {/* --- Error fetching more state (shown below existing photos) --- */}
+      {isError && !isLoading && photos.length > 0 && (
+        <div className="py-4 text-red-500 text-center">
+          Error fetching more posts: {error?.message || "Unknown error"}
+        </div>
+      )}
     </div>
   );
 };

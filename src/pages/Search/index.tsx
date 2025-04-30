@@ -5,7 +5,7 @@ import { FiSearch } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
 import { BsFilter } from "react-icons/bs";
 import { useSearch } from "@/contexts/SearchProvider";
-import IGallery from "@/components/gallery/Gallery";
+import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { TbCategory } from "react-icons/tb";
 import { DataPopper } from "@/components/categories/Categories";
@@ -13,6 +13,10 @@ import { categoriesData } from "@/components/categories/mocks";
 import { Button } from "@/components/ui/button";
 import SortMenu from "@/components/dropdowns/Sort";
 import CategoryList from "@/components/filters/Filter";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Post } from "@/types";
+import { fetchPosts } from "@/features/explore/api/get-post";
+import { getMediaDimensions } from "@/utils/helpers/gallery.helper";
 
 const Search = () => {
   const { query, setQuery } = useSearch();
@@ -27,12 +31,6 @@ const Search = () => {
   const [anchorElCP, setAnchorElCP] = useState<null | HTMLElement>(null);
   const [sort, setSort] = useState("Sort by Relevance");
 
-
-  const handleToggleCP = () => (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorElCP(event.currentTarget);
-    setOpenCP((prevOpen) => !prevOpen);
-  };
-
   useEffect(() => {
     const q = searchParams.get("q") || "";
     setQuery(q);
@@ -44,6 +42,141 @@ const Search = () => {
     console.log("Search query changed:", query);
   }, [query]);
 
+  const [openPP, setOpenPP] = useState(false);
+  const [anchorElPP, setAnchorElPP] = useState<null | HTMLElement>(null);
+  const galleryAreaRef = useRef<HTMLDivElement>(null);
+  const {
+    data,
+    error,
+    isError,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["posts", tab, query, selectedCategories],
+    retry: 2,
+    queryFn: async ({ pageParam = 1 }): Promise<GalleryPhoto[]> => {
+      const posts: Post[] = await fetchPosts(
+        pageParam,
+        tab,
+        query,
+        selectedCategories,
+      );
+      console.log("Fetched posts:", posts);
+
+      const galleryPhotosPromises = posts
+        .filter(
+          (post) =>
+            post.thumbnail_url || (post.medias && post.medias.length > 0),
+        )
+        .map(async (post): Promise<GalleryPhoto | null> => {
+          try {
+            const imageUrl = post.thumbnail_url || post.medias[0]?.url;
+            if (!imageUrl) return null;
+
+            const mediaDimensions = await getMediaDimensions(imageUrl);
+            return {
+              key: post.id.toString(),
+              title: post.title || "",
+              author: post.user?.full_name || "Unknown Author",
+              src: imageUrl,
+              width: mediaDimensions.width,
+              height: mediaDimensions.height,
+              postLength: post.medias?.length ?? 0,
+              postId: post.id,
+            };
+          } catch (dimensionError) {
+            console.error(
+              `Error getting dimensions for post ${post.id}:`,
+              dimensionError,
+            );
+            return null;
+          }
+        });
+
+      const resolvedPhotos = await Promise.all(galleryPhotosPromises);
+
+      return resolvedPhotos.filter((photo) => photo !== null) as GalleryPhoto[];
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.length > 0 ? allPages.length + 1 : undefined;
+    },
+  });
+
+  const handleCategoriesChange = (categoryName: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(categoryName)
+        ? prev.filter((cat) => cat !== categoryName)
+        : [...prev, categoryName],
+    );
+  };
+
+  const handleToggleCP = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElCP(event.currentTarget);
+    setOpenCP((prevOpen) => !prevOpen);
+  };
+
+  const handleTogglePP = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorElPP(event.currentTarget);
+    setOpenPP((prevOpen) => !prevOpen);
+  };
+
+  const handleTabChange = (
+    _: React.MouseEvent<HTMLElement>,
+    newTab: string | null,
+  ) => {
+    if (newTab) {
+      setTab(newTab);
+    }
+  };
+
+  useEffect(() => {
+    const galleryElement = galleryAreaRef.current;
+    if (!galleryElement) return;
+
+    const handleScroll = () => {
+      const scrollThreshold = 200;
+      const scrolledFromTop = galleryElement.scrollTop;
+      const elementHeight = galleryElement.clientHeight;
+      const scrollableHeight = galleryElement.scrollHeight;
+
+      if (
+        elementHeight + scrolledFromTop >= scrollableHeight - scrollThreshold &&
+        hasNextPage &&
+        !isFetchingNextPage
+      ) {
+        console.log("Fetching next page...");
+        fetchNextPage();
+      }
+    };
+
+    const checkInitialContentHeight = () => {
+      if (
+        galleryElement.scrollHeight <= galleryElement.clientHeight &&
+        hasNextPage &&
+        !isFetchingNextPage &&
+        !isLoading
+      ) {
+        console.log("Initial content too short, fetching next page...");
+        fetchNextPage();
+      }
+    };
+
+    galleryElement.addEventListener("scroll", handleScroll);
+
+    const timeoutId = setTimeout(checkInitialContentHeight, 500);
+
+    return () => {
+      galleryElement.removeEventListener("scroll", handleScroll);
+      clearTimeout(timeoutId);
+    };
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, data, isLoading]);
+
+  const galleryPhotos: GalleryPhoto[] =
+    data?.pages?.flat().filter(Boolean) ?? [];
+  console.log("Processed galleryPhotos:", galleryPhotos);
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -96,7 +229,7 @@ const Search = () => {
             <div className="relative">
               <Button
                 className="flex justify-center items-center bg-white hover:bg-mountain-50 py-1 border border-mountain-200 rounded-full w-32 text-mountain-950 cursor-pointer"
-                onClick={handleToggleCP()}
+                onClick={handleToggleCP}
               >
                 <TbCategory size={16} />
                 <p>Channels</p>
@@ -121,8 +254,8 @@ const Search = () => {
           <div
             onClick={() => setTab("posts")}
             className={`${tab === "posts"
-                ? "border-indigo-400"
-                : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
+              ? "border-indigo-400"
+              : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
               } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg`}
           >
             Posts
@@ -130,8 +263,8 @@ const Search = () => {
           <div
             onClick={() => setTab("users")}
             className={`${tab === "users"
-                ? "border-indigo-400"
-                : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
+              ? "border-indigo-400"
+              : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
               } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg`}
           >
             Users
@@ -156,7 +289,13 @@ const Search = () => {
         </div>
         <div className="justify-center items-center mt-4 p-4 w-full h-full gallery-area">
           {/* <IGallery query={query} filter={selectedCategories}/> */}
-          <IGallery query={query} filter={selectedCategories} showTab={false} />
+          <IGallery
+            photos={galleryPhotos}
+            isLoading={isLoading && !data}
+            isFetchingNextPage={isFetchingNextPage}
+            isError={isError}
+            error={error as Error | null}
+          />
         </div>
       </div>
     </div>

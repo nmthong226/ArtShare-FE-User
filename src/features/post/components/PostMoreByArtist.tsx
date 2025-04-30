@@ -1,6 +1,6 @@
 import { User } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { fetchPosts } from "../post/api/postService";
+import { fetchPosts } from "../mocks/api";
 
 const PostMoreByArtist = ({ artist }: { artist: User }) => {
   const {

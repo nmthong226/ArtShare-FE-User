@@ -29,6 +29,7 @@ const UploadMedia: React.FC = () => {
   const [title, setTitle] = useState("");
   // Thumbnail states
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [cate_ids, setCateIds] = useState<number[]>([]);
   const [description, setDescription] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
@@ -50,6 +51,7 @@ const UploadMedia: React.FC = () => {
     thumbnailUrl?: string,
     isMature?: boolean,
     aiCreated?: boolean,
+    cate_ids?: number[],
   ) => {
     const formData = new FormData();
 
@@ -64,6 +66,7 @@ const UploadMedia: React.FC = () => {
     }
     formData.append("is_mature", String(isMature));
     formData.append("ai_created", String(aiCreated));
+    formData.append("cate_ids", JSON.stringify(cate_ids));
     console.log("formData contents:");
     for (const [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
@@ -151,6 +154,7 @@ const UploadMedia: React.FC = () => {
       thumbnailUrl,
       isMature,
       aiCreated,
+      cate_ids,
     );
 
     try {
@@ -263,6 +267,7 @@ const UploadMedia: React.FC = () => {
               setOriginalThumbnailFile={setOriginalThumbnailFile}
               onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
+              setCateIds={setCateIds}
               title={title}
               setTitle={setTitle}
               description={description}

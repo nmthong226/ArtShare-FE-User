@@ -1,92 +1,99 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import CloseIcon from "@mui/icons-material/Close";
 import { Button, TextField } from "@mui/material";
+import { getCategories } from "@/api/category";
 
 type Subject = {
+  id: number;
   label: string;
   description?: string;
   examples?: string[];
 };
 
 // TODO: delete this hardcode and call to api to get categories
-const allSubjects: Subject[] = [
-  { label: "Abstract" },
-  {
-    label: "Anatom3y",
-    description: "Anatomical studies of humans and animals.",
-    examples: [
-      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
-      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
-    ],
-  },
-  {
-    label: "Anatomy5",
-    description: "Anatomical studies of humans and animals.",
-    examples: [
-      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
-      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
-    ],
-  },
-  {
-    label: "Anatomy1",
-    description: "Anatomical studies of humans and animals.",
-    examples: [
-      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
-      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
-    ],
-  },
-  {
-    label: "Anatomy2",
-    description: "Anatomical studies of humans and animals.",
-    examples: [
-      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
-      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
-    ],
-  },
-  {
-    label: "Anatomy3",
-    description: "Anatomical studies of humans and animals.",
-    examples: [
-      "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
-      "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
-    ],
-  },
-  {
-    label: "Animals & Wildlife",
-    description: "Photos and drawings of animals and natural life.",
-    examples: [
-      "https://via.placeholder.com/120?text=Tiger",
-      "https://via.placeholder.com/120?text=Bird",
-    ],
-  },
-  {
-    label: "Anime & Manga",
-    description: "Anime and manga styled artworks and productions.",
-    examples: [
-      "https://via.placeholder.com/120?text=Anime+1",
-      "https://via.placeholder.com/120?text=Anime+2",
-      "https://via.placeholder.com/120?text=Anime+3",
-    ],
-  },
-  { label: "Architectural Concepts" },
-  { label: "Architectural Visualization" },
-];
+// const allSubjects: Subject[] = [
+//   { label: "Abstract" },
+//   {
+//     label: "Anatom3y",
+//     description: "Anatomical studies of humans and animals.",
+//     examples: [
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
+//     ],
+//   },
+//   {
+//     label: "Anatomy5",
+//     description: "Anatomical studies of humans and animals.",
+//     examples: [
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
+//     ],
+//   },
+//   {
+//     label: "Anatomy1",
+//     description: "Anatomical studies of humans and animals.",
+//     examples: [
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
+//     ],
+//   },
+//   {
+//     label: "Anatomy2",
+//     description: "Anatomical studies of humans and animals.",
+//     examples: [
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
+//     ],
+//   },
+//   {
+//     label: "Anatomy3",
+//     description: "Anatomical studies of humans and animals.",
+//     examples: [
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/194/thumb/jason-nguyen-villiansknightfinal-jasonnguyen.jpg?1587663685",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/195/thumb/alessandro-pizzi-lineup.jpg?1587663689",
+//       "https://cdna.artstation.com/p/categories/example_images/000/000/196/thumb/mauro-belfiore-cybalt.jpg?1587663693",
+//       "https://cdnb.artstation.com/p/categories/example_images/000/000/197/thumb/samuel-youn-image.jpg?1587663696",
+//     ],
+//   },
+//   {
+//     label: "Animals & Wildlife",
+//     description: "Photos and drawings of animals and natural life.",
+//     examples: [
+//       "https://via.placeholder.com/120?text=Tiger",
+//       "https://via.placeholder.com/120?text=Bird",
+//     ],
+//   },
+//   {
+//     label: "Anime & Manga",
+//     description: "Anime and manga styled artworks and productions.",
+//     examples: [
+//       "https://via.placeholder.com/120?text=Anime+1",
+//       "https://via.placeholder.com/120?text=Anime+2",
+//       "https://via.placeholder.com/120?text=Anime+3",
+//     ],
+//   },
+//   { label: "Architectural Concepts" },
+//   { label: "Architectural Visualization" },
+// ];
 
-export default function SubjectSelector() {
+const SubjectSelector: React.FC<{
+  setCateIds: (value: number[]) => void;
+}> = ({ setCateIds }) => {
   const [selected, setSelected] = useState<Subject[]>([]);
   const [search, setSearch] = useState("");
-  const [hovered, setHovered] = useState<Subject>(allSubjects[0]);
+  const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
+  const [hovered, setHovered] = useState<Subject | undefined>(
+    allSubjects?.[0] ?? undefined,
+  );
 
   const toggleSubject = (subject: Subject) => {
     const exists = selected.some((s) => s.label === subject.label);
@@ -101,10 +108,20 @@ export default function SubjectSelector() {
     }
   };
 
+  useEffect(() => {
+    setCateIds(selected.map((e) => e.id));
+  }, [selected]);
+
   const isSelected = (subject: Subject) =>
-    selected.some((s) => s.label === subject.label);
+    selected.some((s) => s?.label === subject?.label);
 
   const remainingSlots = 3 - selected.length;
+
+  useEffect(() => {
+    getCategories().then((data) => {
+      setAllSubjects(data.data.data);
+    });
+  }, []);
 
   return (
     <div className="dark:bg-mountain-900 font-sans text-black dark:text-white">
@@ -184,17 +201,17 @@ export default function SubjectSelector() {
             {allSubjects.map((subject) => {
               if (
                 search &&
-                !subject.label.toLowerCase().includes(search.toLowerCase())
+                !subject?.label?.toLowerCase().includes(search.toLowerCase())
               )
                 return null;
               const selectedStatus = isSelected(subject);
               return (
                 <li
-                  key={subject.label}
+                  key={subject?.label}
                   className="flex justify-between items-center gap-2 hover:bg-gray-100 dark:hover:bg-mountain-800 px-2 py-2 rounded text-sm transition cursor-pointer"
                   onMouseEnter={() => setHovered(subject)}
                 >
-                  <span className="max-w-[60%] truncate">{subject.label}</span>
+                  <span className="max-w-[60%] truncate">{subject?.label}</span>
                   <Button
                     onClick={() => toggleSubject(subject)}
                     className={`${selected.length >= 3 && !selectedStatus ? "dark:text-mountain-500 text-gray-400" : "dark:text-white text-black"} flex justify-center items-center gap-1 bg-white hover:bg-gray-100 dark:bg-mountain-950 dark:hover:bg-mountain-900 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded min-w-[110px] text-black  text-sm`}
@@ -224,19 +241,19 @@ export default function SubjectSelector() {
           <div className="bg-gray-100 dark:bg-mountain-950 p-5 border border-indigo-300 rounded-lg h-full">
             <div className="flex justify-between items-center mb-3">
               <div>
-                <h3 className="font-semibold text-xl">{hovered.label}</h3>
+                <h3 className="font-semibold text-xl">{hovered?.label}</h3>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  {hovered.description}
+                  {hovered?.description}
                 </p>
               </div>
             </div>
-            {hovered.examples && (
+            {hovered?.examples && (
               <>
                 <p className="mb-2 text-gray-500 dark:text-gray-400 text-sm">
                   Examples
                 </p>
                 <div className="flex gap-3 overflow-x-auto">
-                  {hovered.examples.map((url, idx) => (
+                  {hovered?.examples.map((url, idx) => (
                     <img
                       key={idx}
                       src={url}
@@ -252,4 +269,6 @@ export default function SubjectSelector() {
       </div>
     </div>
   );
-}
+};
+
+export default SubjectSelector;

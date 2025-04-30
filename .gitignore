@@ -28,3 +28,7 @@ coverage/
 
 # # Ignore assets folder in gen-art feature
 src/features/gen-art/assets/
+db
+
+# # Ignore assets folder in gen-art feature
+src/features/gen-art/assets/

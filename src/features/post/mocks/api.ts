@@ -1,3 +1,4 @@
+import api from "@/api/baseApi";
 import { MEDIA_TYPE } from "@/constants";
 import { Category, Post, User, Media } from "@/types";
 
@@ -6,7 +7,7 @@ const mediaData: Media[] = [
     media_type: MEDIA_TYPE.IMAGE,
     description: "Poster illustration",
     url: "https://images.unsplash.com/photo-1742275346989-2d696fa2c9b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NjU0NTh8MHwxfGFsbHw0OXx8fHx8fHx8MTc0MjYzNjg1MHw&ixlib=rb-4.0.3&q=80&w=1080",
-    creator_id: 1,
+    creator_id: "1",
     downloads: 100,
     created_at: new Date(),
     id: 1,
@@ -16,7 +17,7 @@ const mediaData: Media[] = [
     media_type: MEDIA_TYPE.IMAGE,
     description: "Poster illustration",
     url: "https://images.unsplash.com/photo-1742414348816-fe5f76446808?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NjU0NTh8MHwxfGFsbHwxM3x8fHx8fHx8MTc0MjYxMTQ2MHw&ixlib=rb-4.0.3&q=80&w=1080",
-    creator_id: 1,
+    creator_id: "1",
     downloads: 100,
     created_at: new Date(),
     id: 2,
@@ -26,7 +27,7 @@ const mediaData: Media[] = [
     media_type: MEDIA_TYPE.IMAGE,
     description: "Poster illustration",
     url: "https://images.unsplash.com/photo-1742470523391-891944f4155f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w2NjU0NTh8MHwxfGFsbHwxNHx8fHx8fHx8MTc0MjYxMTQ2MHw&ixlib=rb-4.0.3&q=80&w=1080",
-    creator_id: 1,
+    creator_id: "1",
     downloads: 100,
     created_at: new Date(),
     id: 3,
@@ -35,24 +36,19 @@ const mediaData: Media[] = [
 ];
 
 const userData: User = {
-  userId: 1,
+  id: "1",
   username: "michael_guimont",
-  fullName: "Michael Guimont",
-  profilePictureUrl: "example.com/profile.jpg",
+  full_name: "Michael Guimont",
+  profile_picture_url: "example.com/profile.jpg",
+  email: "michael@gmail.com",
 };
 
 const categoryData: Category[] = [
   {
     id: 1,
-    cateName: "Motion Graphics",
-    urls: [
-      "https://cdna.artstation.com/p/categories/example_images/000/000/134/thumb/fabian-vazquez-storyboard.jpg?1586719728",
-      "https://cdnb.artstation.com/p/categories/example_images/000/000/135/thumb/mike-howie-planetsidearena-logo-concepts-colour.jpg?1586719740",
-      "https://cdna.artstation.com/p/categories/example_images/000/000/136/thumb/daniel-lugo-azuluz-3.jpg?1586719763",
-      "https://cdna.artstation.com/p/categories/example_images/000/000/137/thumb/Screen%20Shot%202020-04-12%20at%203.30.39%20PM.png?1586719850",
-    ],
-    cateType: "ATTRIBUTE",
-    cateDescription: "Artwork with a focus on animated graphics or text.",
+    name: "Illustration",
+    url: "example.com/category/art",
+    type: "GENRE",
     created_at: new Date(),
   },
 ];
@@ -73,13 +69,23 @@ const postData: Post = {
   categories: categoryData,
 };
 
+export const fetchPost = async (postId: number) => {
+  return await api.get<Post>(`/posts/${postId}`);
+  // return { data: postData };
+};
+
 export const fetchPosts = async (
   artistUsername: string,
   page: number,
-  pageSize: number = 10,
+  pageSize: number = 9,
 ) => {
   console.log(
-    `Fetching posts for ${artistUsername} on page ${page} with page size ${pageSize}`,
+    "Fetching posts for artist:",
+    artistUsername,
+    "Page:",
+    page,
+    "Page Size:",
+    pageSize,
   );
   // return await api.get<Post[]>(`?username${artistUsername}?page=${page}?pageSize=${pageSize}`);
   return {

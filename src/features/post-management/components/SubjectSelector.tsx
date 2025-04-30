@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
-import CloseIcon from "@mui/icons-material/Close";
+import { MdAdd, MdClose } from "react-icons/md";
+
 import { Button, TextField } from "@mui/material";
 import { getCategories } from "@/api/category";
 
 type Subject = {
-  label: string;
+  name: string;
   description?: string;
   examples?: string[];
   id: number;
 };
 
 const SubjectSelector: React.FC<{
+  cate_ids: number[];
   setCateIds: (value: number[]) => void;
-}> = ({ setCateIds }) => {
+}> = ({ setCateIds, cate_ids }) => {
   const [selected, setSelected] = useState<Subject[]>([]);
   const [search, setSearch] = useState("");
   const [allSubjects, setAllSubjects] = useState<Subject[]>([]);
@@ -22,9 +23,9 @@ const SubjectSelector: React.FC<{
   );
 
   const toggleSubject = (subject: Subject) => {
-    const exists = selected.some((s) => s.label === subject.label);
+    const exists = selected.some((s) => s.name === subject.name);
     if (exists) {
-      setSelected((prev) => prev.filter((s) => s.label !== subject.label));
+      setSelected((prev) => prev.filter((s) => s.name !== subject.name));
       setSearch("");
     } else {
       if (selected.length < 3) {
@@ -36,16 +37,21 @@ const SubjectSelector: React.FC<{
 
   useEffect(() => {
     setCateIds(selected.map((e) => e.id));
-  }, [selected]);
+  }, [selected, setCateIds]);
 
   useEffect(() => {
     getCategories().then((data) => {
       setAllSubjects(data.data.data);
+      setSelected(
+        data.data.data.filter((subject: Subject) =>
+          cate_ids.includes(subject.id),
+        ),
+      );
     });
   }, []);
 
   const isSelected = (subject: Subject) =>
-    selected.some((s) => s?.label === subject?.label);
+    selected.some((s) => s?.name === subject?.name);
 
   const remainingSlots = 3 - selected.length;
 
@@ -75,10 +81,10 @@ const SubjectSelector: React.FC<{
       >
         {selected.map((subject) => (
           <div
-            key={subject.label}
+            key={subject.name}
             className="flex items-center gap-2 bg-gray-200 dark:bg-mountain-1000 px-2 py-1 rounded h-full text-sm"
           >
-            <span>{subject.label}</span>
+            <span>{subject.name}</span>
             <Button
               onClick={() => toggleSubject(subject)}
               variant="text"
@@ -92,7 +98,7 @@ const SubjectSelector: React.FC<{
                 "&:hover": { backgroundColor: "transparent" },
               }}
             >
-              <CloseIcon fontSize="small" className="text-inherit" />
+              <MdClose size={16} className="text-inherit" />
             </Button>
           </div>
         ))}
@@ -127,17 +133,17 @@ const SubjectSelector: React.FC<{
             {allSubjects.map((subject) => {
               if (
                 search &&
-                !subject.label.toLowerCase().includes(search.toLowerCase())
+                !subject.name.toLowerCase().includes(search.toLowerCase())
               )
                 return null;
               const selectedStatus = isSelected(subject);
               return (
                 <li
-                  key={subject.label}
+                  key={subject.name}
                   className="flex justify-between items-center gap-2 hover:bg-gray-100 dark:hover:bg-mountain-800 px-2 py-2 rounded text-sm transition cursor-pointer"
                   onMouseEnter={() => setHovered(subject)}
                 >
-                  <span className="max-w-[60%] truncate">{subject.label}</span>
+                  <span className="max-w-[60%] truncate">{subject.name}</span>
                   <Button
                     onClick={() => toggleSubject(subject)}
                     className={`${selected.length >= 3 && !selectedStatus ? "dark:text-mountain-500 text-gray-400" : "dark:text-white text-black"} flex justify-center items-center gap-1 bg-white hover:bg-gray-100 dark:bg-mountain-950 dark:hover:bg-mountain-900 px-3 py-1 border border-gray-300 dark:border-gray-600 rounded min-w-[110px] text-black  text-sm`}
@@ -146,12 +152,14 @@ const SubjectSelector: React.FC<{
                   >
                     {!selectedStatus ? (
                       <>
-                        <AddIcon fontSize="small" className="text-indigo-500" />
+                        <MdAdd size={16} className="text-indigo-500" />
+
                         <span className="text-sm">Add</span>
                       </>
                     ) : (
                       <>
-                        <CloseIcon fontSize="small" className="text-red-400" />
+                        <MdClose size={16} className="text-red-400" />
+
                         <span className="text-sm">Remove</span>
                       </>
                     )}
@@ -167,7 +175,7 @@ const SubjectSelector: React.FC<{
           <div className="bg-gray-100 dark:bg-mountain-950 p-5 border border-indigo-300 rounded-lg h-full">
             <div className="flex justify-between items-center mb-3">
               <div>
-                <h3 className="font-semibold text-xl">{hovered?.label}</h3>
+                <h3 className="font-semibold text-xl">{hovered?.name}</h3>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
                   {hovered?.description}
                 </p>
@@ -195,6 +203,6 @@ const SubjectSelector: React.FC<{
       </div>
     </div>
   );
-}
+};
 
 export default SubjectSelector;

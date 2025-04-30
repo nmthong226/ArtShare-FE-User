@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef, ChangeEvent } from "react";
 import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import {
-  CloudUpload as CloudUploadIcon,
-  Add as AddIcon,
-  Close as CloseIcon,
-  ReplayOutlined,
-  DeleteOutlineOutlined,
-} from "@mui/icons-material";
+  MdCloudUpload,
+  MdAdd,
+  MdClose,
+  MdReplay,
+  MdDeleteOutline,
+} from "react-icons/md";
 import { IoVideocam } from "react-icons/io5";
 import { IoMdImage } from "react-icons/io";
 import { MEDIA_TYPE } from "@/constants";
@@ -335,7 +335,7 @@ export default function MediaSelectorPanel({
                           hidden
                           onChange={handleImageFilesChange}
                         />
-                        <CloudUploadIcon sx={{ mr: 1 }} />
+                        <MdCloudUpload className="mr-1" size={20} />
                         <Typography variant="body1">Upload your art</Typography>
                       </Button>
                       <Typography variant="body1">
@@ -376,7 +376,10 @@ export default function MediaSelectorPanel({
                           size="small"
                           className="-top-2 -right-2 absolute opacity-60 bg-gray-600 hover:bg-gray-400 group"
                         >
-                          <CloseIcon className="text-white text-sm group-hover:text-black" />
+                          <MdClose
+                            className="text-white text-sm group-hover:text-black"
+                            size={16}
+                          />
                         </IconButton>
                       </Box>
                     ),
@@ -390,7 +393,8 @@ export default function MediaSelectorPanel({
                       imageFilesPreview.size === MAX_IMAGES
                     }
                   >
-                    <AddIcon fontSize="large" />
+                    <MdAdd size={32} />
+
                     <input
                       accept="image/*"
                       type="file"
@@ -436,7 +440,7 @@ export default function MediaSelectorPanel({
                 <Button
                   variant="text"
                   size="small"
-                  startIcon={<ReplayOutlined sx={{ fontSize: 18 }} />}
+                  startIcon={<MdReplay size={18} />}
                   onClick={() => inputRef.current?.click()}
                   sx={{
                     backgroundColor: "transparent",
@@ -452,7 +456,7 @@ export default function MediaSelectorPanel({
                 <Button
                   variant="text"
                   size="small"
-                  startIcon={<DeleteOutlineOutlined sx={{ fontSize: 18 }} />}
+                  startIcon={<MdDeleteOutline size={18} />}
                   onClick={() => handleRemoveVideoPreview()}
                   sx={{
                     backgroundColor: "transparent",
@@ -511,7 +515,8 @@ export default function MediaSelectorPanel({
                   hidden
                   onChange={handleVideoFileChange}
                 />
-                <CloudUploadIcon sx={{ mr: 1 }} />
+                <MdCloudUpload className="mr-1" size={20} />
+
                 <Typography variant="body1" className="text-center">
                   Upload your video
                 </Typography>

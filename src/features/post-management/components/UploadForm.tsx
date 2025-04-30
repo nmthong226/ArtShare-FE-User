@@ -11,11 +11,8 @@ import {
   Tooltip,
 } from "@mui/material";
 import SubjectSelector from "./SubjectSelector";
-import {
-  Crop,
-  ErrorOutlineOutlined,
-  PhotoCameraBackOutlined,
-} from "@mui/icons-material";
+import { MdCrop, MdErrorOutline, MdPhotoCameraBack } from "react-icons/md";
+
 import { ImageUpIcon } from "lucide-react";
 import { ImageCropperModal } from "@/components/ui/image-cropper-modal";
 
@@ -23,6 +20,7 @@ const UploadForm: React.FC<{
   thumbnailFile: File | undefined;
   onThumbnailChange: (file: File | undefined, isOriginal?: boolean) => void;
   isSubmitted: boolean;
+  cate_ids: number[];
   setCateIds: (value: number[]) => void;
   title: string;
   setTitle: (value: string) => void;
@@ -44,6 +42,7 @@ const UploadForm: React.FC<{
   setOriginalThumbnailFile,
   onThumbnailChange,
   isSubmitted,
+  cate_ids,
   setCateIds,
   title,
   setTitle,
@@ -112,12 +111,11 @@ const UploadForm: React.FC<{
           />
           {isSubmitted && !title.trim() && (
             <FormHelperText>
-              <ErrorOutlineOutlined
-                fontSize="small"
-                sx={{
+              <MdErrorOutline
+                size="1.5em"
+                style={{
                   verticalAlign: "middle",
                   marginRight: "0.5em",
-                  fontSize: "1.5em",
                   color: "red",
                 }}
               />
@@ -281,7 +279,7 @@ const UploadForm: React.FC<{
                 onClick={() => setThumbnailCropOpen(true)}
                 className="border border-gray-300 dark:border-white text-gray-900 dark:text-white"
               >
-                <Crop />
+                <MdCrop />
               </IconButton>
             </Tooltip>
 
@@ -290,7 +288,8 @@ const UploadForm: React.FC<{
                 component="label"
                 className="border border-gray-300 dark:border-white text-gray-900 dark:text-white"
               >
-                <PhotoCameraBackOutlined />
+                <MdPhotoCameraBack />
+
                 <input
                   type="file"
                   accept="image/*"
@@ -325,7 +324,7 @@ const UploadForm: React.FC<{
           {/* Dialog for Selection */}
           <Box className="space-y-1 px-3 pb-3">
             {/** TODO: uncomment this */}
-            <SubjectSelector setCateIds={setCateIds} />
+            <SubjectSelector setCateIds={setCateIds} cate_ids={cate_ids} />
           </Box>
         </Box>
 

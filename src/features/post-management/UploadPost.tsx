@@ -278,6 +278,7 @@ const UploadPost: React.FC = () => {
               setOriginalThumbnailFile={setOriginalThumbnailFile}
               onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
+              cate_ids={cate_ids}
               setCateIds={setCateIds}
               title={title}
               setTitle={setTitle}

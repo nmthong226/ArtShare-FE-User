@@ -2,11 +2,7 @@
 
 import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import { useImageFilesHandler } from "../hooks/use-image-files";
-import {
-  CloudUpload as CloudUploadIcon,
-  Add as AddIcon,
-  Close as CloseIcon,
-} from "@mui/icons-material";
+import { MdCloudUpload, MdAdd, MdClose } from "react-icons/md";
 import { Media } from "@/types";
 import { useEffect, useRef } from "react";
 import { MEDIA_TYPE } from "@/constants";
@@ -151,7 +147,7 @@ export default function ImagesSelection({
                 hidden
                 onChange={handleImageFilesChange}
               />
-              <CloudUploadIcon sx={{ mr: 1 }} />
+              <MdCloudUpload className="mr-1" size={20} />
               <Typography variant="body1" className="text-center">
                 Upload your art
               </Typography>
@@ -197,7 +193,10 @@ export default function ImagesSelection({
                 size="small"
                 className="-top-2 -right-2 absolute opacity-60 bg-gray-600 hover:bg-gray-400 group "
               >
-                <CloseIcon className="text-white text-sm group-hover:text-black" />
+                <MdClose
+                  className="text-white text-sm group-hover:text-black"
+                  size={16}
+                />
               </IconButton>
             </Box>
           ),
@@ -211,7 +210,7 @@ export default function ImagesSelection({
             imageFilesPreview.size === MAX_IMAGES
           }
         >
-          <AddIcon fontSize="large" />
+          <MdAdd size={32} />
           <input
             accept="image/*"
             type="file"

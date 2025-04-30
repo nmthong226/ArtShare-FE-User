@@ -2,10 +2,11 @@
 import { Box, Button, Typography } from "@mui/material";
 import useVideoFileHandler from "../hooks/use-video";
 import {
-  CloudUpload as CloudUploadIcon,
-  DeleteOutlineOutlined,
-  ReplayOutlined,
-} from "@mui/icons-material";
+  MdCloudUpload,
+  MdOutlineReplay,
+  MdOutlineDeleteOutline,
+} from "react-icons/md";
+
 import React, { useEffect, useRef, useState } from "react";
 import { Media } from "@/types";
 import { MEDIA_TYPE } from "@/constants";
@@ -89,7 +90,7 @@ export default function VideoSelection({
             <Button
               variant="text"
               size="small"
-              startIcon={<ReplayOutlined sx={{ fontSize: 18 }} />}
+              startIcon={<MdOutlineReplay size={18} />}
               onClick={() => inputRef.current?.click()}
               sx={{
                 backgroundColor: "transparent",
@@ -106,7 +107,7 @@ export default function VideoSelection({
             <Button
               variant="text"
               size="small"
-              startIcon={<DeleteOutlineOutlined sx={{ fontSize: 18 }} />}
+              startIcon={<MdOutlineDeleteOutline size={18} />}
               onClick={() => {
                 handleRemoveVideoPreview();
                 setIsVideoManuallyRemoved(true);
@@ -171,7 +172,8 @@ export default function VideoSelection({
               hidden
               onChange={handleVideoFileChange}
             />
-            <CloudUploadIcon sx={{ mr: 1 }} />
+            <MdCloudUpload style={{ marginRight: 4 }} />
+
             <Typography variant="body1" className="text-center">
               Upload your video
             </Typography>

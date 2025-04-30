@@ -65,6 +65,7 @@ const EditPost: React.FC = () => {
   >();
   const [isMature, setIsMature] = useState(false);
   const [aiCreated, setAiCreated] = useState(false);
+  const [cate_ids, setCateIds] = useState<number[]>([]);
 
   const [lastCrop, setLastCrop] = useState<{ x: number; y: number }>({
     x: 0,
@@ -85,6 +86,7 @@ const EditPost: React.FC = () => {
     setDescription(postData.description ?? "");
     setIsMature(postData.is_mature);
     setAiCreated(postData.ai_created);
+    setCateIds(postData?.categories?.map((c) => c.id) ?? []);
 
     // 🟣 Extract only image URLs to preserve
     const existingImages = postData.medias.filter(
@@ -112,10 +114,10 @@ const EditPost: React.FC = () => {
     formData.append("title", title);
     if (description) formData.append("description", description);
     // TODO: uncomment this
-    /*  formData.append(
+    formData.append(
       "cate_ids",
-      JSON.stringify(data!.categories.map((cat: Category) => cat.id)),
-    ); */
+      JSON.stringify(cate_ids),
+    );
     const finalVideoUrl = videoUrl ?? existingVideoUrl;
     formData.append("video_url", finalVideoUrl ?? "");
 
@@ -252,6 +254,8 @@ const EditPost: React.FC = () => {
               originalThumbnailFile={originalThumbnailFile}
               isSubmitted={isSubmitted}
               title={title}
+              cate_ids={cate_ids}
+              setCateIds={setCateIds}
               setTitle={setTitle}
               description={description}
               setDescription={setDescription}

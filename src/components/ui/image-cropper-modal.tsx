@@ -9,7 +9,7 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { MdClose } from "react-icons/md";
 import getCroppedImg from "@/utils/cropImage";
 import MuiButton from "@mui/material/Button";
 
@@ -106,7 +106,7 @@ export const ImageCropperModal: React.FC<Props> = ({
       <DialogTitle className="flex items-center justify-between">
         <Typography variant="h6">Crop Image</Typography>
         <IconButton onClick={onClose} size="small">
-          <CloseIcon />
+          <MdClose size={20} />
         </IconButton>
       </DialogTitle>
 

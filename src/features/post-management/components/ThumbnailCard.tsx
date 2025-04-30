@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, Typography, IconButton, Menu, MenuItem } from "@mui/material";
 import { ImageUpIcon } from "lucide-react";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { MdMoreVert } from "react-icons/md";
 
 interface ThumbnailCardProps {
   thumbnail?: string;
@@ -62,7 +62,7 @@ const ThumbnailCard: React.FC<ThumbnailCardProps> = ({
               "&:hover": { backgroundColor: "rgba(0,0,0,0.8)" },
             }}
           >
-            <MoreVertIcon fontSize="small" />
+            <MdMoreVert size={18} />
           </IconButton>
 
           <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>

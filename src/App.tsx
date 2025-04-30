@@ -17,13 +17,15 @@ import Login from "@/pages/Authentication/Login";
 import SignUp from "@/pages/Authentication/SignUp";
 import ForgotPassword from "@/pages/Authentication/ForgotPassword";
 import AccountActivation from "@/pages/Authentication/Activation";
-import Gallery from "./pages/Gallery";
+import Explore from "./features/explore";
 import Blogs from "./pages/Blogs";
 import Shop from "@/pages/Shop";
+import Collection from "./features/collection";
+
 // import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/pages/ArtGeneration";
 import AuthAction from "@/pages/Authentication/HandleCallback";
-import Post from "@/pages/Post";
+import Post from "@/features/post";
 import UploadPost from "@/features/post-management/UploadPost";
 import UserProfile from "@/features/UserProfile/UserProfile";
 import MatureContentPage from "./pages/MatureContent/MatureContent";
@@ -45,10 +47,11 @@ const privateAuthRoute = [
 ];
 
 const InAppPublicRoutes = [
-  { path: "/explore", element: <Gallery /> },
+  { path: "/explore", element: <Explore /> },
   { path: "/posts/:postId", element: <Post /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/shop", element: <Shop /> },
+  { path: "/collections", element: <Collection /> },
   { path: "/:username", element: <UserProfile /> },
 ];
 

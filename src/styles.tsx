@@ -5,7 +5,12 @@ export const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#a5b4fc", // Indigo 300
+      // Use Indigo 500 (#5c6bc0) as the main primary color
+      main: "#5c6bc0",
+      // Add Indigo 400 (#7986cb) as the light variant
+      light: "#7986cb",
+      // Add Indigo 600 (#3f51b5) as the dark variant (useful for hovers)
+      dark: "#3f51b5",
     },
     secondary: {
       main: "#6b7280", // Grey
@@ -19,6 +24,9 @@ export const lightTheme = createTheme({
       secondary: "#6b7280", // Grey
     },
     divider: "#d1d5db", // Soft grey for borders
+    error: {
+      main: "#d32f2f", // Standard MUI red
+    },
   },
   components: {
     MuiButton: {
@@ -26,15 +34,39 @@ export const lightTheme = createTheme({
         root: {
           borderRadius: "8px",
           textTransform: "none",
-          fontWeight: 500,
-          "&:hover": {
-            backgroundColor: "#c7d2fe", // lighter indigo
-          },
+          fontWeight: 500, // Default font weight
         },
         text: {
           "&.MuiButton-root": {
             color: "#000000", // black text
             fontWeight: 700, // bold
+          },
+          // Add a subtle hover if desired for text variant
+          "&:hover": {
+            backgroundColor: "rgba(0, 0, 0, 0.04)", // Standard subtle background on hover
+          },
+        },
+        contained: {
+          backgroundColor: "#7986cb", // Indigo 400
+          color: "#ffffff",
+          "&:hover": {
+            backgroundColor: "#5c6bc0", // Darken slightly on hover (Indigo 500)
+          },
+          "&.Mui-disabled": {
+            backgroundColor: "rgba(159, 168, 218, 0.5)",
+            color: "rgba(255, 255, 255, 0.7)",
+          },
+        },
+        outlined: {
+          borderColor: "#5c6bc0", // Indigo 500 for the border
+          color: "#5c6bc0", // Indigo 500 for the text
+          "&:hover": {
+            borderColor: "#3f51b5", // Darken border on hover (Indigo 600)
+            backgroundColor: "rgba(121, 134, 203, 0.04)", // Add a very faint background tint on hover (Indigo 500 with low alpha)
+          },
+          "&.Mui-disabled": {
+            borderColor: "rgba(121, 134, 203, 0.5)",
+            color: "rgba(121, 134, 203, 0.5)",
           },
         },
       },

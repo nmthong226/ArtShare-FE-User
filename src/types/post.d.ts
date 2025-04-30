@@ -22,5 +22,5 @@ export interface Post {
 
   medias: Media[];
   user: User;
-  categories: Category[];
+  categories?: Category[];
 }

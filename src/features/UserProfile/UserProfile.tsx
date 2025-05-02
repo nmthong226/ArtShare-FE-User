@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useUser } from "@/contexts/UserProvider";
 import UserPosts from "@/features/UserProfile/components/UserPosts";
-import { Box, Typography, Avatar, Button, Tabs, Tab } from "@mui/material";
+import { Box, Tabs, Tab } from "@mui/material";
 import { useState } from "react";
 import { UserProfileCard } from "../user-profile/UserProfileCard";
 

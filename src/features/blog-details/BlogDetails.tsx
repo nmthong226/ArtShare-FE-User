@@ -12,6 +12,7 @@ import { LuTableOfContents } from "react-icons/lu";
 import { IoIosArrowUp } from "react-icons/io";
 import RelatedBlogs from "./components/RelatedBlogs";
 import { BiComment } from "react-icons/bi";
+import { AiOutlineLike } from "react-icons/ai";
 
 const BlogDetails = () => {
     const [showAuthorBadge, setShowAuthorBadge] = useState(false);
@@ -92,6 +93,12 @@ const BlogDetails = () => {
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
                         <div className={`space-y-2 flex-col transition ease-in-out duration-300 flex justify-center items-center bg-white shadow-md rounded-full h-full w-full`}>
+                            <Tooltip title="Comment" placement="right" arrow>
+                                <div className="flex justify-center items-center bg-blue-50 hover:bg-blue-100 shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer">
+                                    <AiOutlineLike className="mr-1 size-5" />
+                                    <p>14</p>
+                                </div>
+                            </Tooltip>
                             <Tooltip title="Comment" placement="right" arrow>
                                 <div className="flex justify-center items-center bg-green-50 hover:bg-green-100 shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer">
                                     <BiComment className="mr-1 size-4" />

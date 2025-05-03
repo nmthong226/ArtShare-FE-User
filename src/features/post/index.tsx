@@ -54,7 +54,7 @@ const Post: React.FC = () => {
   return (
     <div className="flex-grow bg-mountain-50 py-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
       <div className="md:hidden flex flex-col gap-4 p-4">
-        <PostArtist artist={postData!.user} />
+        <PostArtist artist={postData!.user} postData={postData!} />
         <PostAssets medias={postData!.medias} />
         <PostContent />
       </div>
@@ -63,7 +63,7 @@ const Post: React.FC = () => {
           <PostAssets medias={postData!.medias} />
         </div>
         <div className="flex-shrink-0 py-0 pr-4 pl-8 sm:w-[256px] md:w-[384px] lg:w-[448px] overflow-y-scroll no-scrollbar">
-          <PostArtist artist={postData!.user} />
+          <PostArtist artist={postData!.user} postData={postData!} />
           <PostContent />
         </div>
       </div>

@@ -13,7 +13,7 @@ import "react-horizontal-scrolling-menu/dist/styles.css";
 import "./Categories.css";
 import { FiSearch } from "react-icons/fi";
 import { TiDeleteOutline } from "react-icons/ti";
-import { HorizontalSlider } from "../../../components/HorizontalSlider";
+import { HorizontalSlider } from "../../../components/sliders/HorizontalSlider";
 import { cn } from "@/lib/utils";
 
 interface CategoriesProps {

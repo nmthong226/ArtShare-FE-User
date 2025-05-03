@@ -9,7 +9,7 @@ import Panels from './components/panels/Panels';
 
 //Icons
 import { IoCrop } from "react-icons/io5";
-import TuneIcon from '@mui/icons-material/Tune';
+import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { RiText } from "react-icons/ri";
 import { IoShapesOutline } from "react-icons/io5";
 import { PiDiamondsFourLight } from "react-icons/pi";
@@ -40,7 +40,8 @@ const EditImage: React.FC = () => {
 
     //Texts
     const [texts, setTexts] = useState<TextItem[]>([]);
-    // const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
+    const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
+    const textContainerRef = useRef<HTMLDivElement>(null);
 
     const [layers, setLayers] = useState<ImageLayer[]>([{
         id: crypto.randomUUID(),
@@ -189,6 +190,22 @@ const EditImage: React.FC = () => {
         };
     }, [selectedLayerId]);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                textContainerRef.current &&
+                !textContainerRef.current.contains(event.target as Node)
+            ) {
+                setSelectedTextId(null);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const renderTexts = (ctx: CanvasRenderingContext2D) => {
         const scaleFactor = canvasSize.width / imageContainerSize.width;
         texts.forEach(t => {
@@ -294,7 +311,6 @@ const EditImage: React.FC = () => {
 
     return (
         <div className='flex p-4 w-full h-[calc(100vh-4rem)] overflow-hidden'>
-
             <div className='flex space-y-4 bg-mountain-100 border border-mountain-200 rounded-lg w-full h-full overflow-y-hidden'>
                 <div className='z-50 relative flex h-full'>
                     <div className='flex flex-col justify-between bg-white border border-mountain-200 rounded-lg rounded-r-none w-28 h-full'>
@@ -377,42 +393,48 @@ const EditImage: React.FC = () => {
                                 }}
                             />
                         ))}
-                        {texts.map((t) => (
-                            <Draggable
-                                key={t.id}
-                                position={{ x: t.x, y: t.y }}
-                                onStop={(_, data) => {
-                                    setTexts((prev) =>
-                                        prev.map((item) =>
-                                            item.id === t.id ? { ...item, x: data.x, y: data.y } : item
-                                        )
-                                    );
-                                }}
-                            >
-                                <div
-                                    style={{
-                                        position: 'absolute',
-                                        fontSize: t.fontSize,
-                                        color: t.color,
-                                        userSelect: 'none',
-                                        cursor: 'move',
-                                    }}
-                                    contentEditable
-                                    suppressContentEditableWarning
-                                    onDoubleClick={(e) => e.currentTarget.focus()}
-                                    onBlur={(e) => {
-                                        const newText = e.currentTarget.textContent || '';
+                        <div ref={textContainerRef}>
+                            {texts.map((t) => (
+                                <Draggable
+                                    key={t.id}
+                                    position={{ x: t.x, y: t.y }}
+                                    onStop={(_, data) => {
                                         setTexts((prev) =>
                                             prev.map((item) =>
-                                                item.id === t.id ? { ...item, text: newText } : item
+                                                item.id === t.id ? { ...item, x: data.x, y: data.y } : item
                                             )
                                         );
                                     }}
+                                    onMouseDown={() => setSelectedTextId(t.id)}
                                 >
-                                    {t.text}
-                                </div>
-                            </Draggable>
-                        ))}
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            fontSize: t.fontSize,
+                                            color: t.color,
+                                            userSelect: 'none',
+                                            cursor: 'move',
+                                            border: selectedTextId ? '2px dashed #fff' : 'transparent',
+                                            boxSizing: 'border-box',
+                                        }}
+                                        className='p-4 outline-0 tras'
+                                        contentEditable
+                                        suppressContentEditableWarning
+                                        onDoubleClick={(e) => e.currentTarget.focus()}
+                                        onBlur={(e) => {
+                                            const newText = e.currentTarget.textContent || '';
+                                            setTexts((prev) =>
+                                                prev.map((item) =>
+                                                    item.id === t.id ? { ...item, text: newText } : item
+                                                )
+                                            );
+                                        }}
+                                    >
+                                        {t.text}
+                                    </div>
+                                </Draggable>
+                            ))}
+                        </div>
                     </div>
                 </div>
                 {/* Settings Panel */}
@@ -453,7 +475,7 @@ const EditImage: React.FC = () => {
                             setActivePanel(prev => (prev === "adjust" ? null : "adjust"))
                         }
                         className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
-                        <TuneIcon className='size-6 text-mountain-600' />
+                        <HiOutlineAdjustmentsHorizontal className='size-6 text-mountain-600' />
                         <p className='text-mountain-600 text-xs'>Adjust</p>
                     </div>
                     <div

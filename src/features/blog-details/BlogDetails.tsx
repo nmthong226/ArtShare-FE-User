@@ -13,6 +13,10 @@ import { IoIosArrowUp } from "react-icons/io";
 import RelatedBlogs from "./components/RelatedBlogs";
 import { BiComment } from "react-icons/bi";
 import { AiOutlineLike } from "react-icons/ai";
+import { MdBookmarkBorder } from "react-icons/md";
+import { Share2 } from "lucide-react";
+import { LuPlus } from "react-icons/lu";
+import Share from "@/components/dialogs/Share";
 
 const BlogDetails = () => {
     const [showAuthorBadge, setShowAuthorBadge] = useState(false);
@@ -37,10 +41,9 @@ const BlogDetails = () => {
                     <div className="top-110 z-10 sticky flex justify-center items-center bg-white shadow-md mr-4 ml-auto rounded-full w-12 h-12">
                         <LuTableOfContents className="size-5" />
                     </div>
-                    <div className="right-4 bottom-4 z-50 fixed flex justify-center items-center bg-indigo-500 shadow-md rounded-full w-12 h-12">
-                        <IoIosArrowUp className="size-5 text-white" />
+                    <div className="right-4 bottom-4 z-50 fixed flex justify-center items-center bg-blue-400 shadow-md rounded-full w-12 h-12">
+                        <IoIosArrowUp className="mb-1 size-5 text-white" />
                     </div>
-
                 </div>
                 <div className="group flex flex-col space-y-4 bg-white/50 shadow p-4 w-[60%]">
                     <div className="flex bg-black w-full h-[200px] overflow-hidden">
@@ -87,13 +90,20 @@ const BlogDetails = () => {
                     </div>
                 </div>
                 <div className="relative flex flex-col w-[20%]">
-                    <div className={`${!showAuthorBadge ? 'opacity-0 pointer-events-none' : 'opacity-100'} space-y-2 flex-col transition ease-in-out duration-300  top-64 z-10 sticky flex justify-center items-center mr-auto ml-4 rounded-full w-14 h-64`}>
-                        <Avatar className="w-12 h-12">
-                            <AvatarImage src="https://i.pravatar.cc/150?img=68" />
-                            <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        <div className={`space-y-2 flex-col transition ease-in-out duration-300 flex justify-center items-center bg-white shadow-md rounded-full h-full w-full`}>
-                            <Tooltip title="Comment" placement="right" arrow>
+                    <div className={`${!showAuthorBadge ? 'opacity-0 pointer-events-none' : 'opacity-100'} space-y-2 flex-col transition ease-in-out duration-300 top-64 z-10 sticky flex justify-center items-center mr-auto ml-4 rounded-full w-14 h-76`}>
+                        <div className="relative flex justify-center items-center w-12 h-12">
+                            <Avatar>
+                                <AvatarImage src="https://i.pravatar.cc/150?img=68" />
+                                <AvatarFallback>CN</AvatarFallback>
+                            </Avatar>
+                            <Tooltip title="Follow" placement="right" arrow>
+                                <div className="-right-1 -bottom-1 absolute flex justify-center items-center bg-blue-400 border border-white rounded-full w-5 h-5">
+                                    <LuPlus className="text-white" />
+                                </div>
+                            </Tooltip>
+                        </div>
+                        <div className={`space-y-2 flex-col transition ease-in-out duration-300 flex justify-between items-center py-1 bg-white shadow-md rounded-full h-full w-full`}>
+                            <Tooltip title="Like" placement="right" arrow>
                                 <div className="flex justify-center items-center bg-blue-50 hover:bg-blue-100 shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer">
                                     <AiOutlineLike className="mr-1 size-5" />
                                     <p>14</p>
@@ -105,6 +115,16 @@ const BlogDetails = () => {
                                     <p>5</p>
                                 </div>
                             </Tooltip>
+                            <Tooltip title="Save" placement="right" arrow>
+                                <div className="flex justify-center items-center shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer">
+                                    <MdBookmarkBorder className="size-4" />
+                                </div>
+                            </Tooltip>
+                            <Share
+                                tooltipDirection="right"
+                                link="http://localhost:5173/blogs/ambessa-arcane-fan-art"
+                                className="flex justify-center items-center shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer"
+                            />
                         </div>
                     </div>
                 </div>

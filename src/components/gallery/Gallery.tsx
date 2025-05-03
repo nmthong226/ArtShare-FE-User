@@ -4,7 +4,7 @@ import { Photo, RowsPhotoAlbum, RenderPhotoContext } from "react-photo-album";
 import "react-photo-album/rows.css";
 
 import { ImageRenderer } from "./ImageRenderer";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 
 export interface GalleryPhoto extends Photo {
   key: string;

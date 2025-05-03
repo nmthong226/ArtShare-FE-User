@@ -14,7 +14,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 
 //Icons
 import { FiTrash2 } from "react-icons/fi";
@@ -45,9 +45,7 @@ const DeleteButton: React.FC<DeleteConfirmationProps> = ({ open, setOpen }) => {
                         <DialogContent className="flex justify-center sm:max-w-[320px] h-fit cursor-not-allowed" hideCloseButton>
                             <DialogHeader>
                                 <DialogDescription className='flex justify-center items-center space-x-4'>
-                                    <div className='relative flex justify-center items-center rounded-[8px] h-full'>
-                                        <div className='relative mx-auto border-4 border-t-blue-600 border-blue-300 rounded-full w-10 h-10 animate-spin' />
-                                    </div>
+                                    <CircularProgress size={32} thickness={4} />
                                     <DialogTitle className='font-normal text-base text-center'>Deleting This Image</DialogTitle>
                                 </DialogDescription>
                             </DialogHeader>

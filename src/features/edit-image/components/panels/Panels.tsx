@@ -3,7 +3,7 @@ import AdjustmentSlider from '../../components/sliders/AdjustmentSlider';
 import { Button, Tooltip, tooltipClasses } from '@mui/material';
 
 //Icons
-import TitleIcon from '@mui/icons-material/Title';
+import { IoText } from "react-icons/io5";
 import { X } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 import { RiResetRightLine } from "react-icons/ri";
@@ -123,7 +123,7 @@ const Panels: React.FC<PanelsProp> = ({
                             <>
                                 <div onClick={addText} className='flex justify-center items-center w-full h-10'>
                                     <Button className='flex justify-center items-center bg-white border border-mountain-200 rounded-lg w-full h-full font-normal text-sm'>
-                                        <TitleIcon className='mr-2 size-5'/>
+                                        <IoText className='mr-2 size-5'/>
                                         <p>Add Text</p>
                                     </Button>
                                 </div>

@@ -9,8 +9,8 @@ import { Ellipsis, LoaderPinwheel } from "lucide-react";
 import { BsFilter } from "react-icons/bs";
 
 //Components
-import { Categories, DataPopper } from "@/components/categories/Categories";
-import { categoriesData, propsData } from "@/components/categories/mocks";
+import { Categories, DataPopper } from "@/components/carousels/categories/Categories";
+import { categoriesData, propsData } from "@/components/carousels/categories/mocks";
 import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
 
 import { Post } from "@/types";
@@ -81,7 +81,7 @@ const Explore: React.FC = () => {
             return {
               key: post.id.toString(),
               title: post.title || "",
-              author: post.user?.full_name || "Unknown Author",
+              author: post.user?.username || "Unknown Author",
               src: imageUrl,
               width: mediaDimensions.width,
               height: mediaDimensions.height,

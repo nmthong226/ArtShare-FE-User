@@ -22,7 +22,7 @@ import Stack from '@mui/material/Stack';
 
 //Style
 import './BrowseBlogs.css'
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 import BlogCard from "@/components/cards/BlogCard";
 
 // import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";

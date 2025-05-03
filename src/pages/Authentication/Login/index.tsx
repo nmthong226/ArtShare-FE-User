@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider";
 import { AxiosError } from "axios";
 
-
 const Login = () => {
   const { loginWithEmail, authenWithGoogle, signUpWithFacebook } = useUser();
   const [email, setEmail] = useState("");
@@ -27,7 +26,7 @@ const Login = () => {
     setPasswordError("");
     try {
       await loginWithEmail(email, password);
-      navigate("/gallery");
+      navigate("/explore");
     } catch (err) {
       let errorMessage = "";
       if (err instanceof AxiosError) {
@@ -58,7 +57,6 @@ const Login = () => {
     }
   };
 
-
   const handleGoogleLogin = async () => {
     setError(""); // Clear previous error
     try {
@@ -70,7 +68,8 @@ const Login = () => {
         const code = error.code;
         switch (code) {
           case "auth/popup-closed-by-user":
-            message = "Login was cancelled. You closed the popup before signing in.";
+            message =
+              "Login was cancelled. You closed the popup before signing in.";
             break;
           case "auth/cancelled-popup-request":
             message = "Login was interrupted by another popup request.";
@@ -80,7 +79,8 @@ const Login = () => {
               "An account already exists with a different sign-in method. Try logging in using that method.";
             break;
           case "auth/popup-blocked":
-            message = "The login popup was blocked by your browser. Please enable popups and try again.";
+            message =
+              "The login popup was blocked by your browser. Please enable popups and try again.";
             break;
           default:
             message = error.message;
@@ -89,7 +89,6 @@ const Login = () => {
       setError(message);
     }
   };
-
 
   const handleFacebookLogin = async () => {
     try {
@@ -145,7 +144,9 @@ const Login = () => {
           />
           {/* Display error and success messages */}
           {emailError && emailError.length > 0 && (
-            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{emailError}</p>
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">
+              {emailError}
+            </p>
           )}
         </div>
         <div>
@@ -164,7 +165,9 @@ const Login = () => {
           />
           {/* Display error and success messages */}
           {passwordError && passwordError.length > 0 && (
-            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{passwordError}</p>
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">
+              {passwordError}
+            </p>
           )}
         </div>
         <div className="flex justify-between items-center mt-4">

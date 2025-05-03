@@ -1,4 +1,8 @@
-import { FacebookIcon, InstagramIcon, PinterestIcon } from "./SocialNetworksIcon";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  PinterestIcon,
+} from "./SocialNetworksIcon";
 
 const socialNetWorks = [
   {

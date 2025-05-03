@@ -6,7 +6,7 @@ import { FiDownload } from "react-icons/fi";
 import { FiTrash2 } from "react-icons/fi";
 
 //Components
-import { Button, ImageList, ImageListItem } from '@mui/material';
+import { Button, CircularProgress, ImageList, ImageListItem } from '@mui/material';
 import GenImage from './GenImage';
 import {
     Popover,
@@ -107,9 +107,7 @@ const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating,
                                         <DialogContent className="flex justify-center sm:max-w-[320px] h-fit cursor-not-allowed" hideCloseButton>
                                             <DialogHeader>
                                                 <DialogDescription className='flex justify-center items-center space-x-4'>
-                                                    <div className='relative flex justify-center items-center rounded-[8px] h-full'>
-                                                        <div className='relative mx-auto border-4 border-t-blue-600 border-blue-300 rounded-full w-10 h-10 animate-spin' />
-                                                    </div>
+                                                    <CircularProgress size={32} thickness={4} />
                                                     <DialogTitle className='font-normal text-base text-center'>Deleting These Images</DialogTitle>
                                                 </DialogDescription>
                                             </DialogHeader>

@@ -22,11 +22,10 @@ import BrowseBlogs from "@/features/browse-blogs/BrowseBlogs";
 import Collection from "@/features/collection";
 // import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/features/gen-art/ArtGenAI";
-import Portfolio from "@/pages/Portfolio";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/features/post";
-import UploadMedia from "@/features/upload-media/UploadMedia";
-import UserProfile from "@/pages/UserManagement/UserProfile";
+import UploadPost from "@/features/post-management/UploadPost";
+import UserProfile from "@/features/UserProfile/UserProfile";
 import Search from "@/pages/Search";
 
 // Context/Provider
@@ -37,6 +36,7 @@ import { GlobalSearchProvider } from "./contexts/SearchProvider";
 import AILayout from "./layouts/AILayout";
 import BlogDetails from "./features/blog-details/BlogDetails";
 import WriteBlog from "./features/write-blog/WriteBlog";
+import EditPost from "./features/post-management/EditPost";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -56,26 +56,29 @@ const InAppPublicRoutes = [
   { path: "/blogs/:blogId", element: <BlogDetails /> },
   { path: "/search", element: <Search /> },
   { path: "/collections", element: <Collection /> },
+  { path: "/:username", element: <UserProfile /> },
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/posts/new", element: <UploadMedia /> },
   { path: "/blogs/new", element: <WriteBlog /> },
-  { path: "/portfolio", element: <Portfolio /> },
   { path: "/u/:username", element: <UserProfile /> },
+  { path: "/post/:postId/edit", element: <EditPost /> },
+  { path: "/posts/new", element: <UploadPost /> },
 ];
 
 const AIPrivateRoutes = [
   { path: "/image/tool/text-to-image", element: <ArtGeneration /> },
   { path: "/image/tool/editor", element: <ImageEditor /> },
+  { path: "/create-art", element: <ArtGeneration /> },
+  { path: "/artgen", element: <ArtGeneration /> },
 ];
 
 const App: React.FC = () => {
   return (
-    <UserProvider>
-      <LanguageProvider>
-        <GlobalSearchProvider>
-          <Router>
+    <Router>
+      <UserProvider>
+        <LanguageProvider>
+          <GlobalSearchProvider>
             <RootLayout>
               <Routes>
                 {/* Public Auth Routes */}
@@ -132,10 +135,10 @@ const App: React.FC = () => {
                 <Route path="/" element={<LandingPage />} />
               </Routes>
             </RootLayout>
-          </Router>
-        </GlobalSearchProvider>
-      </LanguageProvider>
-    </UserProvider>
+          </GlobalSearchProvider>
+        </LanguageProvider>
+      </UserProvider>
+    </Router>
   );
 };
 

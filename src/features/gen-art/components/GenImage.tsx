@@ -25,7 +25,7 @@ const example_1 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_au
 import { IoIosSquareOutline } from "react-icons/io";
 import { IoCopyOutline } from "react-icons/io5";
 import { FaChevronLeft, FaChevronRight, FaRegPenToSquare } from "react-icons/fa6";
-import { Button, Tooltip } from '@mui/material';
+import { Button, CircularProgress, Tooltip } from '@mui/material';
 import { FiDownload } from "react-icons/fi";
 import { RiFolderUploadLine } from "react-icons/ri";
 import { FiTrash2 } from "react-icons/fi";
@@ -137,9 +137,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
                                         <DialogContent className="flex justify-center sm:max-w-[320px] h-fit cursor-not-allowed" hideCloseButton>
                                             <DialogHeader>
                                                 <DialogDescription className='flex justify-center items-center space-x-4'>
-                                                    <div className='relative flex justify-center items-center rounded-[8px] h-full'>
-                                                        <div className='relative mx-auto border-4 border-t-blue-600 border-blue-300 rounded-full w-10 h-10 animate-spin' />
-                                                    </div>
+                                                    <CircularProgress size={32} thickness={4} />
                                                     <DialogTitle className='font-normal text-base text-center'>Deleting This Image</DialogTitle>
                                                 </DialogDescription>
                                             </DialogHeader>

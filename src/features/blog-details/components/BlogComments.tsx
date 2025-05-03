@@ -7,20 +7,25 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
 
 //Icons
 import { BiDotsVertical } from "react-icons/bi";
 import { SendHorizontal } from "lucide-react";
 import { AiOutlineLike } from "react-icons/ai";
 import { UserComments } from "../mocks";
-import { IoFilter } from "react-icons/io5";
+import { IoFilter, IoPersonRemoveOutline } from "react-icons/io5";
 
 //Libs
 import { formatDate } from "@/lib/utils";
 
 
 const BlogComments = () => {
-    const [order, setOrder] = React.useState<'top' | 'recent'>('top');
+    const [order, setOrder] = React.useState<'top' | 'recent'>('recent');
 
     const handleChange = (event: SelectChangeEvent) => {
         setOrder(event.target.value as 'top' | 'recent');
@@ -43,13 +48,10 @@ const BlogComments = () => {
                             }}
                             className='relative pl-6'
                         >
-                            <MenuItem value="">
-                                <em>Order By</em>
-                            </MenuItem>
-                            <MenuItem value={'top'}>Top Comments</MenuItem>
                             <MenuItem value={'recent'}>Recent Comments</MenuItem>
+                            <MenuItem value={'top'}>Top Comments</MenuItem>
                         </Select>
-                        <IoFilter className='top-1/2 left-2 absolute -translate-y-1/2'/>
+                        <IoFilter className='top-1/2 left-2 absolute -translate-y-1/2' />
                     </FormControl>
                 </div>
                 <div className="flex items-center">
@@ -85,9 +87,18 @@ const BlogComments = () => {
                                     </div>
                                     <p className="pr-2">{user.comment}</p>
                                 </div>
-                                <div className="top-1/2 right-1 absolute flex justify-center items-center hover:bg-mountain-100 rounded-full w-8 h-8 -translate-y-1/2">
-                                    <BiDotsVertical className="size-5 shrink-0" />
-                                </div>
+                                <Popover>
+                                    <PopoverTrigger
+                                        className="top-1/2 right-1 absolute flex justify-center items-center hover:bg-mountain-100 rounded-full w-8 h-8 -translate-y-1/2">
+                                            <BiDotsVertical className="size-5 shrink-0" />
+                                    </PopoverTrigger>
+                                    <PopoverContent className="p-0 border-mountain-200 w-28 text-xs">
+                                        <div className="flex items-center hover:bg-mountain-50 px-3 py-2 border-mountain-200 border-b-1 rounded-t-lg hover:cursor-pointer">
+                                            <IoPersonRemoveOutline className="mr-2" />
+                                            <p>Block User</p>
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
                             </div>
                             <div className="flex items-center space-x-2 ml-10">
                                 <div className="flex items-center">

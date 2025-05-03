@@ -15,8 +15,8 @@ import { useSearch } from "@/contexts/SearchProvider";
 //Components
 import { Input } from "@/components/ui/input";
 import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
-import { DataPopper } from "@/components/categories/Categories";
-import { categoriesData } from "@/components/categories/mocks";
+import { DataPopper } from "@/components/carousels/categories/Categories";
+import { categoriesData } from "@/components/carousels/categories/mocks";
 import { Button } from "@/components/ui/button";
 import SortMenu from "@/components/dropdowns/Sort";
 import CategoryList from "@/components/filters/Filter";

@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { Button, Collapse, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 //Icons
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { IoIosArrowDown } from "react-icons/io";
 import { GoSidebarExpand } from "react-icons/go";
 import { IoImageOutline } from "react-icons/io5";
 import { IoIosArrowForward } from "react-icons/io";
@@ -69,7 +69,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                 {/* Nested Accordions */}
                 <Accordion className="shadow-none" defaultExpanded>
                     <AccordionSummary
-                        expandIcon={<ArrowDropDownIcon />}
+                        expandIcon={<IoIosArrowDown />}
                         aria-controls="panel2-content"
                         id="panel2-header"
                     >
@@ -90,7 +90,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                 </Accordion>
                 <Accordion className="shadow-none" defaultExpanded>
                     <AccordionSummary
-                        expandIcon={<ArrowDropDownIcon />}
+                        expandIcon={<IoIosArrowDown />}
                         aria-controls="panel2-content"
                         id="panel2-header"
                     >
@@ -126,7 +126,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                 </Accordion>
                 <Accordion className="shadow-none" defaultExpanded>
                     <AccordionSummary
-                        expandIcon={<ArrowDropDownIcon />}
+                        expandIcon={<IoIosArrowDown />}
                         aria-controls="panel2-content"
                         id="panel2-header"
                     >

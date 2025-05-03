@@ -32,6 +32,8 @@ import MatureContentPage from "./pages/MatureContent/MatureContent";
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
+import PostComments from "./components/posts/PostComments";
+import OnboardingProfile from "./pages/Onboarding";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -57,6 +59,7 @@ const InAppPrivateRoutes = [
   { path: "/portfolio", element: <Portfolio /> },
   { path: "/artgen", element: <ArtGeneration /> },
   { path: "/:username", element: <UserProfile /> },
+  { path: "/onboarding", element: <OnboardingProfile /> },
 ];
 
 const App: React.FC = () => {

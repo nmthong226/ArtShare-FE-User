@@ -3,6 +3,7 @@ import PostAssets from "@/components/posts/PostAssets";
 import PostArtist from "@/components/posts/PostArtist";
 import PostComments from "@/components/posts/PostComments";
 import { fetchPost } from "@/components/post/api/get-post";
+import { fetchComments } from "@/components/post/api/comment";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import PostTags from "@/components/posts/PostTags";
@@ -13,10 +14,11 @@ import { mappedCategoryPost } from "@/lib/utils";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
+
   const {
     data: postData,
-    isLoading,
-    error,
+    isLoading: isPostLoading,
+    error: postError,
   } = useQuery({
     queryKey: ["postData", postId],
     queryFn: async () => {
@@ -27,7 +29,19 @@ const Post: React.FC = () => {
     },
   });
 
-  if (isLoading) {
+  const {
+    data: comments,
+    isLoading: isCommentsLoading,
+    error: commentsError,
+  } = useQuery({
+    queryKey: ["comments", postId],
+    queryFn: async () => {
+      return await fetchComments(parseInt(postId!));
+    },
+    enabled: !!postId, // Ensure postId is available before fetching comments
+  });
+  console.log(comments);
+  if (isPostLoading || isCommentsLoading) {
     return (
       <div className="m-4 text-center">
         <LoadingSpinner />
@@ -35,15 +49,15 @@ const Post: React.FC = () => {
     );
   }
 
-  if (error) {
-    return <div>Failed to fetch post data.</div>;
+  if (postError || commentsError) {
+    return <div>Failed to fetch data.</div>;
   }
 
   const PostContent = () => {
     return (
       <div className="flex flex-col gap-8">
         <PostInfo postData={postData!} />
-        <PostComments />
+        <PostComments comments={comments!} postId={postData!.id} />
         <PostTags categories={postData!.categories} />
         <PostMoreByArtist artist={postData!.user} />
         {/* <PostShare /> */}
@@ -53,11 +67,11 @@ const Post: React.FC = () => {
 
   return (
     <div className="flex-grow bg-mountain-50 py-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
-      {/* <div className="md:hidden flex flex-col gap-4 p-4">
+      <div className="md:hidden flex flex-col gap-4 p-4">
         <PostArtist artist={postData!.user} />
         <PostAssets medias={postData!.medias} />
         <PostContent />
-      </div> */}
+      </div>
       <div className="hidden md:flex flex-row h-full">
         <div className="flex flex-grow justify-center items-center pl-4 h-full overflow-y-scroll no-scrollbar">
           <PostAssets medias={postData!.medias} />

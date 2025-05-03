@@ -1,5 +1,8 @@
 import React, { useContext } from "react";
-import { FiChevronRight as RightArrowIcon, FiChevronLeft as LeftArrowIcon} from "react-icons/fi";
+import {
+  FiChevronRight as RightArrowIcon,
+  FiChevronLeft as LeftArrowIcon,
+} from "react-icons/fi";
 import {
   ScrollMenu,
   VisibilityContext,

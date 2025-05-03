@@ -293,197 +293,200 @@ const EditImage: React.FC = () => {
 
 
     return (
-        <div className='flex space-y-4 bg-mountain-100 border border-mountain-200 rounded-lg w-full h-full overflow-y-hidden'>
-            <div className='z-50 relative flex h-full'>
-                <div className='flex flex-col justify-between bg-white border border-mountain-200 rounded-lg rounded-r-none w-28 h-full'>
-                    <div className='flex flex-col space-y-2'>
-                        <div className='flex justify-center items-center bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 h-10 font-medium text-mountain-800'>Layers</div>
-                        <div className='flex justify-center items-center p-2 py-0 border-mountain-400 w-full h-10 hover:cursor-pointer'>
-                            <div className='flex justify-center items-center border border-mountain-200 w-full h-full'>
-                                <Plus className='size-4' />
+        <div className='flex p-4 w-full h-[calc(100vh-4rem)] overflow-hidden'>
+
+            <div className='flex space-y-4 bg-mountain-100 border border-mountain-200 rounded-lg w-full h-full overflow-y-hidden'>
+                <div className='z-50 relative flex h-full'>
+                    <div className='flex flex-col justify-between bg-white border border-mountain-200 rounded-lg rounded-r-none w-28 h-full'>
+                        <div className='flex flex-col space-y-2'>
+                            <div className='flex justify-center items-center bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 h-10 font-medium text-mountain-800'>Layers</div>
+                            <div className='flex justify-center items-center p-2 py-0 border-mountain-400 w-full h-10 hover:cursor-pointer'>
+                                <div className='flex justify-center items-center border border-mountain-200 w-full h-full'>
+                                    <Plus className='size-4' />
+                                </div>
+                            </div>
+                            {layers.map((layer, index) => (
+                                <div
+                                    key={layer.id}
+                                    ref={index === 0 ? containerRef : null}
+                                    className={`flex justify-center items-center px-2 w-full h-20 hover:cursor-pointer`}
+                                    onClick={() => setSelectedLayerId(layer.id)}
+                                >
+                                    <img
+                                        src={layer.src}
+                                        className={`rounded-sm w-full h-full object-cover border-2 ${selectedLayerId === layer.id ? 'border-indigo-400' : 'border-mountain-200'}`}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                        <div className='flex flex-col space-y-2 py-2 border-mountain-200 border-t-1'>
+                            <div className='flex justify-center items-center p-2 py-0 border-mountain-400 w-full h-10 hover:cursor-pointer'>
+                                <Button className='flex justify-center items-center bg-white hover:bg-mountain-50 border border-mountain-200 rounded-lg w-full h-full hover:cursor-pointer'>
+                                    <p className='font-normal'>Close</p>
+                                </Button>
+                            </div>
+                            <div onClick={handleDownload} className='flex justify-center items-center p-2 py-0 border-mountain-400 w-full h-10 hover:cursor-pointer'>
+                                <Button className='flex justify-center items-center bg-indigo-200 hover:bg-indigo-100 border border-mountain-200 rounded-lg w-full h-full hover:cursor-pointer'>
+                                    <MdOutlineSaveAlt className='mr-1' />
+                                    <p className='font-normal'>Export</p>
+                                </Button>
                             </div>
                         </div>
-                        {layers.map((layer, index) => (
-                            <div
+                    </div>
+                    <div className='top-1/2 -right-14 absolute flex flex-col justify-between items-center space-y-1 bg-white opacity-50 hover:opacity-100 p-1 border border-mountain-200 rounded-xl w-12 h-48 -translate-y-1/2 duration-200 ease-in-out transform'>
+                        <div onClick={handleZoomIn} className='flex justify-center items-center hover:bg-mountain-50 rounded-lg w-full h-[25%] hover:cursor-pointer select-none'>
+                            <LuZoomIn />
+                        </div>
+                        <div className='flex justify-center items-center bg-indigo-50 p-2 rounded-lg w-full h-[50%] font-medium text-mountain-600 text-sm'>
+                            {Math.round(zoomLevel * 100)}%
+                        </div>
+                        <div onClick={handleZoomOut} className='flex justify-center items-center hover:bg-mountain-50 rounded-lg w-full h-[25%] hover:cursor-pointer select-none'>
+                            <LuZoomOut />
+                        </div>
+                    </div>
+                </div>
+                <div className="relative flex justify-center items-center bg-mountain-200 w-full h-full">
+                    <div
+                        ref={imageContainerRef}
+                        className="relative mx-auto w-[540px] h-[540px] overflow-hidden"
+                        style={{ transform: `scale(${zoomLevel})` }}
+                    >
+                        {layers.map(layer => (
+                            <img
                                 key={layer.id}
-                                ref={index === 0 ? containerRef : null}
-                                className={`flex justify-center items-center px-2 w-full h-20 hover:cursor-pointer`}
-                                onClick={() => setSelectedLayerId(layer.id)}
-                            >
-                                <img
-                                    src={layer.src}
-                                    className={`rounded-sm w-full h-full object-cover border-2 ${selectedLayerId === layer.id ? 'border-indigo-400' : 'border-mountain-200'}`}
-                                />
-                            </div>
-                        ))}
-                    </div>
-                    <div className='flex flex-col space-y-2 py-2 border-mountain-200 border-t-1'>
-                        <div className='flex justify-center items-center p-2 py-0 border-mountain-400 w-full h-10 hover:cursor-pointer'>
-                            <Button className='flex justify-center items-center bg-white hover:bg-mountain-50 border border-mountain-200 rounded-lg w-full h-full hover:cursor-pointer'>
-                                <p className='font-normal'>Close</p>
-                            </Button>
-                        </div>
-                        <div onClick={handleDownload} className='flex justify-center items-center p-2 py-0 border-mountain-400 w-full h-10 hover:cursor-pointer'>
-                            <Button className='flex justify-center items-center bg-indigo-200 hover:bg-indigo-100 border border-mountain-200 rounded-lg w-full h-full hover:cursor-pointer'>
-                                <MdOutlineSaveAlt className='mr-1' />
-                                <p className='font-normal'>Export</p>
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-                <div className='top-1/2 -right-14 absolute flex flex-col justify-between items-center space-y-1 bg-white opacity-50 hover:opacity-100 p-1 border border-mountain-200 rounded-xl w-12 h-48 -translate-y-1/2 duration-200 ease-in-out transform'>
-                    <div onClick={handleZoomIn} className='flex justify-center items-center hover:bg-mountain-50 rounded-lg w-full h-[25%] hover:cursor-pointer select-none'>
-                        <LuZoomIn />
-                    </div>
-                    <div className='flex justify-center items-center bg-indigo-50 p-2 rounded-lg w-full h-[50%] font-medium text-mountain-600 text-sm'>
-                        {Math.round(zoomLevel * 100)}%
-                    </div>
-                    <div onClick={handleZoomOut} className='flex justify-center items-center hover:bg-mountain-50 rounded-lg w-full h-[25%] hover:cursor-pointer select-none'>
-                        <LuZoomOut />
-                    </div>
-                </div>
-            </div>
-            <div className="relative flex justify-center items-center bg-mountain-200 w-full h-full">
-                <div
-                    ref={imageContainerRef}
-                    className="relative mx-auto w-[540px] h-[540px] overflow-hidden"
-                    style={{ transform: `scale(${zoomLevel})` }}
-                >
-                    {layers.map(layer => (
-                        <img
-                            key={layer.id}
-                            src={layer.src}
-                            style={{
-                                filter: `
+                                src={layer.src}
+                                style={{
+                                    filter: `
                                     saturate(${layer?.saturation ?? 100}%)
                                     hue-rotate(${layer?.hue ?? 0}deg)
                                     brightness(${layer?.brightness ?? 100}%)
                                     contrast(${layer?.contrast ?? 100}%)
                                     opacity(${layer?.opacity ?? 1})
                                     sepia(${layer?.sepia ?? 0}%)`,
-                                transform: `
+                                    transform: `
                                     scaleX(${layer.flipH ? -1 : 1})
                                     scaleY(${layer.flipV ? -1 : 1})`,
-                                transformOrigin: 'center center',
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                width: 'auto',
-                                height: '100%',
-                                pointerEvents: 'none',
-                                translate: '-50% -50%',
-                            }}
-                        />
-                    ))}
-                    {texts.map((t) => (
-                        <Draggable
-                            key={t.id}
-                            position={{ x: t.x, y: t.y }}
-                            onStop={(_, data) => {
-                                setTexts((prev) =>
-                                    prev.map((item) =>
-                                        item.id === t.id ? { ...item, x: data.x, y: data.y } : item
-                                    )
-                                );
-                            }}
-                        >
-                            <div
-                                style={{
+                                    transformOrigin: 'center center',
                                     position: 'absolute',
-                                    fontSize: t.fontSize,
-                                    color: t.color,
-                                    userSelect: 'none',
-                                    cursor: 'move',
+                                    top: '50%',
+                                    left: '50%',
+                                    width: 'auto',
+                                    height: '100%',
+                                    pointerEvents: 'none',
+                                    translate: '-50% -50%',
                                 }}
-                                contentEditable
-                                suppressContentEditableWarning
-                                onDoubleClick={(e) => e.currentTarget.focus()}
-                                onBlur={(e) => {
-                                    const newText = e.currentTarget.textContent || '';
+                            />
+                        ))}
+                        {texts.map((t) => (
+                            <Draggable
+                                key={t.id}
+                                position={{ x: t.x, y: t.y }}
+                                onStop={(_, data) => {
                                     setTexts((prev) =>
                                         prev.map((item) =>
-                                            item.id === t.id ? { ...item, text: newText } : item
+                                            item.id === t.id ? { ...item, x: data.x, y: data.y } : item
                                         )
                                     );
                                 }}
                             >
-                                {t.text}
-                            </div>
-                        </Draggable>
-                    ))}
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        fontSize: t.fontSize,
+                                        color: t.color,
+                                        userSelect: 'none',
+                                        cursor: 'move',
+                                    }}
+                                    contentEditable
+                                    suppressContentEditableWarning
+                                    onDoubleClick={(e) => e.currentTarget.focus()}
+                                    onBlur={(e) => {
+                                        const newText = e.currentTarget.textContent || '';
+                                        setTexts((prev) =>
+                                            prev.map((item) =>
+                                                item.id === t.id ? { ...item, text: newText } : item
+                                            )
+                                        );
+                                    }}
+                                >
+                                    {t.text}
+                                </div>
+                            </Draggable>
+                        ))}
+                    </div>
                 </div>
+                {/* Settings Panel */}
+                <Panels
+                    activePanel={activePanel!}
+                    selectedLayerId={selectedLayerId}
+                    layers={layers}
+                    handleOpacityChange={handleOpacityChange}
+                    toggleFlipHorizontal={toggleFlipHorizontal}
+                    toggleFlipVertical={toggleFlipVertical}
+                    handleDuplicate={handleDuplicate}
+                    updateSelectedLayer={updateSelectedLayer}
+                    setActivePanel={setActivePanel}
+                    handleSaturation={handleSaturation}
+                    handleBrightness={handleBrightness}
+                    handleContrast={handleContrast}
+                    handleHue={handleHue}
+                    handleSepia={handleSepia}
+                    /* Add text*/
+                    addText={addText}
+                />
+                {/* Tools Bar */}
+                <div className='z-50 relative flex flex-col flex-none justify-between space-y-2 bg-white border border-mountain-200 rounded-lg rounded-l-none w-20 h-full'>
+                    <div
+                        onClick={() =>
+                            setActivePanel(prev => (prev === "arrange" ? null : "arrange"))
+                        }
+                        className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
+                        <MdFlipToFront className='size-6 text-mountain-600' />
+                        <p className='text-mountain-600 text-xs'>Arrange</p>
+                    </div>
+                    <div className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
+                        <IoCrop className='size-6 text-mountain-600' />
+                        <p className='text-mountain-600 text-xs'>Crop</p>
+                    </div>
+                    <div
+                        onClick={() =>
+                            setActivePanel(prev => (prev === "adjust" ? null : "adjust"))
+                        }
+                        className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
+                        <TuneIcon className='size-6 text-mountain-600' />
+                        <p className='text-mountain-600 text-xs'>Adjust</p>
+                    </div>
+                    <div
+                        onClick={() =>
+                            setActivePanel(prev => (prev === "filter" ? null : "filter"))
+                        }
+                        className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
+                        <IoIosColorFilter className='size-6 text-mountain-600' />
+                        <p className='text-mountain-600 text-xs'>Filter</p>
+                    </div>
+                    <div
+                        onClick={() =>
+                            setActivePanel(prev => (prev === "text" ? null : "text"))
+                        }
+                        className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
+                        <RiText className='size-6 text-mountain-600' />
+                        <p className='text-mountain-600 text-xs'>Text</p>
+                    </div>
+                    <div className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
+                        <IoShapesOutline className='size-6 text-mountain-600' />
+                        <p className='text-mountain-600 text-xs'>Shape</p>
+                    </div>
+                    <div className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
+                        <PiDiamondsFourLight className='size-6 text-mountain-600' />
+                        <p className='text-mountain-600 text-xs'>Element</p>
+                    </div>
+                    <div className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
+                        <HiDotsHorizontal className='size-6 text-mountain-600' />
+                        <p className='text-mountain-600 text-xs'>More</p>
+                    </div>
+                </div>
+                <canvas ref={canvasRef} className="hidden" />
             </div>
-            {/* Settings Panel */}
-            <Panels
-                activePanel={activePanel!}
-                selectedLayerId={selectedLayerId}
-                layers={layers}
-                handleOpacityChange={handleOpacityChange}
-                toggleFlipHorizontal={toggleFlipHorizontal}
-                toggleFlipVertical={toggleFlipVertical}
-                handleDuplicate={handleDuplicate}
-                updateSelectedLayer={updateSelectedLayer}
-                setActivePanel={setActivePanel}
-                handleSaturation={handleSaturation}
-                handleBrightness={handleBrightness}
-                handleContrast={handleContrast}
-                handleHue={handleHue}
-                handleSepia={handleSepia}
-                /* Add text*/
-                addText={addText}
-            />
-            {/* Tools Bar */}
-            <div className='z-50 relative flex flex-col flex-none justify-between space-y-2 bg-white border border-mountain-200 rounded-lg rounded-l-none w-20 h-full'>
-                <div
-                    onClick={() =>
-                        setActivePanel(prev => (prev === "arrange" ? null : "arrange"))
-                    }
-                    className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
-                    <MdFlipToFront className='size-6 text-mountain-600' />
-                    <p className='text-mountain-600 text-xs'>Arrange</p>
-                </div>
-                <div className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
-                    <IoCrop className='size-6 text-mountain-600' />
-                    <p className='text-mountain-600 text-xs'>Crop</p>
-                </div>
-                <div
-                    onClick={() =>
-                        setActivePanel(prev => (prev === "adjust" ? null : "adjust"))
-                    }
-                    className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
-                    <TuneIcon className='size-6 text-mountain-600' />
-                    <p className='text-mountain-600 text-xs'>Adjust</p>
-                </div>
-                <div
-                    onClick={() =>
-                        setActivePanel(prev => (prev === "filter" ? null : "filter"))
-                    }
-                    className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
-                    <IoIosColorFilter className='size-6 text-mountain-600' />
-                    <p className='text-mountain-600 text-xs'>Filter</p>
-                </div>
-                <div
-                    onClick={() =>
-                        setActivePanel(prev => (prev === "text" ? null : "text"))
-                    }
-                    className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
-                    <RiText className='size-6 text-mountain-600' />
-                    <p className='text-mountain-600 text-xs'>Text</p>
-                </div>
-                <div className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
-                    <IoShapesOutline className='size-6 text-mountain-600' />
-                    <p className='text-mountain-600 text-xs'>Shape</p>
-                </div>
-                <div className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
-                    <PiDiamondsFourLight className='size-6 text-mountain-600' />
-                    <p className='text-mountain-600 text-xs'>Element</p>
-                </div>
-                <div className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
-                    <HiDotsHorizontal className='size-6 text-mountain-600' />
-                    <p className='text-mountain-600 text-xs'>More</p>
-                </div>
-            </div>
-            <canvas ref={canvasRef} className="hidden" />
         </div>
     );
 };

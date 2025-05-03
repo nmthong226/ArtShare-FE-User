@@ -1,11 +1,8 @@
-import { Button, CardContent, CardHeader, IconButton } from "@mui/material";
+import { CardContent, CardHeader, IconButton } from "@mui/material";
 import { X } from "lucide-react";
 import Avatar from "boring-avatars";
 import { User } from "@/types";
 import { Link } from "react-router-dom";
-
-// Icons
-import { RiUserFollowLine } from "react-icons/ri";
 
 const PostArtist = ({ artist }: { artist: User }) => {
   return (
@@ -52,10 +49,6 @@ const PostArtist = ({ artist }: { artist: User }) => {
               <div className="text-sm line-clamp-1">@{"nickname"}</div>
             </div>
           </div>
-          <Button variant="contained" className="flex justify-center space-x-1 p-0.5 w-28 min-w-auto h-12 aspect-[1/1] font-normal text-mountain-800 text-sm">
-            <RiUserFollowLine className="size-4" />
-            <p>Follow</p>
-          </Button>
         </CardContent>
       </div>
     )

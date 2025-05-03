@@ -17,12 +17,11 @@ import Login from "@/pages/Authentication/Login";
 import SignUp from "@/pages/Authentication/SignUp";
 import ForgotPassword from "@/pages/Authentication/ForgotPassword";
 import AccountActivation from "@/pages/Authentication/Activation";
-import Explore from "./features/explore";
-import Blogs from "./pages/Blogs";
-import Collection from "./features/collection";
-
+import Explore from "@/features/explore";
+import BrowseBlogs from "@/features/browse-blogs/BrowseBlogs";
+import Collection from "@/features/collection";
 // import SubmitMedia from "@/pages/SubmitMedia";
-import ArtGeneration from "@/pages/ArtGen";
+import ArtGeneration from "@/features/gen-art/ArtGenAI";
 import Portfolio from "@/pages/Portfolio";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/features/post";
@@ -33,9 +32,11 @@ import Search from "@/pages/Search";
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
-import ImageEditor from "./pages/EditImage";
+import ImageEditor from "@/features/edit-image/EditImage";
 import { GlobalSearchProvider } from "./contexts/SearchProvider";
 import AILayout from "./layouts/AILayout";
+import BlogDetails from "./features/blog-details/BlogDetails";
+import WriteBlog from "./features/write-blog/WriteBlog";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -51,13 +52,15 @@ const privateAuthRoute = [
 const InAppPublicRoutes = [
   { path: "/explore", element: <Explore /> },
   { path: "/posts/:postId", element: <Post /> },
-  { path: "/blogs", element: <Blogs /> },
+  { path: "/blogs", element: <BrowseBlogs /> },
+  { path: "/blogs/:blogId", element: <BlogDetails /> },
   { path: "/search", element: <Search /> },
   { path: "/collections", element: <Collection /> },
 ];
 
 const InAppPrivateRoutes = [
   { path: "/posts/new", element: <UploadMedia /> },
+  { path: "/blogs/new", element: <WriteBlog /> },
   { path: "/portfolio", element: <Portfolio /> },
   { path: "/u/:username", element: <UserProfile /> },
 ];

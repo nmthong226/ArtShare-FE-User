@@ -82,7 +82,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
     };
 
     const handleNavigateToEdit = () => {
-        navigate("/edit-image");
+        navigate("/image/tool/editor");
     };
 
     useEffect(() => {

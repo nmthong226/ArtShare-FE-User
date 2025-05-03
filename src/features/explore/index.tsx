@@ -181,7 +181,7 @@ const Explore: React.FC = () => {
   console.log("Processed galleryPhotos:", galleryPhotos);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="relative flex flex-col h-full">
       <div className="top-16 z-10 sticky flex flex-col gap-4 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950 p-4">
         <div className="flex items-center gap-6 w-full categories-bar">
           <Button

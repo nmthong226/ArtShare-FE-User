@@ -5,6 +5,7 @@ import { InfoIcon } from 'lucide-react';
 import { LuImageUpscale } from "react-icons/lu";
 import { BiEdit } from "react-icons/bi";
 import { FaArrowLeftLong } from "react-icons/fa6";
+import { RiImageAiLine } from 'react-icons/ri';
 
 //Components
 import Tooltip from '@mui/material/Tooltip';
@@ -12,7 +13,6 @@ import UserInAppConfigs from '../popovers/UserInAppConfigs';
 
 //Context
 import { useUser } from '@/contexts/UserProvider';
-import { RiImageAiLine } from 'react-icons/ri';
 import UserButton from './user-button';
 
 const AIHeader = () => {

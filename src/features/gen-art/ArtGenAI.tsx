@@ -232,100 +232,103 @@ const ArtGenAI = () => {
     };
 
     return (
-        <div className='relative flex flex-col space-y-4 w-full h-full overflow-y-hidden'>
-            <SettingsPanel isExpanded={expanded} setIsExpanded={setExpanded} />
-            <div className='flex justify-end pr-4 w-full h-fit'>
-                <div className='flex items-center space-x-2 bg-white shadow-md p-2 rounded-xl w-fit h-13'>
-                    <div className='flex h-full'>
-                        <div className='flex justify-center items-center bg-mountain-100 px-2 rounded-lg w-fit h-full font-normal'>
-                            <div className='flex items-center space-x-2'>
-                                <p>Generate <span className='font-medium'>Image</span></p>
-                                <IoMdArrowDropdown />
+        <div className='flex p-4 pr-0 pb-0 w-full h-[calc(100vh-4rem)]'>
+
+            <div className='relative flex flex-col space-y-4 w-full h-full overflow-y-hidden'>
+                <SettingsPanel isExpanded={expanded} setIsExpanded={setExpanded} />
+                <div className='flex justify-end pr-4 w-full h-fit'>
+                    <div className='flex items-center space-x-2 bg-white shadow-md p-2 rounded-xl w-fit h-13'>
+                        <div className='flex h-full'>
+                            <div className='flex justify-center items-center bg-mountain-100 px-2 rounded-lg w-fit h-full font-normal'>
+                                <div className='flex items-center space-x-2'>
+                                    <p>Generate <span className='font-medium'>Image</span></p>
+                                    <IoMdArrowDropdown />
+                                </div>
                             </div>
                         </div>
+                        <TokenPopover tokenNumber={tokenNumber} />
+                        <Button className='flex justify-center items-center bg-indigo-100 rounded-lg w-28 h-full font-normal'>
+                            <TbChessQueenFilled className='mr-2 size-5' />
+                            <p>Get Token</p>
+                        </Button>
                     </div>
-                    <TokenPopover tokenNumber={tokenNumber} />
-                    <Button className='flex justify-center items-center bg-indigo-100 rounded-lg w-28 h-full font-normal'>
-                        <TbChessQueenFilled className='mr-2 size-5' />
-                        <p>Get Token</p>
-                    </Button>
                 </div>
-            </div>
-            <div className='relative flex justify-end w-full h-full'>
-                <div className={`flex relative h-full custom-scrollbar flex-col ${expanded ? 'w-[78%]' : 'w-full delay-300'} items-start transition-all duration-200 ease-in-out`}>
-                    {loading ? (
-                        <div className="flex justify-center items-start mt-4 w-full h-full">
-                            <div className='flex items-center space-x-4'>
-                                <CircularProgress size={32} thickness={4} />
-                                <p className='text-sm'>Loading...</p>
+                <div className='relative flex justify-end w-full h-full'>
+                    <div className={`flex relative h-full custom-scrollbar flex-col ${expanded ? 'w-[78%]' : 'w-full delay-300'} items-start transition-all duration-200 ease-in-out`}>
+                        {loading ? (
+                            <div className="flex justify-center items-start mt-4 w-full h-full">
+                                <div className='flex items-center space-x-4'>
+                                    <CircularProgress size={32} thickness={4} />
+                                    <p className='text-sm'>Loading...</p>
+                                </div>
                             </div>
-                        </div>
-                    ) : (
-                        <div ref={scrollRef} className='flex flex-col space-y-10 pr-4 w-full h-full overflow-y-auto custom-scrollbar'>
-                            {promptResults.map((result, index) => (
-                                <PromptResult
-                                    key={index}
-                                    prompt={result.prompt}
-                                    images={result.images}
-                                    generating={false}
-                                    index={index}
-                                    onDelete={() => handleDeleteResult(result.id)}
-                                    onDeleteSingle={handleDeleteSingleResult}
-                                    resultId={result.id}
-                                />
-                            ))}
-                            {generatingImage && (
-                                <>
-                                    <PromptResult
-                                        prompt={" " + committedPrompt}
-                                        images={result3_images}
-                                        generating={true}
-                                        progress={loadingProgress}
-                                    />
-                                </>
-                            )}
-                            <div className='flex flex-col space-y-2'>
-                                <div className='flex h-64' />
-                            </div>
-                        </div>
-                    )}
-                </div>
-                <div className='bottom-0 z-0 absolute flex bg-white blur-3xl w-full h-40' />
-            </div>
-            {/* Prompt Chat */}
-            <div className={`flex bottom-4 items-end left-1/2 z-50 absolute transform duration-300 ease-in-out ${expanded ? '-translate-x-1/4' : '-translate-x-1/2  delay-300'}`}>
-                <div className={`flex flex-col bg-white border ${promptExpanded ? 'border-indigo-600 shadow-lg' : 'border-mountain-300 shadow-md'} rounded-xl w-[720px] relative`}>
-                    <div
-                        className={`flex bg-white rounded-xl w-[719px] border-0 rounded-b-none overflow-hidden transition-all duration-400 ease-in-out transform
-                            ${promptExpanded ? 'h-24 scale-y-100 opacity-100 py-2' : 'h-0 opacity-0'} 
-                            overflow-y-auto`}
-                    >
-                        <TextareaAutosize
-                            value={userPrompt}
-                            ref={textareaRef}
-                            onChange={(e) => setUserPrompt(e.target.value)}
-                            placeholder="What do you imagine about?"
-                            className={`flex p-2 resize-none bg-white custom-scrollbar rounded-xl w-full text-sm rounded-b-none h-full overflow-y-auto placeholder:text-mountain-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent`}
-                        />
-                    </div>
-                    <div
-                        onClick={() => handlePrompt()}
-                        className={`${promptExpanded && 'rounded-t-none pointer-events-none'
-                            } items-center text-sm flex bg-white px-2 py-4 rounded-xl w-[719px] h-15 line-clamp-1 hover:cursor-pointer overflow-y-auto`}
-                    >
-                        {userPrompt ? (
-                            <p className={`pr-26 line-clamp-1 ${promptExpanded && 'hidden'}`}>{userPrompt}</p>
                         ) : (
-                            <p className={`pr-26 text-mountain-400 ${promptExpanded && 'hidden'}`}>What do you imagine about?</p>
+                            <div ref={scrollRef} className='flex flex-col space-y-10 pr-4 w-full h-full overflow-y-auto custom-scrollbar'>
+                                {promptResults.map((result, index) => (
+                                    <PromptResult
+                                        key={index}
+                                        prompt={result.prompt}
+                                        images={result.images}
+                                        generating={false}
+                                        index={index}
+                                        onDelete={() => handleDeleteResult(result.id)}
+                                        onDeleteSingle={handleDeleteSingleResult}
+                                        resultId={result.id}
+                                    />
+                                ))}
+                                {generatingImage && (
+                                    <>
+                                        <PromptResult
+                                            prompt={" " + committedPrompt}
+                                            images={result3_images}
+                                            generating={true}
+                                            progress={loadingProgress}
+                                        />
+                                    </>
+                                )}
+                                <div className='flex flex-col space-y-2'>
+                                    <div className='flex h-64' />
+                                </div>
+                            </div>
                         )}
                     </div>
-                    <Button
-                        onClick={handleGenerate}
-                        className='right-4 -bottom-2 absolute flex items-center bg-indigo-100 px-4 -translate-y-1/2'>
-                        Generate
-                    </Button>
+                    <div className='bottom-0 z-0 absolute flex bg-white blur-3xl w-full h-40' />
                 </div>
-                <AIBot />
+                {/* Prompt Chat */}
+                <div className={`flex bottom-4 items-end left-1/2 z-50 absolute transform duration-300 ease-in-out ${expanded ? '-translate-x-1/4' : '-translate-x-1/2  delay-300'}`}>
+                    <div className={`flex flex-col bg-white border ${promptExpanded ? 'border-indigo-600 shadow-lg' : 'border-mountain-300 shadow-md'} rounded-xl w-[720px] relative`}>
+                        <div
+                            className={`flex bg-white rounded-xl w-[719px] border-0 rounded-b-none overflow-hidden transition-all duration-400 ease-in-out transform
+                            ${promptExpanded ? 'h-24 scale-y-100 opacity-100 py-2' : 'h-0 opacity-0'} 
+                            overflow-y-auto`}
+                        >
+                            <TextareaAutosize
+                                value={userPrompt}
+                                ref={textareaRef}
+                                onChange={(e) => setUserPrompt(e.target.value)}
+                                placeholder="What do you imagine about?"
+                                className={`flex p-2 resize-none bg-white custom-scrollbar rounded-xl w-full text-sm rounded-b-none h-full overflow-y-auto placeholder:text-mountain-400 outline-none focus:outline-none focus:ring-0 focus:border-transparent`}
+                            />
+                        </div>
+                        <div
+                            onClick={() => handlePrompt()}
+                            className={`${promptExpanded && 'rounded-t-none pointer-events-none'
+                                } items-center text-sm flex bg-white px-2 py-4 rounded-xl w-[719px] h-15 line-clamp-1 hover:cursor-pointer overflow-y-auto`}
+                        >
+                            {userPrompt ? (
+                                <p className={`pr-26 line-clamp-1 ${promptExpanded && 'hidden'}`}>{userPrompt}</p>
+                            ) : (
+                                <p className={`pr-26 text-mountain-400 ${promptExpanded && 'hidden'}`}>What do you imagine about?</p>
+                            )}
+                        </div>
+                        <Button
+                            onClick={handleGenerate}
+                            className='right-4 -bottom-2 absolute flex items-center bg-indigo-100 px-4 -translate-y-1/2'>
+                            Generate
+                        </Button>
+                    </div>
+                    <AIBot />
+                </div>
             </div>
         </div>
     )

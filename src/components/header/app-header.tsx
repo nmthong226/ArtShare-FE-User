@@ -18,6 +18,7 @@ import { useUser } from '@/contexts/UserProvider';
 
 const Header: React.FC = ({ }) => {
     const { user, loading } = useUser();
+    const [isFocused, setIsFocused] = useState(false);
     const [inputValue, setInputValue] = useState("");
     const inputRef = useRef<HTMLInputElement>(null);
     const { query, setQuery } = useSearch();
@@ -40,8 +41,13 @@ const Header: React.FC = ({ }) => {
         },
         {
             path: "/blogs",
-            label: "Read Blogs",
+            label: "Browse Blogs",
             description: "Get inspired by stories, tutorials, and creative journeys"
+        },
+        {
+            path: "/blogs/:id",
+            label: "Read Blogs",
+            description: "Dive into creative experiences shared by artists"
         },
         {
             path: "/posts/new",
@@ -52,11 +58,6 @@ const Header: React.FC = ({ }) => {
             path: "/posts/:id",
             label: "Post Details",
             description: "View artwork in detail and engage with the artist's post"
-        },
-        {
-            path: "/image/tool/create-art",
-            label: "Image Generation",
-            description: "Use AI tools to bring your creative ideas to life"
         },
         {
             path: "/collections",
@@ -82,10 +83,16 @@ const Header: React.FC = ({ }) => {
                             <InfoIcon className='size-4' />
                         </Tooltip>
                     </div>
-                    <div className="hidden top-1/2 left-1/2 absolute lg:flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl w-144 h-10 text-neutral-700 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-neutral-300 -translate-x-1/2 -translate-y-1/2">
+                    <div className={`hidden top-1/2 left-1/2 absolute lg:flex items-center bg-mountain-50 dark:bg-mountain-1000 
+                            rounded-2xl h-10 text-neutral-700 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 
+                            dark:text-neutral-300 -translate-x-1/2 -translate-y-1/2 
+                            transition-all duration-300 ease-in-out 
+                            ${isFocused ? "w-144" : "w-108"}`}>
                         <FiSearch className="left-2 absolute w-5 h-5" />
                         <Input
                             ref={inputRef}
+                            onFocus={() => setIsFocused(true)}
+                            onBlur={() => setIsFocused(false)}
                             className="shadow-inner pr-8 pl-8 rounded-2xl"
                             placeholder="Search"
                             value={inputValue}

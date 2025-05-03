@@ -1,21 +1,14 @@
 import { Button, CardContent, Divider } from "@mui/material";
-import {
-  MessageSquareText,
-  Bookmark,
-  EllipsisVertical,
-  Share2,
-} from "lucide-react";
+import { MessageSquareText, Bookmark, Share2 } from "lucide-react";
 import ShowMoreText from "react-show-more-text";
 import { ElementType, useState, useEffect, useCallback } from "react";
 import ReactTimeAgo from "react-time-ago";
 import { Post, Collection } from "@/types";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
-
 import { SavePostDialog } from "./SavePostDialog";
 import { CreateCollectionDialog } from "@/features/collection/components/CreateCollectionDialog";
-
-import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { fetchCollectionsForDialog } from "../api/collection.api";
+import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 
 interface SimpleCollection {
   id: number;
@@ -26,7 +19,6 @@ const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 const PostInfo = ({ postData }: { postData: Post }) => {
   const { postCommentsRef } = useFocusContext();
-
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [simpleCollections, setSimpleCollections] = useState<
@@ -34,7 +26,6 @@ const PostInfo = ({ postData }: { postData: Post }) => {
   >([]);
   const [isLoadingCollections, setIsLoadingCollections] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
-
   const [userLike, setUserLike] = useState(false);
   const [likeCount, setLikeCount] = useState(postData.like_count);
 
@@ -111,7 +102,9 @@ const PostInfo = ({ postData }: { postData: Post }) => {
 
   const handleLikeClick = () => {
     if (userLike) {
-      if (likeCount > 0) setLikeCount(likeCount - 1);
+      if (likeCount > 0) {
+        setLikeCount(likeCount - 1);
+      }
     } else {
       setLikeCount(likeCount + 1);
     }
@@ -132,12 +125,18 @@ const PostInfo = ({ postData }: { postData: Post }) => {
   return (
     <>
       <div className="bg-white shadow p-4 rounded-2xl md:rounded-t-none overflow-none">
-        {/* ... (CardContent and other elements remain the same) ... */}
         <CardContent className="flex flex-col gap-4 p-0">
-          {/* Post Title, Description, TimeAgo */}
           <div className="flex flex-col gap-2">
             <div className="font-bold text-xl">{postData.title}</div>
-            <AnyShowMoreText /* ...props */>
+            <AnyShowMoreText
+              lines={3}
+              more="Show more"
+              less="Show less"
+              className="text-sm break-words"
+              anchorClass="cursor-pointer hover:text-cyan-500 block py-2 underline text-sm"
+              expanded={false}
+              truncatedEndingComponent={"... "}
+            >
               {postData.description}
             </AnyShowMoreText>
             <div className="text-xs italic">
@@ -145,7 +144,6 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             </div>
           </div>
           <Divider className="border-0.5" />
-          {/* Post Stats */}
           <div className="flex gap-6 text-mountain-950">
             <div className="flex items-center gap-1 text-sm">
               <p className="font-semibold">{likeCount}</p>
@@ -165,7 +163,6 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             </div>
           </div>
           <Divider className="border-0.5" />
-          {/* Action Buttons */}
           <div className="flex justify-between w-full">
             <Button
               className="p-2 border-0 min-w-0 text-blue-900"
@@ -202,34 +199,26 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               {" "}
               <Share2 />{" "}
             </Button>
-            <Button
-              className="border-0 min-w-auto aspect-[1/1] text-blue-900"
-              title="More options"
-            >
-              {" "}
-              <EllipsisVertical />{" "}
-            </Button>
           </div>
         </CardContent>
+        {/* Save Post Dialog */}
+        <SavePostDialog
+          postId={postData.id}
+          open={isSaveDialogOpen}
+          onClose={handleCloseSaveDialog}
+          onNavigateToCreate={handleNavigateToCreate}
+          createDisabled={disableCreate}
+          createDisabledReason={createTooltip}
+        />
+
+        {/* CreateCollectionDialog */}
+        <CreateCollectionDialog
+          open={isCreateDialogOpen}
+          onClose={handleCloseCreateDialog}
+          onSuccess={handleCollectionCreated}
+          existingCollectionNames={existingCollectionNames}
+        />
       </div>
-
-      {/* SavePostDialog */}
-      <SavePostDialog
-        postId={postData.id}
-        open={isSaveDialogOpen}
-        onClose={handleCloseSaveDialog}
-        onNavigateToCreate={handleNavigateToCreate}
-        createDisabled={disableCreate}
-        createDisabledReason={createTooltip}
-      />
-
-      {/* CreateCollectionDialog */}
-      <CreateCollectionDialog
-        open={isCreateDialogOpen}
-        onClose={handleCloseCreateDialog}
-        onSuccess={handleCollectionCreated}
-        existingCollectionNames={existingCollectionNames}
-      />
     </>
   );
 };

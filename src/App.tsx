@@ -20,6 +20,7 @@ import AccountActivation from "@/pages/Authentication/Activation";
 import Gallery from "./pages/Gallery";
 import Blogs from "./pages/Blogs";
 import Shop from "@/pages/Shop";
+
 // import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/pages/ArtGeneration";
 import Portfolio from "@/pages/Portfolio";
@@ -32,6 +33,7 @@ import MatureContentPage from "./pages/MatureContent/MatureContent";
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
+import SubscribePage from "./pages/Subcribe";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -49,6 +51,7 @@ const InAppPublicRoutes = [
   { path: "/posts/:postId", element: <Post /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/shop", element: <Shop /> },
+  { path: "/subcribe", element: <SubscribePage /> },
 ];
 
 const InAppPrivateRoutes = [

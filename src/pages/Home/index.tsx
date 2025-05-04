@@ -30,10 +30,11 @@ import { FaFacebookF } from "react-icons/fa6";
 //Components
 import { PricingSection } from "@/components/ui/pricing-section";
 import { BsInstagram, BsTwitterX } from "react-icons/bs";
+import { PricingTier } from "@/components/ui/pricing-card";
 
 export const PAYMENT_FREQUENCIES = ["monthly", "yearly"];
 
-export const TIERS = [
+export const TIERS: PricingTier[] = [
   {
     id: "individuals",
     name: "Individuals",
@@ -50,6 +51,7 @@ export const TIERS = [
       "Basic profile customization",
     ],
     cta: "Get started",
+    actionType: "none",
   },
   {
     id: "artists",
@@ -57,6 +59,10 @@ export const TIERS = [
     price: {
       monthly: 9,
       yearly: 7.5,
+    },
+    priceId: {
+      monthly: import.meta.env.VITE_ARTISTS_MONTHLY_ID,
+      yearly: import.meta.env.VITE_ARTISTS_YEARLY_ID,
     },
     description: "Great for small businesses",
     features: [
@@ -67,6 +73,7 @@ export const TIERS = [
       "Higher-resolution downloads",
     ],
     cta: "Get started",
+    actionType: "checkout",
     popular: true,
   },
   {
@@ -75,6 +82,10 @@ export const TIERS = [
     price: {
       monthly: 120,
       yearly: 100,
+    },
+    priceId: {
+      monthly: import.meta.env.VITE_STUDIOS_MONTHLY_ID,
+      yearly: import.meta.env.VITE_STUDIOS_YEARLY_ID,
     },
     description: "Great for large businesses",
     features: [
@@ -85,6 +96,7 @@ export const TIERS = [
       "Sell digital art with 0% commission",
     ],
     cta: "Get started",
+    actionType: "checkout",
   },
   {
     id: "enterprise",
@@ -102,6 +114,7 @@ export const TIERS = [
       "Exclusive marketing & promotion",
     ],
     cta: "Contact Us",
+    actionType: "contact",
     highlighted: true,
   },
 ];

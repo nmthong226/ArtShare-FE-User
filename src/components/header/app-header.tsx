@@ -45,6 +45,11 @@ const Header: React.FC = ({ }) => {
             description: "Get inspired by stories, tutorials, and creative journeys"
         },
         {
+            path: "/blogs/new",
+            label: "Write Blog",
+            description: "Share your latest artwork or visual content with the community"
+        },
+        {
             path: "/blogs/:id",
             label: "Read Blogs",
             description: "Dive into creative experiences shared by artists"

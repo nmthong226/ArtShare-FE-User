@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 import { Button, Tooltip } from "@mui/material";
 
 //Icons
-import { Share2 } from "lucide-react";
 import { AiOutlineLike } from "react-icons/ai";
 import { IoTrashBinOutline } from "react-icons/io5";
 
@@ -22,6 +21,7 @@ import { IoPersonRemoveOutline } from "react-icons/io5";
 
 //Style
 import { formatDate } from "@/lib/utils";
+import Share from "../dialogs/Share";
 
 type BlogCardProps = {
     blogId: string,
@@ -142,11 +142,12 @@ const BlogCard: React.FC<BlogCardProps> = ({
                             <MdBookmarkBorder className="mr-1 size-5" />
                         </Button>
                     </Tooltip>
-                    <Tooltip title="Share">
-                        <Button type="button" className="w-1/2 h-full font-normal text-mountain-600 hover:text-mountain-950">
-                            <Share2 className="mr-1 size-5" />
-                        </Button>
-                    </Tooltip>
+                    <Share 
+                        className="flex justify-center hover:bg-mountain-50 p-0.5 rounded-md w-1/2 h-full font-normal text-mountain-600 hover:text-mountain-950"
+                        iconClassName="mr-1 size-5"
+                        link={`http://localhost:5173/blogs/${blogId}`}
+                        tooltipDirection="bottom"
+                    />
                 </div>
             </div>
         </div>

@@ -1,6 +1,6 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import React from "react";
+import React, { lazy, Suspense } from "react";
 
 // Components
 import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
@@ -10,6 +10,7 @@ import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute
 import RootLayout from "@/layouts";
 import InAppLayout from "@/layouts/InAppLayout";
 import AuthenLayout from "@/layouts/AuthenLayout";
+import AILayout from "./layouts/AILayout";
 
 // Pages / Features
 import LandingPage from "@/pages/Home";
@@ -21,21 +22,22 @@ import Explore from "@/features/explore";
 import BrowseBlogs from "@/features/browse-blogs/BrowseBlogs";
 import Collection from "@/features/collection";
 // import SubmitMedia from "@/pages/SubmitMedia";
-import ArtGeneration from "@/features/gen-art/ArtGenAI";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/features/post";
 import UploadPost from "@/features/post-management/UploadPost";
 import UserProfile from "@/features/UserProfile/UserProfile";
 import Search from "@/pages/Search";
 
+//Significant Features
+const WriteBlog = lazy(() => import("@/features/write-blog/WriteBlog"));
+const ImageEditor = lazy(() => import("@/features/edit-image/EditImage"));
+const ArtGeneration = lazy(() => import("@/features/gen-art/ArtGenAI"));
+
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
-import ImageEditor from "@/features/edit-image/EditImage";
 import { GlobalSearchProvider } from "./contexts/SearchProvider";
-import AILayout from "./layouts/AILayout";
 import BlogDetails from "./features/blog-details/BlogDetails";
-import WriteBlog from "./features/write-blog/WriteBlog";
 import EditPost from "./features/post-management/EditPost";
 
 const authRoutes = [
@@ -55,22 +57,14 @@ const InAppPublicRoutes = [
   { path: "/blogs", element: <BrowseBlogs /> },
   { path: "/blogs/:blogId", element: <BlogDetails /> },
   { path: "/search", element: <Search /> },
-  { path: "/collections", element: <Collection /> },
   { path: "/:username", element: <UserProfile /> },
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/blogs/new", element: <WriteBlog /> },
   { path: "/u/:username", element: <UserProfile /> },
   { path: "/post/:postId/edit", element: <EditPost /> },
   { path: "/posts/new", element: <UploadPost /> },
-];
-
-const AIPrivateRoutes = [
-  { path: "/image/tool/text-to-image", element: <ArtGeneration /> },
-  { path: "/image/tool/editor", element: <ImageEditor /> },
-  { path: "/create-art", element: <ArtGeneration /> },
-  { path: "/artgen", element: <ArtGeneration /> },
+  { path: "/collections", element: <Collection /> },
 ];
 
 const App: React.FC = () => {
@@ -120,19 +114,45 @@ const App: React.FC = () => {
                     }
                   />
                 ))}
-                {AIPrivateRoutes.map(({ path, element }) => (
-                  <Route
-                    key={path}
-                    path={path}
-                    element={
-                      <ProtectedInAppRoute>
-                        <AILayout>{element}</AILayout>
-                      </ProtectedInAppRoute>
-                    }
-                  />
-                ))}
                 {/* Fallback Route (catch-all for non-existent routes) */}
                 <Route path="/" element={<LandingPage />} />
+                {/* Significant route need for special loading */}
+                <Route
+                  path="/blogs/new"
+                  element={
+                    <ProtectedInAppRoute>
+                      <InAppLayout>
+                        <Suspense fallback={<div>Loading blog editor...</div>}>
+                          <WriteBlog />
+                        </Suspense>
+                      </InAppLayout>
+                    </ProtectedInAppRoute>
+                  }
+                />
+                <Route
+                  path="/image/tool/text-to-image"
+                  element={
+                    <ProtectedInAppRoute>
+                      <AILayout>
+                        <Suspense fallback={<div>Loading image editor...</div>}>
+                          <ArtGeneration />
+                        </Suspense>
+                      </AILayout>
+                    </ProtectedInAppRoute>
+                  }
+                />
+                <Route
+                  path="/image/tool/editor"
+                  element={
+                    <ProtectedInAppRoute>
+                      <AILayout>
+                        <Suspense fallback={<div>Loading image editor...</div>}>
+                          <ImageEditor />
+                        </Suspense>
+                      </AILayout>
+                    </ProtectedInAppRoute>
+                  }
+                />
               </Routes>
             </RootLayout>
           </GlobalSearchProvider>

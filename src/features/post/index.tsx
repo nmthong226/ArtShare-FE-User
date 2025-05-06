@@ -41,31 +41,31 @@ const Post: React.FC = () => {
   }
 
   return (
-    <div className="flex-grow bg-mountain-50 p-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar relative">
+    <div className="relative flex-grow bg-mountain-50 p-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
       <IconButton
         size="small"
         onClick={(e) => {
           e.stopPropagation();
           navigate("/explore");
         }}
-        className="absolute top-7 right-7 z-20 text-white bg-mountain-500 hover:bg-mountain-700"
+        className="top-5 right-7 z-20 absolute bg-mountain-500 hover:bg-mountain-700 text-white"
       >
         <CloseIcon fontSize={20} />
       </IconButton>
-      <div className="relative md:hidden flex flex-col bg-white shadow p-4 rounded-2xl h-full">
-        <div className="h-full overflow-y-scroll no-scrollbar rounded-2xl">
+      <div className="md:hidden relative flex flex-col bg-white shadow p-4 rounded-2xl h-full">
+        <div className="rounded-2xl h-full overflow-y-auto">
           <PostArtist artist={postData!.user} />
           <PostAssets medias={postData!.medias} />
           <PostInfo postData={postData!} />
           <PostComments />
         </div>
       </div>
-      <div className="hidden md:flex flex-row h-full gap-4">
+      <div className="hidden md:flex flex-row gap-4 h-full">
         <div className="flex flex-grow justify-center items-center h-full overflow-y-scroll no-scrollbar">
           <PostAssets medias={postData!.medias} />
         </div>
-        <div className="relative flex-shrink-0 py-0 sm:w-[256px] md:w-[384px] lg:w-[448px] bg-white shadow p-4 rounded-2xl ">
-          <div className="h-full overflow-y-scroll no-scrollbar rounded-2xl gap-4 flex flex-col">
+        <div className="relative flex-shrink-0 bg-white shadow py-0 pl-4 rounded-2xl sm:w-[256px] md:w-[384px] lg:w-[448px]">
+          <div className="flex flex-col gap-4 rounded-2xl h-full overflow-y-scroll custom-scrollbar">
             <PostArtist artist={postData!.user} />
             <PostInfo postData={postData!} />
             <PostComments />

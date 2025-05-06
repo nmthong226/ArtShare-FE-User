@@ -7,9 +7,9 @@ import { useNavigate, useParams } from "react-router-dom";
 // import PostShare from "@/components/posts/PostShare";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
-import { fetchPost } from "./mocks/api";
 import { IconButton } from "@mui/material";
 import { FiX as CloseIcon } from "react-icons/fi";
+import { fetchPost } from "./api/post.api";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();

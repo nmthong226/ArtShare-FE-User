@@ -145,7 +145,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             >
               {postData.description || ""}
             </AnyShowMoreText>
-            <div className="text-xs italic text-gray-500">
+            <div className="text-gray-500 text-xs italic">
               Posted{" "}
               <ReactTimeAgo
                 date={new Date(postData.created_at)}
@@ -174,7 +174,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
             >
               <p className="font-semibold">{likeCount}</p>
               <span className="text-mountain-600">
-                {likeCount !== 1 ? " Likes" : " Like"}
+                {likeCount > 1 ? " Likes" : " Like"}
               </span>
             </div>
 
@@ -195,7 +195,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
           {/* Action Buttons */}
           <div className="flex justify-between w-full">
             <Button
-              className="p-2 border-0 min-w-0 text-blue-900 hover:bg-blue-50 rounded-lg w-10 h-10"
+              className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
               title="Like"
               onClick={handleLikeClick}
             >
@@ -206,27 +206,27 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               )}
             </Button>
             <Button
-              className="p-2 border-0 min-w-0 text-blue-900 hover:bg-blue-50 rounded-lg w-10 h-10"
+              className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
               title="Comment"
               onClick={handleFocusCommentInput}
             >
               <MessageSquareText className="size-5" />
             </Button>
             <Button
-              className="p-2 border-0 min-w-0 text-blue-900 hover:bg-blue-50 rounded-lg w-10 h-10"
+              className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
               title="Save"
               onClick={handleOpenSaveDialog}
             >
               <Bookmark className="size-5" />
             </Button>
             <Button
-              className="p-2 border-0 min-w-0 text-blue-900 hover:bg-blue-50 rounded-lg w-10 h-10"
+              className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
               title="Copy Link"
             >
               <Share2 className="size-5" />
             </Button>
             <Button
-              className="p-2 border-0 min-w-0 text-blue-900 hover:bg-blue-50 rounded-lg w-10 h-10"
+              className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
               title="More options"
             >
               <EllipsisVertical className="size-5" />

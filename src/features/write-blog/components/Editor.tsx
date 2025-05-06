@@ -24,6 +24,7 @@ import Paragraph from '@tiptap/extension-paragraph'
 import History from '@tiptap/extension-history'
 import Underline from '@tiptap/extension-underline'
 import OrderedList from '@tiptap/extension-ordered-list'
+import { FontSizeExtension } from "../extensions/font-size";
 
 import { EditorContent, useEditor } from '@tiptap/react'
 
@@ -70,6 +71,7 @@ const Editor = () => {
             Color,
             Document,
             FontFamily,
+            FontSizeExtension,
             Gapcursor,
             Heading.configure({
                 levels: [1, 2, 3],

@@ -74,7 +74,7 @@ const Explore: React.FC = () => {
             return {
               key: post.id.toString(),
               title: post.title || "",
-              author: post.user?.full_name || "Unknown Author",
+              author: post.user?.username || "Unknown Author",
               src: imageUrl,
               width: mediaDimensions.width,
               height: mediaDimensions.height,

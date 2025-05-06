@@ -79,11 +79,9 @@ const UserInAppConfigs = () => {
                 </Avatar>
                 <div className="flex flex-col">
                   <p className="text-mountain-950 dark:text-mountain-50">
-                    {user.full_name || "User Sample"}
+                    {user.username}
                   </p>
-                  <p className="text-mountain-500 text-xs">
-                    {user.email || "example123@gmail.com"}
-                  </p>
+                  <p className="text-mountain-500 text-xs">{user.email}</p>
                 </div>
               </div>
             </div>
@@ -94,7 +92,7 @@ const UserInAppConfigs = () => {
               </p>
             </div>
             <Link
-              to={`/${user.id}`}
+              to={`/${user.username}`}
               className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer"
             >
               <p className="text-sm">User Profile</p>

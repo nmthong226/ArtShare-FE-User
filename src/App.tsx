@@ -24,16 +24,16 @@ import Collection from "./features/collection";
 
 // import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/pages/ArtGeneration";
-import Portfolio from "@/pages/Portfolio";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/features/post";
-import UploadMedia from "@/features/upload-media/UploadMedia";
-import UserProfile from "@/pages/UserManagement/UserProfile";
+import UploadPost from "@/features/post-management/UploadPost";
+import UserProfile from "@/features/UserProfile/UserProfile";
 import MatureContentPage from "./pages/MatureContent/MatureContent";
 
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
+import EditPost from "./features/post-management/EditPost";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -52,21 +52,21 @@ const InAppPublicRoutes = [
   { path: "/blogs", element: <Blogs /> },
   { path: "/shop", element: <Shop /> },
   { path: "/collections", element: <Collection /> },
+  { path: "/:username", element: <UserProfile /> },
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/posts/new", element: <UploadMedia /> },
+  { path: "/posts/new", element: <UploadPost /> },
   { path: "/create-art", element: <ArtGeneration /> },
-  { path: "/portfolio", element: <Portfolio /> },
   { path: "/artgen", element: <ArtGeneration /> },
-  { path: "/:username", element: <UserProfile /> },
+  { path: "/post/:postId/edit", element: <EditPost /> },
 ];
 
 const App: React.FC = () => {
   return (
-    <UserProvider>
-      <LanguageProvider>
-        <Router>
+    <Router>
+      <UserProvider>
+        <LanguageProvider>
           <RootLayout>
             <Routes>
               {/* Public Auth Routes */}
@@ -114,9 +114,9 @@ const App: React.FC = () => {
               <Route path="/" element={<LandingPage />} />
             </Routes>
           </RootLayout>
-        </Router>
-      </LanguageProvider>
-    </UserProvider>
+        </LanguageProvider>
+      </UserProvider>
+    </Router>
   );
 };
 

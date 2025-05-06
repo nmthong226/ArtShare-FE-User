@@ -1,22 +1,20 @@
 export interface User {
   id: string;
-  email: string;
   username: string;
-  full_name?: string;
-  profile_picture_url?: string;
-  bio?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  refresh_token?: string;
-  followers_count?: number;
-  following_count?: number;
-
-  //   posts: Post[];
-
-  //   likes: Like[];
-  //   comments: Comment[];
-  //   shares: Share[];
-
-  //   followers: Follow[];
-  //   followings: Follow[];
+  email: string;
+  profile_picture_url?: string | null;
+  bio?: string | null;
+  created_at: Date;
+  updated_at?: Date | null;
+  refresh_token?: string | null;
+  roles?: UserRole[];
+  comments?: Comment[];
+  followers?: Follow[];
+  followings?: Follow[];
+  likes?: Like[];
+  posts?: Post[];
+  blogs?: Blog[];
+  shares?: Share[];
+  bookmarks?: Bookmark[];
+  ratings?: Rating[];
 }

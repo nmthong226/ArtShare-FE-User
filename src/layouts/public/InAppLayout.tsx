@@ -43,7 +43,7 @@ import {
   RiFolderUploadFill,
   RiImageAiFill,
 } from "react-icons/ri";
-import { BsFilePersonFill, BsPen } from "react-icons/bs";
+import { BsPen } from "react-icons/bs";
 import { RiFolderUploadLine } from "react-icons/ri";
 import { RiImageAiLine } from "react-icons/ri";
 import { BsFilePerson } from "react-icons/bs";
@@ -51,7 +51,7 @@ import { MdLibraryBooks, MdOutlineLibraryBooks } from "react-icons/md";
 import { FiLogIn } from "react-icons/fi";
 import { IoMailOutline } from "react-icons/io5";
 import { IoNotificationsOutline } from "react-icons/io5";
-import { FaPenToSquare, FaRegPenToSquare } from "react-icons/fa6";
+import { FaRegPenToSquare } from "react-icons/fa6";
 import { User } from "@/types";
 
 const UserFunctionality: React.FC<{
@@ -455,24 +455,6 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               }
               iconInactive={<RiImageAiLine className="w-6 h-6" />}
               label="Create"
-              user={user!}
-            />
-            <ProtectedSidebarItem
-              path="/write-blog"
-              iconActive={
-                <FaPenToSquare className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />
-              }
-              iconInactive={<FaRegPenToSquare className="w-6 h-6" />}
-              label="Write"
-              user={user!}
-            />
-            <ProtectedSidebarItem
-              path="/portfolio"
-              iconActive={
-                <BsFilePersonFill className="w-6 h-6 text-indigo-800 dark:text-indigo-300" />
-              }
-              iconInactive={<BsFilePerson className="w-6 h-6" />}
-              label="Studio"
               user={user!}
             />
           </aside>

@@ -87,6 +87,10 @@ const post101: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[0]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post102: Post = {
   id: 102,
@@ -113,6 +117,10 @@ const post102: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[3]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 
 const post103: Post = {
@@ -140,6 +148,10 @@ const post103: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[1]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post104: Post = {
   id: 104,
@@ -166,6 +178,10 @@ const post104: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[2]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post105: Post = {
   id: 105,
@@ -192,6 +208,10 @@ const post105: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[3]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post106: Post = {
   id: 106,
@@ -218,6 +238,10 @@ const post106: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[0], mockCategories[4]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post107: Post = {
   id: 107,
@@ -244,6 +268,10 @@ const post107: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[0]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post108: Post = {
   id: 108,
@@ -270,6 +298,10 @@ const post108: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[2], mockCategories[3]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post109: Post = {
   id: 109,
@@ -296,6 +328,10 @@ const post109: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[5]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post110: Post = {
   id: 110,
@@ -322,6 +358,10 @@ const post110: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[1], mockCategories[6]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post111: Post = {
   id: 111,
@@ -348,6 +388,10 @@ const post111: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[0]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 const post112: Post = {
   id: 112,
@@ -374,6 +418,10 @@ const post112: Post = {
   ],
   user: mockUser,
   categories: [mockCategories[6]],
+  user_id: "",
+  view_count: 0,
+  is_mature: false,
+  ai_created: false,
 };
 
 export const mockCollections: Collection[] = [

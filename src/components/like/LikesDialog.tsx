@@ -11,7 +11,7 @@ import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
 import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
+import { FiX as CloseIcon } from "react-icons/fi";
 import Box from "@mui/material/Box";
 import { Button } from "@mui/material";
 import { LikingUser } from "./types/user";

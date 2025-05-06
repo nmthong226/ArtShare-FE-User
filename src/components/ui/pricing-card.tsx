@@ -160,7 +160,7 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
                 isHighlighted ? "text-mountain-200" : "text-muted-foreground",
               )}
             >
-              <BadgeCheck className="w-4 h-4" />
+              <BadgeCheck className="w-4 h-4 flex-shrink-0" />
               {feature}
             </li>
           ))}

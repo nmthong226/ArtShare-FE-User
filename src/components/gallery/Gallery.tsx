@@ -38,7 +38,6 @@ const IGallery: React.FC<IGalleryProps> = ({
   isFetchingNextPage,
   isError,
   error,
-
   renderPhoto,
 }) => {
   if (isLoading) {
@@ -50,9 +49,12 @@ const IGallery: React.FC<IGalleryProps> = ({
   }
 
   if (isError && !isLoading && photos.length === 0) {
+    console.error("Error loading initial posts:", error);
+
     return (
-      <div className="p-4 text-red-500 text-center">
-        Error loading posts: {error?.message || "Unknown error"}
+      <div className="p-4 text-mountain-500 text-center">
+        Oops! Something went wrong while loading the gallery. Please try again
+        later.
       </div>
     );
   }
@@ -69,7 +71,6 @@ const IGallery: React.FC<IGalleryProps> = ({
 
   return (
     <div className="relative pb-20">
-      {/* Padding at the bottom for the spinner */}
       <RowsPhotoAlbum
         spacing={8}
         targetRowHeight={256}
@@ -83,11 +84,13 @@ const IGallery: React.FC<IGalleryProps> = ({
           <LoadingSpinner />
         </div>
       )}
-      {/* --- Error fetching more state (shown below existing photos) --- */}
       {isError && !isLoading && photos.length > 0 && (
-        <div className="py-4 text-red-500 text-center">
-          Error fetching more posts: {error?.message || "Unknown error"}
-        </div>
+        <>
+          {console.error("Error fetching more posts:", error)}
+          <div className="py-4 text-mountain-500 text-center">
+            Could not load more posts at this time. Please try again later.
+          </div>
+        </>
       )}
     </div>
   );

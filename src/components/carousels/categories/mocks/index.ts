@@ -4,15 +4,15 @@ export const categoriesData = [
         thumbnail: "https://cdnb.artstation.com/p/channels/covers/000/000/077/20200505141007/thumb/thumb.jpg?1588705807",
     },
     {
-        name: "Health & Wellness",
+        name: "Nature",
         thumbnail: "https://cdnb.artstation.com/p/channels/covers/000/000/077/20200505141007/thumb/thumb.jpg?1588705807",
     },
     {
-        name: "Travel",
+        name: "Abstract",
         thumbnail: "https://cdnb.artstation.com/p/channels/covers/000/000/077/20200505141007/thumb/thumb.jpg?1588705807",
     },
     {
-        name: "Education",
+        name: "Portraits",
         thumbnail: "https://cdnb.artstation.com/p/channels/covers/000/000/077/20200505141007/thumb/thumb.jpg?1588705807",
     },
     {

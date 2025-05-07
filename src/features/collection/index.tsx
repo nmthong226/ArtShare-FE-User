@@ -81,7 +81,6 @@ const CollectionPage: React.FC = () => {
       };
     }
 
-    // Calculate public posts and their newest thumbnail
     const pubCollections = collections.filter((c) => !c.is_private && c.posts);
     const pubPosts = pubCollections.flatMap((col) => col.posts);
     const uniquePublicMap = new Map<number, Post>();
@@ -98,7 +97,6 @@ const CollectionPage: React.FC = () => {
     const pubThumbnail =
       newestPublicPost?.thumbnail_url || newestPublicPost?.medias?.[0]?.url;
 
-    // Calculate private posts and their newest thumbnail
     const privCollections = collections.filter((c) => c.is_private && c.posts);
     const privPosts = privCollections.flatMap((col) => col.posts);
     const uniquePrivateMap = new Map<number, Post>();
@@ -130,12 +128,11 @@ const CollectionPage: React.FC = () => {
     console.log(
       `FILTERED_POSTS: Recalculating. Selected ID: ${selectedCollectionId}, Show Only Private: ${showOnlyPrivate}`,
     );
-    if (loadingCollections) return []; // Already handled in pre-calc, but keep for safety
+    if (loadingCollections) return [];
 
     if (selectedCollectionId === "all") {
-      return showOnlyPrivate ? privatePosts : publicPosts; // Use pre-calculated lists
+      return showOnlyPrivate ? privatePosts : publicPosts;
     } else {
-      // Logic for specific collection remains the same
       if (currentCollection) {
         const collectionMatchesFilter =
           !showOnlyPrivate || currentCollection.is_private;
@@ -143,10 +140,7 @@ const CollectionPage: React.FC = () => {
       }
       return [];
     }
-    // Sorting is already done in pre-calculation
   }, [
-    // Replace collections dependency with pre-calculated ones if possible
-    // collections, // Keep if needed for currentCollection lookup
     publicPosts,
     privatePosts,
     currentCollection,
@@ -180,10 +174,8 @@ const CollectionPage: React.FC = () => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
     const items: SliderItem[] = [];
 
-    // 1. "Add" button
     items.push({ type: "add" });
 
-    // 2. "All Posts" item - Conditionally set thumbnail and count
     const allPostsTitle = "all posts";
     if (!normalizedQuery || allPostsTitle.includes(normalizedQuery)) {
       const countForAllPosts = showOnlyPrivate
@@ -195,14 +187,13 @@ const CollectionPage: React.FC = () => {
 
       items.push({
         type: "all",
-        // Use the relevant thumbnail based on the filter, or undefined if no posts match
+
         thumbnailUrl: countForAllPosts > 0 ? thumbnailForAllPosts : undefined,
-        // Show the count relevant to the current filter state
+
         count: countForAllPosts,
       });
     }
 
-    // 3. Filter *actual* Collections
     const filteredCollectionItems: SliderItemCollection[] =
       collectionsForDisplay
         .filter((collection) => {
@@ -216,14 +207,13 @@ const CollectionPage: React.FC = () => {
           type: "collection",
           id: collection.id,
           name: collection.name,
-          // Thumbnail for specific collections can remain as calculated before
+
           thumbnailUrl: collection.thumbnailUrl,
-          count: collection.posts?.length ?? 0, // Count remains total for the collection card
+          count: collection.posts?.length ?? 0,
         }));
 
     items.push(...filteredCollectionItems);
 
-    // Optional Sort
     const addIndex = items.findIndex((item) => item.type === "add");
     const allPostsIndex = items.findIndex((item) => item.type === "all");
     if (allPostsIndex > addIndex + 1) {
@@ -233,25 +223,18 @@ const CollectionPage: React.FC = () => {
 
     return items;
   }, [
-    collectionsForDisplay, // Keep for mapping actual collections
-    // Remove newestOverallThumbnailUrl if replaced
-    // allPosts.length, // Replaced by specific counts
-    publicPosts.length, // Add new dependency
-    privatePosts.length, // Add new dependency
-    newestPublicThumbnail, // Add new dependency
-    newestPrivateThumbnail, // Add new dependency
+    collectionsForDisplay,
+
+    publicPosts.length,
+    privatePosts.length,
+    newestPublicThumbnail,
+    newestPrivateThumbnail,
     searchQuery,
     showOnlyPrivate,
   ]);
 
   const handleTogglePrivateFilter = useCallback(() => {
     setShowOnlyPrivate((prev) => !prev);
-    // Optional: Reset selection when filter changes?
-    // if (!showOnlyPrivate) { // If switching *to* private only
-    //    Maybe check if current selection is private, if not, select 'all' or first private?
-    // } else { // If switching *from* private only to all
-    //    Selection can probably stay as is.
-    // }
   }, []);
 
   const handleCollectionSelect = useCallback(
@@ -430,7 +413,6 @@ const CollectionPage: React.FC = () => {
   ]);
 
   const galleryTitle = useMemo(() => {
-    // Handle initial loading state first
     if (
       loadingCollections &&
       selectedCollectionId !== "all" &&
@@ -439,43 +421,31 @@ const CollectionPage: React.FC = () => {
       return "Loading...";
     }
 
-    // Handle "All Posts" selection
     if (selectedCollectionId === "all") {
-      // Title should reflect the filter state when 'All' is selected
-      return "All"; // Or adjust wording
+      return "All";
     }
 
-    // Handle specific collection selection (selectedCollectionId is a number)
     if (currentCollection) {
-      // Check if the selected collection matches the *current* filter state
       const collectionMatchesFilter =
         !showOnlyPrivate || currentCollection.is_private;
 
       if (collectionMatchesFilter) {
-        // If it matches, show its actual name
         return currentCollection.name;
       } else {
-        // If it *doesn't* match (e.g., public item selected, then filter toggled to private),
-        // the gallery is empty. The title should reflect the active filter state.
-        // It shouldn't show the name of the now-hidden collection.
-        return "All"; // Or simply "Private Collections"
+        return "All";
       }
     }
 
-    // Fallback: Should ideally not be reached if selectedId is 'all' or a valid number w/ data
-    // If reached, could mean data inconsistency or selection is briefly invalid.
-    // Defaulting to the filter state might be safest.
     console.warn(
       "GalleryTitle: Fallback reached, currentCollection likely undefined for selected ID",
       selectedCollectionId,
     );
-    return showOnlyPrivate ? "Private Collections" : "All Collections"; // Fallback title
+    return showOnlyPrivate ? "Private Collections" : "All Collections";
   }, [
     selectedCollectionId,
-    currentCollection, // Depends on the selected item object
+    currentCollection,
     loadingCollections,
-    showOnlyPrivate, // <<< Now depends on the filter state
-    // collections might be needed if calculating counts or checking emptiness below
+    showOnlyPrivate,
   ]);
 
   const galleryItemCountText = useMemo(() => {
@@ -514,19 +484,19 @@ const CollectionPage: React.FC = () => {
             }
           >
             <ToggleButton
-              value="privateFilter" // Value is static, selection state matters
-              selected={showOnlyPrivate} // Control selection based on state
-              onChange={handleTogglePrivateFilter} // Toggle state on change
+              value="privateFilter"
+              selected={showOnlyPrivate}
+              onChange={handleTogglePrivateFilter}
               aria-label="Toggle private collection filter"
               size="small"
               sx={{
                 height: "fit-content",
                 textTransform: "none",
-                display: "inline-flex", // Use inline-flex or flex
-                alignItems: "center", // Vertical alignment
+                display: "inline-flex",
+                alignItems: "center",
                 justifyContent: "center",
                 bgcolor: "background.paper",
-              }} // Ensure vertical alignment
+              }}
             >
               {/* Show Lock icon when filtering, LockOpen/Apps when not */}
               {!showOnlyPrivate ? (
@@ -538,10 +508,9 @@ const CollectionPage: React.FC = () => {
               <Typography
                 variant="caption"
                 sx={{
-                  // No margin needed here if added to icon
                   ml: 1,
-                  display: { xs: "none", sm: "inline" }, // Use 'inline' for better flow with icon
-                  lineHeight: 1, // Adjust line height for captions if needed
+                  display: { xs: "none", sm: "inline" },
+                  lineHeight: 1,
                 }}
               >
                 {/* Text also depends on the current state */}
@@ -574,13 +543,12 @@ const CollectionPage: React.FC = () => {
       {/* Title Section */}
       <Box mb={4}>
         <CollectionTitle
-          title={galleryTitle} // Pass the updated title
+          title={galleryTitle}
           itemCountText={galleryItemCountText}
           isEditable={
             typeof selectedCollectionId === "number" &&
             (!showOnlyPrivate || !!currentCollection?.is_private)
-          } // Only allow editing if the selected collection matches the filter
-          // ... other props ...
+          }
           isLoading={
             loadingCollections &&
             !currentCollection &&
@@ -593,12 +561,6 @@ const CollectionPage: React.FC = () => {
           onEditCancel={handleEditCancel}
           existingCollectionNames={existingCollectionNames}
         />
-        {/* Display data loading or photo processing errors below the title component */}
-        {(collectionsError || photosError) && !actionError && (
-          <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-            Error: {collectionsError || photosError}
-          </Typography>
-        )}
       </Box>
 
       {/* Gallery */}
@@ -643,13 +605,12 @@ const CollectionPage: React.FC = () => {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="delete-collection-dialog-description">
-            Are you sure you want to delete the collection{" "}
+            Are you sure you want to delete the collection
             <strong>"{collectionToDelete?.name || "this collection"}"</strong>?
             <br />
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ p: 2 }}>
-          {" "}
           {/* Added padding */}
           <Button onClick={handleCloseDeleteDialog} variant="outlined">
             Cancel

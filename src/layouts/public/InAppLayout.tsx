@@ -459,7 +459,7 @@ const InAppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             />
           </aside>
           <div
-            className={`border-l-1 border-l-mountain-100 dark:border-l-mountain-700  h-full ${location.pathname !== "/posts/new" ? "w-[calc(100vw-5rem)]" : "w-full"}`}
+            className={`border-l-1 border-l-mountain-100 dark:border-l-mountain-700  h-full ${location.pathname !== "/posts/new" ? "md:w-[calc(100%-4rem)]" : "w-full"}`}
           >
             {children}
           </div>

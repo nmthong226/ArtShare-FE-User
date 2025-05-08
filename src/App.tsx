@@ -25,8 +25,10 @@ import Collection from "@/features/collection";
 import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/features/post";
 import UploadPost from "@/features/post-management/UploadPost";
-import UserProfile from "@/features/UserProfile/UserProfile";
 import Search from "@/pages/Search";
+import BlogDetails from "./features/blog-details/BlogDetails";
+import EditPost from "./features/post-management/EditPost";
+import UserProfile from "@/features/UserProfile/UserProfile";
 
 //Significant Features
 const WriteBlog = lazy(() => import("@/features/write-blog/WriteBlog"));
@@ -36,9 +38,8 @@ const ArtGeneration = lazy(() => import("@/features/gen-art/ArtGenAI"));
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
-import { GlobalSearchProvider } from "./contexts/SearchProvider";
-import BlogDetails from "./features/blog-details/BlogDetails";
-import EditPost from "./features/post-management/EditPost";
+import { GlobalSearchProvider } from "@/contexts/SearchProvider";
+
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -57,7 +58,6 @@ const InAppPublicRoutes = [
   { path: "/blogs", element: <BrowseBlogs /> },
   { path: "/blogs/:blogId", element: <BlogDetails /> },
   { path: "/search", element: <Search /> },
-  { path: "/:username", element: <UserProfile /> },
 ];
 
 const InAppPrivateRoutes = [

@@ -24,7 +24,10 @@ import Paragraph from '@tiptap/extension-paragraph'
 import History from '@tiptap/extension-history'
 import Underline from '@tiptap/extension-underline'
 import OrderedList from '@tiptap/extension-ordered-list'
+import Youtube from '@tiptap/extension-youtube'
+import Placeholder from '@tiptap/extension-placeholder'
 import { FontSizeExtension } from "../extensions/font-size";
+import { LineHeightExtension } from "../extensions/line-height";
 
 import { EditorContent, useEditor } from '@tiptap/react'
 
@@ -81,6 +84,10 @@ const Editor = () => {
             }),
             History,
             ListItem,
+            LineHeightExtension.configure({
+                types: ["heading", "paragraph"],
+                defaultLineHeight: "normal",
+            }),
             Paragraph,
             Italic,
             Image,
@@ -102,6 +109,14 @@ const Editor = () => {
             TextStyle,
             Underline,
             OrderedList,
+            Placeholder.configure({
+                placeholder: 'Write something …',
+            }),
+            Youtube.configure({
+                inline: true,
+                controls: true,
+                allowFullscreen: true
+            }),
             Link.configure({
                 openOnClick: false,
                 autolink: true,

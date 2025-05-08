@@ -60,28 +60,28 @@ const UserPosts = () => {
   }
 
   return (
-    <div className="w-full p-1 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 3xl:grid-cols-8 4xl:grid-cols-10 gap-2">
+    <div className="gap-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-7 3xl:grid-cols-8 4xl:grid-cols-10 xl:grid-cols-6 p-1 w-full">
       {posts.map((post) => (
         <Link
           component={RouterLink}
           to={`/posts/${post.id}`}
           key={post.id}
-          className="aspect-w-1 aspect-h-1 relative overflow-hidden group transition-shadow duration-300 hover:shadow-[0_8px_12px_-4px_rgba(0,0,0,0.4)]"
+          className="group relative hover:shadow-[0_8px_12px_-4px_rgba(0,0,0,0.4)] aspect-h-1 aspect-w-1 overflow-hidden transition-shadow duration-300"
           underline="none"
         >
           <img
             src={post.thumbnail_url}
             alt={post.title}
-            className="object-cover w-full h-full transition-transform duration-300"
+            className="w-full h-full object-cover transition-transform duration-300"
           />
 
-          <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-b from-transparent via-transparent to-black/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white p-3">
+          <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-b from-transparent via-transparent to-black/70 opacity-0 group-hover:opacity-100 p-3 text-white transition-opacity duration-300">
             <div className="flex justify-between items-end w-full">
               <div>
                 <p className="font-medium truncate">
                   {post.title || "Untitled"}
                 </p>
-                <p className="text-xs text-gray-300 break-words whitespace-normal">
+                <p className="text-gray-300 text-xs break-words whitespace-normal">
                   @{username}
                 </p>
               </div>

@@ -10,6 +10,7 @@ import {
     ImageIcon,
     ItalicIcon,
     Link2Icon,
+    ListCollapseIcon,
     ListIcon,
     ListOrderedIcon,
     ListTodo,
@@ -26,6 +27,7 @@ import {
     Undo2Icon,
     UploadIcon
 } from "lucide-react";
+import { AiOutlineYoutube } from "react-icons/ai";
 
 //Components
 import { Separator } from "@/components/ui/separator";
@@ -48,6 +50,56 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogFooter, DialogContent, DialogTitle, DialogHeader } from "@/components/ui/dialog";
 import { Tooltip } from "@mui/material";
+
+const LineHeightButton = () => {
+    const { editor } = useEditorStore();
+
+    const lineHeights = [
+        {
+            label: "Default",
+            value: "normal",
+        },
+        {
+            label: "Single",
+            value: "1",
+        },
+        {
+            label: "1.15",
+            value: "1.15",
+        },
+        {
+            label: "1.5",
+            value: "1.5",
+        },
+        {
+            label: "Double",
+            value: "2.0",
+        }
+    ]
+    return (
+        <DropdownMenu
+            modal={false}>
+            <DropdownMenuTrigger asChild>
+                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm")}>
+                    <ListCollapseIcon className="size-4" />
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="flex flex-col gap-x-2 gap-y-1 mt-2 p-0 border-1 border-mountain-200 overflow-hidden">
+                {lineHeights.map(({ label, value }) => (
+                    <button
+                        key={value}
+                        onClick={() => editor?.chain().focus().setLineHeight(value).run()}
+                        className={cn("h-7 min-w-7 shrink-0 items-center flex space-x-2 rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm",
+                            editor?.getAttributes("paragraph").lineHeight === value && "bg-mountain-100/80"
+                        )}
+                    >
+                        <span className="text-sm">{label}</span>
+                    </button>
+                ))}
+            </DropdownMenuContent>
+        </DropdownMenu>
+    )
+}
 
 const FontSizeButton = () => {
     const { editor } = useEditorStore();
@@ -99,7 +151,7 @@ const FontSizeButton = () => {
         <div className="flex items-center gap-x-0.5">
             <button
                 onClick={decrement}
-                className="flex flex-col justify-center items-center hover:bg-neutral-200/80 rounded-sm w-7 h-7 shrink-0">
+                className="flex flex-col justify-center items-center hover:bg-mountain-100/80 rounded-sm w-7 h-7 shrink-0">
                 <MinusIcon className="size-4" />
             </button>
             {isEditing ? (
@@ -109,7 +161,7 @@ const FontSizeButton = () => {
                     onChange={handleInputChange}
                     onBlur={handleInputBlur}
                     onKeyDown={handleKeyDown}
-                    className="bg-transparent border border-neutral-400 rounded-sm focus:outline-none focus:ring-0 w-10 h-7 text-sm text-center cursor-text"
+                    className="bg-transparent border border-mountain-100 rounded-sm focus:outline-none focus:ring-0 w-10 h-7 text-sm text-center cursor-text"
                 />
             ) : (
                 <button
@@ -117,14 +169,14 @@ const FontSizeButton = () => {
                         setIsEditing(true);
                         setFontSize(currentFontSize);
                     }}
-                    className="bg-transparent border border-neutral-400 rounded-sm w-10 h-7 text-sm text-center cursor-text">
+                    className="bg-transparent border border-mountain-100 rounded-sm w-10 h-7 text-sm text-center cursor-text">
                     {currentFontSize}
                 </button>
             )
             }
             <button
                 onClick={increment}
-                className="flex flex-col justify-center items-center hover:bg-neutral-200/80 rounded-sm w-7 h-7 shrink-0">
+                className="flex flex-col justify-center items-center hover:bg-mountain-100/80 rounded-sm w-7 h-7 shrink-0">
                 <PlusIcon className="size-4" />
             </button>
         </div >
@@ -153,7 +205,7 @@ const ListButton = () => {
         <DropdownMenu
             modal={false}>
             <DropdownMenuTrigger asChild>
-                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm")}>
+                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm")}>
                     <ListIcon className="size-4" />
                 </button>
             </DropdownMenuTrigger>
@@ -162,8 +214,8 @@ const ListButton = () => {
                     <button
                         key={label}
                         onClick={onClick}
-                        className={cn("h-7 min-w-7 shrink-0 items-center flex space-x-2 rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm",
-                            isActive() && "bg-neutral-200/80"
+                        className={cn("h-7 min-w-7 shrink-0 items-center flex space-x-2 rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm",
+                            isActive() && "bg-mountain-100/80"
                         )}
                     >
                         <Icon className="size-4" />
@@ -204,7 +256,7 @@ const AlignButton = () => {
         <DropdownMenu
             modal={false}>
             <DropdownMenuTrigger asChild>
-                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm")}>
+                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm")}>
                     <AlignLeftIcon className="size-4" />
                 </button>
             </DropdownMenuTrigger>
@@ -213,7 +265,7 @@ const AlignButton = () => {
                     <button
                         key={value}
                         onClick={() => editor?.chain().focus().setTextAlign(value).run()}
-                        className={cn("h-7 min-w-7 shrink-0 items-center flex space-x-2 rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm",
+                        className={cn("h-7 min-w-7 shrink-0 items-center flex space-x-2 rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm",
 
                         )}
                     >
@@ -225,6 +277,74 @@ const AlignButton = () => {
         </DropdownMenu>
     )
 }
+
+const YoutubeButton = () => {
+    const { editor } = useEditorStore();
+    const [isVideoDialogOpen, setIsVideoDialogOpen] = useState(false);
+    const [videoUrl, setVideoUrl] = useState("");
+    const [height] = useState(480);
+    const [width] = useState(640);
+    
+    const addYoutubeVideo = (e?: React.MouseEvent | React.KeyboardEvent) => {
+        e?.stopPropagation?.();
+        if (videoUrl) {
+            editor?.commands.setYoutubeVideo({
+                src: videoUrl,
+                width: Math.max(320, parseInt(width.toString(), 10)) || 640,
+                height: Math.max(180, parseInt(height.toString(), 10)) || 480,
+            });
+            setIsVideoDialogOpen(false); // Close the dialog after inserting
+            setVideoUrl(""); // Clear input after use
+        }
+    };
+
+    return (
+        <>
+            <DropdownMenu modal={false}>
+                <DropdownMenuTrigger asChild>
+                    <button
+                        className={cn(
+                            "h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm"
+                        )}
+                    >
+                        <AiOutlineYoutube className="size-5" />
+                    </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="flex flex-col gap-y-1 mt-2 p-2.5 border border-mountain-200">
+                    <DropdownMenuItem onClick={() => setIsVideoDialogOpen(true)}>
+                        <SearchIcon className="mr-2 size-4" />
+                        Paste Youtube URL
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog open={isVideoDialogOpen} onOpenChange={setIsVideoDialogOpen} modal={false}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Insert Youtube Embedded Link</DialogTitle>
+                    </DialogHeader>
+                    <Input
+                        placeholder="https://youtube.com/example"
+                        value={videoUrl}
+                        onChange={(e) => setVideoUrl(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                addYoutubeVideo(e);
+                            }
+                        }}
+                        className="placeholder:text-mountain-400"
+                    />
+                    <DialogFooter>
+                        <Button onClick={addYoutubeVideo}>
+                            Insert
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+        </>
+    );
+};
 
 const ImageButton = () => {
     const { editor } = useEditorStore();
@@ -263,7 +383,7 @@ const ImageButton = () => {
         <>
             <DropdownMenu modal={false}>
                 <DropdownMenuTrigger asChild>
-                    <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm")}>
+                    <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm")}>
                         <ImageIcon className="size-4" />
                     </button>
                 </DropdownMenuTrigger>
@@ -324,7 +444,7 @@ const LinkButon = () => {
                 }
             }}>
             <DropdownMenuTrigger asChild>
-                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm")}>
+                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm")}>
                     <Link2Icon className="size-4" />
                 </button>
             </DropdownMenuTrigger>
@@ -355,7 +475,7 @@ const HighLightColorButton = () => {
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm")}>
+                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm")}>
                     <HighlighterIcon className="size-4" />
                     <div className="mt-0.5 w-full h-0.5" style={{ backgroundColor: value }} />
                 </button>
@@ -379,7 +499,7 @@ const TextColorButton = () => {
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm")}>
+                <button className={cn("h-7 min-w-7 shrink-0 items-center flex-col flex justify-center rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm")}>
                     <span className="text-sm">A</span>
                     <div className="w-full h-0.5" style={{ backgroundColor: value }} />
                 </button>
@@ -415,7 +535,7 @@ const HeadingLevelButton = () => {
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
-                <button className={cn("h-7 min-w-7 shrink-0 items-center flex justify-between rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm")}>
+                <button className={cn("h-7 min-w-7 shrink-0 items-center flex justify-between rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm")}>
                     <span className="truncate">
                         {getCurrentHeading()}
                     </span>
@@ -433,8 +553,8 @@ const HeadingLevelButton = () => {
                             }
                         }}
                         key={value}
-                        className={cn("flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
-                            (value === 0 && !editor?.isActive("heading")) || editor?.isActive("heading", { level: value }) && "bg-neutral-200/80"
+                        className={cn("flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-mountain-100/80",
+                            (value === 0 && !editor?.isActive("heading")) || editor?.isActive("heading", { level: value }) && "bg-mountain-100/80"
                         )}
                         style={{ fontSize }}
                     >
@@ -458,7 +578,7 @@ const FontFamilyButton = () => {
     return (
         <DropdownMenu modal={false}>
             <DropdownMenuTrigger>
-                <button className={cn("h-7 w-[120px] shrink-0 items-center flex justify-between rounded-sm hover:bg-neutral-200/80 px-1.5 overflow-hidden text-sm")}>
+                <button className={cn("h-7 w-[120px] shrink-0 items-center flex justify-between rounded-sm hover:bg-mountain-100/80 px-1.5 overflow-hidden text-sm")}>
                     <span className="truncate">
                         {editor?.getAttributes("textStyle").fontFamily || "Arial"}
                     </span>
@@ -470,8 +590,8 @@ const FontFamilyButton = () => {
                     <DropdownMenuItem
                         onClick={() => editor?.chain().focus().setFontFamily(font.value).run()}
                         key={value}
-                        className={cn("flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-neutral-200/80",
-                            editor?.getAttributes("textStyle").fontFamily === value && "bg-neutral-200/80"
+                        className={cn("flex items-center gap-x-2 px-2 py-1 rounded-sm hover:bg-mountain-100/80",
+                            editor?.getAttributes("textStyle").fontFamily === value && "bg-mountain-100/80"
                         )}
                         style={{ fontFamily: font.value }}
                     >
@@ -502,7 +622,7 @@ const ToolbarButton = ({
         <Tooltip title={label + ` (${shortcut})`} arrow placement="bottom">
             <button
                 onClick={onClick}
-                className={cn("text-sm h-7 min-w-7 flex items-center justify-center rounded-sm hover:bg-neutral-200/80", isActive && 'bg-neutral-200/80')}
+                className={cn("text-sm h-7 min-w-7 flex items-center justify-center rounded-sm hover:bg-mountain-100/80", isActive && 'bg-mountain-100/80')}
             >
                 <Icon className="size-4" />
             </button>
@@ -601,24 +721,26 @@ const Toolbar = () => {
             {sections[0].map((item) => (
                 <ToolbarButton key={item.label} {...item} />
             ))}
-            <Separator orientation="vertical" className="bg-neutral-300 h-6" />
+            <Separator orientation="vertical" className="bg-mountain-100 h-6" />
             {sections[1].map((item) => (
                 <ToolbarButton key={item.label} {...item} />
             ))}
-            <Separator orientation="vertical" className="bg-neutral-300 h-6" />
+            <Separator orientation="vertical" className="bg-mountain-100 h-6" />
             <HeadingLevelButton />
-            <Separator orientation="vertical" className="bg-neutral-300 h-6" />
+            <Separator orientation="vertical" className="bg-mountain-100 h-6" />
             <FontFamilyButton />
-            <Separator orientation="vertical" className="bg-neutral-300 h-6" />
+            <Separator orientation="vertical" className="bg-mountain-100 h-6" />
             <FontSizeButton />
-            <Separator orientation="vertical" className="bg-neutral-300 h-6" />
+            <Separator orientation="vertical" className="bg-mountain-100 h-6" />
             <TextColorButton />
             <HighLightColorButton />
-            <Separator orientation="vertical" className="bg-neutral-300 h-6" />
+            <Separator orientation="vertical" className="bg-mountain-100 h-6" />
             <AlignButton />
+            <LineHeightButton />
             <ListButton />
             <LinkButon />
             <ImageButton />
+            <YoutubeButton />
             {sections[2].map((item) => (
                 <ToolbarButton key={item.label} {...item} />
             ))}

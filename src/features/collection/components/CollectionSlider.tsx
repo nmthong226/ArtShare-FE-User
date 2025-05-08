@@ -12,7 +12,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { FiPlus as AddIcon, FiX as DeleteIcon } from "react-icons/fi";
-import { HorizontalSlider } from "@/components/HorizontalSlider";
+import { HorizontalSlider } from "@/components/sliders/HorizontalSlider";
 import { SelectedCollectionId, SliderItem } from "../types/collection";
 
 const CARD_MIN_WIDTH = 256;

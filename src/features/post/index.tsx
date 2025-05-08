@@ -5,7 +5,7 @@ import PostComments from "@/features/post/components/PostComments";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 // import PostShare from "@/components/posts/PostShare";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
 import { IconButton } from "@mui/material";
 import { FiX as CloseIcon } from "react-icons/fi";

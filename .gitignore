@@ -28,4 +28,9 @@ coverage/
 # we dont use npm 
 package-lock.json  
 
+# # Ignore assets folder in gen-art feature
+src/features/gen-art/assets/
 db
+
+# # Ignore assets folder in gen-art feature
+src/features/gen-art/assets/

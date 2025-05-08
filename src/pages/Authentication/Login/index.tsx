@@ -115,10 +115,10 @@ const Login = () => {
   return (
     <div className="flex-1 space-y-4 px-10 md:px-0 lg:px-20 py-8">
       <div className="flex flex-col space-x-3">
-        <h1 className="font-bold text-mountain-800 dark:text-mountain-50 text-2xl xl:text-3xl leading-6">
+        <h1 className="font-bold text-mountain-800 dark:text-mountain-50 text-xl xl:text-2xl leading-6">
           Welcome back!
         </h1>
-        <p className="mt-2 font-bold text-mountain-600 dark:text-mountain-300 text-2xl xl:text-3xl">
+        <p className="mt-2 font-bold text-mountain-600 dark:text-mountain-300 text-xl xl:text-2xl">
           Login to your account
         </p>
         <p className="mt-4 text-mountain-500 dark:text-mountain-300 text-xs xl:text-sm">

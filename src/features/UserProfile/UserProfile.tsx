@@ -20,7 +20,7 @@ const UserProfile = () => {
   };
 
   return (
-    <Box className="sm:px-6 md:px-4 lg:px-6 py-4 bg-mountain-1000 text-white">
+    <Box className="dark:bg-mountain-1000 p-4 text-white">
       {/* Container for Posts + Profile Sidebar */}
       <Box
         sx={{
@@ -29,10 +29,11 @@ const UserProfile = () => {
           gap: 4,
           minHeight: "100vh",
         }}
+        className="bg-white shadow p-2 rounded-md"
       >
         {/* TOP SECTION: Profile card */}
         <Box
-          className="w-full bg-mountain-950 rounded-lg p-8"
+          className="bg-mountain-100 dark:bg-mountain-950 p-8 rounded-lg w-full"
           sx={{
             overflowY: "auto",
           }}
@@ -52,6 +53,7 @@ const UserProfile = () => {
                 minHeight: 0,
                 ".MuiTabs-flexContainer": { gap: 2 },
               }}
+              className="text-mountain-950"
             >
               <Tab
                 label="All posts"

@@ -1134,13 +1134,6 @@
   resolved "https://registry.npmjs.org/@mui/core-downloads-tracker/-/core-downloads-tracker-6.4.11.tgz#0752eea024d8ff0f120b0f26aee4342c79112847"
   integrity sha512-CzAQs9CTzlwbsF9ZYB4o4lLwBv1/qNE264NjuYao+ctAXsmlPtYa8RtER4UsUXSMxNN9Qi+aQdYcKl2sUpnmAw==
 
-"@mui/icons-material@^6.4.7":
-  version "6.4.11"
-  resolved "https://registry.npmjs.org/@mui/icons-material/-/icons-material-6.4.11.tgz#add406d3d1c82e7aaf49002a8d456fa992e7f3db"
-  integrity sha512-+jjJGIrB1awNbMv4ZVPPdN/p7O1UKFZ+xqRvNIQ8B1KnlID5hPMPBLM6UUbRF4bu3UDCbu79rn9Nye5LGNzmeA==
-  dependencies:
-    "@babel/runtime" "^7.26.0"
-
 "@mui/material@^6.4.7":
   version "6.4.11"
   resolved "https://registry.npmjs.org/@mui/material/-/material-6.4.11.tgz#ac5c42c25fc807545eef4de0e88a47b52de8ed75"
@@ -2231,6 +2224,11 @@
   resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.14.tgz"
   integrity sha512-gNMvNH49DJ7OJYv+KAKn0Xp45p8PLl6zo2YnvDIbTd4J6MER2BmWN49TG7n9LvkyihINxeKW8+3bfS2yDC9dzQ==
 
+"@types/qs@^6.9.18":
+  version "6.9.18"
+  resolved "https://registry.npmjs.org/@types/qs/-/qs-6.9.18.tgz#877292caa91f7c1b213032b34626505b746624c2"
+  integrity sha512-kK7dgTYDyGqS+e2Q4aK9X3D7q234CIZ1Bv0q/7Z5IwRDoADNU81xXJK/YVyLbLTZCoIwUoDoffFeF+p/eIklAA==
+
 "@types/react-dom@^18.3.5":
   version "18.3.7"
   resolved "https://registry.npmjs.org/@types/react-dom/-/react-dom-18.3.7.tgz#b89ddf2cd83b4feafcc4e2ea41afdfb95a0d194f"
@@ -2517,7 +2515,6 @@ array-union@^2.1.0:
     "@emotion/styled" "^11.14.0"
     "@fontsource/roboto" "^5.2.5"
     "@hookform/resolvers" "^4.1.3"
-    "@mui/icons-material" "^6.4.7"
     "@mui/material" "^6.4.7"
     "@number-flow/react" "^0.5.8"
     "@radix-ui/react-accordion" "^1.2.3"
@@ -2528,13 +2525,15 @@ array-union@^2.1.0:
     "@radix-ui/react-popover" "^1.1.6"
     "@radix-ui/react-slot" "^1.1.2"
     "@radix-ui/react-switch" "^1.1.3"
+    "@stripe/react-stripe-js" "^3.7.0"
+    "@stripe/stripe-js" "^7.3.0"
     "@tailwindcss/line-clamp" "^0.4.4"
     "@tailwindcss/oxide" "^4.0.17"
     "@tailwindcss/postcss" "^4.0.9"
     "@tailwindcss/vite" "^4.0.9"
     "@tanstack/react-query" "^5.69.0"
     "@types/react-show-more-text" "^1.4.5"
-    art-share "file:../../../../../Yarn/Cache/v6/npm-art-share-0.0.0-89494b92-84c5-4985-9127-7a55b2dd7e5c-1746614075339/node_modules/art-share"
+    art-share "file:../../../../../Yarn/Cache/v6/npm-art-share-0.0.0-f3bcb142-2434-4cb4-bf7e-79b247705fe7-1746804423092/node_modules/art-share"
     axios "^1.8.4"
     boring-avatars "^1.11.2"
     class-variance-authority "^0.7.1"
@@ -2561,6 +2560,7 @@ array-union@^2.1.0:
     react-scroll "^1.9.3"
     react-show-more-text "^1.7.1"
     react-time-ago "^7.3.3"
+    react-virtualized-auto-sizer "^1.0.26"
     tailwind-merge "^3.0.2"
     tailwindcss "^4.0.14"
     tailwindcss-animate "^1.0.7"
@@ -6155,6 +6155,11 @@ react-transition-group@^4.4.5:
     dom-helpers "^5.0.1"
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
+
+react-virtualized-auto-sizer@^1.0.26:
+  version "1.0.26"
+  resolved "https://registry.npmjs.org/react-virtualized-auto-sizer/-/react-virtualized-auto-sizer-1.0.26.tgz#e9470ef6a778dc4f1d5fd76305fa2d8b610c357a"
+  integrity sha512-CblNyiNVw2o+hsa5/49NH2ogGxZ+t+3aweRvNSq7TVjDIlwk7ir4lencEg5HxHeSzwNarSkNkiu0qJSOXtxm5A==
 
 react@^18.3.1:
   version "18.3.1"

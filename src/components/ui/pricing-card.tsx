@@ -61,9 +61,11 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
       console.log(
         `Requesting checkout session for Price ID: ${payload.priceId}`,
       );
-      const session = await createCheckoutSession(payload);
-      console.log(`Redirecting to session URL: ${session.url}`);
-      window.location.href = session.url;
+      const sessionResult = await createCheckoutSession(payload);
+      console.log(
+        `Redirecting to ${sessionResult.type} URL: ${sessionResult.url}`,
+      );
+      window.location.href = sessionResult.url;
     } catch (err) {
       console.error("Checkout session creation failed:", err);
     }

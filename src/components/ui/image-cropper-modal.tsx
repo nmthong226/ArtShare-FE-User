@@ -17,9 +17,12 @@ interface Props {
   image: string;
   open: boolean;
   onClose: () => void;
-  onCropped: (croppedFile: Blob) => void;
+  onCropped: (croppedFile: Blob, thumbnail_crop_meta: string) => void;
   initialCrop?: { x: number; y: number };
   initialZoom?: number;
+  initialAspect?: number;
+  initialSelectedAspect?: string;
+  initialCroppedAreaPixels?: Area;
   onCropChange?: (crop: { x: number; y: number }) => void;
   onZoomChange?: (zoom: number) => void;
 }
@@ -43,14 +46,23 @@ export const ImageCropperModal: React.FC<Props> = ({
   onCropped,
   initialCrop,
   initialZoom,
+  initialAspect,
+  initialSelectedAspect,
+  initialCroppedAreaPixels,
   onCropChange,
   onZoomChange,
 }) => {
-  const [crop, setCrop] = useState(initialCrop || { x: 0, y: 0 });
-  const [zoom, setZoom] = useState(initialZoom || 1);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
   const [aspect, setAspect] = useState<number | undefined>(undefined);
   const [selectedAspect, setSelectedAspect] = useState("Free");
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+
+  useEffect(() => {
+    if (initialCroppedAreaPixels) {
+      setCroppedAreaPixels(initialCroppedAreaPixels);
+    }
+  }, [image]);
 
   const onCropComplete = useCallback((_: Area, croppedPixels: Area) => {
     setCroppedAreaPixels(croppedPixels);
@@ -61,7 +73,14 @@ export const ImageCropperModal: React.FC<Props> = ({
   const cropImage = async () => {
     if (croppedAreaPixels) {
       const cropped = await getCroppedImg(image, croppedAreaPixels);
-      onCropped(cropped);
+      const thumbnail_crop_meta = {
+        crop,
+        zoom,
+        aspect,
+        croppedAreaPixels,
+        selectedAspect,
+      };
+      onCropped(cropped, JSON.stringify(thumbnail_crop_meta));
       onClose();
     }
   };
@@ -77,9 +96,9 @@ export const ImageCropperModal: React.FC<Props> = ({
     const img = new Image();
     img.src = image;
     img.onload = () => {
-      const naturalAspect = img.width / img.height;
+      const naturalAspect = initialAspect ?? img.width / img.height;
       setAspect(naturalAspect);
-      setSelectedAspect("Original");
+      setSelectedAspect(initialSelectedAspect ?? "Original");
     };
   }, [image]);
 

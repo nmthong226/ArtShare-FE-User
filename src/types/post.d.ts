@@ -23,13 +23,5 @@ export interface Post {
   medias: Media[];
   user: User;
   categories?: Category[];
-
-  thumbnail_crop_meta?: {
-    crop_x: number;
-    crop_y: number;
-    crop_w: number;
-    crop_h: number;
-    zoom: number;
-    aspect: number;
-  };
+  thumbnail_crop_meta: string;
 }

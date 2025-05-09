@@ -22,7 +22,11 @@ interface MediaSelectorPanelProps {
   /* shared props ─────────────────── */
   setVideoFile: (file?: File) => void;
   setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
-  setThumbnailFile: (file?: File, isOriginal?: boolean) => void;
+  setThumbnailFile: (
+    file?: File,
+    isOriginal?: boolean,
+    thumbnail_crop_meta?: string,
+  ) => void;
 
   /* edit-only props – now optional ── */
   setExistingImageUrls?: React.Dispatch<React.SetStateAction<string[]>>;

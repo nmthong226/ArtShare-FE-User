@@ -154,6 +154,7 @@ body {
   height: 100%;
   width: 100%;
   font-family: "Roboto", sans-serif;
+  scrollbar-gutter: "stable";
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -163,6 +164,8 @@ body {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
+
+  background-color: var(--background);
 }
 
 .bounce-item {

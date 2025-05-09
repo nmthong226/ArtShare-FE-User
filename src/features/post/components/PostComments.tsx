@@ -1,0 +1,96 @@
+import { useRef, forwardRef, useImperativeHandle } from "react";
+import { Button, IconButton, TextareaAutosize } from "@mui/material";
+import { Dot, SendHorizontal } from "lucide-react";
+import Avatar from "boring-avatars";
+import { useFocusContext } from "@/contexts/focus/useFocusText";
+import { AiFillLike } from "react-icons/ai";
+import { BsClockFill } from "react-icons/bs";
+import { BiDotsVertical } from "react-icons/bi";
+
+const PostComments = forwardRef(() => {
+  const count = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const { postCommentsRef } = useFocusContext();
+  const commentInputRef = useRef<HTMLTextAreaElement>(null);
+
+  useImperativeHandle(postCommentsRef, () => ({
+    focusInput: () => {
+      if (commentInputRef.current) {
+        commentInputRef.current.focus();
+      }
+    },
+  }));
+
+  return (
+    <div className="flex flex-col gap-4 pb-24">
+      <div className="font-bold text-sm">COMMENTS</div>
+      <div className="flex flex-col bg-white">
+        <div className="flex flex-col gap-6 pr-3">
+          {count.map(() => (
+            <div className="group flex gap-2">
+              <div>
+                <Avatar
+                  name="Georgia O"
+                  colors={[
+                    "#84bfc3",
+                    "#fff5d6",
+                    "#ffb870",
+                    "#d96153",
+                    "#000511",
+                  ]}
+                  variant="beam"
+                  size={32}
+                />
+              </div>
+              <div className="flex flex-col flex-grow gap-1">
+                <div className="">
+                  <div className="font-bold">Michael Guimont</div>
+                  <div className="text-sm">@michael_guimont</div>
+                </div>
+                <div className="text-sm">very cute!!</div>
+                <div className="flex items-center text-xs">
+                  <div className="hover:bg-gradient-to-r hover:from-blue-800 hover:to-purple-800 px-1.5 py-0.5 border rounded-sm hover:text-white hover:cursor-pointer">
+                    Like
+                  </div>
+                  <Dot size={24} className="mx-0.5 text-mountain-400" />
+                  <div className="flex items-center gap-1">
+                    <AiFillLike
+                      size={14}
+                      className="-mt-0.5 text-mountain-500"
+                    />
+                    <span>53</span>
+                  </div>
+                  <Dot size={24} className="mx-0.5 text-mountain-400" />
+                  <div className="flex items-center gap-1">
+                    <BsClockFill className="-mt-0.5 text-mountain-500" />
+                    <div>2d</div>
+                  </div>
+                </div>
+              </div>
+              <div className="hidden group-hover:flex justify-start items-start">
+                <IconButton className="-m-2">
+                  <BiDotsVertical className="size-5" />
+                </IconButton>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="right-0 bottom-0 left-0 absolute flex gap-2 bg-white p-4 border-[1px] border-mountain-200 rounded-2xl rounded-t-none">
+          <TextareaAutosize
+            ref={commentInputRef}
+            placeholder="Add a comment"
+            className="px-4 py-2 border-2 border-mountain-700 rounded-md w-full"
+          />
+          <Button
+            variant="contained"
+            className="p-0.5 min-w-auto h-12 aspect-[1/1]"
+          >
+            <SendHorizontal />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export default PostComments;

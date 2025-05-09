@@ -4,17 +4,23 @@ import { User } from "./user";
 
 export interface Post {
   id: number;
-  title?: string;
+  user_id: string;
+  title: string;
   description?: string;
+  created_at: Date;
+  updated_at?: Date;
   is_published: boolean;
   is_private: boolean;
-  like_count: number;
+  group_id?: number;
   share_count: number;
   comment_count: number;
-  created_at: Date;
-  thumbnail_url?: string;
+  like_count: number;
+  view_count: number;
+  thumbnail_url: string;
+  is_mature: boolean;
+  ai_created: boolean;
 
   medias: Media[];
   user: User;
-  categories: Category[];
+  categories?: Category[];
 }

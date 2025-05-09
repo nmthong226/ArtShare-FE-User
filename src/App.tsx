@@ -17,23 +17,23 @@ import Login from "@/pages/Authentication/Login";
 import SignUp from "@/pages/Authentication/SignUp";
 import ForgotPassword from "@/pages/Authentication/ForgotPassword";
 import AccountActivation from "@/pages/Authentication/Activation";
-import Gallery from "./pages/Gallery";
+import Explore from "./features/explore";
 import Blogs from "./pages/Blogs";
 import Shop from "@/pages/Shop";
+import Collection from "./features/collection";
 
 // import SubmitMedia from "@/pages/SubmitMedia";
 import ArtGeneration from "@/pages/ArtGeneration";
-import Portfolio from "@/pages/Portfolio";
 import AuthAction from "@/pages/Authentication/HandleCallback";
-import Post from "@/pages/Post";
-import UploadMedia from "@/features/upload-media/UploadMedia";
-import UserProfile from "@/pages/UserManagement/UserProfile";
+import Post from "@/features/post";
+import UploadPost from "@/features/post-management/UploadPost";
+import UserProfile from "@/features/UserProfile/UserProfile";
 import MatureContentPage from "./pages/MatureContent/MatureContent";
 
 // Context/Provider
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
-import SubscribePage from "./pages/Subcribe";
+import EditPost from "./features/post-management/EditPost";
 
 const authRoutes = [
   { path: "/login", element: <Login /> },
@@ -47,26 +47,26 @@ const privateAuthRoute = [
 ];
 
 const InAppPublicRoutes = [
-  { path: "/explore", element: <Gallery /> },
+  { path: "/explore", element: <Explore /> },
   { path: "/posts/:postId", element: <Post /> },
   { path: "/blogs", element: <Blogs /> },
   { path: "/shop", element: <Shop /> },
-  { path: "/subcribe", element: <SubscribePage /> },
+  { path: "/collections", element: <Collection /> },
+  { path: "/:username", element: <UserProfile /> },
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/posts/new", element: <UploadMedia /> },
+  { path: "/posts/new", element: <UploadPost /> },
   { path: "/create-art", element: <ArtGeneration /> },
-  { path: "/portfolio", element: <Portfolio /> },
   { path: "/artgen", element: <ArtGeneration /> },
-  { path: "/:username", element: <UserProfile /> },
+  { path: "/post/:postId/edit", element: <EditPost /> },
 ];
 
 const App: React.FC = () => {
   return (
-    <UserProvider>
-      <LanguageProvider>
-        <Router>
+    <Router>
+      <UserProvider>
+        <LanguageProvider>
           <RootLayout>
             <Routes>
               {/* Public Auth Routes */}
@@ -114,9 +114,9 @@ const App: React.FC = () => {
               <Route path="/" element={<LandingPage />} />
             </Routes>
           </RootLayout>
-        </Router>
-      </LanguageProvider>
-    </UserProvider>
+        </LanguageProvider>
+      </UserProvider>
+    </Router>
   );
 };
 

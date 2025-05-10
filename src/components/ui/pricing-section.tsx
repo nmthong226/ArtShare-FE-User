@@ -35,7 +35,7 @@ export function PricingSection({ tiers, frequencies }: PricingSectionProps) {
       <div className="gap-8 grid sm:grid-cols-2 xl:grid-cols-4 w-full max-w-8xl">
         {tiers.map((tier) => (
           <PricingCard
-            key={tier.name}
+            key={tier.id}
             tier={tier}
             paymentFrequency={selectedFrequency}
           />

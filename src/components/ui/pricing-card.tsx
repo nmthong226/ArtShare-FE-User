@@ -19,7 +19,6 @@ export interface PricingTier {
   id: string;
   name: string;
   price: Record<string, number | string>;
-  priceId?: Record<string, string>;
   description: string;
   features: string[];
   cta: string;
@@ -43,24 +42,22 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
   const handleProceedToCheckout = async () => {
     if (tier.actionType !== "checkout") return;
 
-    const priceId = tier.priceId?.[paymentFrequency];
+    const planId = tier.id + `_${paymentFrequency}`;
 
-    if (!priceId || !priceId.startsWith("price_")) {
+    if (!planId) {
       console.error(
-        `Invalid or missing Price ID for CHECKOUT action. Tier: ${tier.name}, Interval: ${paymentFrequency}`,
+        `Missing Price ID for CHECKOUT action. Tier: ${tier.name}, Interval: ${paymentFrequency}`,
       );
       return;
     }
 
     try {
       const payload: CreateCheckoutSessionPayload = {
-        priceId: priceId,
+        planId: planId,
         email: user?.email,
         userId: user?.id,
       };
-      console.log(
-        `Requesting checkout session for Price ID: ${payload.priceId}`,
-      );
+      console.log(`Requesting checkout session for Plan ID: ${payload.planId}`);
       const sessionResult = await createCheckoutSession(payload);
       console.log(
         `Redirecting to ${sessionResult.type} URL: ${sessionResult.url}`,

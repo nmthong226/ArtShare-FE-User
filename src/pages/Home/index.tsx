@@ -36,7 +36,7 @@ export const PAYMENT_FREQUENCIES = ["monthly", "yearly"];
 
 export const TIERS: PricingTier[] = [
   {
-    id: "individuals",
+    id: "individual",
     name: "Individuals",
     price: {
       monthly: "Free",
@@ -55,15 +55,11 @@ export const TIERS: PricingTier[] = [
     actionType: "none",
   },
   {
-    id: "artists",
+    id: "artist",
     name: "Pro Artists",
     price: {
-      monthly: 9,
-      yearly: 7.5,
-    },
-    priceId: {
-      monthly: import.meta.env.VITE_ARTISTS_MONTHLY_ID,
-      yearly: import.meta.env.VITE_ARTISTS_YEARLY_ID,
+      monthly: 12,
+      yearly: 10,
     },
     description: "Great for small businesses",
     features: [
@@ -83,15 +79,11 @@ export const TIERS: PricingTier[] = [
     popular: true,
   },
   {
-    id: "studios",
+    id: "studio",
     name: "Studios",
     price: {
-      monthly: 120,
-      yearly: 100,
-    },
-    priceId: {
-      monthly: import.meta.env.VITE_STUDIOS_MONTHLY_ID,
-      yearly: import.meta.env.VITE_STUDIOS_YEARLY_ID,
+      monthly: 30,
+      yearly: 24,
     },
     description: "Great for large businesses",
     features: [

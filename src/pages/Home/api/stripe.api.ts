@@ -2,7 +2,7 @@ import api from "@/api/baseApi";
 import axios from "axios";
 
 export interface CreateCheckoutSessionPayload {
-  priceId: string;
+  planId: string;
   email?: string;
   userId?: string;
 }

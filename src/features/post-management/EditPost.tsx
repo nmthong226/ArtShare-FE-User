@@ -24,8 +24,18 @@ import { mappedCategoryPost } from "@/lib/utils";
 import { nanoid } from "nanoid";
 import { Post } from "@/types";
 import { MEDIA_TYPE } from "@/constants";
+import { Area } from "react-easy-crop";
 
 const VIDEO_STORAGE_DIRECTORY = "posts";
+
+interface ThumbnailMeta {
+  crop: { x: number; y: number };
+  zoom: number;
+  aspect: number;
+  selectedAspect: string;
+  croppedAreaPixels: Area;
+  initialThumbnail: string;
+}
 
 /**
  * EditPostPage – fully‑screen page that reuses UploadPost components
@@ -76,6 +86,65 @@ const EditPost: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [existingImageUrls, setExistingImageUrls] = useState<string[]>([]);
   const [existingVideoUrl, setExistingVideoUrl] = useState<string>();
+  const [thumbnailCropMeta, setThumbnailCropMeta] = useState<string>("{}");
+  const [thumbnailMeta, setThumbnailMeta] = useState<ThumbnailMeta | undefined>(
+    undefined,
+  );
+
+  const getThumbnailCropMeta = () => {
+    const cropMeta = JSON.parse(thumbnailCropMeta);
+    return {
+      crop: cropMeta.crop,
+      zoom: cropMeta.zoom,
+      aspect: cropMeta.aspect,
+      selectedAspect: cropMeta.selectedAspect,
+      croppedAreaPixels: cropMeta.croppedAreaPixels,
+      initialThumbnail: cropMeta.initialThumbnail,
+    };
+  };
+
+  useEffect(() => {
+    if (isPostLoading || postError) return;
+    setThumbnailCropMeta(JSON.stringify(postData?.thumbnail_crop_meta) ?? "{}");
+  }, [postData]);
+
+  const fetchFileFromUrl = async (
+    url: string,
+    fileName: string,
+  ): Promise<File> => {
+    const response = await fetch(url, {
+      headers: {
+        "Content-Type": "application/octet-stream", // Ensure the correct content type
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch file from URL: ${response.statusText}`);
+    }
+
+    const blob = await response.blob();
+
+    if (!blob.type.startsWith("image/")) {
+      throw new Error("The fetched resource is not an image.");
+    }
+
+    return new File([blob], fileName, { type: blob.type });
+  };
+
+  useEffect(() => {
+    if (isPostLoading || postError) return;
+    if (Object.keys(getThumbnailCropMeta()).length === 0) return;
+    const metaData = getThumbnailCropMeta();
+    setThumbnailMeta(metaData);
+
+    fetchFileFromUrl(metaData.initialThumbnail, "initial_thumbnail").then(
+      (file) => {
+        setLastCrop(metaData?.crop);
+        setLastZoom(metaData?.zoom);
+        setOriginalThumbnailFile(file);
+      },
+    );
+  }, [thumbnailCropMeta]);
 
   /** ─────────────────── preload fetched post into state ─────────────────── */
   useEffect(() => {
@@ -108,16 +177,14 @@ const EditPost: React.FC = () => {
     // TODO: uncomment this
     // data: typeof postData,
     videoUrl?: string,
+    initialThumbnail?: string,
     thumbnailUrl?: string,
   ) => {
     const formData = new FormData();
     formData.append("title", title);
     if (description) formData.append("description", description);
     // TODO: uncomment this
-    formData.append(
-      "cate_ids",
-      JSON.stringify(cate_ids),
-    );
+    formData.append("cate_ids", JSON.stringify(cate_ids));
     const finalVideoUrl = videoUrl ?? existingVideoUrl;
     formData.append("video_url", finalVideoUrl ?? "");
 
@@ -132,6 +199,13 @@ const EditPost: React.FC = () => {
 
     formData.append("is_mature", String(isMature));
     formData.append("ai_created", String(aiCreated));
+    formData.append(
+      "thumbnail_crop_meta",
+      JSON.stringify({
+        ...JSON.parse(thumbnailCropMeta),
+        initialThumbnail: initialThumbnail,
+      }),
+    );
     return formData;
   };
 
@@ -164,6 +238,20 @@ const EditPost: React.FC = () => {
     return presigned.fileUrl;
   };
 
+  const handleUploadInitialThumbnail = async (): Promise<
+    string | undefined
+  > => {
+    if (!originalThumbnailFile) return undefined;
+    const presigned: GetPresignedUrlResponse = await getPresignedUrl(
+      `initial_thumbnail_${nanoid(6)}`,
+      originalThumbnailFile.type.split("/")[1],
+      "image",
+      VIDEO_STORAGE_DIRECTORY,
+    );
+    await uploadFile(originalThumbnailFile, presigned.presignedUrl);
+    return presigned.fileUrl;
+  };
+
   /** ─────────────────── submit ─────────────────── */
   const handleSubmit = async () => {
     if (!postData) return;
@@ -180,13 +268,14 @@ const EditPost: React.FC = () => {
 
     try {
       setIsUploading(true);
-      const [videoUrl, thumbnailUrl] = await Promise.all([
+      const [videoUrl, initialThumbnail, thumbnailUrl] = await Promise.all([
         handleUploadVideo(),
+        handleUploadInitialThumbnail(),
         handleUploadThumbnail(),
       ]);
       // TODO: uncomment this
       // const body = createFormData(postData, videoUrl, thumbnailUrl);
-      const body = createFormData(videoUrl, thumbnailUrl);
+      const body = createFormData(videoUrl, initialThumbnail, thumbnailUrl);
 
       for (const [key, value] of body.entries()) {
         // Note: value could be a File or a string
@@ -249,7 +338,10 @@ const EditPost: React.FC = () => {
           <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
             <UploadForm
               thumbnailFile={thumbnailFile}
-              onThumbnailChange={(f) => setThumbnailFile(f)}
+              onThumbnailChange={(f, _, thumbnail_crop_meta = "{}") => {
+                setThumbnailFile(f);
+                setThumbnailCropMeta(thumbnail_crop_meta);
+              }}
               setOriginalThumbnailFile={setOriginalThumbnailFile}
               originalThumbnailFile={originalThumbnailFile}
               isSubmitted={isSubmitted}
@@ -268,6 +360,9 @@ const EditPost: React.FC = () => {
               setLastCrop={setLastCrop}
               setLastZoom={setLastZoom}
               existingThumbnailUrl={postData.thumbnail_url}
+              initialAspect={thumbnailMeta?.aspect}
+              initialSelectedAspect={thumbnailMeta?.selectedAspect}
+              initialCroppedAreaPixels={thumbnailMeta?.croppedAreaPixels}
             />
           </Box>
           <hr className="border-mountain-300 dark:border-mountain-700 border-t-1 w-full" />

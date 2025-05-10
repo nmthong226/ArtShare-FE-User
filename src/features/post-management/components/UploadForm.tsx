@@ -15,10 +15,15 @@ import { MdCrop, MdErrorOutline, MdPhotoCameraBack } from "react-icons/md";
 
 import { ImageUpIcon } from "lucide-react";
 import { ImageCropperModal } from "@/components/ui/image-cropper-modal";
+import { Area } from "react-easy-crop";
 
 const UploadForm: React.FC<{
   thumbnailFile: File | undefined;
-  onThumbnailChange: (file: File | undefined, isOriginal?: boolean) => void;
+  onThumbnailChange: (
+    file: File | undefined,
+    isOriginal?: boolean,
+    thumbnail_crop_meta?: string,
+  ) => void;
   isSubmitted: boolean;
   cate_ids: number[];
   setCateIds: (value: number[]) => void;
@@ -37,6 +42,10 @@ const UploadForm: React.FC<{
   setLastCrop: (value: { x: number; y: number }) => void;
   setLastZoom: (value: number) => void;
   existingThumbnailUrl?: string;
+  initialAspect?: number;
+  initialSelectedAspect?: string;
+  initialCroppedAreaPixels?: Area;
+  initialThumbnailImage?: string;
 }> = ({
   thumbnailFile,
   setOriginalThumbnailFile,
@@ -58,6 +67,9 @@ const UploadForm: React.FC<{
   setLastCrop,
   setLastZoom,
   existingThumbnailUrl,
+  initialAspect,
+  initialSelectedAspect,
+  initialCroppedAreaPixels,
 }) => {
   // const [description, setDescription] = useState("");
   const [thumbnailCropOpen, setThumbnailCropOpen] = useState(false);
@@ -213,11 +225,16 @@ const UploadForm: React.FC<{
           onClose={() => setThumbnailCropOpen(false)}
           initialCrop={lastCrop}
           initialZoom={lastZoom}
+          initialAspect={initialAspect}
+          initialSelectedAspect={initialSelectedAspect}
+          initialCroppedAreaPixels={initialCroppedAreaPixels}
           onCropChange={setLastCrop}
           onZoomChange={setLastZoom}
-          onCropped={(blob) => {
+          onCropped={(blob, thumbnail_crop_meta) => {
             onThumbnailChange(
               new File([blob], "cropped_thumbnail.png", { type: "image/png" }),
+              false,
+              thumbnail_crop_meta,
             );
           }}
         />

@@ -1,10 +1,16 @@
 import axios from "axios";
 
 // Base URL of your NestJS backend API
-const API_BASE_URL = "http://localhost:3000/auth"; // Change this to your backend URL if necessary
+const rawUrl = import.meta.env.VITE_BE_URL ?? "http://localhost:3000";
+const API_BASE_URL = `${rawUrl.replace(/\/+$/, "")}/auth`;
 
 // Function to handle user sign up
-export const signup = async (userId:string, email: string | '', password: string, username: string) => {
+export const signup = async (
+  userId: string,
+  email: string | "",
+  password: string,
+  username: string,
+) => {
   try {
     const response = await axios.post(`${API_BASE_URL}/register`, {
       userId,

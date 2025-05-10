@@ -338,7 +338,7 @@ const EditPost: React.FC = () => {
           <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
             <UploadForm
               thumbnailFile={thumbnailFile}
-              onThumbnailChange={(f, b, thumbnail_crop_meta = "{}") => {
+              onThumbnailChange={(f, _, thumbnail_crop_meta = "{}") => {
                 setThumbnailFile(f);
                 setThumbnailCropMeta(thumbnail_crop_meta);
               }}

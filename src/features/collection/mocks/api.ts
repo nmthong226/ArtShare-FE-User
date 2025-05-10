@@ -8,6 +8,8 @@ const mockUser: User = {
   email: "dev@example.com",
   profile_picture_url: "https://via.placeholder.com/40",
   created_at: new Date(),
+  followers_count: 123,
+  followings_count: 45,
 };
 
 export const mockCategories: Category[] = [
@@ -74,6 +76,7 @@ const post101: Post = {
   created_at: new Date(Date.now() - 86400000 * 2),
   thumbnail_url:
     "https://plus.unsplash.com/premium_photo-1673240367277-e1d394465b56?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bW91bnRhaW58ZW58MHx8MHx8fDA%3D",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 201,
@@ -104,6 +107,7 @@ const post102: Post = {
   created_at: new Date(Date.now() - 86400000),
   thumbnail_url:
     "https://images.unsplash.com/photo-1698907432487-f99fa6a91c0f?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8TmlnaHQlMjB2aWV3JTIwb2YlMjB0aGUlMjBjaXR5fGVufDB8fDB8fHww",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 202,
@@ -135,6 +139,7 @@ const post103: Post = {
   created_at: new Date(),
   thumbnail_url:
     "https://images.unsplash.com/photo-1620500152438-b303ab1e73c1?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTMyfHxBJTIwcHJvZmVzc2lvbmFsJTIwcG9ydHJhaXQlMjBzaG90fGVufDB8fDB8fHww",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 203,
@@ -165,6 +170,7 @@ const post104: Post = {
   created_at: new Date(Date.now() - 86400000 * 3),
   thumbnail_url:
     "https://plus.unsplash.com/premium_photo-1671019879191-a695376b6d61?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MzN8fEV4cGxvcmluZyUyMHNoYXBlcyUyMGFuZCUyMGNvbG9yc3xlbnwwfHwwfHx8MA%3D%3D",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 204,
@@ -195,6 +201,7 @@ const post105: Post = {
   created_at: new Date(Date.now() - 86400000 * 4),
   thumbnail_url:
     "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8Y2l0eSUyMHN0cmVldCUyMGF0JTIwZHVza3xlbnwwfHwwfHx8MA%3D%3D",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 205,
@@ -225,6 +232,7 @@ const post106: Post = {
   created_at: new Date(Date.now() - 86400000 * 6),
   thumbnail_url:
     "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?w=700&auto=format&fit=crop&q=60",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 206,
@@ -255,6 +263,7 @@ const post107: Post = {
   created_at: new Date(Date.now() - 86400000 * 5),
   thumbnail_url:
     "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=700&auto=format&fit=crop&q=60",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 207,
@@ -285,6 +294,7 @@ const post108: Post = {
   created_at: new Date(Date.now() - 86400000 * 4),
   thumbnail_url:
     "https://plus.unsplash.com/premium_photo-1673621329410-e4ef5df05b69?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8QmxhY2slMjAlMjYlMjBXaGl0ZXxlbnwwfHwwfHx8MA%3D%3D",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 208,
@@ -315,6 +325,7 @@ const post109: Post = {
   created_at: new Date(Date.now() - 86400000 * 3),
   thumbnail_url:
     "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=700&auto=format&fit=crop&q=60",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 209,
@@ -345,6 +356,7 @@ const post110: Post = {
   created_at: new Date(Date.now() - 86400000 * 2),
   thumbnail_url:
     "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=700&auto=format&fit=crop&q=60",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 210,
@@ -375,6 +387,7 @@ const post111: Post = {
   created_at: new Date(Date.now() - 86400000 * 7),
   thumbnail_url:
     "https://images.unsplash.com/photo-1473580044384-7ba9967e16a0?w=700&auto=format&fit=crop&q=60",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 211,
@@ -405,6 +418,7 @@ const post112: Post = {
   created_at: new Date(Date.now() - 86400000 * 1),
   thumbnail_url:
     "https://plus.unsplash.com/premium_photo-1698524852430-6a9654e26940?w=700&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8ZWFnbGUlMjBpbiUyMGZsaWdodHxlbnwwfHwwfHx8MA%3D%3D",
+  thumbnail_crop_meta: "{}",
   medias: [
     {
       id: 212,

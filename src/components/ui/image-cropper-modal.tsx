@@ -162,26 +162,29 @@ export const ImageCropperModal: React.FC<Props> = ({
 
         <div className="text-sm px-6 pb-4 flex flex-col gap-3 dark:text-white">
           <div>
-            <label>
-              Zoom
-              <input
-                type="range"
-                min="1"
-                max="3"
-                step="0.1"
-                value={zoom}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  setZoom(value);
-                  onZoomChange?.(value); // ✅ propagate to parent
-                }}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:text-white"
-              />
+            <label className="block mb-1 font-medium">
+              {" "}
+              {/* Added block and margin for better label spacing */}
+              Zoom: {zoom.toFixed(1)}x{" "}
+              {/* Display current zoom next to label */}
             </label>
-            <div className="flex justify-between text-xs mt-1">
-              <span>1x</span>
-              <span>{zoom.toFixed(1)}x</span>
-              <span>3x</span>
+            <input
+              type="range"
+              min="1" // Min zoom value
+              max="3" // Max zoom value
+              step="0.1"
+              value={zoom}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                setZoom(value);
+                onZoomChange?.(value);
+              }}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" // Added dark mode bg
+            />
+            {/* Simplified labels for min and max */}
+            <div className="flex justify-between text-xs mt-1 text-gray-500 dark:text-gray-400">
+              <span>Min (1x)</span>
+              <span>Max (3x)</span>
             </div>
           </div>
 

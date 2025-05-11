@@ -395,7 +395,7 @@ export const darkTheme = createTheme({
               borderWidth: "2px",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "#e7e7e7", // primary.main on focus
+              borderColor: "#a5b4fc", // primary.main on focus
               borderWidth: "2px",
             },
           },

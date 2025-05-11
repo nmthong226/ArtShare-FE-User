@@ -2,10 +2,6 @@
 export enum CategoryTypeValues {
   MEDIUM = "MEDIUM", // From your previous examples
   ATTRIBUTE = "ATTRIBUTE", // From your previous examples
-  // Add THEME and GENRE if these are also valid types your backend might send
-  // based on your old Category interface's type: "ATTRIBUTE" | "THEME" | "GENRE"
-  // If your Prisma model only has MEDIUM and ATTRIBUTE, stick to those.
-  // For now, I'll assume your Prisma enum CategoryType only has MEDIUM and ATTRIBUTE.
 }
 
 export interface Category {

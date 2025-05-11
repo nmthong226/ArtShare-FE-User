@@ -6,7 +6,7 @@ import { Button, CircularProgress, TextareaAutosize } from '@mui/material';
 import PromptResult from './components/PromptResult';
 import TokenPopover from './components/TokenPopover';
 import SettingsPanel from './components/SettingsPanel/SettingsPanel';
-import AIBot from './components/AIBot';
+import AIBot from './components/AI/AIBot';
 
 //Icons
 import { TbChessQueenFilled } from "react-icons/tb";
@@ -15,26 +15,11 @@ import { IoMdArrowDropdown } from "react-icons/io";
 //Css files
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
-const result3_images =
-    [
-        {
-            id: '9',
-            url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/arasef6bmgopjnqhwzrc'
-        },
-        {
-            id: '10',
-            url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/sir6kdbszkcmcmehatdp'
-        },
-        {
-            id: '11',
-            url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/g4dzfj4t74rjgjmr6l1r'
-        },
-        {
-            id: '12',
-            url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/s9pjhgywgozbske8byog'
-        },
-    ]
+import api from '@/api/baseApi';
+import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
+import { DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { aspectOptions, cameraOptions, HistoryFilter, lightingOptions, ModelKey } from './enum';
+import { MockModelOptionsData } from './mock/Data';
 
 {/*
 A stunning realistic scene featuring a woman astronaut curiously peeking out of 
@@ -47,58 +32,9 @@ capturing the intricate design of the space station and the dynamic activity in 
 with stars twinkling in the background creating a sense of vastness in space.
 */}
 
-const mockUserPromptResults = [
-    {
-        id: '1',
-        prompt: 'Dynamic angle, best quality, highly detailed, depth of field. A stunning steampunk city with towering skyscrapers and intricate clockwork mechanisms, gears and pistons move in a complex symphony, steam billows from chimneys, airships navigate the bustling skylanes, a vibrant metropolis.',
-        images:
-            [
-                {
-                    id: '1',
-                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/ymz4f8uldlagpgfosjo5'
-                },
-                {
-                    id: '2',
-                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/xw990iearcg71iefho4u'
-                },
-                {
-                    id: '3',
-                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/stfmbrgaumkjjfijkyxy'
-                },
-                {
-                    id: '4',
-                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/opbbxebjw79xosse6zlz'
-                },
-            ]
-        // attributes: 'handle later'
-    },
-    {
-        id: '2',
-        prompt: 'goku, in the style of Akira Toriyama, dragon ball theme, uhd image, precisionist art, character illustrations.',
-        images:
-            [
-                {
-                    id: '5',
-                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/au2c5vvtjresit5dqnt5'
-                },
-                {
-                    id: '6',
-                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/lhsyjfgg1zz1ejr6hjlh'
-                },
-                {
-                    id: '7',
-                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/glxcivoy2s3ant70cgjc'
-                },
-                {
-                    id: '8',
-                    url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/asuz4vezfti3yi3j4m82'
-                },
-            ]
-    },
-]
-
 const ArtGenAI = () => {
-    const [promptResults, setPromptResults] = useState(mockUserPromptResults);
+    const [promptResultList, setPromptResultList] = useState<PromptResult[]>([]);
+    const [promptResult, setPromptResult] = useState<PromptResult>();
     const [tokenNumber] = useState<number>(35);
     const [expanded, setExpanded] = useState<boolean>(true);
     const [promptExpanded, setPromptExpanded] = useState<boolean>(false);
@@ -108,34 +44,162 @@ const ArtGenAI = () => {
     const scrollRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [loading, setLoading] = useState(true);
+    const [historyFilter, setHistoryFilter] = useState<HistoryFilter>(HistoryFilter.TODAY)
+    const [filteredResults, setFilteredResults] = useState<PromptResult[]>([]);
+
+    //Loading
+    const [loadingProgress, setLoadingProgress] = useState([0, 0, 0, 0]);
+
+    //Setting Panel
+    const [modelKey] = useState<ModelKey>(ModelKey.GPT_IMAGE_1);
+    const [style, setStyle] = useState<StyleOption>(MockModelOptionsData[0]);
+    const [aspectRatio, setAspectRatio] = useState<AspectOption>(aspectOptions[0]);
+    const [lighting, setLighting] = useState<LightingOption>(lightingOptions[0]);
+    const [camera, setCamera] = useState<CameraOption>(cameraOptions[0]);
+    const [numberOfImages, setNumberOfImages] = useState<number>(1);
 
     useEffect(() => {
-        // Simulate loading or replace with your actual fetch call
         const timer = setTimeout(() => {
-            setLoading(false); // Set to false after data is fetched
-        }, 1500); // Adjust time or remove if you have real async logic
-
+            setLoading(false);
+        }, 1000);
         return () => clearTimeout(timer);
     }, []);
 
-    const handleGenerate = () => {
-        if (!userPrompt.trim()) return;
+    const getLabel = (filter: HistoryFilter) => {
+        switch (filter) {
+            case HistoryFilter.TODAY:
+                return "Today";
+            case HistoryFilter.YESTERDAY:
+                return "Yesterday";
+            case HistoryFilter.LAST7DAYS:
+                return "Last 7 Days";
+            case HistoryFilter.LAST30DAYS:
+                return "Last 30 Days";
+            default:
+                return "";
+        }
+    };
+
+    const handleGetPromptHistory = async () => {
+        setTimeout(() => {
+            scrollRef.current?.scrollTo({
+                top: scrollRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
+        }, 100);
+        try {
+            const response = await api.get('/art-generation/prompt-history');
+            setPromptResultList(response.data)
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    useEffect(() => {
+        handleGetPromptHistory();
+    }, [promptResult]);
+
+    const isInFilterRange = (createdAt: string): boolean => {
+        const createdDate = new Date(createdAt);
+        const now = new Date();
+
+        switch (historyFilter) {
+            case HistoryFilter.TODAY:
+                return createdDate.toDateString() === now.toDateString();
+
+            case HistoryFilter.YESTERDAY: {
+                const yesterday = new Date();
+                yesterday.setDate(now.getDate() - 1);
+                return createdDate.toDateString() === yesterday.toDateString();
+            }
+
+            case HistoryFilter.LAST7DAYS: {
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setDate(now.getDate() - 6);
+                return createdDate >= sevenDaysAgo && createdDate <= now;
+            }
+
+            case HistoryFilter.LAST30DAYS: {
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(now.getDate() - 29);
+                return createdDate >= thirtyDaysAgo && createdDate <= now;
+            }
+
+            default:
+                return true;
+        }
+    };
+
+
+    useEffect(() => {
+        setTimeout(() => {
+            scrollRef.current?.scrollTo({
+                top: scrollRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
+        }, 100);
+        const filtered = promptResultList.filter(result =>
+            isInFilterRange(result.created_at)
+        ).reverse();
+        setFilteredResults(filtered);
+    }, [historyFilter, promptResultList]);
+
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const handleGenerate = async () => {
+        if (!userPrompt.trim() || generatingImage) return;
+
+        setTimeout(() => {
+            scrollRef.current?.scrollTo({
+                top: scrollRef.current.scrollHeight,
+                behavior: 'smooth',
+            });
+        }, 100);
+
         setGeneratingImage(true);
-        setCommittedPrompt(userPrompt); // store the current prompt
-        // Immediately scroll down
-        setTimeout(() => {
-            scrollRef.current?.scrollTo({
-                top: scrollRef.current.scrollHeight,
-                behavior: 'smooth',
+        setCommittedPrompt(userPrompt);
+        setLoadingProgress(Array(numberOfImages).fill(0));
+
+        // Start simulating progress immediately
+        intervalRef.current = setInterval(() => {
+            setLoadingProgress((prev) => {
+                const updated = prev.map((p) =>
+                    p < 100 ? Math.min(p + Math.floor(Math.random() * 5) + 1, 100) : p
+                );
+                return updated;
             });
-        }, 100);
-        // Simulate generation delay
-        setTimeout(() => {
-            scrollRef.current?.scrollTo({
-                top: scrollRef.current.scrollHeight,
-                behavior: 'smooth',
-            });
-        }, 100);
+        }, 500);
+
+        const payload = {
+            prompt: userPrompt,
+            modelKey: modelKey,
+            style: style.name.toLowerCase(),
+            n: numberOfImages,
+            aspectRatio: aspectRatio.value,
+            lighting: lighting.value,
+            camera: camera.value
+        };
+        console.log(payload);
+        try {
+            const response = await api.post('/art-generation/text-to-image', payload);
+            setLoadingProgress((prev) => prev.map(() => 100));
+            setPromptResult(response.data);
+            setUserPrompt('');
+            setGeneratingImage(false);
+            if (intervalRef.current) clearInterval(intervalRef.current);
+
+            setTimeout(() => {
+                scrollRef.current?.scrollTo({
+                    top: scrollRef.current.scrollHeight,
+                    behavior: 'smooth',
+                });
+            }, 100);
+
+        } catch (error: any) {
+            console.error('Image generation failed:', error);
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            setGeneratingImage(false);
+        }
     };
 
     const handlePrompt = () => {
@@ -164,90 +228,71 @@ const ArtGenAI = () => {
         };
     }, [promptExpanded]);
 
-    const [loadingProgress, setLoadingProgress] = useState([0, 0, 0, 0]);
-
-    useEffect(() => {
-        if (generatingImage) {
-            const interval = setInterval(() => {
-                setLoadingProgress((prev) => {
-                    const updated = prev.map((p) =>
-                        p < 100 ? Math.min(p + Math.floor(Math.random() * 10) + 1, 100) : 100
-                    );
-                    // Check if all progress values reached 100
-                    const allComplete = updated.every((p) => p === 100);
-                    if (allComplete) {
-                        clearInterval(interval);
-                        setGeneratingImage(false); // ✅ stop generating
-                        // ✅ Only insert after progress completes
-                        const newResult = {
-                            id: '3',
-                            prompt: userPrompt,
-                            images:
-                                [
-                                    {
-                                        id: '9',
-                                        url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/arasef6bmgopjnqhwzrc'
-                                    },
-                                    {
-                                        id: '10',
-                                        url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/sir6kdbszkcmcmehatdp'
-                                    },
-                                    {
-                                        id: '11',
-                                        url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/g4dzfj4t74rjgjmr6l1r'
-                                    },
-                                    {
-                                        id: '12',
-                                        url: 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/s9pjhgywgozbske8byog'
-                                    },
-                                ]
-                        };
-                        setPromptResults((prev) => [...prev, newResult]);
-                    }
-                    return updated;
-                });
-            }, 500);
-            return () => clearInterval(interval);
-        }
-    }, [generatingImage]);
-
-    const handleDeleteResult = (resultId: string) => {
-        setPromptResults(prev => prev.filter((result) => result.id !== resultId));
+    const handleDeleteResult = (resultId: number) => {
+        setPromptResultList(prev => prev.filter((result) => result.id !== resultId));
     };
 
-    const handleDeleteSingleResult = (resultId: string, imageId: string) => {
-        setPromptResults((prev) => {
-            const updated = prev.map((result) =>
-                result.id === resultId
-                    ? {
-                        ...result,
-                        images: result.images.filter((img) => img.id !== imageId),
-                    }
-                    : result
-            );
-
-            // Remove result if all its images are deleted
-            return updated.filter((result) => result.images.length > 0);
-        });
-    };
+    // const handleDeleteSingleResult = (resultId: string, imageId: string) => {
+    //     setPromptResults((prev) => {
+    //         const updated = prev.map((result) =>
+    //             result.id === resultId
+    //                 ? {
+    //                     ...result,
+    //                     images: result.images.filter((img: { id: string; }) => img.id !== imageId),
+    //                 }
+    //                 : result
+    //         );
+    //         return updated.filter((result) => result.images.length > 0);
+    //     });
+    // };
 
     return (
         <div className='flex p-4 pr-0 pb-0 w-full h-[calc(100vh-4rem)]'>
-
             <div className='relative flex flex-col space-y-4 w-full h-full overflow-y-hidden'>
-                <SettingsPanel isExpanded={expanded} setIsExpanded={setExpanded} />
+                <SettingsPanel
+                    isExpanded={expanded}
+                    setIsExpanded={setExpanded}
+                    numberOfImages={numberOfImages}
+                    setNumberOfImages={setNumberOfImages}
+                    aspectRatio={aspectRatio}
+                    setAspectRatio={setAspectRatio}
+                    lighting={lighting}
+                    setLighting={setLighting}
+                    camera={camera}
+                    setCamera={setCamera}
+                    style={style}
+                    setStyle={setStyle}
+                />
                 <div className='flex justify-end pr-4 w-full h-fit'>
-                    <div className='flex items-center space-x-2 bg-white shadow-md p-2 rounded-xl w-fit h-13'>
-                        <div className='flex h-full'>
-                            <div className='flex justify-center items-center bg-mountain-100 px-2 rounded-lg w-fit h-full font-normal'>
-                                <div className='flex items-center space-x-2'>
-                                    <p>Generate <span className='font-medium'>Image</span></p>
-                                    <IoMdArrowDropdown />
-                                </div>
+                    <div className='flex items-center space-x-2 bg-white shadow-md p-2 rounded-xl w-102 h-13'>
+                        <div className='flex w-full h-full'>
+                            <div className='flex justify-start items-center bg-mountain-100 hover:bg-mountain-200/80 px-2 rounded-lg w-full h-full font-normal'>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger className="justify-start outline-none hover:cursor-pointer">
+                                        <div className="flex items-center space-x-2">
+                                            <p>
+                                                Show <span className="font-medium">{getLabel(historyFilter)}</span>
+                                            </p>
+                                            <IoMdArrowDropdown />
+                                        </div>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="flex flex-col mt-4 border-mountain-200 min-w-48 select-none">
+                                        {Object.entries(HistoryFilter).map(([_, value]) => (
+                                            <div
+                                                key={value}
+                                                onClick={() => setHistoryFilter(value as HistoryFilter)}
+                                                className={`${loading && 'pointer-events-none'} flex p-1.5 hover:bg-mountain-100 hover:cursor-pointer ${historyFilter === value ? "bg-indigo-50 font-medium text-mountain-800" : ""
+                                                    }`}
+                                            >
+                                                {getLabel(value as HistoryFilter)}
+                                            </div>
+                                        ))}
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
                         </div>
                         <TokenPopover tokenNumber={tokenNumber} />
-                        <Button className='flex justify-center items-center bg-indigo-100 rounded-lg w-28 h-full font-normal'>
+                        <Button className='flex justify-center items-center bg-indigo-100 rounded-lg w-28 h-full font-normal shrink-0'>
                             <TbChessQueenFilled className='mr-2 size-5' />
                             <p>Get Token</p>
                         </Button>
@@ -264,28 +309,30 @@ const ArtGenAI = () => {
                             </div>
                         ) : (
                             <div ref={scrollRef} className='flex flex-col space-y-10 pr-4 w-full h-full overflow-y-auto custom-scrollbar'>
-                                {promptResults.map((result, index) => (
-                                    <PromptResult
-                                        key={index}
-                                        prompt={result.prompt}
-                                        images={result.images}
-                                        generating={false}
-                                        index={index}
-                                        onDelete={() => handleDeleteResult(result.id)}
-                                        onDeleteSingle={handleDeleteSingleResult}
-                                        resultId={result.id}
-                                    />
-                                ))}
-                                {generatingImage && (
+                                {filteredResults
+                                    .map((result, index) => (
+                                        <PromptResult
+                                            key={index}
+                                            prompt={result.user_prompt}
+                                            images={result.image_urls}
+                                            generating={false}
+                                            index={index}
+                                            onDelete={() => handleDeleteResult(result.id)}
+                                            // onDeleteSingle={handleDeleteSingleResult}
+                                            onDeleteSingle={() => { }}
+                                            resultId={result.id}
+                                        />
+                                    ))}
+                                {generatingImage &&
                                     <>
                                         <PromptResult
                                             prompt={" " + committedPrompt}
-                                            images={result3_images}
+                                            images={Array(numberOfImages).fill('https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/artshare-asset/utzac220yrts0ujnjjq1?blur=300&q=1')}
                                             generating={true}
                                             progress={loadingProgress}
                                         />
                                     </>
-                                )}
+                                }
                                 <div className='flex flex-col space-y-2'>
                                     <div className='flex h-64' />
                                 </div>

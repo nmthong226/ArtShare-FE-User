@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react'
 
-//Libs
-
-
 //Components
 import {
     Dialog,
@@ -16,27 +13,15 @@ import {
 //Assets
 import { MockModelOptionsData } from '../../mock/Data';
 
-
 //Icons
 import { IoIosArrowForward } from "react-icons/io";
 import { Button } from '@mui/material';
 import { Input } from '@/components/ui/input';
 
-interface UsedModel {
-    name: string,
-    description: string,
-    images: string[]
-}
-
-interface ModelOptionsProp {
-    model: UsedModel,
-    selectModel: (model: UsedModel) => void;
-}
-
-const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
+const StyleOptions: React.FC<StyleOptionsProp> = ({ style, selectStyle }) => {
     const [open, setOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(0);
-    const [selectedModel, setSelectedModel] = useState<UsedModel | null>(model);
+    const [selectedStyle, setSelectedStyle] = useState<UsedStyle | null>(style);
     const [startIndex, setStartIndex] = useState(0);
 
     const visibleCount = 3;
@@ -55,13 +40,13 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
 
     const translateValue = -(startIndex * itemWidth) + baseOffset;
 
-    const SelectSelectedModel = (model: UsedModel) => {
-        selectModel(model);
+    const SelectSelectedStyle = (style: UsedStyle) => {
+        selectStyle(style);
         setOpen(false);
     }
 
     useEffect(() => {
-        setSelectedModel(model);
+        setSelectedStyle(style);
     }, [open])
 
     return (
@@ -69,8 +54,8 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
             <DialogTrigger asChild>
                 <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
                     <div className='flex items-center space-x-2'>
-                        <img src={model.images[0]} loading="lazy" className='rounded-xs w-5 h-5' />
-                        <p>{model.name}</p>
+                        <img src={style.images[0]} loading="lazy" className='rounded-xs w-5 h-5' />
+                        <p>{style.name}</p>
                     </div>
                     <IoIosArrowForward />
                 </Button>
@@ -87,12 +72,12 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                         </div>
                         <div className='flex flex-col justify-between h-full'>
                             <div className='flex justify-between w-full'>
-                                {MockModelOptionsData.slice(0, 5).map((model, index) => {
-                                    const isSelected = selectedModel === model;
+                                {MockModelOptionsData.slice(0, 5).map((style, index) => {
+                                    const isSelected = selectedStyle === style;
                                     return (
-                                        <div key={index} className='group flex flex-col items-center space-y-2' onClick={() => setSelectedModel(model)}>
+                                        <div key={index} className='group flex flex-col items-center space-y-2' onClick={() => setSelectedStyle(style)}>
                                             <div className='relative flex w-32 h-32 hover:cursor-pointer'>
-                                                <img src={model.images[0]} loading="lazy" className='rounded-lg w-fit h-auto object-cover' />
+                                                <img src={style.images[0]} loading="lazy" className='rounded-lg w-fit h-auto object-cover' />
                                                 {/* Show "Selected ✅" only if selected */}
                                                 {isSelected && (
                                                     <div className='absolute inset-0 flex justify-center items-end bg-gradient-to-b from-black/10 to-black/70 p-2 rounded-lg'>
@@ -100,18 +85,18 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <p>{model.name}</p>
+                                            <p>{style.name}</p>
                                         </div>
                                     )
                                 })}
                             </div>
                             <div className='flex justify-between w-full'>
-                                {MockModelOptionsData.slice(5, 10).map((model, index) => {
-                                    const isSelected = selectedModel === model;
+                                {MockModelOptionsData.slice(5, 10).map((style, index) => {
+                                    const isSelected = selectedStyle === style;
                                     return (
-                                        <div key={index} className='group flex flex-col items-center space-y-2' onClick={() => setSelectedModel(model)}>
+                                        <div key={index} className='group flex flex-col items-center space-y-2' onClick={() => setSelectedStyle(style)}>
                                             <div className='relative flex w-32 h-32 hover:cursor-pointer'>
-                                                <img src={model.images[0]} loading="lazy" className='rounded-lg w-fit h-auto object-cover' />
+                                                <img src={style.images[0]} loading="lazy" className='rounded-lg w-fit h-auto object-cover' />
                                                 {/* Show "Selected ✅" only if selected */}
                                                 {isSelected && (
                                                     <div className='absolute inset-0 flex justify-center items-end bg-gradient-to-b from-black/10 to-black/70 p-2 rounded-lg'>
@@ -119,18 +104,18 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <p>{model.name}</p>
+                                            <p>{style.name}</p>
                                         </div>
                                     )
                                 })}
                             </div>
                             <div className='flex justify-start space-x-3 w-full'>
-                                {MockModelOptionsData.slice(10, 12).map((model, index) => {
-                                    const isSelected = selectedModel === model;
+                                {MockModelOptionsData.slice(10, 12).map((style, index) => {
+                                    const isSelected = selectedStyle === style;
                                     return (
-                                        <div key={index} className='group flex flex-col items-center space-y-2' onClick={() => setSelectedModel(model)}>
+                                        <div key={index} className='group flex flex-col items-center space-y-2' onClick={() => setSelectedStyle(style)}>
                                             <div className='relative flex w-32 h-32 hover:cursor-pointer'>
-                                                <img src={model.images[0]} loading="lazy" className='rounded-lg w-fit h-auto object-cover' />
+                                                <img src={style.images[0]} loading="lazy" className='rounded-lg w-fit h-auto object-cover' />
                                                 {/* Show "Selected ✅" only if selected */}
                                                 {isSelected && (
                                                     <div className='absolute inset-0 flex justify-center items-end bg-gradient-to-b from-black/10 to-black/70 p-2 rounded-lg'>
@@ -138,7 +123,7 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                                                     </div>
                                                 )}
                                             </div>
-                                            <p>{model.name}</p>
+                                            <p>{style.name}</p>
                                         </div>
                                     )
                                 })}
@@ -148,18 +133,18 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                     <div className='flex flex-col items-start space-y-4 py-4 border-mountain-200 w-[307px] overflow-hidden'>
                         <div className='flex justify-center w-full'>
                             <div className='flex w-64 h-64'>
-                                <img loading="lazy" src={selectedModel?.images[selectedIndex]} className='rounded-xl w-fit h-auto object-cover' />
+                                <img loading="lazy" src={selectedStyle?.images[selectedIndex]} className='rounded-xl w-fit h-auto object-cover' />
                             </div>
                         </div>
                         <div className='flex flex-col px-6 w-full'>
-                            <p className='flex mb-1 w-full font-medium'>{selectedModel?.name}</p>
-                            <span className='text-mountain-600 text-xs'>{selectedModel?.description}</span>
+                            <p className='flex mb-1 w-full font-medium'>{selectedStyle?.name}</p>
+                            <span className='text-mountain-600 text-xs'>{selectedStyle?.description}</span>
                         </div>
                         <div className='flex flex-col justify-between w-full h-full'>
                             <div>
                                 <p className='flex mb-1 px-6 w-full font-medium'>Sample Result</p>
                                 <div className='flex space-x-2 w-[500px] duration-300 ease-in-out' style={{ transform: `translateX(${translateValue}px)` }}>
-                                    {selectedModel?.images.map((img, idx) => (
+                                    {selectedStyle?.images.map((img, idx) => (
                                         <div
                                             key={idx}
                                             className={`flex w-20 h-20 cursor-pointer transform duration-200 ease-in-out rounded-xl ${selectedIndex === idx ? 'border-4 border-black' : ''}`}
@@ -172,7 +157,7 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
                                     ))}
                                 </div>
                             </div>
-                            <div className='flex px-6' onClick={() => SelectSelectedModel(selectedModel!)}>
+                            <div className='flex px-6' onClick={() => SelectSelectedStyle(selectedStyle!)}>
                                 <Button className='flex justify-center items-center bg-indigo-200 w-full'>Use This Model</Button>
                             </div>
                         </div>
@@ -183,4 +168,4 @@ const ModelOptions: React.FC<ModelOptionsProp> = ({ model, selectModel }) => {
     )
 }
 
-export default ModelOptions
+export default StyleOptions

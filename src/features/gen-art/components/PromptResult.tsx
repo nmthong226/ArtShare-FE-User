@@ -24,26 +24,20 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
-//Assets
-interface promptResultImage {
-    id: string,
-    url: string
-}
-
 interface promptResultProps {
     prompt: string,
-    images: promptResultImage[],
+    images: string[],
     generating: boolean | null,
     progress?: number[] | null,
     index?: number;
-    resultId?: string;
+    resultId?: number;
     onDelete?: (index: number) => void;
-    onDeleteSingle?: (resultId: string, imageIndex: string) => void;
+    onDeleteSingle?: (resultId: number, imageIndex: number) => void;
 }
 
 const LoadingCell = ({ percent }: { percent: number }) => (
     <div className='relative flex justify-center items-center bg-mountain-100 rounded-[8px] h-full'>
-        <div className='relative mx-auto border-4 border-t-blue-600 border-blue-300 rounded-full w-16 h-16 animate-spin' />
+        <CircularProgress size={48} thickness={4} />
         <p className='absolute font-medium text-gray-700 text-sm'>{percent}%</p>
     </div>
 );
@@ -54,10 +48,10 @@ const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating,
     const handleDownloadAll = async () => {
         const zip = new JSZip();
         await Promise.all(
-            images.map(async ({ id, url }, index) => {
+            images.map(async (url, index) => {
                 const response = await fetch(url);
                 const blob = await response.blob();
-                zip.file(`image-${id || index + 1}.jpg`, blob);
+                zip.file(`image-${index + 1}.jpg`, blob);
             })
         );
 
@@ -118,12 +112,12 @@ const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating,
                         </Popover>
                     </div>
                 </div>
-                <ImageList cols={4} gap={8} sx={{ width: '100%' }}>
+                <ImageList cols={4} gap={8} sx={{ width: '100%', minHeight: '268px' }}>
                     {images.map((img, index) => (
-                        <ImageListItem key={index}>
+                        <ImageListItem key={index} className='flex h-full object-cover'>
                             <GenImage
-                                image={img.url}
-                                imageId={img.id}
+                                image={img}
+                                imageId={index}
                                 images={images}
                                 prompt={prompt}
                                 index={index}
@@ -152,11 +146,11 @@ const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating,
                     </div>
                     <ImageList cols={4} gap={8} sx={{ width: '100%', minHeight: '268px' }}>
                         {images.map((img, imgIndex) => (
-                            <ImageListItem key={index}>
+                            <ImageListItem key={index} className='flex h-full object-cover'>
                                 {progress && progress[imgIndex] === 100 ? (
                                     <GenImage
-                                        image={img.url}
-                                        imageId={img.id}
+                                        image={img}
+                                        imageId={index!}
                                         images={images}
                                         prompt={prompt}
                                         index={imgIndex}

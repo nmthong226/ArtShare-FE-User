@@ -1,77 +1,72 @@
-const model1_img1 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/dzu0q9a2zxvtu3w1r29a';
-const model1_img2 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/zhtws0deeiymygawyhqw';
-const model1_img3 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/srcrptriciskgf37fijw';
-const model1_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/qpfnkldeshbngvdk0jlx";
-const model1_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/mzjw5qfhieullw7efpyh";
+const model1_img1 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/dzu0q9a2zxvtu3w1r29a?blur=300&q=1';
+const model1_img2 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/zhtws0deeiymygawyhqw?blur=300&q=1';
+const model1_img3 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/srcrptriciskgf37fijw?blur=300&q=1';
+const model1_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/qpfnkldeshbngvdk0jlx?blur=300&q=1";
+const model1_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-1/mzjw5qfhieullw7efpyh?blur=300&q=1";
 
-const model2_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/xysapj6wfytzbwrl39jx";
-const model2_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/hu1s9sb57dbvqmdqwguq";
-const model2_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/oxhqakdasgldixufc7xu";
-const model2_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/difjaxuqplk94hzg8t2k";
-const model2_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/x3ov30gaic6jgj7mosqm";
+const model2_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/xysapj6wfytzbwrl39jx?blur=300&q=1";
+const model2_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/hu1s9sb57dbvqmdqwguq?blur=300&q=1";
+const model2_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/oxhqakdasgldixufc7xu?blur=300&q=1";
+const model2_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/difjaxuqplk94hzg8t2k?blur=300&q=1";
+const model2_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-2/x3ov30gaic6jgj7mosqm?blur=300&q=1";
 
-const model3_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/rle8sbvoma6rv3jd5x38";
-const model3_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/fmdognipx9ppesd8nak7";
-const model3_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/e6dgelqbvpjkr4pte788";
-const model3_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/eilh6u0kw2udzjdkmmv7";
-const model3_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/ofwj2jsx2o3qbntau26j";
+const model3_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/rle8sbvoma6rv3jd5x38?blur=300&q=1";
+const model3_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/fmdognipx9ppesd8nak7?blur=300&q=1";
+const model3_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/e6dgelqbvpjkr4pte788?blur=300&q=1";
+const model3_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/eilh6u0kw2udzjdkmmv7?blur=300&q=1";
+const model3_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-3/ofwj2jsx2o3qbntau26j?blur=300&q=1";
 
-const model4_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/pljckxer3z3mwdu5f86v";
-const model4_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/xf9aiowm3c9hpdl5tg9v";
-const model4_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/yl2ybxiu9y8jrkcfzbjg";
-const model4_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/fwlvwt23eqpmp5dzyglq";
-const model4_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/ojnixjncgnyhpapbvtoq";
+const model4_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/pljckxer3z3mwdu5f86v?blur=300&q=1";
+const model4_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/xf9aiowm3c9hpdl5tg9v?blur=300&q=1";
+const model4_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/yl2ybxiu9y8jrkcfzbjg?blur=300&q=1";
+const model4_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/fwlvwt23eqpmp5dzyglq?blur=300&q=1";
+const model4_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-4/ojnixjncgnyhpapbvtoq?blur=300&q=1";
 
-const model5_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/zasdrnchoxg3eh24jbqg";
-const model5_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/dacxlmzqnia9awv7b18l";
-const model5_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/gxz5e8ye9wjev0r9x96w";
-const model5_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/cjcc3fo0jg81s0lnzgrd";
-const model5_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/lbqscfivwkiqbfyc6dak";
+const model5_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/zasdrnchoxg3eh24jbqg?blur=300&q=1";
+const model5_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/dacxlmzqnia9awv7b18l?blur=300&q=1";
+const model5_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/gxz5e8ye9wjev0r9x96w?blur=300&q=1";
+const model5_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/cjcc3fo0jg81s0lnzgrd?blur=300&q=1";
+const model5_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-5/lbqscfivwkiqbfyc6dak?blur=300&q=1";
 
-const model6_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/ajsmdswqmkdorawtepsz";
-const model6_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/idc58ejq5cb9ka2pr9rm";
-const model6_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/y95phfixppb2x0aotqxz";
-const model6_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/cnp7hc9lspwoixih3l6z";
-const model6_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/soadjhtvdsqw65bbp8ac";
+const model6_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/ajsmdswqmkdorawtepsz?blur=300&q=1";
+const model6_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/idc58ejq5cb9ka2pr9rm?blur=300&q=1";
+const model6_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/y95phfixppb2x0aotqxz?blur=300&q=1";
+const model6_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/cnp7hc9lspwoixih3l6z?blur=300&q=1";
+const model6_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-6/soadjhtvdsqw65bbp8ac?blur=300&q=1";
 
-const model7_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/t15tjiz81sw6zct3k2x4";
-const model7_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/gdaumsq40wi0woxmcqhg";
-const model7_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/cegjr4plgq6iwnix10ll";
-const model7_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/f4j1otzeb5vnmwoola3a";
-const model7_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/daujzu6dnymobyztqpej";
+const model7_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/t15tjiz81sw6zct3k2x4?blur=300&q=1";
+const model7_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/gdaumsq40wi0woxmcqhg?blur=300&q=1";
+const model7_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/cegjr4plgq6iwnix10ll?blur=300&q=1";
+const model7_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/f4j1otzeb5vnmwoola3a?blur=300&q=1";
+const model7_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-7/daujzu6dnymobyztqpej?blur=300&q=1";
 
-const model8_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/jjnhrsinvjazdwfursog";
-const model8_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/iu5vptbb85cacj3lxucy";
-const model8_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/f838omzltjpsemwzicgs";
-const model8_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/hrcdpy26lg0mhjcshari";
-const model8_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/bq0jl3qveuybydv0twml";
+const model8_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/jjnhrsinvjazdwfursog?blur=300&q=1";
+const model8_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/iu5vptbb85cacj3lxucy?blur=300&q=1";
+const model8_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/f838omzltjpsemwzicgs?blur=300&q=1";
+const model8_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/hrcdpy26lg0mhjcshari?blur=300&q=1";
+const model8_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-8/bq0jl3qveuybydv0twml?blur=300&q=1";
 
-const model9_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/ebntcvljna21ntkezdah";
-const model9_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/sft3whcpsmnezdp8znz9";
-const model9_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/tj6h5pzsg9x03bwrn7y0";
-const model9_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/gx9s0odjn1qv7s8rlbny";
-const model9_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/lfcdyeb4xz8hof4rjkl7";
+const model9_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/ebntcvljna21ntkezdah?blur=300&q=1";
+const model9_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/sft3whcpsmnezdp8znz9?blur=300&q=1";
+const model9_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/tj6h5pzsg9x03bwrn7y0?blur=300&q=1";
+const model9_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/gx9s0odjn1qv7s8rlbny?blur=300&q=1";
+const model9_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-9/lfcdyeb4xz8hof4rjkl7?blur=300&q=1";
 
-const model10_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-10/y8paf58albdejptz0mjm";
-const model10_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-10/nw9s4rscqffhsgtw8azi";
-const model10_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-10/g2opkdt12jusqmq91fsb";
+const model10_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-10/y8paf58albdejptz0mjm?blur=300&q=1";
+const model10_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-10/nw9s4rscqffhsgtw8azi?blur=300&q=1";
+const model10_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-10/g2opkdt12jusqmq91fsb?blur=300&q=1";
 
-const model11_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/vc1gkys3bjj6cn1gobyp";
-const model11_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/xpphygffw8ybwidznqb7";
-const model11_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/uxeniiw94zus4lzsawjt";
-const model11_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/bj8a8vw99ypapygflwz2";
-const model11_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/tfkt41w1spgrlten1pok";
+const model11_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/vc1gkys3bjj6cn1gobyp?blur=300&q=1";
+const model11_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/xpphygffw8ybwidznqb7?blur=300&q=1";
+const model11_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/uxeniiw94zus4lzsawjt?blur=300&q=1";
+const model11_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/bj8a8vw99ypapygflwz2?blur=300&q=1";
+const model11_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-11/tfkt41w1spgrlten1pok?blur=300&q=1";
 
-const model12_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/irhx3zywo9arhkctfjcg";
-const model12_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/vj7aztrzoukw63nccngm";
-const model12_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/tfgdttn7wiqlhzeoa2qx";
-const model12_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/ffb2xrndjq6gbkaomldu";
-const model12_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/f4oquhimazftztbky8il";
-
-import { TbSquareDashed } from "react-icons/tb";
-import { TbRectangle } from "react-icons/tb";
-import { LuRectangleHorizontal } from "react-icons/lu";
-import { LuRectangleVertical } from "react-icons/lu";
+const model12_img1 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/irhx3zywo9arhkctfjcg?blur=300&q=1";
+const model12_img2 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/vj7aztrzoukw63nccngm?blur=300&q=1";
+const model12_img3 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/tfgdttn7wiqlhzeoa2qx?blur=300&q=1";
+const model12_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/ffb2xrndjq6gbkaomldu?blur=300&q=1";
+const model12_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/f4oquhimazftztbky8il?blur=300&q=1";
 
 // Trending Mocks
 const trending_1 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/s2t3xlwkryfr3xskvfoq';
@@ -168,12 +163,7 @@ export const MockModelOptionsData = [
     },
 ];
 
-export const aspectOptions: AspectOption[] = [
-    { label: "1:1", icon: TbSquareDashed, value: "1:1" },
-    { label: "16:9", icon: LuRectangleHorizontal, value: "16:9" },
-    { label: "9:16", icon: LuRectangleVertical, value: "9:16" },
-    { label: "4:3", icon: TbRectangle, value: "4:3" },
-];
+
 
 export const trending = [
     {

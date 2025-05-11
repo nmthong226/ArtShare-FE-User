@@ -1,30 +1,37 @@
-import React, { useState } from 'react'
+import React from 'react'
 
 //Components
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
-import { Button, Collapse, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Collapse, ToggleButton, ToggleButtonGroup } from '@mui/material';
 
 //Icons
 import { IoIosArrowDown } from "react-icons/io";
 import { GoSidebarExpand } from "react-icons/go";
 import { IoImageOutline } from "react-icons/io5";
-import { IoIosArrowForward } from "react-icons/io";
-import { GoLightBulb } from "react-icons/go";
-import { AiOutlineCamera } from "react-icons/ai";
-import { IoColorFillOutline } from "react-icons/io5";
 
 //Assets
-import ModelOptions from './ModelOptions';
-import { aspectOptions, MockModelOptionsData } from '../../mock/Data';
 import AspectRatioOptions from './AspectRatio';
+import LightingOptions from './LightingOptions';
+import CameraOptions from './CameraOptions';
+import StyleOptions from './StyleOptions';
 
-const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
-    const [usedModel, setUsedModel] = useState<UsedModel | null>(MockModelOptionsData[0]);
-    const [aspectRatio, setAspectRatio] = useState(aspectOptions[0]);
-    const [numberOfImages, setNumberOfImages] = useState('4');
+const SettingsPanel: React.FC<PanelProps> = ({
+    isExpanded,
+    setIsExpanded,
+    numberOfImages,
+    setNumberOfImages,
+    aspectRatio,
+    setAspectRatio,
+    lighting,
+    setLighting,
+    camera,
+    setCamera,
+    style,
+    setStyle,
+}) => {
 
     const handleParentToggle = (_event: React.SyntheticEvent, isExpanded: boolean) => {
         setIsExpanded(isExpanded);
@@ -32,29 +39,26 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
 
     const handleSelectNumber = (
         _: React.MouseEvent<HTMLElement>,
-        newNumber: string
+        newNumber: number
     ) => {
         if (newNumber) {
             setNumberOfImages(newNumber);
         }
     };
 
-    const handleSelectModel = (model: UsedModel) => {
-        setUsedModel(model);
-    }
-
     return (
         <div className='absolute flex flex-col w-[300px]'>
             <div
                 aria-controls="panel2-content"
                 id="panel2-header"
-                className={`z-50 bg-gradient-to-r flex justify-between p-4 items-center from-blue-200 via-indigo-200 to-purple-200 ${isExpanded ? 'rounded-t-xl' : 'rounded-xl'}`}
+                className={`z-50 bg-gradient-to-r hover:cursor-pointer ${isExpanded ? '' : 'shadow-md'} flex justify-between p-4 items-center from-blue-200 via-indigo-200 to-purple-200 ${isExpanded ? 'rounded-t-xl' : 'rounded-xl'}`}
+                onClick={() => setIsExpanded(!isExpanded)}
             >
                 <Typography component="span" className="flex items-center space-x-2 font-medium">
                     <IoImageOutline className="size-5" />
-                    <p>Image Generation</p>
+                    <p>Generation Options</p>
                 </Typography>
-                <GoSidebarExpand />
+                <GoSidebarExpand onClick={() => setIsExpanded(!isExpanded)} />
             </div>
             <Accordion
                 expanded={isExpanded}
@@ -65,7 +69,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                         timeout: 200,
                     },
                 }}
-                className={`flex flex-col m-0 z-10 bg-white shadow-md border border-mountain-300 rounded-xl rounded-t-none w-[300px] ${isExpanded ? 'max-h-[calc(100vh-10rem)]' : 'h-fit'
+                className={`flex ${isExpanded ? '' : 'hidden'} flex-col m-0 z-10 bg-white shadow-md border border-mountain-300 rounded-xl rounded-t-none w-[300px] ${isExpanded ? 'max-h-[calc(100vh-9.5rem)]' : 'h-fit'
                     } overflow-y-auto custom-scrollbar`}>
 
                 <AccordionDetails className="flex flex-col flex-1 p-0 min-h-0 overflow-y-auto custom-scrollbar">
@@ -82,12 +86,18 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                         </AccordionSummary>
                         <AccordionDetails className='flex flex-col space-y-2 pb-0'>
                             <div className='flex flex-col space-y-1'>
-                                <p className='text-mountain-600 text-sm'>Model</p>
-                                <ModelOptions model={usedModel!} selectModel={handleSelectModel} />
+                                <p className='text-mountain-600 text-sm'>Style</p>
+                                <StyleOptions
+                                    style={style}
+                                    selectStyle={setStyle}
+                                />
                             </div>
                             <div className='flex flex-col space-y-1'>
                                 <p className='text-mountain-600 text-sm'>Aspect Ratio</p>
-                                <AspectRatioOptions selectedAspect={aspectRatio} onChange={setAspectRatio} />
+                                <AspectRatioOptions
+                                    selectedAspect={aspectRatio}
+                                    onChange={setAspectRatio}
+                                />
                             </div>
                         </AccordionDetails>
                     </Accordion>
@@ -98,32 +108,23 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                             id="panel2-header"
                         >
                             <Typography component="span" className="font-medium">
-                                Styles
+                                Effects
                             </Typography>
                         </AccordionSummary>
-                        <AccordionDetails className='flex flex-col'>
-                            <div className='flex flex-col space-y-1'>
-                                <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
-                                    <div className='flex items-center space-x-2'>
-                                        <IoColorFillOutline className='rounded-xs w-5 h-5' />
-                                        <p>Styles</p>
-                                    </div>
-                                    <IoIosArrowForward />
-                                </Button>
-                                <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
-                                    <div className='flex items-center space-x-2'>
-                                        <GoLightBulb className='rounded-xs w-5 h-5' />
-                                        <p>Lighting</p>
-                                    </div>
-                                    <IoIosArrowForward />
-                                </Button>
-                                <Button className='flex justify-between bg-mountain-100 p-3 rounded-xl w-full font-normal'>
-                                    <div className='flex items-center space-x-2'>
-                                        <AiOutlineCamera className='rounded-xs w-5 h-5' />
-                                        <p>Camera</p>
-                                    </div>
-                                    <IoIosArrowForward />
-                                </Button>
+                        <AccordionDetails className='flex flex-col space-y-1'>
+                            <div className='flex flex-col space-y-1 w-full'>
+                                <p className='text-mountain-600 text-sm'>Lighting</p>
+                                <LightingOptions
+                                    selectedLighting={lighting}
+                                    onChange={setLighting}
+                                />
+                            </div>
+                            <div className='flex flex-col space-y-1 w-full'>
+                                <p className='text-mountain-600 text-sm'>Camera</p>
+                                <CameraOptions
+                                    selectedCamera={camera}
+                                    onChange={setCamera}
+                                />
                             </div>
                         </AccordionDetails>
                     </Accordion>
@@ -148,7 +149,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                                     onChange={handleSelectNumber}
                                 >
                                     <ToggleButton
-                                        value="1"
+                                        value={1}
                                         className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/4 normal-case transition duration-300 ease-in-out transform"
                                         sx={{
                                             backgroundColor: '#e0e0e0',
@@ -167,7 +168,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                                         1
                                     </ToggleButton>
                                     <ToggleButton
-                                        value="2"
+                                        value={2}
                                         className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/4 normal-case transition duration-300 ease-in-out transform"
                                         sx={{
                                             backgroundColor: '#e0e0e0',
@@ -186,7 +187,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                                         2
                                     </ToggleButton>
                                     <ToggleButton
-                                        value="3"
+                                        value={3}
                                         className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/4 normal-case transition duration-300 ease-in-out transform"
                                         sx={{
                                             backgroundColor: '#e0e0e0',
@@ -205,7 +206,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                                         3
                                     </ToggleButton>
                                     <ToggleButton
-                                        value="4"
+                                        value={4}
                                         className="-m-0.5 px-4 py-2 border-0 rounded-full w-1/4 normal-case transition duration-300 ease-in-out transform"
                                         sx={{
                                             backgroundColor: '#e0e0e0',
@@ -229,7 +230,7 @@ const SettingsPanel: React.FC<PanelProps> = ({ isExpanded, setIsExpanded }) => {
                     </Accordion>
                 </AccordionDetails>
             </Accordion>
-        </div>
+        </div >
     )
 }
 

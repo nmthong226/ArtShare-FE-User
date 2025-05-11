@@ -32,19 +32,14 @@ import { FiTrash2 } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 import DeleteButton from './DeleteConfirmation';
 
-interface PromptResult {
-    id: string,
-    url: string
-}
-
 interface GenImageProps {
     index: number,
-    imageId: string,
-    resultId: string,
+    imageId: number,
+    resultId: number,
     image: string,
-    images: PromptResult[],
+    images: string[],
     prompt: string,
-    onDelete?: (resultId: string, imgId: string) => void;
+    onDelete?: (resultId: number, imgId: number) => void;
 }
 
 const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
@@ -72,7 +67,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
     };
 
     const handleDownload = () => {
-        const currentImageUrl = images[currentIndex].url;
+        const currentImageUrl = images[currentIndex];
         const link = document.createElement('a');
         link.href = currentImageUrl;
         link.download = `image-${currentIndex + 1}.jpg`; // or use original file name
@@ -110,13 +105,13 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
     return (
         <Dialog open={openDiaLog} onOpenChange={setOpenDiaLog}>
             <DialogTrigger asChild>
-                <div className='group relative'>
+                <div className='group relative flex h-full'>
                     <div className='relative flex'>
                         <img
                             src={image}
                             alt={`Image ${imageId}`}
                             loading="lazy"
-                            className='relative shadow-md cursor-pointer'
+                            className='relative flex shadow-md h-full object-cover cursor-pointer'
                             style={{ borderRadius: '8px' }}
                             onClick={() => { setCurrentIndex(index), setOpenDiaLog(true) }}
                         />
@@ -199,7 +194,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
                                 {images.map((_img, index) => (
                                     <div key={index} className="flex flex-shrink-0 justify-center items-center w-full h-full">
                                         <img
-                                            src={_img.url}
+                                            src={_img}
                                             alt={`Preview ${index}`}
                                             className="max-w-full max-h-[680px] object-contain"
                                         />

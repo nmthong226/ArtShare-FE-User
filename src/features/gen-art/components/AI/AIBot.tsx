@@ -11,7 +11,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import SuggestPrompt from './AI/SuggestPrompt';
+import SuggestPrompt from './SuggestPrompt';
 import { Button } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 
@@ -19,7 +19,7 @@ import Tooltip from '@mui/material/Tooltip';
 import { RiRobot2Line } from 'react-icons/ri'
 import { TbPrompt } from "react-icons/tb";
 import { TbTrendingUp } from "react-icons/tb";
-import TrendingPrompt from './AI/TrendingPrompt';
+import TrendingPrompt from './TrendingPrompt';
 
 const AIBot = () => {
     const [open, setOpen] = useState(false);

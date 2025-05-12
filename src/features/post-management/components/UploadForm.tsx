@@ -10,12 +10,12 @@ import {
   FormControl,
   Tooltip,
 } from "@mui/material";
-import SubjectSelector from "./SubjectSelector";
 import { MdCrop, MdErrorOutline, MdPhotoCameraBack } from "react-icons/md";
 
 import { ImageUpIcon } from "lucide-react";
 import { ImageCropperModal } from "@/components/ui/image-cropper-modal";
 import { Area } from "react-easy-crop";
+import SubjectPicker from "./SubjectPicker";
 
 const UploadForm: React.FC<{
   thumbnailFile: File | undefined;
@@ -341,7 +341,7 @@ const UploadForm: React.FC<{
           {/* Dialog for Selection */}
           <Box className="space-y-1 px-3 pb-3">
             {/** TODO: uncomment this */}
-            <SubjectSelector setCateIds={setCateIds} cate_ids={cate_ids} />
+            <SubjectPicker cate_ids={cate_ids} setCateIds={setCateIds} />
           </Box>
         </Box>
 

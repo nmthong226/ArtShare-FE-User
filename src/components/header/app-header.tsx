@@ -16,7 +16,7 @@ import UserButton from './user-button';
 import { useSearch } from "@/contexts/SearchProvider";
 import { useUser } from '@/contexts/UserProvider';
 
-const Header: React.FC = ({ }) => {
+const Header: React.FC = () => {
     const { user, loading } = useUser();
     const [isFocused, setIsFocused] = useState(false);
     const [inputValue, setInputValue] = useState("");

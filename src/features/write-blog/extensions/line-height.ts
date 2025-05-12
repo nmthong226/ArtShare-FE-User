@@ -58,8 +58,9 @@ export const LineHeightExtension = Extension.create({
                 return true;
             },
             unsetLineHeight: () => (props: CommandProps) => {
-                let { tr, state, dispatch } = props
+                const { state, dispatch } = props
                 const { selection } = state
+                let tr = props.tr;
                 tr = tr.setSelection(selection)
 
                 const { from, to } = selection

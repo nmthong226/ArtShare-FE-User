@@ -184,8 +184,8 @@ const ArtGenAI = () => {
                 });
             }, 100);
 
-        } catch (error: any) {
-            console.error('Image generation failed:', error);
+        } catch (e) {
+            console.error('Image generation failed:', e);
             if (intervalRef.current) clearInterval(intervalRef.current);
             setGeneratingImage(false);
         }
@@ -266,7 +266,7 @@ const ArtGenAI = () => {
                                         </div>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="flex flex-col mt-4 border-mountain-200 min-w-48 select-none">
-                                        {Object.entries(HistoryFilter).map(([_, value]) => (
+                                        {Object.entries(HistoryFilter).map(([value]) => (
                                             <div
                                                 key={value}
                                                 onClick={() => setHistoryFilter(value as HistoryFilter)}

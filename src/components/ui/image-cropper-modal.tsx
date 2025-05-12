@@ -17,9 +17,12 @@ interface Props {
   image: string;
   open: boolean;
   onClose: () => void;
-  onCropped: (croppedFile: Blob) => void;
+  onCropped: (croppedFile: Blob, thumbnail_crop_meta: string) => void;
   initialCrop?: { x: number; y: number };
   initialZoom?: number;
+  initialAspect?: number;
+  initialSelectedAspect?: string;
+  initialCroppedAreaPixels?: Area;
   onCropChange?: (crop: { x: number; y: number }) => void;
   onZoomChange?: (zoom: number) => void;
 }
@@ -43,14 +46,23 @@ export const ImageCropperModal: React.FC<Props> = ({
   onCropped,
   initialCrop,
   initialZoom,
+  initialAspect,
+  initialSelectedAspect,
+  initialCroppedAreaPixels,
   onCropChange,
   onZoomChange,
 }) => {
-  const [crop, setCrop] = useState(initialCrop || { x: 0, y: 0 });
-  const [zoom, setZoom] = useState(initialZoom || 1);
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
   const [aspect, setAspect] = useState<number | undefined>(undefined);
   const [selectedAspect, setSelectedAspect] = useState("Free");
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+
+  useEffect(() => {
+    if (initialCroppedAreaPixels) {
+      setCroppedAreaPixels(initialCroppedAreaPixels);
+    }
+  }, [image]);
 
   const onCropComplete = useCallback((_: Area, croppedPixels: Area) => {
     setCroppedAreaPixels(croppedPixels);
@@ -61,7 +73,14 @@ export const ImageCropperModal: React.FC<Props> = ({
   const cropImage = async () => {
     if (croppedAreaPixels) {
       const cropped = await getCroppedImg(image, croppedAreaPixels);
-      onCropped(cropped);
+      const thumbnail_crop_meta = {
+        crop,
+        zoom,
+        aspect,
+        croppedAreaPixels,
+        selectedAspect,
+      };
+      onCropped(cropped, JSON.stringify(thumbnail_crop_meta));
       onClose();
     }
   };
@@ -77,9 +96,9 @@ export const ImageCropperModal: React.FC<Props> = ({
     const img = new Image();
     img.src = image;
     img.onload = () => {
-      const naturalAspect = img.width / img.height;
+      const naturalAspect = initialAspect ?? img.width / img.height;
       setAspect(naturalAspect);
-      setSelectedAspect("Original");
+      setSelectedAspect(initialSelectedAspect ?? "Original");
     };
   }, [image]);
 
@@ -143,26 +162,29 @@ export const ImageCropperModal: React.FC<Props> = ({
 
         <div className="text-sm px-6 pb-4 flex flex-col gap-3 dark:text-white">
           <div>
-            <label>
-              Zoom
-              <input
-                type="range"
-                min="1"
-                max="3"
-                step="0.1"
-                value={zoom}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  setZoom(value);
-                  onZoomChange?.(value); // ✅ propagate to parent
-                }}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:text-white"
-              />
+            <label className="block mb-1 font-medium">
+              {" "}
+              {/* Added block and margin for better label spacing */}
+              Zoom: {zoom.toFixed(1)}x{" "}
+              {/* Display current zoom next to label */}
             </label>
-            <div className="flex justify-between text-xs mt-1">
-              <span>1x</span>
-              <span>{zoom.toFixed(1)}x</span>
-              <span>3x</span>
+            <input
+              type="range"
+              min="1" // Min zoom value
+              max="3" // Max zoom value
+              step="0.1"
+              value={zoom}
+              onChange={(e) => {
+                const value = Number(e.target.value);
+                setZoom(value);
+                onZoomChange?.(value);
+              }}
+              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700" // Added dark mode bg
+            />
+            {/* Simplified labels for min and max */}
+            <div className="flex justify-between text-xs mt-1 text-gray-500 dark:text-gray-400">
+              <span>Min (1x)</span>
+              <span>Max (3x)</span>
             </div>
           </div>
 

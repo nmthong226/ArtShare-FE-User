@@ -34,41 +34,53 @@ export const lightTheme = createTheme({
         root: {
           borderRadius: "8px",
           textTransform: "none",
-          fontWeight: 500, // Default font weight
+          fontWeight: 500,
         },
+        contained: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "error"
+            ? {
+                backgroundColor: theme.palette.error.main,
+                color: theme.palette.error.contrastText,
+                "&:hover": {
+                  backgroundColor: theme.palette.error.dark,
+                },
+              }
+            : {
+                backgroundColor: "#7986cb",
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#5c6bc0",
+                },
+              }),
+        }),
         text: {
           "&.MuiButton-root": {
-            color: "#000000", // black text
-            fontWeight: 700, // bold
+            color: "#000000",
+            fontWeight: 700,
           },
-          // Add a subtle hover if desired for text variant
           "&:hover": {
-            backgroundColor: "rgba(0, 0, 0, 0.04)", // Standard subtle background on hover
+            backgroundColor: "rgba(0, 0, 0, 0.04)",
           },
         },
-        contained: {
-          backgroundColor: "#7986cb", // Indigo 400
-          color: "#ffffff",
-          "&:hover": {
-            backgroundColor: "#5c6bc0", // Darken slightly on hover (Indigo 500)
-          },
-          "&.Mui-disabled": {
-            backgroundColor: "rgba(159, 168, 218, 0.5)",
-            color: "rgba(255, 255, 255, 0.7)",
-          },
-        },
-        outlined: {
-          borderColor: "#5c6bc0", // Indigo 500 for the border
-          color: "#5c6bc0", // Indigo 500 for the text
-          "&:hover": {
-            borderColor: "#3f51b5", // Darken border on hover (Indigo 600)
-            backgroundColor: "rgba(121, 134, 203, 0.04)", // Add a very faint background tint on hover (Indigo 500 with low alpha)
-          },
-          "&.Mui-disabled": {
-            borderColor: "rgba(121, 134, 203, 0.5)",
-            color: "rgba(121, 134, 203, 0.5)",
-          },
-        },
+        outlined: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "error"
+            ? {
+                borderColor: theme.palette.error.main,
+                color: theme.palette.error.main,
+                "&:hover": {
+                  borderColor: theme.palette.error.dark,
+                  backgroundColor: "rgba(211, 47, 47, 0.04)",
+                },
+              }
+            : {
+                borderColor: "#5c6bc0",
+                color: "#5c6bc0",
+                "&:hover": {
+                  borderColor: "#3f51b5",
+                  backgroundColor: "rgba(121, 134, 203, 0.04)",
+                },
+              }),
+        }),
       },
     },
 
@@ -311,8 +323,53 @@ export const darkTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
+          borderRadius: "8px",
+          textTransform: "none",
+          fontWeight: 500,
+        },
+        contained: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "error"
+            ? {
+                backgroundColor: theme.palette.error.main,
+                color: theme.palette.error.contrastText,
+                "&:hover": {
+                  backgroundColor: theme.palette.error.dark,
+                },
+              }
+            : {
+                backgroundColor: "000",
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#818cf8", // hover variant of primary
+                },
+              }),
+        }),
+        outlined: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "error"
+            ? {
+                borderColor: theme.palette.error.main,
+                color: theme.palette.error.main,
+                "&:hover": {
+                  borderColor: theme.palette.error.dark,
+                  backgroundColor: "rgba(211, 47, 47, 0.08)",
+                },
+              }
+            : {
+                borderColor: theme.palette.primary.main,
+                color: "#ffffff",
+                "&:hover": {
+                  borderColor: "#818cf8",
+                  backgroundColor: "rgba(165, 180, 252, 0.08)",
+                },
+              }),
+        }),
+        text: {
+          "&.MuiButton-root": {
+            fontWeight: 700,
+            color: "#ffffff",
+          },
           "&:hover": {
-            backgroundColor: "#818cf8",
+            backgroundColor: "rgba(255, 255, 255, 0.08)",
           },
         },
       },
@@ -338,7 +395,7 @@ export const darkTheme = createTheme({
               borderWidth: "2px",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "#e7e7e7", // primary.main on focus
+              borderColor: "#a5b4fc", // primary.main on focus
               borderWidth: "2px",
             },
           },

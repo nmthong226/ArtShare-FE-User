@@ -4,8 +4,6 @@ import PostArtist from "@/features/post/components/PostArtist";
 import PostComments from "@/features/post/components/PostComments";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import PostTags from "@/features/post/components/PostTags";
-import PostMoreByArtist from "@/features/post/components/PostMoreByArtist";
 // import PostShare from "@/components/posts/PostShare";
 import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
@@ -39,32 +37,26 @@ const Post: React.FC = () => {
     return <div>Failed to fetch post data.</div>;
   }
 
-  const PostContent = () => {
-    return (
-      <div className="flex flex-col gap-8">
-        <PostInfo postData={postData!} />
-        <PostComments />
-        <PostTags categories={postData!.categories} />
-        <PostMoreByArtist artist={postData!.user} />
-        {/* <PostShare /> */}
-      </div>
-    );
-  };
-
   return (
-    <div className="flex-grow bg-mountain-50 py-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
-      <div className="md:hidden flex flex-col gap-4 p-4">
-        <PostArtist artist={postData!.user} />
-        <PostAssets medias={postData!.medias} />
-        <PostContent />
+    <div className="relative flex-grow bg-mountain-50 p-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
+      <div className="md:hidden relative flex flex-col bg-white shadow p-4 rounded-2xl h-full">
+        <div className="rounded-2xl h-full overflow-y-auto">
+          <PostArtist artist={postData!.user} postData={postData!} />
+          <PostAssets medias={postData!.medias} />
+          <PostInfo postData={postData!} />
+          <PostComments />
+        </div>
       </div>
-      <div className="hidden md:flex flex-row h-full">
-        <div className="flex flex-grow justify-center items-center pl-4 h-full overflow-y-scroll no-scrollbar">
+      <div className="hidden md:flex flex-row gap-4 h-full">
+        <div className="flex flex-grow justify-center items-center h-full overflow-y-scroll no-scrollbar">
           <PostAssets medias={postData!.medias} />
         </div>
-        <div className="flex-shrink-0 py-0 pr-4 pl-8 sm:w-[256px] md:w-[384px] lg:w-[448px] overflow-y-scroll no-scrollbar">
-          <PostArtist artist={postData!.user} />
-          <PostContent />
+        <div className="relative flex-shrink-0 bg-white shadow py-0 pl-4 rounded-2xl sm:w-[256px] md:w-[384px] lg:w-[448px]">
+          <div className="flex flex-col gap-4 rounded-2xl h-full overflow-y-scroll custom-scrollbar">
+            <PostArtist artist={postData!.user} postData={postData!} />
+            <PostInfo postData={postData!} />
+            <PostComments />
+          </div>
         </div>
       </div>
     </div>

@@ -23,4 +23,5 @@ export interface Post {
   medias: Media[];
   user: User;
   categories?: Category[];
+  thumbnail_crop_meta: string;
 }

@@ -21,7 +21,7 @@ const AdjustmentSlider = ({
     step = 1,
     gradientColors
 }: AdjustmentSliderProps) => {
-    const handleChange = (_: any, newValue: number | number[]) => {
+    const handleChange = (_: React.SyntheticEvent | Event, newValue: number | number[]) => {
         if (typeof newValue === "number") onChange(newValue);
     };
 

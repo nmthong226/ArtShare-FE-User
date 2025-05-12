@@ -14,7 +14,6 @@ import RelatedBlogs from "./components/RelatedBlogs";
 import { BiComment } from "react-icons/bi";
 import { AiOutlineLike } from "react-icons/ai";
 import { MdBookmarkBorder } from "react-icons/md";
-import { Share2 } from "lucide-react";
 import { LuPlus } from "react-icons/lu";
 import Share from "@/components/dialogs/Share";
 

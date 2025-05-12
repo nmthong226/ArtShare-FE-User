@@ -31,3 +31,6 @@ yarn.lock
 db
 
 .vercel
+
+# # Ignore assets folder in gen-art feature
+src/features/gen-art/assets/

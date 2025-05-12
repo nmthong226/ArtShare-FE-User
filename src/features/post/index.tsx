@@ -5,7 +5,7 @@ import PostComments from "@/features/post/components/PostComments";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 // import PostShare from "@/components/posts/PostShare";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
 import { fetchPost } from "./api/post.api";
 

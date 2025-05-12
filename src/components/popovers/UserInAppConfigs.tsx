@@ -86,13 +86,8 @@ const UserInAppConfigs = () => {
               </div>
             </div>
             <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
-            <div className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer">
-              <p className="bg-clip-text bg-gradient-to-r from-blue-800 dark:from-blue-500 to-pink-800 dark:to-pink-500 text-transparent text-sm">
-                Become Seller
-              </p>
-            </div>
             <Link
-              to={`/${user.username}`}
+              to={`/u/${user.username}`}
               className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer"
             >
               <p className="text-sm">User Profile</p>

@@ -1,6 +1,7 @@
 export interface User {
   id: string;
   username: string;
+  full_name: string;
   email: string;
   full_name?: string | null;
   profile_picture_url?: string | null;

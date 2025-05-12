@@ -35,13 +35,6 @@ interface promptResultProps {
     onDeleteSingle?: (resultId: number, imageIndex: number) => void;
 }
 
-const LoadingCell = ({ percent }: { percent: number }) => (
-    <div className='relative flex justify-center items-center bg-mountain-100 rounded-[8px] h-full'>
-        <CircularProgress size={48} thickness={4} />
-        <p className='absolute font-medium text-gray-700 text-sm'>{percent}%</p>
-    </div>
-);
-
 const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating, resultId, progress, index, onDelete, onDeleteSingle }) => {
     const [open, setOpen] = useState(false);
 
@@ -156,7 +149,10 @@ const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating,
                                         index={imgIndex}
                                         resultId={resultId!} />
                                 ) : (
-                                    <LoadingCell percent={progress![imgIndex]} />
+                                    <div className='relative flex justify-center items-center bg-mountain-100 rounded-[8px] h-full'>
+                                        <CircularProgress size={64} thickness={4} />
+                                        <p className='absolute font-medium text-gray-700 text-sm'>...Loading</p>
+                                    </div>
                                 )}
                             </ImageListItem>
                         ))}

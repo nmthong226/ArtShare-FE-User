@@ -160,16 +160,6 @@ const ArtGenAI = () => {
         setCommittedPrompt(userPrompt);
         setLoadingProgress(Array(numberOfImages).fill(0));
 
-        // Start simulating progress immediately
-        intervalRef.current = setInterval(() => {
-            setLoadingProgress((prev) => {
-                const updated = prev.map((p) =>
-                    p < 100 ? Math.min(p + Math.floor(Math.random() * 5) + 1, 100) : p
-                );
-                return updated;
-            });
-        }, 500);
-
         const payload = {
             prompt: userPrompt,
             modelKey: modelKey,
@@ -182,7 +172,6 @@ const ArtGenAI = () => {
         console.log(payload);
         try {
             const response = await api.post('/art-generation/text-to-image', payload);
-            setLoadingProgress((prev) => prev.map(() => 100));
             setPromptResult(response.data);
             setUserPrompt('');
             setGeneratingImage(false);
@@ -268,7 +257,7 @@ const ArtGenAI = () => {
                         <div className='flex w-full h-full'>
                             <div className='flex justify-start items-center bg-mountain-100 hover:bg-mountain-200/80 px-2 rounded-lg w-full h-full font-normal'>
                                 <DropdownMenu>
-                                    <DropdownMenuTrigger className="justify-start outline-none hover:cursor-pointer">
+                                    <DropdownMenuTrigger className="justify-start outline-none w-full hover:cursor-pointer">
                                         <div className="flex items-center space-x-2">
                                             <p>
                                                 Show <span className="font-medium">{getLabel(historyFilter)}</span>

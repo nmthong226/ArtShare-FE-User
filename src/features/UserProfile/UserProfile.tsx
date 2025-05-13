@@ -1,14 +1,20 @@
-import { useParams } from "react-router-dom";
-import { useUser } from "@/contexts/UserProvider";
+// TODO: implement is owner for user profile
+
+// import { useParams } from "react-router-dom";
+// import { useUser } from "@/contexts/UserProvider";
 import UserPosts from "@/features/UserProfile/components/UserPosts";
+import { Box, Tabs, Tab } from "@mui/material";
 import { Box, Tabs, Tab } from "@mui/material";
 import { useState } from "react";
 import { UserProfileCard } from "../user-profile/UserProfileCard";
+import UserBlogs from "./components/UserBlogs";
 
 const UserProfile = () => {
-  const { username } = useParams();
-  const { user } = useUser();
-  const isOwner = user?.username === username;
+  // TODO: implement is owner for user profile
+
+  // const { username } = useParams();
+  // const { user } = useUser();
+  // const isOwner = user?.username === username;
   const [selectedTab, setSelectedTab] = useState(0);
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
@@ -24,6 +30,7 @@ const UserProfile = () => {
           gap: 4,
           minHeight: "100vh",
         }}
+        className="bg-white shadow p-2 rounded-md"
       >
         {/* TOP SECTION: Profile card */}
         <Box
@@ -32,12 +39,12 @@ const UserProfile = () => {
             overflowY: "auto",
           }}
         >
-            <UserProfileCard />
+          <UserProfileCard />
         </Box>
 
         {/* BOTTOM SECTION: Posts */}
-        <Box className="w-full">
-          <Box className="mb-6">
+        <Box sx={{ width: "100%" }}>
+          <Box sx={{ mb: 3 }}>
             <Tabs
               value={selectedTab}
               onChange={handleTabChange}
@@ -45,10 +52,9 @@ const UserProfile = () => {
               indicatorColor="primary"
               sx={{
                 minHeight: 0,
-                ".MuiTabs-flexContainer": {
-                  gap: 2,
-                },
+                ".MuiTabs-flexContainer": { gap: 2 },
               }}
+              className="text-mountain-950"
             >
               <Tab
                 label="All posts"
@@ -60,8 +66,8 @@ const UserProfile = () => {
               />
             </Tabs>
           </Box>
-
-          <UserPosts />
+          {selectedTab === 0 && <UserPosts />}
+          {selectedTab === 1 && <UserBlogs />}
         </Box>
       </Box>
     </Box>

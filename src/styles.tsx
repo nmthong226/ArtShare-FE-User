@@ -5,7 +5,12 @@ export const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#a5b4fc", // Indigo 300
+      // Use Indigo 500 (#5c6bc0) as the main primary color
+      main: "#5c6bc0",
+      // Add Indigo 400 (#7986cb) as the light variant
+      light: "#7986cb",
+      // Add Indigo 600 (#3f51b5) as the dark variant (useful for hovers)
+      dark: "#3f51b5",
     },
     secondary: {
       main: "#6b7280", // Grey
@@ -19,6 +24,9 @@ export const lightTheme = createTheme({
       secondary: "#6b7280", // Grey
     },
     divider: "#d1d5db", // Soft grey for borders
+    error: {
+      main: "#d32f2f", // Standard MUI red
+    },
   },
   components: {
     MuiButton: {
@@ -27,16 +35,52 @@ export const lightTheme = createTheme({
           borderRadius: "8px",
           textTransform: "none",
           fontWeight: 500,
-          "&:hover": {
-            backgroundColor: "#c7d2fe", // lighter indigo
-          },
         },
+        contained: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "error"
+            ? {
+                backgroundColor: theme.palette.error.main,
+                color: theme.palette.error.contrastText,
+                "&:hover": {
+                  backgroundColor: theme.palette.error.dark,
+                },
+              }
+            : {
+                backgroundColor: "#7986cb",
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#5c6bc0",
+                },
+              }),
+        }),
         text: {
           "&.MuiButton-root": {
-            color: "#000000", // black text
-            fontWeight: 700, // bold
+            color: "#000000",
+            fontWeight: 700,
+          },
+          "&:hover": {
+            backgroundColor: "rgba(0, 0, 0, 0.04)",
           },
         },
+        outlined: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "error"
+            ? {
+                borderColor: theme.palette.error.main,
+                color: theme.palette.error.main,
+                "&:hover": {
+                  borderColor: theme.palette.error.dark,
+                  backgroundColor: "rgba(211, 47, 47, 0.04)",
+                },
+              }
+            : {
+                borderColor: "#5c6bc0",
+                color: "#5c6bc0",
+                "&:hover": {
+                  borderColor: "#3f51b5",
+                  backgroundColor: "rgba(121, 134, 203, 0.04)",
+                },
+              }),
+        }),
       },
     },
 
@@ -143,7 +187,7 @@ export const lightTheme = createTheme({
           "&.Mui-checked": {
             color: "#a5b4fc",
           },
-          "&.Mui-checked + .MuiSwitch-track": {
+          "&.Mui-checked  .MuiSwitch-track": {
             backgroundColor: "#a5b4fc",
           },
         },
@@ -222,7 +266,34 @@ export const lightTheme = createTheme({
         },
       },
     },
-    
+    // Menus
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#ffffff",
+          border: "1px solid #d1d5db",
+          boxShadow: "0 2px 8px rgba(0,0,0,.06)",
+          "& .MuiMenuItem-root": {
+            fontSize: 14,
+            fontWeight: 500,
+            color: "#111827",
+            transition: "background-color .15s",
+            "&:hover": { backgroundColor: "#f3f4f6" }, // hover tint
+          },
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          "&.danger": {
+            // optional “Delete” utility class
+            color: "#ef4444",
+            "&:hover": { backgroundColor: "rgba(239,68,68,.08)" },
+          },
+        },
+      },
+    },
   },
 });
 
@@ -252,8 +323,53 @@ export const darkTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
+          borderRadius: "8px",
+          textTransform: "none",
+          fontWeight: 500,
+        },
+        contained: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "error"
+            ? {
+                backgroundColor: theme.palette.error.main,
+                color: theme.palette.error.contrastText,
+                "&:hover": {
+                  backgroundColor: theme.palette.error.dark,
+                },
+              }
+            : {
+                backgroundColor: "000",
+                color: "#ffffff",
+                "&:hover": {
+                  backgroundColor: "#818cf8", // hover variant of primary
+                },
+              }),
+        }),
+        outlined: ({ ownerState, theme }) => ({
+          ...(ownerState.color === "error"
+            ? {
+                borderColor: theme.palette.error.main,
+                color: theme.palette.error.main,
+                "&:hover": {
+                  borderColor: theme.palette.error.dark,
+                  backgroundColor: "rgba(211, 47, 47, 0.08)",
+                },
+              }
+            : {
+                borderColor: theme.palette.primary.main,
+                color: "#ffffff",
+                "&:hover": {
+                  borderColor: "#818cf8",
+                  backgroundColor: "rgba(165, 180, 252, 0.08)",
+                },
+              }),
+        }),
+        text: {
+          "&.MuiButton-root": {
+            fontWeight: 700,
+            color: "#ffffff",
+          },
           "&:hover": {
-            backgroundColor: "#818cf8",
+            backgroundColor: "rgba(255, 255, 255, 0.08)",
           },
         },
       },
@@ -279,7 +395,7 @@ export const darkTheme = createTheme({
               borderWidth: "2px",
             },
             "&.Mui-focused fieldset": {
-              borderColor: "#e7e7e7", // primary.main on focus
+              borderColor: "#a5b4fc", // primary.main on focus
               borderWidth: "2px",
             },
           },
@@ -352,6 +468,32 @@ export const darkTheme = createTheme({
         },
       },
     },
-    
+    // Menus
+    MuiMenu: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: "#262626",
+          border: "1px solid #374151",
+          boxShadow: "0 2px 8px rgba(0,0,0,.5)",
+          "& .MuiMenuItem-root": {
+            fontSize: 14,
+            fontWeight: 500,
+            color: "#ffffff",
+            transition: "background-color .15s",
+            "&:hover": { backgroundColor: "rgba(255,255,255,.08)" },
+          },
+        },
+      },
+    },
+    MuiMenuItem: {
+      styleOverrides: {
+        root: {
+          "&.danger": {
+            color: "#ef4444",
+            "&:hover": { backgroundColor: "rgba(239,68,68,.16)" },
+          },
+        },
+      },
+    },
   },
 });

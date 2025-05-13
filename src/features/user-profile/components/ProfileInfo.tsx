@@ -31,7 +31,7 @@ const ProfileInfo: FC<ProfileInfoProps> = ({ name, username, bio, followings_cou
       </div> */}
       <ProfileStats following={followings_count || 0} followers={followers_count || 0} />
     </div>
-  )
-}
+  );
+};
 
-export default ProfileInfo
+export default ProfileInfo;

@@ -1,49 +1,111 @@
-import { RowsPhotoAlbum } from "react-photo-album";
-import { useMemo } from "react";
-import { ImageRenderer } from "@/components/gallery/ImageRenderer";
-
-const posts = [
-  {
-    id: 1,
-    username: "Jade",
-    handle: "@itsjade",
-    time: "19hr",
-    text: "Testtttt",
-    image: "/logo_app_v_101.png", // Replace with actual path
-  },
-  {
-    id: 2,
-    username: "Jade",
-    handle: "@itsjade",
-    time: "4d",
-    text: "",
-    image: "/logo_app_v_101.png",
-  },
-];
+import { Link as RouterLink, useParams } from "react-router-dom";
+import Link from "@mui/material/Link";
+import { AiOutlineLike } from "react-icons/ai";
+import { BiCommentDetail } from "react-icons/bi";
+import { HiOutlineEye } from "react-icons/hi";
+import { useEffect, useState } from "react";
+import { fetchUserPosts } from "../api/get-posts-by-user";
+import { Post } from "@/types";
+import { Box, CircularProgress, Typography } from "@mui/material";
 
 const UserPosts = () => {
-  const photos = useMemo(
-    () =>
-      posts.map((post) => ({
-        key: post.id.toString(),
-        src: post.image,
-        width: 640,
-        height: 360,
-        title: post.text,
-        author: post.username,
-        postLength: 1, // or actual length if multiple media
-        postId: post.id,
-      })),
-    [],
-  );
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loadingPosts, setLoadingPosts] = useState(true);
+  const { username } = useParams<{ username: string }>();
+
+  useEffect(() => {
+    if (!username) return;
+    (async () => {
+      try {
+        setLoadingPosts(true);
+        const userPosts = await fetchUserPosts(username, 1);
+        console.log("@@ User posts", userPosts);
+        setPosts(userPosts);
+      } catch (error) {
+        console.error("Error fetching user posts:", error);
+      } finally {
+        setLoadingPosts(false);
+      }
+    })();
+  }, [username]);
+
+  if (!username) return null;
+
+  if (loadingPosts) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height={200}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (posts.length === 0) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height={200}
+      >
+        <Typography variant="body2" color="textSecondary">
+          No posts available.
+        </Typography>
+      </Box>
+    );
+  }
 
   return (
-    <RowsPhotoAlbum
-      photos={photos}
-      spacing={8}
-      targetRowHeight={250}
-      render={{ image: ImageRenderer }}
-    />
+    <div className="gap-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-7 3xl:grid-cols-8 4xl:grid-cols-10 xl:grid-cols-6 p-1 w-full">
+      {posts.map((post) => (
+        <Link
+          component={RouterLink}
+          to={`/posts/${post.id}`}
+          key={post.id}
+          className="group relative hover:shadow-[0_8px_12px_-4px_rgba(0,0,0,0.4)] aspect-h-1 aspect-w-1 overflow-hidden transition-shadow duration-300"
+          underline="none"
+        >
+          <img
+            src={post.thumbnail_url}
+            alt={post.title}
+            className="w-full h-full object-cover transition-transform duration-300"
+          />
+
+          <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-b from-transparent via-transparent to-black/70 opacity-0 group-hover:opacity-100 p-3 text-white transition-opacity duration-300">
+            <div className="flex justify-between items-end w-full">
+              <div>
+                <p className="font-medium truncate">
+                  {post.title || "Untitled"}
+                </p>
+                <p className="text-gray-300 text-xs break-words whitespace-normal">
+                  @{username}
+                </p>
+              </div>
+              <div className="flex flex-col items-end space-y-1 text-xs">
+                <div className="flex items-center space-x-1">
+                  <span className="font-semibold">{post.like_count}</span>
+                  <AiOutlineLike className="size-4" />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span className="font-semibold">{post.comment_count}</span>
+                  <BiCommentDetail className="size-4" />
+                </div>
+                <div className="flex items-center space-x-1">
+                  <span className="font-semibold">
+                    {post.view_count || "X"}
+                  </span>
+                  <HiOutlineEye className="size-4" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
   );
 };
 

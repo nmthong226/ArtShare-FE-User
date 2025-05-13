@@ -60,6 +60,17 @@ export const UserProfileCard = () => {
   if (!profileData) {
     return <div>No profile data available.</div>;
   }
+  if (isLoading) {
+    return <div>Loading profile...</div>;
+  }
+
+  if (isError) {
+    return <div>Error loading profile: {error?.message}</div>;
+  }
+
+  if (!profileData) {
+    return <div>No profile data available.</div>;
+  }
 
   return (
     <div>

@@ -1,22 +1,25 @@
-interface User {
+export interface User {
   id: string;
-  name: string;
+  username: string;
+  full_name: string;
   email: string;
-  username?: string;
-  password_hash?: string;
-  full_name?: string;
-  profile_picture_url?: string;
-  bio?: string;
-  created_at?: Date;
-  updated_at?: Date;
-  refresh_token?: string;
-
-  //   posts: Post[];
-
-  //   likes: Like[];
-  //   comments: Comment[];
-  //   shares: Share[];
-
-  //   followers: Follow[];
-  //   followings: Follow[];
+  full_name?: string | null;
+  profile_picture_url?: string | null;
+  bio?: string | null;
+  created_at: Date;
+  updated_at?: Date | null;
+  refresh_token?: string | null;
+  followers_count: number;
+  followings_count: number;
+  collections?: Collection[];
+  blogs?: Blog[];
+  bookmarks?: Bookmark[];
+  comments?: Comment[];
+  followers?: Follow[];
+  followings?: Follow[];
+  likes?: Like[];
+  posts?: Post[];
+  ratings?: Rating[];
+  shares?: Share[];
+  roles?: UserRole[];
 }

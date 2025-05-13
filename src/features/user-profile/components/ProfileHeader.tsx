@@ -11,10 +11,6 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({
   name,
   avatarUrl,
 }) => {
-const ProfileHeader: FC<ProfileHeaderProps> = ({
-  name,
-  avatarUrl,
-}) => {
   return (
     <div className="flex items-start justify-between">
       <div className="flex items-center gap-3">

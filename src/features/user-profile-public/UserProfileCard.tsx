@@ -49,10 +49,6 @@ export const UserProfileCard = () => {
   const isFollowing = profileData?.isFollowing;
   const iconColor = "white";
 
-  if (isLoading) {
-    return <div>Loading profile...</div>;
-  }
-
   if (isError) {
     return <div>Error loading profile: {error?.message}</div>;
   }
@@ -62,14 +58,6 @@ export const UserProfileCard = () => {
   }
   if (isLoading) {
     return <div>Loading profile...</div>;
-  }
-
-  if (isError) {
-    return <div>Error loading profile: {error?.message}</div>;
-  }
-
-  if (!profileData) {
-    return <div>No profile data available.</div>;
   }
 
   return (

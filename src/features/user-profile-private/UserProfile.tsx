@@ -1,12 +1,9 @@
-// TODO: implement is owner for user profile
-
 // import { useParams } from "react-router-dom";
 // import { useUser } from "@/contexts/UserProvider";
-import UserPosts from "@/features/UserProfile/components/UserPosts";
-import { Box, Tabs, Tab } from "@mui/material";
+import UserPosts from "@/features/user-profile-private/components/UserPosts";
 import { Box, Tabs, Tab } from "@mui/material";
 import { useState } from "react";
-import { UserProfileCard } from "../user-profile/UserProfileCard";
+import { UserProfileCard } from "../user-profile-public/UserProfileCard";
 import UserBlogs from "./components/UserBlogs";
 
 const UserProfile = () => {

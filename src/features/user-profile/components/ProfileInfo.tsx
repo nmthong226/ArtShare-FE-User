@@ -1,6 +1,4 @@
 import type { FC } from "react"
-import { Link } from "lucide-react"
-import { useTheme } from "@/contexts/ThemeProvider";
 import ProfileStats from "./ProfileStats";
 
 interface ProfileInfoProps {
@@ -9,9 +7,11 @@ interface ProfileInfoProps {
   bio: string
   location: string
   website: string
+  followings_count: number
+  followers_count: number
 }
 
-const ProfileInfo: FC<ProfileInfoProps> = ({ name, username, bio, website }) => {
+const ProfileInfo: FC<ProfileInfoProps> = ({ name, username, bio, followings_count, followers_count }) => {
   return (
     <div className="pt-3 px-4 pb-3">
       <h1 className="text-black dark:text-white text-xl font-bold">{name}</h1>
@@ -29,7 +29,7 @@ const ProfileInfo: FC<ProfileInfoProps> = ({ name, username, bio, website }) => 
           </div>
         )}
       </div> */}
-      <ProfileStats following={10} followers={9} />
+      <ProfileStats following={followings_count || 0} followers={followers_count || 0} />
     </div>
   )
 }

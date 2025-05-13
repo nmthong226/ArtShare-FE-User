@@ -1,19 +1,28 @@
 import api from "@/api/baseApi";
 
-interface UserProfile {
+export interface UserProfile {
+  id: string;
   username: string;
   email: string;
   full_name: string | null;
   profile_picture_url: string | null;
   bio: string | null;
-  following_count: number;
+  followings_count: number;
   followers_count: number;
+  isFollowing: boolean;
+  birthday: string | null;
 }
 
-export const getUserProfile = async (): Promise<UserProfile> => {
+export const getUserProfile = async (userId?: string): Promise<UserProfile> => {
+  const url = userId
+    ? `/users/profile/${encodeURIComponent(userId)}`
+    : "/users/profile";
+
+  console.log('url for userProfile: ', url)
+
   try {
-    const response = await api.get<UserProfile>("/users/profile");
-    return response.data;
+    const { data } = await api.get<UserProfile>(url);
+    return data;
   } catch (error) {
     console.error("Error fetching user profile:", error);
     throw error;

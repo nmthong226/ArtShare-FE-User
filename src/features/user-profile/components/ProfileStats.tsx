@@ -9,7 +9,7 @@ const ProfileStats: FC<ProfileStatsProps> = ({ following, followers }) => {
   return (
     <div className="py-3 flex gap-4 text-sm">
       <div className="flex items-center">
-        <span className="font-bold text-black dark:text-white">{following | 0}</span>
+        <span className="font-bold text-black dark:text-white">{following}</span>
         <span className="text-black dark:text-gray-500 ml-1">Following</span>
       </div>
       <div className="flex items-center">

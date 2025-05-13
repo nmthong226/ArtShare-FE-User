@@ -30,12 +30,13 @@ import { FaFacebookF } from "react-icons/fa6";
 //Components
 import { PricingSection } from "@/components/ui/pricing-section";
 import { BsInstagram, BsTwitterX } from "react-icons/bs";
+import { PricingTier } from "@/components/ui/pricing-card";
 
 export const PAYMENT_FREQUENCIES = ["monthly", "yearly"];
 
-export const TIERS = [
+export const TIERS: PricingTier[] = [
   {
-    id: "individuals",
+    id: "individual",
     name: "Individuals",
     price: {
       monthly: "Free",
@@ -43,48 +44,61 @@ export const TIERS = [
     },
     description: "Used by art lovers",
     features: [
-      "Upload up to 10 artworks",
-      "Basic AI enhancements",
-      "Community engagement & likes",
-      "Standard resolution downloads",
-      "Basic profile customization",
+      "Showcase your artwork and build your public portfolio.",
+      "Connect with a vibrant community of artists and art lovers.",
+      "Experiment with basic AI art generation using daily credits.",
+      "Discover trending AI artwork and the prompts used to create them.",
+      "Get inspired with basic suggestions for popular prompt styles.",
+      "Engage via likes, comments, follows, and shares on the platform.",
     ],
     cta: "Get started",
+    actionType: "none",
   },
   {
-    id: "artists",
+    id: "artist",
     name: "Pro Artists",
     price: {
-      monthly: 9,
-      yearly: 7.5,
+      monthly: 12,
+      yearly: 10,
     },
     description: "Great for small businesses",
     features: [
-      "Unlimited artwork uploads",
-      "Advanced AI enhancements",
-      "Single-user account",
-      "Premium profile customization",
-      "Higher-resolution downloads",
+      "Everything in Free plan.",
+      "Unlock advanced AI models for higher quality art generation.",
+      "Receive a significantly larger monthly quota for AI creations.",
+      "Generate high-resolution AI art without the platform watermark.",
+      "Gain commercial usage rights for your generated AI artwork (T&Cs apply).",
+      "Access smarter, data-driven prompt suggestions tailored to trends.",
+      "Organize your work professionally with portfolio collections.",
+      "Customize your profile layout to better reflect your brand.",
+      "Benefit from increased artwork storage capacity.",
+      "Receive priority access to customer support.",
     ],
     cta: "Get started",
+    actionType: "checkout",
     popular: true,
   },
   {
-    id: "studios",
+    id: "studio",
     name: "Studios",
     price: {
-      monthly: 120,
-      yearly: 100,
+      monthly: 30,
+      yearly: 24,
     },
     description: "Great for large businesses",
     features: [
-      "All Pro Artist features +",
-      "Team collaboration (up to 5 members)",
-      "Private project sharing",
-      "Custom watermarking",
-      "Sell digital art with 0% commission",
+      "Everything in Pro Artists plan.",
+      "Equip your team with collaborative tools (includes multiple user seats).",
+      "Access a massive, shared pool of AI generation credits for team projects.",
+      "Utilize enhanced studio profile branding options.",
+      "Collaborate effectively with shared folders and resources.",
+      "Track team usage and artwork performance with analytics.",
+      "Ensure faster workflows with top priority in the AI generation queue.",
+      "Secure robust commercial rights suitable for agency and studio work.",
+      "Access dedicated support channels for faster team assistance.",
     ],
     cta: "Get started",
+    actionType: "checkout",
   },
   {
     id: "enterprise",
@@ -95,13 +109,19 @@ export const TIERS = [
     },
     description: "For Large art agencies & businesses",
     features: [
-      "All Studio features +",
-      "Unlimited team members",
-      "API access for art automation",
-      "Personalized support & consulting",
-      "Exclusive marketing & promotion",
+      "Everything in Studios plan.",
+      "Receive a fully bespoke platform solution tailored to enterprise needs.",
+      "Negotiate custom AI generation volumes, potentially unlimited.",
+      "Benefit from dedicated, high-touch account management.",
+      "Explore possibilities for custom AI model training on specific styles.",
+      "Gain full API access for deep integration into your workflows.",
+      "Secure enterprise-grade Service Level Agreements (SLAs).",
+      "Implement advanced security protocols and compliance measures.",
+      "Discuss potential white-labeling solutions for your brand.",
+      "Fund custom feature development specific to your requirements.",
     ],
     cta: "Contact Us",
+    actionType: "contact",
     highlighted: true,
   },
 ];
@@ -523,7 +543,7 @@ const LandingPage = () => {
         </div>
       </div>
       {/* Pricing */}
-      <div className="flex flex-col justify-center bg-white p-8 lg:p-12 xl:p-20 px-10 lg:px-16 xl:px-24 w-full h-fit md:min-h-[1300px] xl:min-h-[900px]">
+      <div className="flex flex-col justify-center bg-white p-8 lg:p-12 xl:p-20 px-10 lg:px-16 xl:px-24 w-full h-fit md:min-h-[1600px] xl:min-h-[1200px]">
         <div className="flex flex-col justify-center items-center space-y-3 lg:space-y-5">
           <motion.p
             initial={{ opacity: 0 }}

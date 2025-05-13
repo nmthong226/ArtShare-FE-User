@@ -199,7 +199,7 @@ const Explore: React.FC = () => {
             onSave={(categories) => setSelectedCategories(categories)}
             selectedData={selectedCategories}
             data={categoriesData}
-            placement="bottom-end"
+            placement="bottom-start"
             renderItem="category"
           />
 
@@ -243,7 +243,7 @@ const Explore: React.FC = () => {
             anchorEl={anchorElPP}
             data={propsData}
             selectedData={[]}
-            placement="left-end"
+            placement="bottom-end"
             renderItem="prop"
           />
         </div>

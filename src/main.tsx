@@ -14,10 +14,16 @@ import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 import vi from "javascript-time-ago/locale/vi";
 
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(vi);
 
 const queryClient = new QueryClient();
+const stripePromise = loadStripe(
+  import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string,
+);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -27,13 +33,14 @@ createRoot(document.getElementById("root")!).render(
           <AppThemeProvider>
             <SnackbarProvider>
               <FocusProvider>
-                <App />
-                
+                <Elements stripe={stripePromise}>
+                  <App />
+                </Elements>
               </FocusProvider>
             </SnackbarProvider>
           </AppThemeProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </StyledEngineProvider>
-  </StrictMode>
+  </StrictMode>,
 );

@@ -1,10 +1,5 @@
 import { Button, CardContent, Divider } from "@mui/material";
-import {
-  MessageSquareText,
-  Bookmark,
-  EllipsisVertical,
-  Share2,
-} from "lucide-react";
+import { MessageSquareText, Bookmark, Share2 } from "lucide-react";
 import ShowMoreText from "react-show-more-text";
 import { ElementType, useState, useEffect, useCallback } from "react";
 import ReactTimeAgo from "react-time-ago";
@@ -224,12 +219,6 @@ const PostInfo = ({ postData }: { postData: Post }) => {
               title="Copy Link"
             >
               <Share2 className="size-5" />
-            </Button>
-            <Button
-              className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
-              title="More options"
-            >
-              <EllipsisVertical className="size-5" />
             </Button>
           </div>
         </CardContent>

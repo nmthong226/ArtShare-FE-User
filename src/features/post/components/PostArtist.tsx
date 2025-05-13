@@ -1,11 +1,59 @@
-import { CardContent } from "@mui/material";
+import { Box, CardContent, CardHeader, IconButton } from "@mui/material";
+import { X } from "lucide-react";
 import Avatar from "boring-avatars";
-import { User } from "@/types";
+import { User, Post } from "@/types";
+import { Link, useNavigate } from "react-router-dom";
+import { PostMenu } from "./PostMenu";
+import { auth } from "@/firebase";
+import { deletePost } from "@/api/post/post";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
 
-const PostArtist = ({ artist }: { artist: User }) => {
+const PostArtist = ({ artist, postData }: { artist: User; postData: Post }) => {
+  const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
+  const currentUser = auth.currentUser;
+  const isOwner = currentUser && postData.user_id === currentUser.uid;
+
+  const handleEdit = () => {
+    navigate(`/post/${postData.id}/edit`, {
+      state: { postData },
+    });
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deletePost(postData.id);
+      navigate(`/${postData.user.username}`);
+    } catch {
+      showSnackbar("Failed to update post", "error");
+    }
+  };
+
+  const handleReport = () => {
+    showSnackbar("Reported post", "info");
+  };
+
   return (
     artist && (
-      <div className="bg-white py-4 border-b border-b-mountain-200 rounded-2xl rounded-b-none overflow-none">
+      <div className="bg-white shadow p-4 md:border-b md:border-b-mountain-200 rounded-2xl md:rounded-b-none overflow-none">
+        <CardHeader
+          className="p-0"
+          action={
+            <Box display="flex" gap={1}>
+              <PostMenu
+                isOwner={!!isOwner}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onReport={handleReport}
+              />
+              <Link to="/explore">
+                <IconButton>
+                  <X />
+                </IconButton>
+              </Link>
+            </Box>
+          }
+        />
         <CardContent className="flex flex-col gap-4 p-0">
           <div className="flex gap-4 cursor-pointer">
             <div className="flex-shrink-0 rounded-full overflow-hidden">
@@ -16,7 +64,7 @@ const PostArtist = ({ artist }: { artist: User }) => {
                 />
               ) : (
                 <Avatar
-                  name="Georgia O"
+                  name={artist.username || "Unknown"}
                   colors={[
                     "#84bfc3",
                     "#fff5d6",
@@ -31,10 +79,9 @@ const PostArtist = ({ artist }: { artist: User }) => {
             </div>
             <div className="flex flex-col pt-0.5">
               <div className="font-bold text-xl">
-                {artist.full_name || "Mock User"}
+                {artist.full_name || "Unknown fullname"}
               </div>
-              {/* <div className="text-sm line-clamp-1">@{artist.username}</div> */}
-              <div className="text-sm line-clamp-1">@{"nickname"}</div>
+              <div className="text-sm line-clamp-1">@{artist.username}</div>
             </div>
           </div>
         </CardContent>

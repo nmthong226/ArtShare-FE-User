@@ -1,15 +1,23 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
+
+//Libs
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { Button, Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
+
+//Icons
 import { Ellipsis, LoaderPinwheel } from "lucide-react";
 import { BsFilter } from "react-icons/bs";
 
-import { Categories, DataPopper } from "@/components/categories/Categories";
-import { SearchContext } from "@/layouts/public/InAppLayout";
-import { categoriesData, propsData } from "@/components/categories/mocks";
-import { Post } from "@/types";
+//Components
+import { Categories, DataPopper } from "@/components/carousels/categories/Categories";
+import { categoriesData, propsData } from "@/components/carousels/categories/mocks";
 import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
+
+import { Post } from "@/types";
 import { fetchPosts } from "./api/get-post";
+
+//Contexts
+import { useSearch } from "@/contexts/SearchProvider";
 
 const getMediaDimensions = (
   url: string,
@@ -36,10 +44,9 @@ const Explore: React.FC = () => {
   const [openPP, setOpenPP] = useState(false);
   const [anchorElCP, setAnchorElCP] = useState<null | HTMLElement>(null);
   const [anchorElPP, setAnchorElPP] = useState<null | HTMLElement>(null);
-  const { query } = useContext(SearchContext);
   const [tab, setTab] = useState<string>("for-you");
   const galleryAreaRef = useRef<HTMLDivElement>(null);
-
+  const { query } = useSearch();
   const {
     data,
     error,
@@ -174,11 +181,11 @@ const Explore: React.FC = () => {
   console.log("Processed galleryPhotos:", galleryPhotos);
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="top-16 z-50 sticky flex flex-col gap-4 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950 p-4">
+    <div className="relative flex flex-col h-full">
+      <div className="top-16 z-10 sticky flex flex-col gap-4 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950 p-4">
         <div className="flex items-center gap-6 w-full categories-bar">
           <Button
-            className="flex flex-shrink-0 gap-2 dark:bg-mountain-900 shadow-none p-2 rounded-lg min-w-auto aspect-[1/1] font-normal  dark:text-mountain-50 normal-case all-channels-btn"
+            className="flex flex-shrink-0 gap-2 dark:bg-mountain-900 shadow-none p-2 rounded-lg min-w-auto aspect-[1/1] font-normal dark:text-mountain-50 normal-case all-channels-btn"
             variant="contained"
             disableElevation
             onClick={handleToggleCP}
@@ -192,7 +199,7 @@ const Explore: React.FC = () => {
             onSave={(categories) => setSelectedCategories(categories)}
             selectedData={selectedCategories}
             data={categoriesData}
-            placement="bottom-end"
+            placement="bottom-start"
             renderItem="category"
           />
 
@@ -214,7 +221,7 @@ const Explore: React.FC = () => {
             <span className="flex-shrink-0">All Channels</span>
           </Button>
 
-          <div className="overflow-x-auto flex-grow scrollbar-hide">
+          <div className="flex-grow overflow-x-auto scrollbar-hide">
             <Categories
               onSelectCategory={handleCategoriesChange}
               selectedCategories={selectedCategories}
@@ -222,7 +229,7 @@ const Explore: React.FC = () => {
           </div>
 
           <Button
-            className="flex-shrink-0 p-2 rounded-lg min-w-auto aspect-[1/1] spread-btn dark:bg-mountain-900  dark:text-mountain-50"
+            className="flex-shrink-0 dark:bg-mountain-900 p-2 rounded-lg min-w-auto aspect-[1/1] dark:text-mountain-50 spread-btn"
             variant="contained"
             disableElevation
             onClick={handleTogglePP}
@@ -236,14 +243,14 @@ const Explore: React.FC = () => {
             anchorEl={anchorElPP}
             data={propsData}
             selectedData={[]}
-            placement="left-end"
+            placement="bottom-end"
             renderItem="prop"
           />
         </div>
       </div>
       <div
         ref={galleryAreaRef}
-        className="p-4 gallery-area flex-grow overflow-y-auto"
+        className="flex-grow p-4 overflow-y-auto gallery-area"
       >
         <IGallery
           photos={galleryPhotos}
@@ -264,14 +271,14 @@ const Explore: React.FC = () => {
         >
           <ToggleButton
             color="primary"
-            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case dark:text-mountain-100 data-[selected]:dark:bg-primary-700 data-[selected]:dark:text-white"
+            className="data-[selected]:dark:bg-primary-700 -m-0.5 px-4 py-2 border-0 rounded-full data-[selected]:dark:text-white dark:text-mountain-100 normal-case"
             value="for-you"
           >
             For you
           </ToggleButton>
           <ToggleButton
             color="primary"
-            className="-m-0.5 px-4 py-2 border-0 rounded-full normal-case dark:text-mountain-100 data-[selected]:dark:bg-primary-700 data-[selected]:dark:text-white"
+            className="data-[selected]:dark:bg-primary-700 -m-0.5 px-4 py-2 border-0 rounded-full data-[selected]:dark:text-white dark:text-mountain-100 normal-case"
             value="following"
           >
             Following

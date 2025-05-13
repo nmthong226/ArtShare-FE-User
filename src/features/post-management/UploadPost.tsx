@@ -37,6 +37,7 @@ const UploadPost: React.FC = () => {
   const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(
     undefined,
   );
+  const [thumbnailCropMeta, setThumbnailCropMeta] = useState<string>("{}");
   const [isLoading, setIsLoading] = useState(false);
   const [isMature, setIsMature] = useState(false);
   const [aiCreated, setAiCreated] = useState(false);
@@ -48,6 +49,7 @@ const UploadPost: React.FC = () => {
     description?: string,
     imageFiles?: File[],
     videoUrl?: string,
+    initialThumbnail?: string,
     thumbnailUrl?: string,
     isMature?: boolean,
     aiCreated?: boolean,
@@ -67,6 +69,13 @@ const UploadPost: React.FC = () => {
     formData.append("is_mature", String(isMature));
     formData.append("ai_created", String(aiCreated));
     formData.append("cate_ids", JSON.stringify(cate_ids));
+    formData.append(
+      "thumbnail_crop_meta",
+      JSON.stringify({
+        ...JSON.parse(thumbnailCropMeta),
+        initialThumbnail: initialThumbnail,
+      }),
+    );
     console.log("formData contents:");
     for (const [key, value] of formData.entries()) {
       console.log(`${key}:`, value);
@@ -129,15 +138,17 @@ const UploadPost: React.FC = () => {
 
       // Create promises to upload video and create post at the same time
       const uploadVideoPromise = handleUploadVideo();
+      const uploadInitThumbnailPromise = handleUploadInitialThumbnail();
       const uploadThumbnailPromise = handleUploadThumbnail();
 
       // Use Promise.all with await to wait for both operations to complete
-      const [videoUrl, thumbnailUrl] = await Promise.all([
+      const [videoUrl, initialThumbnail, thumbnailUrl] = await Promise.all([
         uploadVideoPromise,
+        uploadInitThumbnailPromise,
         uploadThumbnailPromise,
       ]);
 
-      await handleCreatePost(thumbnailUrl, videoUrl);
+      await handleCreatePost(thumbnailUrl, initialThumbnail, videoUrl);
 
       navigate("/explore");
     } catch (error) {
@@ -175,6 +186,7 @@ const UploadPost: React.FC = () => {
 
   const handleCreatePost = async (
     thumbnailUrl: string,
+    initialThumbnail?: string,
     videoUrl?: string,
   ): Promise<void> => {
     const formData = createFormData(
@@ -182,6 +194,7 @@ const UploadPost: React.FC = () => {
       description,
       imageFiles,
       videoUrl,
+      initialThumbnail,
       thumbnailUrl,
       isMature,
       aiCreated,
@@ -213,11 +226,27 @@ const UploadPost: React.FC = () => {
     return presignedUrlResponse.fileUrl;
   };
 
+  const handleUploadInitialThumbnail = async (): Promise<
+    string | undefined
+  > => {
+    if (!originalThumbnailFile) return undefined;
+    const presigned: GetPresignedUrlResponse = await getPresignedUrl(
+      `initial_thumbnail_${nanoid(6)}`,
+      originalThumbnailFile.type.split("/")[1],
+      "image",
+      VIDEO_STORAGE_DIRECTORY,
+    );
+    await uploadFile(originalThumbnailFile, presigned.presignedUrl);
+    return presigned.fileUrl;
+  };
+
   const handleThumbnailChange = (
     file: File | undefined,
     isOriginal = false,
+    thumbnail_crop_meta = "{}",
   ) => {
     setThumbnailFile(file);
+    setThumbnailCropMeta(thumbnail_crop_meta);
 
     if (isOriginal) {
       setOriginalThumbnailFile(file);

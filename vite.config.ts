@@ -6,9 +6,14 @@ import istanbul from "vite-plugin-istanbul";
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
+  // Load .env file tương ứng với mode (ví dụ: .env.test)
   const env = loadEnv(process.env.MODE || mode, process.cwd(), "");
 
   return {
+    server: {
+      port: 5173, // fixed port for the admin app
+      open: true, // (optional) auto‑open browser
+    },
     plugins: [
       react(),
       tailwindcss(),

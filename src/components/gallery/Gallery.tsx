@@ -4,7 +4,7 @@ import { Photo, RowsPhotoAlbum, RenderPhotoContext } from "react-photo-album";
 import "react-photo-album/rows.css";
 
 import { ImageRenderer } from "./ImageRenderer";
-import LoadingSpinner from "@/components/LoadingSpinner";
+import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 
 export interface GalleryPhoto extends Photo {
   key: string;
@@ -87,7 +87,7 @@ const IGallery: React.FC<IGalleryProps> = ({
       {isError && !isLoading && photos.length > 0 && (
         <>
           {console.error("Error fetching more posts:", error)}
-          <div className="text-mountain-500 text-center py-4">
+          <div className="py-4 text-mountain-500 text-center">
             Could not load more posts at this time. Please try again later.
           </div>
         </>

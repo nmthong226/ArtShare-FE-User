@@ -17,7 +17,6 @@ env:
   VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
   VITE_BE_URL: ${{ secrets.VITE_BE_URL }}
   VITE_S3_BUCKET_URL: ${{ secrets.VITE_S3_BUCKET_URL }}
-  
 
 jobs:
   build:
@@ -31,12 +30,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm' # Added caching for npm
 
       - name: Install dependencies
-        run: yarn install
+        run: npm install 
 
       - name: Build the app
-        run: yarn build
+        run: npm run build
 
   test:
     runs-on: ubuntu-latest
@@ -49,9 +49,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm' # Added caching for npm
 
       - name: Install dependencies
-        run: yarn install
+        run: npm install # Changed from yarn install
 
       - name: Setup Code Climate test-reporter
         run: |
@@ -59,14 +60,14 @@ jobs:
           chmod +x ./cc-test-reporter
 
       - name: Run tests
-        run: yarn cy-run-unit
+        run: npm run cy-run-unit # Changed from yarn cy-run-unit
 
       - name: Upload Code Climate test report
         run: |
           ./cc-test-reporter format-coverage -t lcov coverage/lcov.info
           ./cc-test-reporter upload-coverage
         env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}  # Set the Code Climate Test Reporter ID as a secret
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }} # Set the Code Climate Test Reporter ID as a secret
 
   # deploy:
   #   runs-on: ubuntu-latest
@@ -74,18 +75,19 @@ jobs:
   #   if: success()
   #   steps:
   #     - name: Checkout code
-  #       uses: actions/checkout@v3
+  #       uses: actions/checkout@v4 # Updated from v3
 
   #     - name: Set up Node.js
-  #       uses: actions/setup-node@v3
+  #       uses: actions/setup-node@v4 # Updated from v3
   #       with:
   #         node-version: '22'
+  #         cache: 'npm' # Added caching for npm
 
   #     - name: Install dependencies
-  #       run: npm install
+  #       run: npm install # Was already npm install
 
   #     - name: Build the app
-  #       run: npm run build
+  #       run: npm run build # Was already npm run build
 
   #     - name: Vercel CLI - Deploy
   #       uses: amondnet/vercel-action@v21

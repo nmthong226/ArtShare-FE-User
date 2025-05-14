@@ -76,7 +76,7 @@ interface PromptResult {
     camera: string,
     final_prompt: string,
     image_urls: string[],
-    lingting: string,
+    lighting: string,
     model_key: string,
     number_of_images_generated: number,
     style: string,

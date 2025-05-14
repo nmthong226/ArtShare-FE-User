@@ -1,6 +1,6 @@
 enum TabValue {
-  UPLOAD_IMAGE = 0,
-  UPLOAD_VIDEO = 1,
+  UPLOAD_DEVICE = 0,
+  USE_GENAI = 1,
 }
 
 export default TabValue;

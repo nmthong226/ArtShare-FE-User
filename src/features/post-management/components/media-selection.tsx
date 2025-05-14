@@ -1,22 +1,36 @@
-import { useState, useEffect, useRef, ChangeEvent } from "react";
-import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
+import React, { useState, useEffect, useRef, ChangeEvent } from "react";
+import { Avatar, Box, Button, IconButton, Tooltip, Typography } from "@mui/material";
 import {
-  MdCloudUpload,
   MdAdd,
   MdClose,
-  MdReplay,
-  MdDeleteOutline,
 } from "react-icons/md";
-import { IoVideocam } from "react-icons/io5";
-import { IoMdImage } from "react-icons/io";
 import { MEDIA_TYPE } from "@/constants";
 import TabValue from "../enum/media-tab-value";
 import MediaUploadTab from "./media-upload-tab";
 import { Media } from "@/types";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
+import { RiFileVideoFill, RiImageCircleAiFill, RiImageCircleAiLine } from "react-icons/ri";
+import { TbDeviceDesktop } from "react-icons/tb";
+import { BsImageFill } from "react-icons/bs";
+import { useSearchParams } from "react-router-dom";
 
-const MAX_IMAGES = 5;
+//Components
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Sparkle, Trash2 } from "lucide-react";
+import { LuImageOff } from "react-icons/lu";
+import { IoSparkles } from "react-icons/io5";
+
+const MAX_IMAGES = 4;
+const MAX_VIDEO = 1;
 
 interface MediaSelectorPanelProps {
   /* shared props ─────────────────── */
@@ -27,6 +41,8 @@ interface MediaSelectorPanelProps {
     isOriginal?: boolean,
     thumbnail_crop_meta?: string,
   ) => void;
+  aiImages: PromptResult[];
+  setAIImages: React.Dispatch<React.SetStateAction<PromptResult[]>>;
 
   /* edit-only props – now optional ── */
   setExistingImageUrls?: React.Dispatch<React.SetStateAction<string[]>>;
@@ -53,6 +69,8 @@ const validateVideoDuration = (
 };
 
 export default function MediaSelectorPanel({
+  aiImages,
+  setAIImages,
   setVideoFile,
   setImageFiles,
   setThumbnailFile,
@@ -60,7 +78,30 @@ export default function MediaSelectorPanel({
   initialMedias,
   setExistingVideoUrl,
 }: MediaSelectorPanelProps) {
-  const [tabValue, setTabValue] = useState<TabValue>(TabValue.UPLOAD_IMAGE);
+  const [searchParams] = useSearchParams();
+  const type = searchParams.get("type");
+
+  const [tabValue, setTabValue] = useState<TabValue>(TabValue.UPLOAD_DEVICE);
+  const [pendingTab, setPendingTab] = useState<TabValue | null>(null);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+
+  const handleTabChange = (newTab: TabValue) => {
+    const hasAIImages = selectedAIImages.length > 0;
+    if (hasAIImages && newTab !== TabValue.USE_GENAI) {
+      setPendingTab(newTab);
+      setConfirmDialogOpen(true);
+    } else {
+      setTabValue(newTab);
+    }
+  };
+  useEffect(() => {
+    if (type === "ai-gen") {
+      setTabValue(TabValue.USE_GENAI);
+    } else if (type === "upload-device") {
+      setTabValue(TabValue.UPLOAD_DEVICE);
+    }
+  }, [type]);
+
   const [imageFilesPreview, setImageFilesPreview] = useState<Map<File, string>>(
     new Map(),
   );
@@ -239,29 +280,53 @@ export default function MediaSelectorPanel({
     }
   };
 
+  // -------------------------------------------------
+  const [selectedAIImages, setSelectedAIImages] = useState<PromptResult[]>([]);
+  const [previewAI, setPreviewAI] = useState<PromptResult>();
+  useEffect(() => {
+    if (aiImages && aiImages.length > 0) {
+      setPreviewAI(aiImages[0]);
+      setSelectedAIImages(aiImages);
+    }
+  }, [aiImages]);
+
+  const handleRemoveAIPreview = () => {
+    if (!previewAI) return;
+
+    const updatedImages = selectedAIImages.filter(
+      (img) => img !== previewAI
+    );
+
+    setSelectedAIImages(updatedImages);
+
+    if (updatedImages.length > 0) {
+      setPreviewAI(updatedImages[0]);
+    } else {
+      setPreviewAI(undefined);
+    }
+  };
+
   return (
-    <Box className="flex flex-col items-start bg-mountain-100 dark:bg-mountain-900 px-6 py-3 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
+    <Box className="flex flex-col items-start dark:bg-mountain-900 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
       {/* Tabs */}
-      <div className="flex gap-x-1 w-full mb-3">
+      <div className="flex gap-x-1 bg-white mb-3 p-1.25 border border-mountain-200 rounded-full w-full">
         <MediaUploadTab
-          isActive={tabValue === TabValue.UPLOAD_IMAGE}
-          onClick={() => setTabValue(TabValue.UPLOAD_IMAGE)}
-          icon={<IoMdImage className="mr-0.5 w-5 h-5" />}
-          label="Upload image"
-          examples="( .png, .jpg, .jpeg, ... )"
+          isActive={tabValue === TabValue.UPLOAD_DEVICE}
+          onClick={() => handleTabChange(TabValue.UPLOAD_DEVICE)}
+          icon={<TbDeviceDesktop className="mr-0.5 w-5 h-5" />}
+          label="Upload from Device"
+          examples="(image, video)"
         />
         <MediaUploadTab
-          isActive={tabValue === TabValue.UPLOAD_VIDEO}
-          onClick={() => setTabValue(TabValue.UPLOAD_VIDEO)}
-          icon={<IoVideocam className="mr-2 w-5 h-5 text-sm" />}
-          label="Upload video"
-          examples="( .mp4 ... )"
+          isActive={tabValue === TabValue.USE_GENAI}
+          onClick={() => handleTabChange(TabValue.USE_GENAI)}
+          icon={<RiImageCircleAiLine className="mr-2 w-5 h-5 text-sm" />}
+          label="Post My AI Images"
+          examples=""
         />
       </div>
-      <hr className="mb-2 border-mountain-400 border-t-1 w-full" />
-
-      {/* Images Section */}
-      {tabValue === TabValue.UPLOAD_IMAGE && (
+      {/* Device Section */}
+      {tabValue === TabValue.UPLOAD_DEVICE && (
         <AutoSizer>
           {({ height, width }) => {
             const adjustedHeight = Math.max(height - 61, 150);
@@ -275,20 +340,23 @@ export default function MediaSelectorPanel({
                   alignItems: "center",
                   overflow: "hidden",
                   minHeight: 0,
+                  position: "relative"
                 }}
               >
                 <Box
-                  className="flex justify-between items-center w-full mb-2"
+                  className="top-2 left-2 z-50 absolute flex items-center space-x-2 mb-2 w-full"
                   sx={{ flexShrink: 0 }}
                 >
                   <Typography className="text-gray-900 dark:text-mountain-200 text-base">
-                    {imageFilesPreview.size}/{MAX_IMAGES} images
+                    {imageFilesPreview.size}/{MAX_IMAGES} images,
+                  </Typography>
+                  <Typography className="text-gray-900 dark:text-mountain-200 text-base">
+                    {videoPreviewUrl ? 1 : 0}/{MAX_VIDEO} video
                   </Typography>
                 </Box>
-
                 <Box
                   sx={{
-                    flexGrow: 1,
+                    height: "100%",
                     minHeight: 0,
                     width: "100%",
                     display: "flex",
@@ -296,17 +364,18 @@ export default function MediaSelectorPanel({
                     justifyContent: "center",
                     overflow: "hidden",
                   }}
+                  className="flex flex-col justify-center items-center bg-mountain-100 border border-gray-500 border-dashed rounded-lg w-full h-full"
                 >
                   {selectedPreview ? (
                     <img
                       src={imageFilesPreview.get(selectedPreview)}
                       alt="Preview"
-                      className="w-full object-contain"
+                      className="w-full object-cover aspect-video"
                       style={{ maxHeight: "100%", maxWidth: "100%" }}
                     />
                   ) : (
                     <Box
-                      className="flex flex-col justify-center items-center border border-gray-500 border-dashed w-full h-full"
+                      className="flex flex-col justify-center items-center bg-mountain-100 border border-gray-500 border-dashed rounded-lg w-full h-full"
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={(e) => {
                         e.preventDefault();
@@ -318,41 +387,63 @@ export default function MediaSelectorPanel({
                         }
                       }}
                     >
-                      <Button
-                        variant="text"
-                        component="label"
-                        size="small"
-                        className="mb-2 border-mountain-600"
-                        sx={{
-                          backgroundColor: "transparent",
-                          color: "white",
-                          borderRadius: "10px",
-                          border: "1px solid",
-                          textTransform: "none",
-                          "&:hover": { backgroundColor: "transparent" },
-                        }}
-                      >
-                        <input
-                          type="file"
-                          multiple
-                          accept="image/*"
-                          hidden
-                          onChange={handleImageFilesChange}
-                        />
-                        <MdCloudUpload className="mr-1" size={20} />
-                        <Typography variant="body1">Upload your art</Typography>
-                      </Button>
-                      <Typography variant="body1">
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="text"
+                          component="label"
+                          size="small"
+                          className="flex flex-col justify-center items-center bg-white hover:bg-mountain-50 shadow-md p-4 border-1 border-mountain-200 w-40"
+                          sx={{
+                            backgroundColor: "transparent",
+                            color: "white",
+                            borderRadius: "10px",
+                            textTransform: "none",
+                            "&:hover": { backgroundColor: "transparent" },
+                          }}
+                        >
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            hidden
+                            onChange={handleImageFilesChange}
+                          />
+                          <BsImageFill className="mb-2 size-10 text-mountain-600" />
+                          <Typography variant="body1" className="text-sm">Upload Image</Typography>
+                        </Button>
+                        <Button
+                          variant="text"
+                          component="label"
+                          size="small"
+                          className="flex flex-col justify-center items-center bg-white hover:bg-mountain-50 shadow-md p-4 border-1 border-mountain-200 w-40"
+                          sx={{
+                            backgroundColor: "transparent",
+                            color: "white",
+                            borderRadius: "10px",
+                            textTransform: "none",
+                            "&:hover": { backgroundColor: "transparent" },
+                          }}
+                        >
+                          <input
+                            type="file"
+                            accept="video/*"
+                            hidden
+                            onChange={handleVideoFileChange}
+                          />
+                          <RiFileVideoFill className="mb-2 size-10 text-mountain-600" />
+                          <Typography variant="body1" className="text-sm">Upload Video</Typography>
+                        </Button>
+                      </div>
+                      <Typography variant="body1" className="mt-2">
                         or drag and drop here
                       </Typography>
                     </Box>
                   )}
                 </Box>
-
                 {/* Carousel */}
                 <Box
-                  className="flex gap-2 custom-scrollbar pt-4"
-                  sx={{ flexShrink: 0, overflowX: "auto" }}
+                  className="flex space-x-2 pt-3 h-fit custom-scrollbar"
+                  sx={{ flexShrink: 0, overflowX: "hidden" }}
                 >
                   {Array.from(imageFilesPreview.entries()).map(
                     ([file, previewUrl], i) => (
@@ -378,17 +469,16 @@ export default function MediaSelectorPanel({
                             handleRemoveImagePreview(file);
                           }}
                           size="small"
-                          className="-top-2 -right-2 absolute opacity-60 bg-gray-600 hover:bg-gray-400 group"
+                          className="group -top-2 -right-2 absolute bg-gray-600 hover:bg-gray-400 opacity-60"
                         >
                           <MdClose
-                            className="text-white text-sm group-hover:text-black"
+                            className="text-white group-hover:text-black text-sm"
                             size={16}
                           />
                         </IconButton>
                       </Box>
                     ),
                   )}
-
                   <Box
                     className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
                     component="label"
@@ -398,7 +488,6 @@ export default function MediaSelectorPanel({
                     }
                   >
                     <MdAdd size={32} />
-
                     <input
                       accept="image/*"
                       type="file"
@@ -413,135 +502,194 @@ export default function MediaSelectorPanel({
           }}
         </AutoSizer>
       )}
-
-      {/* Video Section */}
-      {tabValue === TabValue.UPLOAD_VIDEO && (
-        <Box
-          className={`relative w-full h-full rounded-md flex flex-col ${
-            videoPreviewUrl ? "" : "border border-gray-500 border-dashed"
-          }`}
-          sx={{
-            aspectRatio: "9 / 16",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            overflow: "hidden",
-          }}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            e.preventDefault();
-            const droppedFiles = e.dataTransfer.files;
-            if (droppedFiles?.[0]) {
-              handleVideoFileChange({
-                target: { files: droppedFiles },
-              } as ChangeEvent<HTMLInputElement>);
-            }
-          }}
-        >
-          {videoPreviewUrl ? (
-            <Box className="flex flex-col gap-4 w-full h-full">
-              <Box className="flex justify-end gap-2 px-2 pt-2">
-                <Button
-                  variant="text"
-                  size="small"
-                  startIcon={<MdReplay size={18} />}
-                  onClick={() => inputRef.current?.click()}
-                  sx={{
-                    backgroundColor: "transparent",
-                    color: "white",
-                    borderRadius: "10px",
-                    border: "1px solid",
-                    textTransform: "none",
-                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
-                  }}
-                >
-                  Replace video
-                </Button>
-                <Button
-                  variant="text"
-                  size="small"
-                  startIcon={<MdDeleteOutline size={18} />}
-                  onClick={() => handleRemoveVideoPreview()}
-                  sx={{
-                    backgroundColor: "transparent",
-                    color: "white",
-                    borderRadius: "10px",
-                    border: "1px solid",
-                    textTransform: "none",
-                    "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" },
-                  }}
-                >
-                  Remove video
-                </Button>
-                <input
-                  type="file"
-                  ref={inputRef}
-                  hidden
-                  accept="video/*"
-                  onChange={handleVideoFileChange}
-                />
-              </Box>
+      {/* AI Section */}
+      {tabValue === TabValue.USE_GENAI && (
+        <AutoSizer>
+          {({ height, width }) => {
+            const adjustedHeight = Math.max(height - 61, 150);
+            return (
               <Box
-                className="relative w-full"
-                sx={{ maxHeight: 500, minHeight: 300 }}
+                sx={{
+                  width,
+                  height: adjustedHeight,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  overflow: "hidden",
+                  minHeight: 0,
+                  position: "relative"
+                }}
               >
-                <video
-                  src={videoPreviewUrl}
-                  controls
-                  className="rounded w-full object-contain"
-                  style={{
-                    maxHeight: "100%",
+                <Box
+                  className="top-2 z-50 absolute flex justify-between items-center mb-2 px-4 w-full"
+                  sx={{ flexShrink: 0 }}
+                >
+                  <Typography className="text-gray-900 dark:text-mountain-200 text-base">
+                    {selectedAIImages[0]?.image_urls.length || 0}/{MAX_IMAGES} images
+                  </Typography>
+                  <Tooltip title="Marked as an AI Post. Its prompt may appear in trending suggestions for others to reuse.">
+                    <div className={`${selectedAIImages && selectedAIImages.length > 0 ? '' : 'hidden'} hover:cursor-pointer text-base items-center space-x-2 flex px-4 py-1 bg-white shadow rounded-full`}>
+                      <IoSparkles className="text-amber-300" />
+                      <p>Generated by ArtNova</p>
+                    </div>
+                  </Tooltip>
+                </Box>
+                <Box
+                  sx={{
+                    height: "100%",
+                    minHeight: 0,
                     width: "100%",
-                    objectFit: "contain",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
                   }}
-                />
+                  className="flex flex-col justify-center items-center bg-mountain-100 border border-gray-500 border-dashed rounded-lg w-full h-full"
+                >
+                  {previewAI ? (
+                    <img
+                      src={previewAI.image_urls[0]}
+                      alt="Preview"
+                      className="w-full object-cover aspect-video"
+                      style={{ maxHeight: "100%", maxWidth: "100%" }}
+                    />
+                  ) : (
+                    <Box
+                      className="flex flex-col justify-center items-center bg-mountain-100 border border-gray-500 border-dashed rounded-lg w-full h-full"
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const droppedFiles = e.dataTransfer.files;
+                        if (droppedFiles && droppedFiles.length > 0) {
+                          handleImageFilesChange({
+                            target: { files: droppedFiles },
+                          } as ChangeEvent<HTMLInputElement>);
+                        }
+                      }}
+                    >
+                      <div className="flex flex-col">
+                        <Button
+                          variant="text"
+                          component="label"
+                          size="small"
+                          className="flex flex-col justify-center items-center bg-white hover:bg-mountain-50 shadow-md p-4 border-1 border-mountain-200 w-40"
+                          sx={{
+                            backgroundColor: "transparent",
+                            color: "white",
+                            borderRadius: "10px",
+                            textTransform: "none",
+                            "&:hover": { backgroundColor: "transparent" },
+                          }}
+                        >
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            hidden
+                            onChange={handleImageFilesChange}
+                          />
+                          <RiImageCircleAiFill className="mb-2 size-10 text-mountain-600" />
+                          <Typography variant="body1" className="text-sm">Browse My Stock</Typography>
+                        </Button>
+                        <Typography variant="body1" className="mt-2">
+                          or drag and drop here
+                        </Typography>
+                      </div>
+                    </Box>
+                  )}
+                </Box>
+                {/* Carousel */}
+                <Box
+                  className="flex space-x-2 pt-3 h-fit custom-scrollbar"
+                  sx={{ flexShrink: 0, overflowX: "hidden" }}
+                >
+                  {selectedAIImages[0]?.image_urls.map((url, i) => (
+                    <Box
+                      key={i}
+                      className="relative border-1 rounded-md cursor-pointer bounce-item"
+                      sx={{
+                        borderColor:
+                          previewAI?.image_urls?.[0] === url ? "primary.main" : "transparent",
+                      }}
+                      onClick={() =>
+                        setPreviewAI({
+                          ...selectedAIImages[0],
+                          image_urls: [url], // Only show selected preview image
+                        })
+                      }
+                    >
+                      <Avatar
+                        src={url}
+                        className="rounded-md"
+                        sx={{ width: 80, height: 80 }}
+                      />
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveAIPreview(); // You may want to pass the `url` if removing by URL
+                        }}
+                        size="small"
+                        className="group -top-2 -right-2 absolute bg-gray-600 hover:bg-gray-400 opacity-60"
+                      >
+                        <MdClose
+                          className="text-white group-hover:text-black text-sm"
+                          size={16}
+                        />
+                      </IconButton>
+                    </Box>
+                  ))}
+                  <Box
+                    className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
+                    component="label"
+                    hidden={
+                      imageFilesPreview.size === 0 ||
+                      imageFilesPreview.size === MAX_IMAGES
+                    }
+                  >
+                    <MdAdd size={32} />
+                    <input
+                      accept="image/*"
+                      type="file"
+                      multiple
+                      hidden
+                      onChange={handleImageFilesChange}
+                    />
+                  </Box>
+                </Box>
               </Box>
-            </Box>
-          ) : (
-            <>
-              <Button
-                variant="text"
-                component="label"
-                size="small"
-                className="mb-2 border-mountain-600"
-                sx={{
-                  backgroundColor: "transparent",
-                  color: "white",
-                  borderRadius: "10px",
-                  border: "1px solid",
-                  textTransform: "none",
-                  "&:hover": { backgroundColor: "transparent" },
-                }}
-              >
-                <input
-                  type="file"
-                  accept="video/*"
-                  hidden
-                  onChange={handleVideoFileChange}
-                />
-                <MdCloudUpload className="mr-1" size={20} />
-
-                <Typography variant="body1" className="text-center">
-                  Upload your video
-                </Typography>
-              </Button>
-              <Typography variant="body1" className="text-center">
-                or drag and drop here
-              </Typography>
-              <Typography
-                variant="caption"
-                sx={{
-                  fontStyle: "italic",
-                  color: "text.secondary",
-                  mt: 0.5,
-                }}
-              >
-                * Our video upload only allows max 1 minute in length.
-              </Typography>
-            </>
-          )}
-        </Box>
+            );
+          }}
+        </AutoSizer>
       )}
+      <Dialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <DialogContent className="flex flex-col w-108">
+          <DialogHeader>
+            <DialogTitle>Change Tab Confirmation</DialogTitle>
+            <DialogDescription>
+              If you switch tabs, your changes will be removed. Are you sure?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center items-center bg-mountain-100 py-6">
+            <LuImageOff className="size-12 text-mountain-600" />
+          </div>
+          <DialogFooter>
+            <Button className="bg-mountain-100 hover:bg-mountain-100/80" onClick={() => setConfirmDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              className="bg-red-700 hover:bg-red-700/80 text-mountain-50"
+              onClick={() => {
+                setSelectedAIImages([]);
+                setPreviewAI(undefined);
+                setTabValue(pendingTab!);
+                setConfirmDialogOpen(false);
+              }}
+            >
+              Yes, discard and switch
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 }

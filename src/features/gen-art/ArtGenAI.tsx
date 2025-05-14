@@ -20,6 +20,7 @@ import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 import { DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { aspectOptions, cameraOptions, HistoryFilter, lightingOptions, ModelKey } from './enum';
 import { MockModelOptionsData } from './mock/Data';
+import { BiInfoCircle } from 'react-icons/bi';
 
 {/*
 A stunning realistic scene featuring a woman astronaut curiously peeking out of 
@@ -46,9 +47,6 @@ const ArtGenAI = () => {
     const [loading, setLoading] = useState(true);
     const [historyFilter, setHistoryFilter] = useState<HistoryFilter>(HistoryFilter.TODAY)
     const [filteredResults, setFilteredResults] = useState<PromptResult[]>([]);
-
-    //Loading
-    const [loadingProgress, setLoadingProgress] = useState([0, 0, 0, 0]);
 
     //Setting Panel
     const [modelKey] = useState<ModelKey>(ModelKey.GPT_IMAGE_1);
@@ -158,7 +156,6 @@ const ArtGenAI = () => {
 
         setGeneratingImage(true);
         setCommittedPrompt(userPrompt);
-        setLoadingProgress(Array(numberOfImages).fill(0));
 
         const payload = {
             prompt: userPrompt,
@@ -217,10 +214,6 @@ const ArtGenAI = () => {
         };
     }, [promptExpanded]);
 
-    const handleDeleteResult = (resultId: number) => {
-        setPromptResultList(prev => prev.filter((result) => result.id !== resultId));
-    };
-
     // const handleDeleteSingleResult = (resultId: string, imageId: string) => {
     //     setPromptResults((prev) => {
     //         const updated = prev.map((result) =>
@@ -266,7 +259,7 @@ const ArtGenAI = () => {
                                         </div>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="flex flex-col mt-4 border-mountain-200 min-w-48 select-none">
-                                        {Object.entries(HistoryFilter).map(([value]) => (
+                                        {Object.entries(HistoryFilter).map(([__, value]) => (
                                             <div
                                                 key={value}
                                                 onClick={() => setHistoryFilter(value as HistoryFilter)}
@@ -298,27 +291,26 @@ const ArtGenAI = () => {
                             </div>
                         ) : (
                             <div ref={scrollRef} className='flex flex-col space-y-10 pr-4 w-full h-full overflow-y-auto custom-scrollbar'>
-                                {filteredResults
+                                {(filteredResults && filteredResults.length > 0) || generatingImage ?  filteredResults
                                     .map((result, index) => (
                                         <PromptResult
                                             key={index}
-                                            prompt={result.user_prompt}
-                                            images={result.image_urls}
+                                            result={result}
                                             generating={false}
-                                            index={index}
-                                            onDelete={() => handleDeleteResult(result.id)}
-                                            // onDeleteSingle={handleDeleteSingleResult}
-                                            onDeleteSingle={() => { }}
-                                            resultId={result.id}
                                         />
-                                    ))}
+                                    )) : (
+                                    <div className='flex justify-center items-center h-full text-mountain-600'>
+                                        <BiInfoCircle className='mr-2 size-5' />
+                                        <p className=''>There is no prompt result. What's on your mind?</p>
+                                    </div>
+                                )}
                                 {generatingImage &&
                                     <>
                                         <PromptResult
-                                            prompt={" " + committedPrompt}
-                                            images={Array(numberOfImages).fill('https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/artshare-asset/utzac220yrts0ujnjjq1?blur=300&q=1')}
+                                            tempPrompt={" " + committedPrompt}
+                                            tempResult={Array(numberOfImages).fill('https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/artshare-asset/utzac220yrts0ujnjjq1?blur=300&q=1')}
                                             generating={true}
-                                            progress={loadingProgress}
+                                            result={promptResult!}
                                         />
                                     </>
                                 }

@@ -29,6 +29,7 @@ import Search from "@/pages/Search";
 import BlogDetails from "./features/blog-details/BlogDetails";
 import EditPost from "./features/post-management/EditPost";
 import UserProfile from "@/features/UserProfile/UserProfile";
+import Loading from "@/pages/Loading";
 
 //Significant Features
 const WriteBlog = lazy(() => import("@/features/write-blog/WriteBlog"));
@@ -122,7 +123,7 @@ const App: React.FC = () => {
                   element={
                     <ProtectedInAppRoute>
                       <InAppLayout>
-                        <Suspense fallback={<div>Loading blog editor...</div>}>
+                        <Suspense fallback={<Loading />}>
                           <WriteBlog />
                         </Suspense>
                       </InAppLayout>
@@ -134,7 +135,7 @@ const App: React.FC = () => {
                   element={
                     <ProtectedInAppRoute>
                       <AILayout>
-                        <Suspense fallback={<div>Loading image editor...</div>}>
+                        <Suspense fallback={<Loading />}>
                           <ArtGeneration />
                         </Suspense>
                       </AILayout>
@@ -146,7 +147,7 @@ const App: React.FC = () => {
                   element={
                     <ProtectedInAppRoute>
                       <AILayout>
-                        <Suspense fallback={<div>Loading image editor...</div>}>
+                        <Suspense fallback={<Loading />}>
                           <ImageEditor />
                         </Suspense>
                       </AILayout>

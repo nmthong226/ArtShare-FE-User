@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Button, Tooltip } from "@mui/material";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { createPost } from "./api/create-post";
@@ -11,11 +11,16 @@ import {
   uploadFile,
 } from "@/api/storage";
 import { nanoid } from "nanoid";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import MediaSelection from "./components/media-selection";
+import { AiFillAndroid } from "react-icons/ai";
+import { FaMagic } from "react-icons/fa";
 
 const UploadPost: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectedPrompt: PromptResult | undefined = location.state?.prompt;
+  console.log(selectedPrompt);
   const { showSnackbar } = useSnackbar();
   const [lastCrop, setLastCrop] = useState<{ x: number; y: number }>({
     x: 0,
@@ -25,15 +30,12 @@ const UploadPost: React.FC = () => {
   const [originalThumbnailFile, setOriginalThumbnailFile] = useState<
     File | undefined
   >();
-
   const [title, setTitle] = useState("");
-  // Thumbnail states
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [cate_ids, setCateIds] = useState<number[]>([]);
   const [description, setDescription] = useState("");
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
-
   const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(
     undefined,
   );
@@ -43,6 +45,14 @@ const UploadPost: React.FC = () => {
   const [aiCreated, setAiCreated] = useState(false);
 
   const VIDEO_STORAGE_DIRECTORY = "posts";
+
+  const [aiImages, setAIImages] = useState<PromptResult[]>([]);
+
+  useEffect(() => {
+    if (selectedPrompt) {
+      setAIImages([selectedPrompt]);
+    }
+  }, [selectedPrompt]);
 
   const createFormData = (
     title: string,
@@ -286,14 +296,15 @@ const UploadPost: React.FC = () => {
         style={{ overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}
-
         <MediaSelection
+          aiImages={aiImages}
+          setAIImages={setAIImages}
           setImageFiles={setImageFiles}
           setVideoFile={setVideoFile}
           setThumbnailFile={handleThumbnailChange}
         />
         {/* RIGHT COLUMN: FORM FIELDS & ACTIONS */}
-        <Box className="flex flex-col space-y-3 w-[50%]">
+        <Box className="flex flex-col space-y-3 w-[40%]">
           {/* <Box className="mb-2">
             <UploadToggle
               isImageUpload={isImageUpload}
@@ -301,7 +312,12 @@ const UploadPost: React.FC = () => {
             />
           </Box> */}
           {/* Form fields */}
-          <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
+          <Box className="relative pr-4 rounded-md w-full overflow-y-auto custom-scrollbar">
+            <Tooltip title="Auto Generate Content (title, description, categories)" arrow placement="left">
+              <div className="top-2 z-50 sticky flex justify-center items-center bg-gradient-to-b from-blue-400 to-purple-400 shadow-md ml-auto rounded-full w-12 h-12 hover:scale-105 duration-300 ease-in-out hover:cursor-pointer transform">
+                <FaMagic className="size-5 text-white" />
+              </div>
+            </Tooltip>
             <UploadForm
               thumbnailFile={thumbnailFile}
               setOriginalThumbnailFile={setOriginalThumbnailFile}
@@ -324,9 +340,7 @@ const UploadPost: React.FC = () => {
               originalThumbnailFile={originalThumbnailFile}
             />
           </Box>
-
           <hr className="border-mountain-300 dark:border-mountain-700 border-t-1 w-full" />
-
           {/* Bottom actions */}
           <Box className="flex justify-between mt-auto pr-4 w-full">
             <Button

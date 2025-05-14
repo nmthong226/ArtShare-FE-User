@@ -6,7 +6,7 @@ import { FiDownload } from "react-icons/fi";
 import { FiTrash2 } from "react-icons/fi";
 
 //Components
-import { Button, CircularProgress, ImageList, ImageListItem } from '@mui/material';
+import { Button, CircularProgress, ImageList, ImageListItem, Tooltip } from '@mui/material';
 import GenImage from './GenImage';
 import {
     Popover,
@@ -23,42 +23,44 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+import { RiShareBoxFill } from 'react-icons/ri';
+import { useNavigate } from 'react-router-dom';
 
 interface promptResultProps {
-    prompt: string,
-    images: string[],
+    tempResult?: string[],
+    tempPrompt?: string,
+    result?: PromptResult,
     generating: boolean | null,
-    progress?: number[] | null,
-    index?: number;
-    resultId?: number;
-    onDelete?: (index: number) => void;
-    onDeleteSingle?: (resultId: number, imageIndex: number) => void;
 }
 
-const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating, resultId, progress, index, onDelete, onDeleteSingle }) => {
+const PromptResult: React.FC<promptResultProps> = ({
+    tempResult,
+    tempPrompt,
+    result,
+    generating,
+}) => {
     const [open, setOpen] = useState(false);
-
     const handleDownloadAll = async () => {
         const zip = new JSZip();
-        await Promise.all(
-            images.map(async (url, index) => {
-                const response = await fetch(url);
-                const blob = await response.blob();
-                zip.file(`image-${index + 1}.jpg`, blob);
-            })
-        );
+        if (result)
+            await Promise.all(
+                result.image_urls.map(async (url, index) => {
+                    const response = await fetch(url);
+                    const blob = await response.blob();
+                    zip.file(`image-${index + 1}.jpg`, blob);
+                })
+            );
 
         const zipBlob = await zip.generateAsync({ type: 'blob' });
         saveAs(zipBlob, 'images.zip');
     };
-
 
     useEffect(() => {
         let timeout: NodeJS.Timeout;
 
         if (open) {
             timeout = setTimeout(() => {
-                onDelete?.(index!); // Trigger delete
+                // onDelete?.(result?.id!); // Trigger delete --> RESOVLE THIS
                 setOpen(false); // Close dialog after delete
             }, 2000);
         }
@@ -66,20 +68,35 @@ const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating,
         return () => clearTimeout(timeout);
     }, [open]);
 
+    const navigate = useNavigate();
+
+    const handleNavigateToUploadPost = (prompt: PromptResult) => {
+        navigate("/posts/new?type=ai-gen", { state: { prompt } });
+    };
+
     if (generating === false) {
         return (
             <div className='flex flex-col space-y-2 w-full'>
                 <div className='flex justify-between items-center space-x-2 w-full'>
-                    <p className='line-clamp-1'><span className='mr-2 font-sans font-medium'>Prompt</span>{prompt}</p>
+                    <p className='line-clamp-1'><span className='mr-2 font-sans font-medium'>Prompt</span>{result?.user_prompt}</p>
                     <div className='flex items-center space-x-2'>
-                        <Button title='Download All' className='bg-mountain-100' onClick={handleDownloadAll}>
-                            <FiDownload className='size-5' />
-                        </Button>
+                        <Tooltip title="Share Post" placement='bottom' arrow>
+                            <Button onClick={() => handleNavigateToUploadPost(result!)} className='flex bg-mountain-100 w-8' title='Share Post'>
+                                <RiShareBoxFill className='size-5' />
+                            </Button>
+                        </Tooltip>
+                        <Tooltip title="Download" placement='bottom' arrow>
+                            <Button className='bg-mountain-100' onClick={handleDownloadAll}>
+                                <FiDownload className='size-5' />
+                            </Button>
+                        </Tooltip>
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
-                                <Button className='flex bg-mountain-100 w-4'>
-                                    <FiTrash2 className='size-5 text-red-900' />
-                                </Button>
+                                <Tooltip title="Delete" placement='bottom' arrow>
+                                    <Button className='flex bg-mountain-100 w-4'>
+                                        <FiTrash2 className='size-5 text-red-900' />
+                                    </Button>
+                                </Tooltip>
                             </PopoverTrigger>
                             <PopoverContent className="dark:bg-mountain-900 mt-2 mr-6 p-2 border-mountain-100 dark:border-mountain-700 w-48">
                                 <div className="flex flex-col space-y-2">
@@ -105,20 +122,20 @@ const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating,
                         </Popover>
                     </div>
                 </div>
-                <ImageList cols={4} gap={8} sx={{ width: '100%', minHeight: '268px' }}>
-                    {images.map((img, index) => (
-                        <ImageListItem key={index} className='flex h-full object-cover'>
-                            <GenImage
-                                image={img}
-                                imageId={index}
-                                images={images}
-                                prompt={prompt}
-                                index={index}
-                                onDelete={onDeleteSingle!}
-                                resultId={resultId!} />
-                        </ImageListItem>
-                    ))}
-                </ImageList>
+                {result && (
+                    <ImageList cols={4} gap={8} sx={{ width: '100%', minHeight: '268px' }}>
+                        {result.image_urls.map((__, index) => (
+                            <ImageListItem key={index} className='flex h-full object-cover'>
+                                <GenImage
+                                    result={result}
+                                    otherImages={result.image_urls}
+                                    index={index}
+                                // onDelete={onDeleteSingle!}
+                                />
+                            </ImageListItem>
+                        ))}
+                    </ImageList>
+                )}
             </div>
         )
     }
@@ -127,8 +144,11 @@ const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating,
             {generating && (
                 <div className='flex flex-col space-y-2 w-full'>
                     <div className='flex justify-between items-center space-x-2 w-full'>
-                        <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span>{prompt}</p>
-                        <div className='flex items-center space-x-2'>
+                        <p className='line-clamp-1'><span className='font-sans font-medium'>Prompt</span>{" " + tempPrompt}</p>
+                        <div className='flex items-center space-x-2 pointer-events-none'>
+                            <Button className='flex bg-mountain-100 w-8' title='Share Post'>
+                                <RiShareBoxFill className='size-5' />
+                            </Button>
                             <Button className='flex bg-mountain-100 w-8' title='Download'>
                                 <FiDownload className='size-5' />
                             </Button>
@@ -137,26 +157,18 @@ const PromptResult: React.FC<promptResultProps> = ({ prompt, images, generating,
                             </Button>
                         </div>
                     </div>
-                    <ImageList cols={4} gap={8} sx={{ width: '100%', minHeight: '268px' }}>
-                        {images.map((img, imgIndex) => (
-                            <ImageListItem key={index} className='flex h-full object-cover'>
-                                {progress && progress[imgIndex] === 100 ? (
-                                    <GenImage
-                                        image={img}
-                                        imageId={index!}
-                                        images={images}
-                                        prompt={prompt}
-                                        index={imgIndex}
-                                        resultId={resultId!} />
-                                ) : (
+                    {tempResult && (
+                        <ImageList cols={4} gap={8} sx={{ width: '100%', minHeight: '268px' }}>
+                            {tempResult.map(() => (
+                                <ImageListItem className='flex h-full object-cover'>
                                     <div className='relative flex justify-center items-center bg-mountain-100 rounded-[8px] h-full'>
                                         <CircularProgress size={64} thickness={4} />
-                                        <p className='absolute font-medium text-gray-700 text-sm'>...Loading</p>
+                                        <p className='absolute font-medium text-gray-700 text-xs'>Loading</p>
                                     </div>
-                                )}
-                            </ImageListItem>
-                        ))}
-                    </ImageList>
+                                </ImageListItem>
+                            ))}
+                        </ImageList>
+                    )}
                 </div>
             )}
         </>

@@ -19,25 +19,22 @@ export default function MediaUploadTab({
       variant="text"
       size="small"
       onClick={onClick}
-      className={`flex items-center justify-start px-3 border rounded-sm w-1/2 transition-all duration-300 ${
-        isActive
-          ? "bg-indigo-800 text-white"
-          : "bg-gray-900 text-white opacity-50"
-      }`}
+      className={`flex items-center bg-gradient-to-r rounded-full border-1 border-mountain-200 shadow-sm justify-start px-3 w-1/2 transition-all duration-300 ${isActive
+        ? "bg-indigo-700 to-purple-400 text-white"
+        : "bg-mountain-50 hover:bg-mountain-100 text-mountain-800"
+        }`}
       sx={{
         height: 40,
-        borderColor: isActive ? "#4F46E5" : "#4B5563",
         borderRadius: "2px",
         textTransform: "none",
         overflow: "hidden", // MUI style fallback
       }}
     >
-      <div className={`${isActive && "text-mountain-50"} mr-2`}>{icon}</div>
-
+      <div className={`${isActive && "text-mountain-50"} mr-1`}>{icon}</div>
       {/* ✅ Label + examples inline with truncation */}
-      <div className="flex-1 text-sm font-medium truncate whitespace-nowrap overflow-hidden text-ellipsis">
+      <div className="flex overflow-hidden font-medium text-sm truncate text-ellipsis whitespace-nowrap">
         <span className="mr-1">{label}</span>
-        <span className="text-gray-400">{examples}</span>
+        <span className={`${isActive ? 'text-mountain-200' : 'text-mountain-400'}`}>{examples}</span>
       </div>
     </Button>
   );

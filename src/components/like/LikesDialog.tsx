@@ -18,13 +18,13 @@ import { LikingUser } from "./types/user";
 import { fetchLikingUsersMock } from "./mocks/likes.api.mock";
 
 interface LikesDialogProps {
-  postId: number | null;
+  contentId?: number; // changed from postId
   open: boolean;
   onClose: () => void;
 }
 
 export const LikesDialog: React.FC<LikesDialogProps> = ({
-  postId,
+  contentId, // changed from postId
   open,
   onClose,
 }) => {
@@ -40,13 +40,13 @@ export const LikesDialog: React.FC<LikesDialogProps> = ({
   );
 
   useEffect(() => {
-    if (open && postId) {
+    if (open && contentId) {
       setLoading(true);
       setError(null);
       setLikingUsers([]);
       setFollowStatus(new Map());
 
-      fetchLikingUsersMock(postId)
+      fetchLikingUsersMock(contentId) // use contentId now
         .then((users) => {
           setLikingUsers(users);
 
@@ -74,7 +74,7 @@ export const LikesDialog: React.FC<LikesDialogProps> = ({
       setFollowStatus(new Map());
       setFollowingInProgress(new Set());
     }
-  }, [open, postId]);
+  }, [open, contentId]);
 
   const handleClose = () => {
     onClose();
@@ -132,7 +132,7 @@ export const LikesDialog: React.FC<LikesDialogProps> = ({
         id="likes-dialog-title"
         className="flex justify-between items-center"
       >
-        Likes
+        {"Liked By"}
         <IconButton
           aria-label="close"
           onClick={handleClose}

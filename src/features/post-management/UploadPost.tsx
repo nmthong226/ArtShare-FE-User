@@ -13,14 +13,13 @@ import {
 import { nanoid } from "nanoid";
 import { useLocation, useNavigate } from "react-router-dom";
 import MediaSelection from "./components/media-selection";
-import { AiFillAndroid } from "react-icons/ai";
 import { FaMagic } from "react-icons/fa";
+import api from "@/api/baseApi";
 
 const UploadPost: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const selectedPrompt: PromptResult | undefined = location.state?.prompt;
-  console.log(selectedPrompt);
   const { showSnackbar } = useSnackbar();
   const [lastCrop, setLastCrop] = useState<{ x: number; y: number }>({
     x: 0,
@@ -30,29 +29,27 @@ const UploadPost: React.FC = () => {
   const [originalThumbnailFile, setOriginalThumbnailFile] = useState<
     File | undefined
   >();
+
+  const [mode, setMode] = useState<'upload' | 'browse'>('upload');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // SHARED FIELDS
   const [title, setTitle] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [cate_ids, setCateIds] = useState<number[]>([]);
   const [description, setDescription] = useState("");
+  const [isMature, setIsMature] = useState(false);
+  const [aiCreated, setAiCreated] = useState(false);
+
+  // UPLOAD INFO
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
   const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(
     undefined,
   );
   const [thumbnailCropMeta, setThumbnailCropMeta] = useState<string>("{}");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isMature, setIsMature] = useState(false);
-  const [aiCreated, setAiCreated] = useState(false);
 
   const VIDEO_STORAGE_DIRECTORY = "posts";
-
-  const [aiImages, setAIImages] = useState<PromptResult[]>([]);
-
-  useEffect(() => {
-    if (selectedPrompt) {
-      setAIImages([selectedPrompt]);
-    }
-  }, [selectedPrompt]);
 
   const createFormData = (
     title: string,
@@ -66,7 +63,6 @@ const UploadPost: React.FC = () => {
     cate_ids?: number[],
   ) => {
     const formData = new FormData();
-
     formData.append("title", title);
     if (description) formData.append("description", description);
     // TODO: delete this when we have backend for categories
@@ -116,21 +112,16 @@ const UploadPost: React.FC = () => {
   };
 
   // Function to handle the form submission
-  const handleSubmit = async () => {
+  const handleSubmitMediaUploaded = async () => {
     setIsSubmitted(true);
-
-    // Validation for required fields
     if (!title.trim()) {
       showSnackbar("Title is required.", "error");
       return;
     }
-
     if ((!imageFiles || imageFiles.length === 0) && !videoFile) {
       showSnackbar("At least one image or video is required.", "error");
       return;
     }
-
-    // ✅ Video length validation
     if (videoFile) {
       const isVideoValid = await validateVideoDuration(videoFile, 60); // 60 sec max
       if (!isVideoValid) {
@@ -138,28 +129,22 @@ const UploadPost: React.FC = () => {
         return;
       }
     }
-
     try {
       setIsLoading(true);
-
       if (!thumbnailFile) {
         throw new Error("Thumbnail file is not defined");
       }
-
       // Create promises to upload video and create post at the same time
       const uploadVideoPromise = handleUploadVideo();
       const uploadInitThumbnailPromise = handleUploadInitialThumbnail();
       const uploadThumbnailPromise = handleUploadThumbnail();
-
       // Use Promise.all with await to wait for both operations to complete
       const [videoUrl, initialThumbnail, thumbnailUrl] = await Promise.all([
         uploadVideoPromise,
         uploadInitThumbnailPromise,
         uploadThumbnailPromise,
       ]);
-
       await handleCreatePost(thumbnailUrl, initialThumbnail, videoUrl);
-
       navigate("/explore");
     } catch (error) {
       console.error("Error during submission:", error);
@@ -173,7 +158,6 @@ const UploadPost: React.FC = () => {
     if (!videoFile) {
       return Promise.resolve(undefined);
     }
-
     try {
       const presignedUrlResponse: GetPresignedUrlResponse =
         await getPresignedUrl(
@@ -182,9 +166,7 @@ const UploadPost: React.FC = () => {
           "video",
           VIDEO_STORAGE_DIRECTORY,
         );
-
       await uploadFile(videoFile, presignedUrlResponse.presignedUrl);
-
       console.log("Video uploaded successfully:", presignedUrlResponse.fileUrl);
       return presignedUrlResponse.fileUrl;
     } catch (error) {
@@ -210,7 +192,6 @@ const UploadPost: React.FC = () => {
       aiCreated,
       cate_ids,
     );
-
     try {
       const response = await createPost(formData);
       console.log("Post created:", response);
@@ -223,16 +204,13 @@ const UploadPost: React.FC = () => {
 
   const handleUploadThumbnail = async (): Promise<string> => {
     const thumbnailFileName = `thumbnail_${nanoid(6)}`;
-
     const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
       thumbnailFileName,
       thumbnailFile!.type.split("/")[1],
       "image",
       VIDEO_STORAGE_DIRECTORY,
     );
-
     await uploadFile(thumbnailFile!, presignedUrlResponse.presignedUrl);
-
     return presignedUrlResponse.fileUrl;
   };
 
@@ -265,7 +243,76 @@ const UploadPost: React.FC = () => {
     }
   };
 
-  const isMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
+  const isUploadMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
+
+  // LOGIC FOR AI POST UPLOAD
+  const [aiImages, setAIImages] = useState<PromptResult | undefined>();
+  const isBrowseAIValid = (aiImages?.image_urls?.length ?? 0) > 0;
+
+  useEffect(() => {
+    const fetchFilesFromUrls = async (urls: string[]) => {
+      for (const url of urls) {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
+          const blob = await response.blob();
+          console.log("Fetched:", url, blob);
+        } catch (error) {
+          console.error("Failed to fetch:", url, error);
+        }
+      }
+    };
+
+    if (selectedPrompt) {
+      fetchFilesFromUrls(selectedPrompt.image_urls);
+    }
+  }, [selectedPrompt]);
+
+  const handleCreateAIPost = async (
+  ): Promise<void> => {
+    const formData = {
+      title,
+      description,
+      imageFiles,
+      thumbnailUrl: aiImages?.image_urls[0],
+      isMature,
+      aiCreated,
+      cate_ids,
+    }
+    try {
+      const response = await api.post("/posts", formData);
+      console.log("Post created:", response);
+    } catch (error) {
+      console.error("Error creating post:", error);
+      showSnackbar("Failed to create post.", "error");
+      throw error;
+    }
+  };
+
+  const handleSubmitAIMedia = async () => {
+    setIsSubmitted(true);
+    if (!title.trim()) {
+      showSnackbar("Title is required.", "error");
+      return;
+    }
+    if (!aiImages || aiImages.image_urls.length === 0) {
+      showSnackbar("At least one AI image is required.", "error");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      if (!aiImages.image_urls[0]) {
+        throw new Error("Thumbnail is not defined");
+      }
+      await handleCreateAIPost();
+      navigate("/explore");
+    } catch (error) {
+      console.error("Error during submission:", error);
+      showSnackbar("Failed to create post or upload video.", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Box className="dark:bg-mountain-950 w-full h-full">
@@ -297,7 +344,8 @@ const UploadPost: React.FC = () => {
       >
         {/* LEFT COLUMN */}
         <MediaSelection
-          aiImages={aiImages}
+          setMode={setMode}
+          aiImages={aiImages!}
           setAIImages={setAIImages}
           setImageFiles={setImageFiles}
           setVideoFile={setVideoFile}
@@ -320,7 +368,9 @@ const UploadPost: React.FC = () => {
             </Tooltip>
             <UploadForm
               thumbnailFile={thumbnailFile}
+              originalThumbnailFile={originalThumbnailFile}
               setOriginalThumbnailFile={setOriginalThumbnailFile}
+              existingThumbnailUrl={aiImages?.image_urls[0]}
               onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
               cate_ids={cate_ids}
@@ -337,27 +387,26 @@ const UploadPost: React.FC = () => {
               lastZoom={lastZoom}
               setLastCrop={setLastCrop}
               setLastZoom={setLastZoom}
-              originalThumbnailFile={originalThumbnailFile}
             />
           </Box>
           <hr className="border-mountain-300 dark:border-mountain-700 border-t-1 w-full" />
           {/* Bottom actions */}
-          <Box className="flex justify-between mt-auto pr-4 w-full">
+          <Box className="flex justify-between bg-none mt-auto pr-4 w-full">
             <Button
               variant="contained"
-              onClick={handleSubmit}
-              disabled={!isMediaValid}
+              onClick={handleSubmitMediaUploaded}
+              disabled={!(isUploadMediaValid || isBrowseAIValid)}
               className="ml-auto rounded-md"
               sx={{
                 textTransform: "none",
-                background: !isMediaValid
+                background: !(isUploadMediaValid || isBrowseAIValid)
                   ? "linear-gradient(to right, #9ca3af, #6b7280)" // Tailwind's gray-400 to gray-500
                   : "linear-gradient(to right, #3730a3, #5b21b6, #4c1d95)", // indigo-violet gradient
                 color: "white",
-                opacity: !isMediaValid ? 0.6 : 1,
-                pointerEvents: !isMediaValid ? "none" : "auto",
+                opacity: !(isUploadMediaValid || isBrowseAIValid) ? 0.6 : 1,
+                pointerEvents: !(isUploadMediaValid || isBrowseAIValid) ? "none" : "auto",
                 "&:hover": {
-                  background: !isMediaValid
+                  background: !(isUploadMediaValid || isBrowseAIValid)
                     ? "linear-gradient(to right, #9ca3af, #6b7280)"
                     : "linear-gradient(to right, #312e81, #4c1d95, #3b0764)",
                 },

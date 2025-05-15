@@ -23,9 +23,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
-import { Sparkle, Trash2 } from "lucide-react";
 import { LuImageOff } from "react-icons/lu";
 import { IoSparkles } from "react-icons/io5";
 
@@ -41,9 +39,9 @@ interface MediaSelectorPanelProps {
     isOriginal?: boolean,
     thumbnail_crop_meta?: string,
   ) => void;
-  aiImages: PromptResult[];
-  setAIImages: React.Dispatch<React.SetStateAction<PromptResult[]>>;
-
+  aiImages: PromptResult;
+  setAIImages: React.Dispatch<React.SetStateAction<PromptResult | undefined>>;
+  setMode: React.Dispatch<React.SetStateAction<'upload' | 'browse'>>;
   /* edit-only props – now optional ── */
   setExistingImageUrls?: React.Dispatch<React.SetStateAction<string[]>>;
   setExistingVideoUrl?: React.Dispatch<
@@ -69,6 +67,7 @@ const validateVideoDuration = (
 };
 
 export default function MediaSelectorPanel({
+  setMode,
   aiImages,
   setAIImages,
   setVideoFile,
@@ -81,24 +80,26 @@ export default function MediaSelectorPanel({
   const [searchParams] = useSearchParams();
   const type = searchParams.get("type");
 
-  const [tabValue, setTabValue] = useState<TabValue>(TabValue.UPLOAD_DEVICE);
+  const [tabValue, setTabValue] = useState<TabValue>(TabValue.UPLOAD_MEDIA);
   const [pendingTab, setPendingTab] = useState<TabValue | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   const handleTabChange = (newTab: TabValue) => {
-    const hasAIImages = selectedAIImages.length > 0;
-    if (hasAIImages && newTab !== TabValue.USE_GENAI) {
+    const hasAIImages = selectedAIImages?.image_urls.length! > 0;
+    if (hasAIImages && newTab !== TabValue.BROWSE_GENAI) {
       setPendingTab(newTab);
       setConfirmDialogOpen(true);
+      setMode('upload');
     } else {
       setTabValue(newTab);
+      setMode('browse');
     }
   };
   useEffect(() => {
     if (type === "ai-gen") {
-      setTabValue(TabValue.USE_GENAI);
+      setTabValue(TabValue.BROWSE_GENAI);
     } else if (type === "upload-device") {
-      setTabValue(TabValue.UPLOAD_DEVICE);
+      setTabValue(TabValue.UPLOAD_MEDIA);
     }
   }, [type]);
 
@@ -281,52 +282,52 @@ export default function MediaSelectorPanel({
   };
 
   // -------------------------------------------------
-  const [selectedAIImages, setSelectedAIImages] = useState<PromptResult[]>([]);
-  const [previewAI, setPreviewAI] = useState<PromptResult>();
+  const [selectedAIImages, setSelectedAIImages] = useState<PromptResult>();
+  const [previewAI, setPreviewAI] = useState<string>();
+
   useEffect(() => {
-    if (aiImages && aiImages.length > 0) {
-      setPreviewAI(aiImages[0]);
+    if (aiImages && aiImages.image_urls.length > 0) {
       setSelectedAIImages(aiImages);
+      setPreviewAI(aiImages.image_urls[0]);
     }
   }, [aiImages]);
 
   const handleRemoveAIPreview = () => {
-    if (!previewAI) return;
+    if (!selectedAIImages || !previewAI) return;
 
-    const updatedImages = selectedAIImages.filter(
-      (img) => img !== previewAI
-    );
+    const updatedUrls = selectedAIImages.image_urls.filter((img) => img !== previewAI);
 
-    setSelectedAIImages(updatedImages);
-
-    if (updatedImages.length > 0) {
-      setPreviewAI(updatedImages[0]);
+    if (updatedUrls.length > 0) {
+      setSelectedAIImages({ ...selectedAIImages, image_urls: updatedUrls });
+      setPreviewAI(updatedUrls[0]);
     } else {
+      setSelectedAIImages(undefined);
       setPreviewAI(undefined);
     }
   };
 
+
   return (
     <Box className="flex flex-col items-start dark:bg-mountain-900 rounded-md w-[60%] h-full text-gray-900 dark:text-white">
       {/* Tabs */}
-      <div className="flex gap-x-1 bg-white mb-3 p-1.25 border border-mountain-200 rounded-full w-full">
+      <div className="z-20 flex gap-x-1 bg-white mb-3 p-1.25 border border-mountain-200 rounded-full w-full">
         <MediaUploadTab
-          isActive={tabValue === TabValue.UPLOAD_DEVICE}
-          onClick={() => handleTabChange(TabValue.UPLOAD_DEVICE)}
+          isActive={tabValue === TabValue.UPLOAD_MEDIA}
+          onClick={() => handleTabChange(TabValue.UPLOAD_MEDIA)}
           icon={<TbDeviceDesktop className="mr-0.5 w-5 h-5" />}
           label="Upload from Device"
           examples="(image, video)"
         />
         <MediaUploadTab
-          isActive={tabValue === TabValue.USE_GENAI}
-          onClick={() => handleTabChange(TabValue.USE_GENAI)}
+          isActive={tabValue === TabValue.BROWSE_GENAI}
+          onClick={() => handleTabChange(TabValue.BROWSE_GENAI)}
           icon={<RiImageCircleAiLine className="mr-2 w-5 h-5 text-sm" />}
           label="Post My AI Images"
           examples=""
         />
       </div>
       {/* Device Section */}
-      {tabValue === TabValue.UPLOAD_DEVICE && (
+      {tabValue === TabValue.UPLOAD_MEDIA && (
         <AutoSizer>
           {({ height, width }) => {
             const adjustedHeight = Math.max(height - 61, 150);
@@ -503,7 +504,7 @@ export default function MediaSelectorPanel({
         </AutoSizer>
       )}
       {/* AI Section */}
-      {tabValue === TabValue.USE_GENAI && (
+      {tabValue === TabValue.BROWSE_GENAI && (
         <AutoSizer>
           {({ height, width }) => {
             const adjustedHeight = Math.max(height - 61, 150);
@@ -525,10 +526,10 @@ export default function MediaSelectorPanel({
                   sx={{ flexShrink: 0 }}
                 >
                   <Typography className="text-gray-900 dark:text-mountain-200 text-base">
-                    {selectedAIImages[0]?.image_urls.length || 0}/{MAX_IMAGES} images
+                    {selectedAIImages?.image_urls.length || 0}/{MAX_IMAGES} images
                   </Typography>
                   <Tooltip title="Marked as an AI Post. Its prompt may appear in trending suggestions for others to reuse.">
-                    <div className={`${selectedAIImages && selectedAIImages.length > 0 ? '' : 'hidden'} hover:cursor-pointer text-base items-center space-x-2 flex px-4 py-1 bg-white shadow rounded-full`}>
+                    <div className={`${selectedAIImages && selectedAIImages.image_urls.length > 0 ? '' : 'hidden'} hover:cursor-pointer text-base items-center space-x-2 flex px-4 py-1 bg-white shadow rounded-full`}>
                       <IoSparkles className="text-amber-300" />
                       <p>Generated by ArtNova</p>
                     </div>
@@ -548,7 +549,7 @@ export default function MediaSelectorPanel({
                 >
                   {previewAI ? (
                     <img
-                      src={previewAI.image_urls[0]}
+                      src={previewAI}
                       alt="Preview"
                       className="w-full object-cover aspect-video"
                       style={{ maxHeight: "100%", maxWidth: "100%" }}
@@ -603,19 +604,16 @@ export default function MediaSelectorPanel({
                   className="flex space-x-2 pt-3 h-fit custom-scrollbar"
                   sx={{ flexShrink: 0, overflowX: "hidden" }}
                 >
-                  {selectedAIImages[0]?.image_urls.map((url, i) => (
+                  {selectedAIImages?.image_urls.map((url, i) => (
                     <Box
                       key={i}
                       className="relative border-1 rounded-md cursor-pointer bounce-item"
                       sx={{
                         borderColor:
-                          previewAI?.image_urls?.[0] === url ? "primary.main" : "transparent",
+                          previewAI === url ? "primary.main" : "transparent",
                       }}
                       onClick={() =>
-                        setPreviewAI({
-                          ...selectedAIImages[0],
-                          image_urls: [url], // Only show selected preview image
-                        })
+                        setPreviewAI(url)
                       }
                     >
                       <Avatar
@@ -666,7 +664,7 @@ export default function MediaSelectorPanel({
           <DialogHeader>
             <DialogTitle>Change Tab Confirmation</DialogTitle>
             <DialogDescription>
-              If you switch tabs, your changes will be removed. Are you sure?
+              Switch tabs, your changes will be removed. Are you sure?
             </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center items-center bg-mountain-100 py-6">
@@ -679,7 +677,7 @@ export default function MediaSelectorPanel({
             <Button
               className="bg-red-700 hover:bg-red-700/80 text-mountain-50"
               onClick={() => {
-                setSelectedAIImages([]);
+                setSelectedAIImages(undefined);
                 setPreviewAI(undefined);
                 setTabValue(pendingTab!);
                 setConfirmDialogOpen(false);

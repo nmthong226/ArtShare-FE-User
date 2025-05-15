@@ -1,6 +1,6 @@
 enum TabValue {
-  UPLOAD_DEVICE = 0,
-  USE_GENAI = 1,
+  UPLOAD_MEDIA = 0,
+  BROWSE_GENAI = 1,
 }
 
 export default TabValue;

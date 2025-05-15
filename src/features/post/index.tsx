@@ -1,20 +1,24 @@
-import PostInfo from "@/features/post/components/PostInfo";
-import PostAssets from "@/features/post/components/PostAssets";
-import PostArtist from "@/features/post/components/PostArtist";
-import PostComments from "@/features/post/components/PostComments";
+import PostInfo from "./components/PostInfo";
+import PostAssets from "./components/PostAssets";
+import PostArtist from "./components/PostArtist";
+import PostComments from "./components/PostComments";
+import { fetchPost } from "./api/post.api";
+import { fetchComments } from "./api/comment.api.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-// import PostShare from "@/components/posts/PostShare";
-import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
+import PostTags from "./components/PostTags";
+import PostMoreByArtist from "./components/PostMoreByArtist";
+// import PostShare from "./components/PostShare";
+import LoadingSpinner from "@/components/fallbacks/LoadingSpinner.tsx";
 import { mappedCategoryPost } from "@/lib/utils";
-import { fetchPost } from "./api/post.api";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
+
   const {
     data: postData,
-    isLoading,
-    error,
+    isLoading: isPostLoading,
+    error: postError,
   } = useQuery({
     queryKey: ["postData", postId],
     queryFn: async () => {
@@ -25,7 +29,19 @@ const Post: React.FC = () => {
     },
   });
 
-  if (isLoading) {
+  const {
+    data: comments,
+    isLoading: isCommentsLoading,
+    error: commentsError,
+  } = useQuery({
+    queryKey: ["comments", postId],
+    queryFn: async () => {
+      return await fetchComments(parseInt(postId!));
+    },
+    enabled: !!postId, // Ensure postId is available before fetching comments
+  });
+  console.log(comments);
+  if (isPostLoading || isCommentsLoading) {
     return (
       <div className="m-4 text-center">
         <LoadingSpinner />
@@ -33,30 +49,36 @@ const Post: React.FC = () => {
     );
   }
 
-  if (error) {
-    return <div>Failed to fetch post data.</div>;
+  if (postError || commentsError) {
+    return <div>Failed to fetch data.</div>;
   }
 
-  return (
-    <div className="relative flex-grow bg-mountain-50 p-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
-      <div className="md:hidden relative flex flex-col bg-white shadow p-4 rounded-2xl h-full">
-        <div className="rounded-2xl h-full overflow-y-auto">
-          <PostArtist artist={postData!.user} postData={postData!} />
-          <PostAssets medias={postData!.medias} />
-          <PostInfo postData={postData!} />
-          <PostComments />
-        </div>
+  const PostContent = () => {
+    return (
+      <div className="flex flex-col gap-8">
+        <PostInfo postData={postData!} />
+        <PostComments comments={comments!} postId={postData!.id} />
+        <PostTags categories={postData!.categories} />
+        {/* <PostMoreByArtist artist={postData!.user} /> */}
+        {/* <PostShare /> */}
       </div>
-      <div className="hidden md:flex flex-row gap-4 h-full">
-        <div className="flex flex-grow justify-center items-center h-full overflow-y-scroll no-scrollbar">
+    );
+  };
+
+  return (
+    <div className="flex-grow bg-mountain-50 py-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">
+      <div className="md:hidden flex flex-col gap-4 p-4">
+        <PostArtist artist={postData!.user} postData={postData!} />
+        <PostAssets medias={postData!.medias} />
+        <PostContent />
+      </div>
+      <div className="hidden md:flex flex-row h-full">
+        <div className="flex flex-grow justify-center items-center pl-4 h-full overflow-y-scroll no-scrollbar">
           <PostAssets medias={postData!.medias} />
         </div>
-        <div className="relative flex-shrink-0 bg-white shadow py-0 pl-4 rounded-2xl sm:w-[256px] md:w-[384px] lg:w-[448px]">
-          <div className="flex flex-col gap-4 rounded-2xl h-full overflow-y-scroll custom-scrollbar">
-            <PostArtist artist={postData!.user} postData={postData!} />
-            <PostInfo postData={postData!} />
-            <PostComments />
-          </div>
+        <div className="flex-shrink-0 py-0 pr-4 pl-8 sm:w-[256px] md:w-[384px] lg:w-[448px] overflow-y-scroll no-scrollbar">
+          <PostArtist artist={postData!.user} postData={postData!} />
+          <PostContent />
         </div>
       </div>
     </div>

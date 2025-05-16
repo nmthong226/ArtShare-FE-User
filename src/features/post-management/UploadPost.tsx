@@ -277,6 +277,7 @@ const UploadPost: React.FC = () => {
         // 5️⃣ update your state
         setImageFiles(files)
         setHasArtNovaImages(true)
+        setThumbnailFile(files[0])
       } catch (err) {
         console.error('Error fetching images from S3', err)
       }

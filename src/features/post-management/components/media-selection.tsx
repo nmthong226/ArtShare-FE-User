@@ -331,6 +331,7 @@ export default function MediaSelectorPanel({
                 className="
                 top-2 left-2 z-50 absolute flex items-center space-x-2 mb-2 bg-white rounded-lg
                 p-1
+                px-2
                 "
                 sx={{ flexShrink: 0 }}
               >
@@ -338,7 +339,7 @@ export default function MediaSelectorPanel({
                   {imageFiles.length}/{MAX_IMAGES} images
                 </Typography>
 
-                {!hasArtNovaImages && <Typography className="text-gray-900 dark:text-mountain-200 text-base">
+                {tabValue !== TabValue.BROWSE_GENAI && <Typography className="text-gray-900 dark:text-mountain-200 text-base">
                   , {videoFile ? 1 : 0}/{MAX_VIDEO} video
                 </Typography>}
               </Box>

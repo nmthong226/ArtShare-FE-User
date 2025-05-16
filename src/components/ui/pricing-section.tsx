@@ -14,7 +14,7 @@ export function PricingSection({ tiers, frequencies }: PricingSectionProps) {
   );
 
   return (
-    <section className="flex flex-col items-center gap-10 py-10 w-full">
+    <section className="flex flex-col items-center space-y-4 w-full">
       <div className="text-center">
         <motion.div
           initial={{ opacity: 0 }}

@@ -14,7 +14,7 @@ import { nanoid } from "nanoid";
 import { useLocation, useNavigate } from "react-router-dom";
 import MediaSelection from "./components/media-selection";
 import { FaMagic } from "react-icons/fa";
-import api from "@/api/baseApi";
+import { generatePostContent } from "./api/generate-post-content.api";
 
 const UploadPost: React.FC = () => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const UploadPost: React.FC = () => {
     File | undefined
   >();
 
-  const [mode, setMode] = useState<'upload' | 'browse'>('upload');
+  // const [mode, setMode] = useState<'upload' | 'browse'>('upload');
   const [isLoading, setIsLoading] = useState(false);
   const [hasArtNovaImages, setHasArtNovaImages] = useState(false);
 
@@ -291,6 +291,29 @@ const UploadPost: React.FC = () => {
     })
   }, [location.pathname, navigate, selectedPrompt])
 
+  const handleGenerateContent = async () => {
+    if (!imageFiles || imageFiles.length === 0) {
+      showSnackbar("Please upload an image first.", "error");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const formData = new FormData();
+      imageFiles.forEach((file) => formData.append("images", file));
+      const response = await generatePostContent(formData);
+      const { title, description, categories } = response;
+      console.log("Generated content:", response);
+      setTitle(title);
+      setDescription(description);
+      setCateIds(categories.map(cate => cate.id));
+    } catch (error) {
+      console.error("Error generating content:", error);
+      showSnackbar("Failed to generate content.", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <Box className="dark:bg-mountain-950 w-full h-full">
       {isLoading && (
@@ -321,7 +344,6 @@ const UploadPost: React.FC = () => {
       >
         {/* LEFT COLUMN */}
         <MediaSelection
-          setMode={setMode}
           setImageFiles={setImageFiles}
           setVideoFile={setVideoFile}
           setThumbnailFile={handleThumbnailChange}
@@ -341,9 +363,20 @@ const UploadPost: React.FC = () => {
           {/* Form fields */}
           <Box className="relative pr-4 rounded-md w-full overflow-y-auto custom-scrollbar">
             <Tooltip title="Auto Generate Content (title, description, categories)" arrow placement="left">
-              <div className="top-2 z-50 sticky flex justify-center items-center bg-gradient-to-b from-blue-400 to-purple-400 shadow-md ml-auto rounded-full w-12 h-12 hover:scale-105 duration-300 ease-in-out hover:cursor-pointer transform">
+              <Button
+                className="
+                top-2 z-50 sticky 
+                flex justify-center items-center 
+                bg-gradient-to-b from-blue-400 to-purple-400 shadow-md 
+                ml-auto rounded-full w-12 h-12
+                hover:scale-105 duration-300 ease-in-out hover:cursor-pointer transform
+                p-0
+                min-w-0 
+                "
+                onClick={handleGenerateContent}
+              >
                 <FaMagic className="size-5 text-white" />
-              </div>
+              </Button>
             </Tooltip>
             <UploadForm
               thumbnailFile={thumbnailFile}

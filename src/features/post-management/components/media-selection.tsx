@@ -42,7 +42,6 @@ interface MediaSelectorPanelProps {
     isOriginal?: boolean,
     thumbnail_crop_meta?: string,
   ) => void;
-  setMode: React.Dispatch<React.SetStateAction<'upload' | 'browse'>>;
   /* edit-only props – now optional ── */
   setExistingImageUrls?: React.Dispatch<React.SetStateAction<string[]>>;
   setExistingVideoUrl?: React.Dispatch<
@@ -73,7 +72,6 @@ const validateVideoDuration = (
 };
 
 export default function MediaSelectorPanel({
-  setMode,
   setVideoFile,
   setImageFiles,
   setThumbnailFile,
@@ -98,10 +96,8 @@ export default function MediaSelectorPanel({
     if (hasArtNovaImages && newTab !== TabValue.BROWSE_GENAI) {
       setPendingTab(newTab);
       setConfirmDialogOpen(true);
-      setMode('upload');
     } else {
       setTabValue(newTab);
-      setMode('browse');
     }
   };
   useEffect(() => {

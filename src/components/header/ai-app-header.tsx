@@ -22,7 +22,7 @@ const AIHeader = () => {
     const routes = [
         {
             path: "/image/tool/text-to-image",
-            label: "Text To Image",
+            label: "Image Generation",
             description: "Use AI tools to bring your creative ideas to life"
         },
         {

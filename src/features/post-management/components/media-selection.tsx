@@ -418,8 +418,9 @@ export default function MediaSelectorPanel({
                   className="flex justify-center items-center border border-mountain-600 rounded-md w-[80px] h-[80px] text-gray-900 dark:text-white cursor-pointer"
                   component="label"
                   hidden={
-                    (imageFiles.length === 0 || imageFiles.length === MAX_IMAGES) &&
-                    videoFile === undefined
+                    (imageFiles.length === 0 && videoFile === undefined)
+                    || imageFiles.length === MAX_IMAGES
+                    || hasArtNovaImages
                   }
                 >
                   <MdAdd size={32} />

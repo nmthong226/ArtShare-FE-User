@@ -334,7 +334,7 @@ const UploadPost: React.FC = () => {
         >
           <CircularProgress color="inherit" />
           <Typography variant="h6" sx={{ mt: 2, color: "white" }}>
-            Creating post...
+            Processing...
           </Typography>
         </Backdrop>
       )}

@@ -32,6 +32,7 @@ const UploadPost: React.FC = () => {
 
   const [mode, setMode] = useState<'upload' | 'browse'>('upload');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasArtNovaImages, setHasArtNovaImages] = useState(false);
 
   // SHARED FIELDS
   const [title, setTitle] = useState("");
@@ -245,74 +246,50 @@ const UploadPost: React.FC = () => {
 
   const isUploadMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
 
-  // LOGIC FOR AI POST UPLOAD
-  const [aiImages, setAIImages] = useState<PromptResult | undefined>();
-  const isBrowseAIValid = (aiImages?.image_urls?.length ?? 0) > 0;
 
   useEffect(() => {
-    const fetchFilesFromUrls = async (urls: string[]) => {
-      for (const url of urls) {
-        try {
-          const response = await fetch(url);
-          if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
-          const blob = await response.blob();
-          console.log("Fetched:", url, blob);
-        } catch (error) {
-          console.error("Failed to fetch:", url, error);
-        }
+    if (!selectedPrompt) return
+
+    const fetchFilesFromUrls = async () => {
+      try {
+        const files: File[] = await Promise.all(
+          selectedPrompt.image_urls.map(async (url) => {
+            // 1️⃣ fetch the URL
+            const res = await fetch(url, {
+              method: 'GET',
+            })
+            if (!res.ok) {
+              throw new Error(`Failed to fetch ${url}: ${res.status}`)
+            }
+
+            // 2️⃣ read it as a Blob
+            const blob = await res.blob()
+
+            // 3️⃣ derive a filename (or hard-code one)
+            const parts = url.split('/')
+            const filename = parts[parts.length - 1] || 'image.jpg'
+
+            // 4️⃣ create a File from the Blob
+            return new File([blob], filename, { type: blob.type })
+          })
+        )
+
+        // 5️⃣ update your state
+        setImageFiles(files)
+        setHasArtNovaImages(true)
+      } catch (err) {
+        console.error('Error fetching images from S3', err)
       }
-    };
+    }
 
-    if (selectedPrompt) {
-      fetchFilesFromUrls(selectedPrompt.image_urls);
-    }
-  }, [selectedPrompt]);
+    fetchFilesFromUrls()
 
-  const handleCreateAIPost = async (
-  ): Promise<void> => {
-    const formData = {
-      title,
-      description,
-      imageFiles,
-      thumbnailUrl: aiImages?.image_urls[0],
-      isMature,
-      aiCreated,
-      cate_ids,
-    }
-    try {
-      const response = await api.post("/posts", formData);
-      console.log("Post created:", response);
-    } catch (error) {
-      console.error("Error creating post:", error);
-      showSnackbar("Failed to create post.", "error");
-      throw error;
-    }
-  };
-
-  const handleSubmitAIMedia = async () => {
-    setIsSubmitted(true);
-    if (!title.trim()) {
-      showSnackbar("Title is required.", "error");
-      return;
-    }
-    if (!aiImages || aiImages.image_urls.length === 0) {
-      showSnackbar("At least one AI image is required.", "error");
-      return;
-    }
-    try {
-      setIsLoading(true);
-      if (!aiImages.image_urls[0]) {
-        throw new Error("Thumbnail is not defined");
-      }
-      await handleCreateAIPost();
-      navigate("/explore");
-    } catch (error) {
-      console.error("Error during submission:", error);
-      showSnackbar("Failed to create post or upload video.", "error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    // clear prompt out of history
+    navigate(location.pathname, {
+      replace: true,       // swap current entry instead of pushing
+      state: {},           // or `state: null`
+    })
+  }, [location.pathname, navigate, selectedPrompt])
 
   return (
     <Box className="dark:bg-mountain-950 w-full h-full">
@@ -345,11 +322,13 @@ const UploadPost: React.FC = () => {
         {/* LEFT COLUMN */}
         <MediaSelection
           setMode={setMode}
-          aiImages={aiImages!}
-          setAIImages={setAIImages}
           setImageFiles={setImageFiles}
           setVideoFile={setVideoFile}
           setThumbnailFile={handleThumbnailChange}
+          imageFiles={imageFiles ?? []}
+          videoFile={videoFile}
+          hasArtNovaImages={hasArtNovaImages}
+          setHasArtNovaImages={setHasArtNovaImages}
         />
         {/* RIGHT COLUMN: FORM FIELDS & ACTIONS */}
         <Box className="flex flex-col space-y-3 w-[40%]">
@@ -370,7 +349,7 @@ const UploadPost: React.FC = () => {
               thumbnailFile={thumbnailFile}
               originalThumbnailFile={originalThumbnailFile}
               setOriginalThumbnailFile={setOriginalThumbnailFile}
-              existingThumbnailUrl={aiImages?.image_urls[0]}
+              // existingThumbnailUrl={aiImages?.image_urls[0]}
               onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
               cate_ids={cate_ids}
@@ -395,18 +374,18 @@ const UploadPost: React.FC = () => {
             <Button
               variant="contained"
               onClick={handleSubmitMediaUploaded}
-              disabled={!(isUploadMediaValid || isBrowseAIValid)}
+              disabled={!(isUploadMediaValid)}
               className="ml-auto rounded-md"
               sx={{
                 textTransform: "none",
-                background: !(isUploadMediaValid || isBrowseAIValid)
+                background: !(isUploadMediaValid)
                   ? "linear-gradient(to right, #9ca3af, #6b7280)" // Tailwind's gray-400 to gray-500
                   : "linear-gradient(to right, #3730a3, #5b21b6, #4c1d95)", // indigo-violet gradient
                 color: "white",
-                opacity: !(isUploadMediaValid || isBrowseAIValid) ? 0.6 : 1,
-                pointerEvents: !(isUploadMediaValid || isBrowseAIValid) ? "none" : "auto",
+                opacity: !(isUploadMediaValid) ? 0.6 : 1,
+                pointerEvents: !(isUploadMediaValid) ? "none" : "auto",
                 "&:hover": {
-                  background: !(isUploadMediaValid || isBrowseAIValid)
+                  background: !(isUploadMediaValid)
                     ? "linear-gradient(to right, #9ca3af, #6b7280)"
                     : "linear-gradient(to right, #312e81, #4c1d95, #3b0764)",
                 },

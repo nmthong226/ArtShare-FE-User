@@ -100,6 +100,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       // Call backend signup API
       const backendResponse = await signup(user.uid, email, "", username);
+
       if (!backendResponse) {
         throw new Error("Error during registration. Please try again.");
       }
@@ -131,6 +132,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const data = await getUserProfile();
+
       setUser(data);
       const token = await user.getIdToken();
 
@@ -151,10 +153,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   // Google Sign-Up or Login
   const authenWithGoogle = async (): Promise<void> => {
     try {
-      const result = await signInWithPopup(
-        auth,
-        new GoogleAuthProvider(),
-      );
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
       const { operationType, user: googleUser } = result;
       console.log("Google sign-in operation type:", operationType);
 
@@ -175,6 +174,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       localStorage.setItem("accessToken", loginResponse.access_token);
       const data = await getUserProfile();
+
       setUser(data);
     } catch (error) {
       setError((error as Error).message);

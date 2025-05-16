@@ -8,6 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider";
 import { AxiosError } from "axios";
+import { getAuth } from "firebase/auth";
+import api from "@/api/baseApi";
+import { getUserProfile } from "@/api/authentication/auth";
 
 const Login = () => {
   const { loginWithEmail, authenWithGoogle, signUpWithFacebook } = useUser();
@@ -61,7 +64,10 @@ const Login = () => {
     setError(""); // Clear previous error
     try {
       await authenWithGoogle(); // Call Google login function from UserProvider
-      navigate("/explore"); // Redirect after successful login
+      const user = getAuth();
+      const data = await getUserProfile(user.currentUser!.uid);
+      if (!data.isOnboard) navigate("/onboarding");
+      else navigate("/explore");
     } catch (error) {
       let message = "Something went wrong. Please try again.";
       if (error instanceof AxiosError) {

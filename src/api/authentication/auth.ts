@@ -1,9 +1,18 @@
 import axios from "axios";
-
+import api from "../baseApi";
 // Base URL of your NestJS backend API
 const rawUrl = import.meta.env.VITE_BE_URL ?? "http://localhost:3000";
 const API_BASE_URL = `${rawUrl.replace(/\/+$/, "")}/auth`;
-
+// Function to get user profile by userId
+export const getUserProfile = async (userId: string) => {
+  try {
+    const response = await api.get(`/users/profile/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    throw error;
+  }
+};
 // Function to handle user sign up
 export const signup = async (
   userId: string,

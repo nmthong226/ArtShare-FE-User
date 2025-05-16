@@ -132,7 +132,7 @@ export const LikesDialog: React.FC<LikesDialogProps> = ({
         id="likes-dialog-title"
         className="flex justify-between items-center"
       >
-        {"Liked By"}
+        {"Liked by"}
         <IconButton
           aria-label="close"
           onClick={handleClose}

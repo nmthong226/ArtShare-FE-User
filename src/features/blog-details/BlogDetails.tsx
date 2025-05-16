@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 //Components
 import { Button, Tooltip } from "@mui/material";
 import BlogComments from "./components/BlogComments";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-
+import type { Blog } from "@/types/blog";
 //Icons
 import { IoPersonAddOutline } from "react-icons/io5";
 import { LuTableOfContents } from "react-icons/lu";
@@ -16,10 +16,21 @@ import { AiOutlineLike } from "react-icons/ai";
 import { MdBookmarkBorder } from "react-icons/md";
 import { LuPlus } from "react-icons/lu";
 import Share from "@/components/dialogs/Share";
+import { LikesDialog } from "@/components/like/LikesDialog";
+import { fetchBlogDetails } from "./api/blog";
+import { formatDistanceToNow } from "date-fns";
 
 const BlogDetails = () => {
+  const { blogId } = useParams<{ blogId: string }>(); // get blogId from URL
   const [showAuthorBadge, setShowAuthorBadge] = useState(false);
+  // states for the likes dialog
+  const [likesDialogOpen, setLikesDialogOpen] = useState(false);
+  const [likeCount, setLikeCount] = useState(14);
+  const [isLiked, setIsLiked] = useState(false);
 
+  const [blog, setBlog] = useState<Blog | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>("");
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -33,6 +44,56 @@ const BlogDetails = () => {
     };
   }, []);
 
+  const handleOpenLikesDialog = () => {
+    setLikesDialogOpen(true);
+  };
+
+  const handleCloseLikesDialog = () => {
+    setLikesDialogOpen(false);
+  };
+
+  // Function to handle toggling like status
+  const handleToggleLike = () => {
+    // Toggle like status
+    setIsLiked(!isLiked);
+
+    // Update like count based on the new state
+    setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
+  };
+
+  useEffect(() => {
+    if (!blogId) return;
+
+    setLoading(true);
+    fetchBlogDetails(Number(blogId))
+      .then((data) => {
+        setBlog(data);
+      })
+      .catch((err) => {
+        console.error("Failed to load blog:", err);
+        setError("Could not load blog details.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [blogId]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-full">
+        <p>Loading…</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500 p-4">{error}</div>;
+  }
+  if (!blog) return null;
+
+  // 5) Compute reading time:
+  const readingTime = Math.ceil(blog.content.split(/\s+/).length / 200);
+
   return (
     <div className="flex flex-col items-center w-full h-full">
       <div className="flex w-full h-full">
@@ -45,40 +106,37 @@ const BlogDetails = () => {
           </div>
         </div>
         <div className="group flex flex-col space-y-4 bg-white/50 shadow p-4 w-[60%]">
-          <div className="flex bg-black w-full h-[200px] overflow-hidden">
-            <img
-              src="https://picsum.photos/id/11/300/200"
-              className="w-full h-full object-cover group-hover:scale-120 transition-transform duration-300 ease-in-out transform"
-            />
-          </div>
           <div className="flex space-x-2 w-full">
             <Link to="/blogs" className="underline">
               Blogs
             </Link>
             <span>/</span>
-            <Link to="/blogs/news" className="underline">
-              News
-            </Link>
-            <span>/</span>
-            <span className="text-mountain-600 line-clamp-1">
-              Ambessa – Arcane Fan Art
-            </span>
+            <span className="text-mountain-600 line-clamp-1">{blog.title}</span>
           </div>
-          <h1 className="font-medium text-3xl">Ambessa – Arcane Fan Art</h1>
+          <h1 className="font-medium text-3xl">{blog.title}</h1>{" "}
           <div className="flex items-center space-x-2 text-mountain-600 text-sm">
-            <p>Posted in 2 days ago</p>
+            <p>
+              Posted{" "}
+              {formatDistanceToNow(new Date(blog.created_at), {
+                addSuffix: true,
+              })}
+            </p>
             <span>•</span>
-            <p>5m reading</p>
+            <p>{readingTime}m reading</p>
           </div>
           <div className="flex justify-between items-center bg-gradient-to-r from-indigo-100 to-purple-100 shadow-sm p-2 py-4 rounded-lg">
             <div className="flex space-x-2">
-              <Avatar className="w-12 h-12">
-                <AvatarImage src="https://i.pravatar.cc/150?img=68" />
-                <AvatarFallback>CN</AvatarFallback>
+              <Avatar>
+                <AvatarImage src={blog.user.profile_picture_url ?? undefined} />
+                <AvatarFallback>
+                  {blog.user.username.charAt(0).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div className="flex flex-col justify-between">
-                <p className="text-lg">Fred Taylor</p>
-                <p className="text-mountain-600 text-sm">@fredtaylor</p>
+                <p>{blog.user.full_name || blog.user.username}</p>
+                <p className="text-mountain-600 text-sm">
+                  @{blog.user.username}
+                </p>
               </div>
             </div>
             <Button className="flex items-center bg-white shadow w-32 h-12 font-thin text">
@@ -86,69 +144,10 @@ const BlogDetails = () => {
               <p>Follow</p>
             </Button>
           </div>
-          <div className="flex flex-col space-y-2 p-2 rounded-md">
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam
-              tristique orci arcu, sed condimentum dui fringilla eget. Quisque
-              ultricies turpis a risus sollicitudin, et aliquam ligula
-              fermentum. Duis finibus vestibulum sollicitudin. Fusce sed magna
-              gravida, faucibus arcu sollicitudin, congue enim. In tellus
-              sapien, dignissim in quam vitae, ultricies eleifend mauris. Sed
-              sed nulla at libero semper suscipit. Cras finibus sollicitudin
-              ligula sit amet vestibulum. Nunc diam justo, suscipit ut nisl a,
-              gravida hendrerit ipsum.
-            </p>
-            <p>
-              Ut sagittis laoreet sem tempus viverra. Phasellus accumsan urna ac
-              viverra sagittis. Proin fringilla elit magna, id rutrum tortor
-              pretium nec. Aliquam non libero sed lectus porttitor laoreet. Sed
-              molestie nunc eget convallis tempus. Duis quis nunc sem. Cras nec
-              aliquet orci, in mollis magna. In dictum felis ac lorem pretium,
-              ut semper nisl volutpat. Pellentesque ac magna elit. Mauris purus
-              nisl, gravida et ante at, rutrum vestibulum metus. Nam eu velit ut
-              tellus pulvinar malesuada blandit vulputate dolor. Morbi cursus
-              vel ex a egestas. Donec molestie arcu non tempor luctus. Cras
-              ligula tortor, semper eu pretium nec, accumsan non diam.
-            </p>
-            <p>
-              Sed sed turpis ut enim eleifend laoreet eu non mauris. Ut vitae
-              nisi quis tellus consectetur mattis. Vestibulum interdum mattis
-              nibh eget sagittis. Donec sit amet lectus in augue dignissim
-              vestibulum. Pellentesque tempus, neque in convallis convallis,
-              mauris erat iaculis odio, id placerat velit augue et risus.
-              Curabitur ipsum arcu, convallis nec eleifend eu, posuere ut quam.
-              Nulla cursus urna at risus maximus, pretium consequat est semper.
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam eu
-              nulla id sapien aliquam sodales et quis neque. Praesent id ligula
-              non dui luctus malesuada sed vel ligula. Vivamus facilisis
-              consectetur justo eget rutrum. Nam aliquet fermentum fermentum.
-              Fusce suscipit orci eget pharetra imperdiet.
-            </p>
-            <p>
-              Pellentesque nec tortor dolor. In ut ultrices nunc, in dapibus
-              magna. Mauris efficitur velit eget arcu mattis, et imperdiet nisi
-              vestibulum. Sed sollicitudin massa ut leo ornare venenatis.
-              Phasellus convallis pulvinar dui vel porttitor. Aliquam quis
-              iaculis eros, vel pulvinar felis. Nulla eget lacus porttitor quam
-              ullamcorper malesuada sodales at urna. Aliquam sed felis lorem.
-              Aliquam vitae elit venenatis, volutpat felis ut, cursus nisl.
-              Suspendisse ipsum dolor, tempor nec sagittis a, iaculis blandit
-              ligula. Mauris nisl orci, pellentesque efficitur ullamcorper nec,
-              suscipit et tellus. Integer vestibulum non lorem a dapibus. Fusce
-              at lobortis est, ut sollicitudin quam. Duis commodo at dolor id
-              imperdiet. Nullam id dolor ut urna euismod pulvinar blandit a
-              enim. Vivamus pretium porttitor enim.
-            </p>
-            <p>
-              Mauris ut fringilla tortor. Donec at consequat orci, vitae laoreet
-              sem. Quisque ultrices lectus a quam vehicula accumsan. Donec vel
-              dui bibendum, consequat odio eget, rhoncus ex. Vestibulum in justo
-              dignissim, auctor neque non, tempor purus. Proin vel neque neque.
-              Donec in purus ornare, viverra neque eget, ornare metus. Curabitur
-              vehicula congue tincidunt. Nunc consequat elementum risus id
-              efficitur.
-            </p>
-          </div>
+          <div
+            className="prose lg:prose-xl max-w-none p-2 rounded-md" // Added prose classes for styling
+            dangerouslySetInnerHTML={{ __html: blog.content }}
+          />
         </div>
         <div className="relative flex flex-col w-[20%]">
           <div
@@ -170,8 +169,22 @@ const BlogDetails = () => {
             >
               <Tooltip title="Like" placement="right" arrow>
                 <div className="flex justify-center items-center bg-blue-50 hover:bg-blue-100 shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer">
-                  <AiOutlineLike className="mr-1 size-5" />
-                  <p>14</p>
+                  <AiOutlineLike
+                    className={`size-5 ${isLiked ? "text-blue-500" : ""}`}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent event bubbling
+                      handleToggleLike();
+                    }} // Add onClick to toggle like
+                  />
+                  <p
+                    className="ml-1 hover:underline"
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent event bubbling
+                      handleOpenLikesDialog();
+                    }} // Add onClick to just the number to open dialog
+                  >
+                    {likeCount}
+                  </p>
                 </div>
               </Tooltip>
               <Tooltip title="Comment" placement="right" arrow>
@@ -194,8 +207,13 @@ const BlogDetails = () => {
           </div>
         </div>
       </div>
-      <BlogComments blogId={1} />
+      <BlogComments />
       <RelatedBlogs />
+      <LikesDialog
+        contentId={Number(blogId)} // pass contentId from URL
+        open={likesDialogOpen}
+        onClose={handleCloseLikesDialog}
+      />
     </div>
   );
 };

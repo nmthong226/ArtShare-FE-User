@@ -37,7 +37,6 @@ const OnboardingProfile: React.FC = () => {
       username: "",
       bio: "",
       profile_picture_url: "",
-      birthday: "",
     },
   });
 
@@ -60,7 +59,6 @@ const OnboardingProfile: React.FC = () => {
     const payload: ProfileForm = {
       ...raw,
       birthday: raw.birthday ? new Date(raw.birthday).toISOString() : undefined,
-      isOnboard: true,
     };
 
     try {
@@ -73,7 +71,20 @@ const OnboardingProfile: React.FC = () => {
       showDialog(false, "Failed to update profile");
     }
   };
-
+  // Prevent interaction with the rest of the page when dialog is open
+  React.useEffect(() => {
+    if (open) {
+      document.body.style.pointerEvents = "none";
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.pointerEvents = "";
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.pointerEvents = "";
+      document.body.style.overflow = "";
+    };
+  }, [open]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-6">
       <Card className="w-full max-w-xl bg-white shadow-xl border border-neutral-200">

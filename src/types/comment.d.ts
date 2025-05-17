@@ -47,5 +47,5 @@ export interface CreateCommentDto {
 /** BE model + extra “view‑state” props the UI needs */
 export interface CommentUI extends Comment {
   likes?: number;
-  likedByUser?: boolean;
+  likedByCurrentUser?: boolean;
 }

@@ -66,7 +66,8 @@ const Login = () => {
       await authenWithGoogle(); // Call Google login function from UserProvider
       const user = getAuth();
       const data = await getUserProfile(user.currentUser!.uid);
-      if (!data.isOnboard) navigate("/onboarding");
+      console.log(data);
+      if (!data.is_onboard) navigate("/onboarding");
       else navigate("/explore");
     } catch (error) {
       let message = "Something went wrong. Please try again.";

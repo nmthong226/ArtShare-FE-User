@@ -14,6 +14,7 @@ import {
   MenuItem,
   TextareaAutosize,
   CircularProgress,
+  Snackbar,
 } from "@mui/material";
 import {
   ThumbsUp,
@@ -25,8 +26,13 @@ import {
 import Avatar from "boring-avatars";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
 import api from "@/api/baseApi";
-import { likeComment, createComment, fetchComments } from "../api/comment.api";
-import { Comment, CommentUI, CreateCommentDto } from "@/types/comment";
+import {
+  likeComment,
+  createComment,
+  fetchComments,
+  unlikeComment,
+} from "../api/comment.api";
+import { CommentUI, CreateCommentDto } from "@/types/comment";
 import { useUser } from "@/contexts/UserProvider";
 
 /* ------------------------------------------------------------------ */
@@ -52,8 +58,8 @@ const toggleLikeRecursive = (list: CommentUI[], id: number): CommentUI[] =>
     c.id === id
       ? {
           ...c,
-          likedByUser: !c.likedByUser,
-          likes: (c.likes ?? 0) + (c.likedByUser ? -1 : 1),
+          likedByCurrentUser: !c.likedByCurrentUser,
+          like_count: (c.like_count ?? 0) + (c.likedByCurrentUser ? -1 : 1),
         }
       : c.replies?.length
         ? { ...c, replies: toggleLikeRecursive(c.replies, id) }
@@ -128,10 +134,15 @@ const CommentRow = ({
       try {
         setLoading(true);
         const replies = await fetchComments(comment.id);
+
         onRepliesFetched(comment.id, replies as CommentUI[]);
       } catch (err) {
         console.error(err);
-        alert("Could not load replies.");
+        Snackbar({
+          open: true,
+          message: "Failed to load replies.",
+          autoHideDuration: 3000,
+        });
       } finally {
         setLoading(false);
       }
@@ -209,7 +220,9 @@ const CommentRow = ({
           <div className="flex items-center gap-4 mt-1 text-xs text-neutral-600">
             <button
               onClick={() => onLike(comment.id)}
-              className="flex items-center gap-1 hover:text-black"
+              className={`flex items-center gap-1 hover:text-black ${
+                comment.likedByCurrentUser ? "text-blue-600 font-semibold" : ""
+              }`}
             >
               <ThumbsUp size={16} />
               <span>{comment.like_count ?? 0}</span>
@@ -353,6 +366,8 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
 
       const tmpId = Date.now();
       const now = new Date();
+
+      // Check if the current user has liked this post
       const optimistic: CommentUI = {
         id: tmpId,
         user_id: CURRENT_USER_ID || "",
@@ -364,19 +379,21 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         created_at: now,
         updated_at: now,
         replies: [],
-        likes: 0,
-        likedByUser: false,
         like_count: 0,
+        likedByCurrentUser: false,
       };
 
+      // Optimistically update UI to show the new comment
       setComments((prev) =>
         replyParentId
           ? addReplyRecursive(prev, replyParentId, optimistic)
           : [...prev, optimistic],
       );
+
       setNewComment("");
       setReplyParentId(null);
       setIsPosting(true);
+
       try {
         const payload: CreateCommentDto = {
           content,
@@ -384,6 +401,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           target_type: "POST",
           parent_comment_id: replyParentId ?? undefined,
         };
+
         const { data } = await createComment(payload);
         setComments((prev) =>
           prev.map((c) => (c.id === tmpId ? { ...data } : c)),
@@ -433,13 +451,27 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
 
     /* -------------------- LIKE ------------------------------------ */
     const handleLike = async (id: number) => {
+      // Find the comment to check if it's already liked
+      const comment = comments
+        .flatMap(function findAll(c): CommentUI[] {
+          return [c, ...(c.replies ? c.replies.flatMap(findAll) : [])];
+        })
+        .find((c) => c.id === id);
+
+      const alreadyLiked = comment?.likedByCurrentUser;
+      console.log(alreadyLiked);
+
       setComments((prev) => toggleLikeRecursive(prev, id));
       try {
-        await likeComment(id);
+        if (alreadyLiked) {
+          await unlikeComment(id);
+        } else {
+          await likeComment(id);
+        }
       } catch (err) {
         // revert optimistic update
         setComments((prev) => toggleLikeRecursive(prev, id));
-        alert("Could not like comment.");
+        alert("Could not update like status.");
       }
     };
 

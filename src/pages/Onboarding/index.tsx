@@ -53,8 +53,6 @@ const OnboardingProfile: React.FC = () => {
   const showDialog = (ok: boolean, text: string) => {
     setPopMessage({ ok, text });
     setOpen(true);
-    clearTimeout(timerRef.current as NodeJS.Timeout);
-    timerRef.current = setTimeout(() => setOpen(false), 2500); // Close dialog after 2.5 seconds
   };
 
   // Age validation function (user must be at least 13 years old)
@@ -79,7 +77,9 @@ const OnboardingProfile: React.FC = () => {
     try {
       await api.patch("/users/profile", payload);
       reset(raw);
-      setTimeout(() => navigate("/explore"), 2600); // Redirect to explore after a successful update
+      setTimeout(() => navigate("/explore"), 2600); // Redirect to explore after a
+      // successful update
+      showDialog(true, "Profile updated successfully!");
     } catch (err) {
       console.log(err);
       showDialog(false, "Failed to update profile");
@@ -207,6 +207,20 @@ const OnboardingProfile: React.FC = () => {
             Save changes
           </Button>
         </form>
+        {popMessage && (
+          <div className="flex flex-col items-center justify-center mt-4">
+            {popMessage.ok ? (
+              <CheckCircle2 className="text-green-500 w-8 h-8 mb-2" />
+            ) : (
+              <XCircle className="text-rose-500 w-8 h-8 mb-2" />
+            )}
+            <span
+              className={`text-base font-medium ${popMessage.ok ? "text-green-700" : "text-rose-700"}`}
+            >
+              {popMessage.text}
+            </span>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

@@ -5,7 +5,7 @@ import {
   ReactNode,
   useEffect,
 } from "react";
-import { auth } from "@/firebase"; // Import Firebase auth
+import { auth } from "@/firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -15,7 +15,7 @@ import {
   FacebookAuthProvider,
   getAdditionalUserInfo,
 } from "firebase/auth";
-import { login, signup } from "@/api/authentication/auth"; // Import your backend login and signup functions
+import { login, signup } from "@/api/authentication/auth";
 import { User } from "@/types";
 import { getUserProfile } from "@/features/user-profile-private/api/get-user-profile";
 import { useNavigate } from "react-router-dom";
@@ -23,15 +23,15 @@ import api from "@/api/baseApi";
 
 interface UserContextType {
   user: User | null;
+  isAuthenticated: boolean;
+  isOnboard: boolean;
   error: string | null;
   loading: boolean | null;
-  // Updated to return a Promise<string> (token)
   signUpWithEmail: (
     email: string,
     password: string,
     username: string,
   ) => Promise<string>;
-  // Updated to return a Promise<string> (token)
   loginWithEmail: (email: string, password: string) => Promise<string>;
   logout: () => void;
   authenWithGoogle: () => Promise<void>;
@@ -47,22 +47,18 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true); // Add loading state
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const unsubscribe = auth.onIdTokenChanged(
       async (firebaseUser) => {
         if (firebaseUser) {
           try {
-            // 1. Get Firebase token
             const fbToken = await firebaseUser.getIdToken();
-            // 2. Exchange it for your backend JWT
             const { access_token } = await login(fbToken);
-            // 3. Store and install the backend token
             localStorage.setItem("accessToken", access_token);
             api.defaults.headers.common["Authorization"] =
               `Bearer ${access_token}`;
-            // 4. Now call the protected endpoint
             const data = await getUserProfile();
             setUser(data);
           } catch (err) {
@@ -72,7 +68,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         } else {
           setUser(null);
         }
-        setLoading(false); // Authentication check completed
+        setLoading(false);
       },
       (err) => {
         setError(err.message);
@@ -83,36 +79,27 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
-  // Signup with Email and Password
   const signUpWithEmail = async (
     email: string,
     password: string,
     username: string,
   ): Promise<string> => {
     try {
-      // Create user with Firebase
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
         password,
       );
       const user = userCredential.user;
-
-      // Call backend signup API
-      const backendResponse = await signup(user.uid, email, "", username);
-      if (!backendResponse) {
-        throw new Error("Error during registration. Please try again.");
-      }
-
-      // Retrieve and set the token
+      await signup(user.uid, email, "", username);
       const token = await user.getIdToken();
-      // Return the token for further processing (e.g., navigation)
       return token;
     } catch (error) {
       setError((error as Error).message);
-      throw error; // Rethrow the error so the caller can handle it
+      throw error;
     }
   };
+
   const loginWithEmail = async (
     email: string,
     password: string,
@@ -132,8 +119,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await getUserProfile();
       setUser(data);
-      const token = await user.getIdToken();
 
+      const token = await user.getIdToken();
       const backendResponse = await login(token);
       if (backendResponse) {
         return token;
@@ -148,16 +135,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Google Sign-Up or Login
   const authenWithGoogle = async (): Promise<void> => {
     try {
-      const result = await signInWithPopup(
-        auth,
-        new GoogleAuthProvider(),
-      );
-      const { operationType, user: googleUser } = result;
-      console.log("Google sign-in operation type:", operationType);
-
+      const result = await signInWithPopup(auth, new GoogleAuthProvider());
+      const { user: googleUser } = result;
       const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
 
       if (isNewUser) {
@@ -167,23 +148,21 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           "",
           googleUser.displayName || "",
         );
-        console.log("signup");
       }
+
       const googleToken = await googleUser.getIdToken();
       const loginResponse = await login(googleToken);
-      console.log("Login response:", loginResponse);
-
       localStorage.setItem("accessToken", loginResponse.access_token);
+
       const data = await getUserProfile();
       setUser(data);
     } catch (error) {
       setError((error as Error).message);
-      console.error("Error during Google sign-in:", error);
+      console.error("Google sign-in error:", error);
       throw error;
     }
   };
 
-  // Facebook Sign-Up or Login
   const signUpWithFacebook = async () => {
     const provider = new FacebookAuthProvider();
     try {
@@ -191,12 +170,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const user = userCredential.user;
       const token = await user.getIdToken();
 
-      // Call backend login API after Firebase authentication
       const backendResponse = await login(token);
       if (backendResponse.success) {
-        navigate("/home", { replace: true }); // Redirect to home
+        navigate("/home", { replace: true });
       } else {
-        // Handle new user registration
         const signupResponse = await signup(
           user.uid,
           user.email!,
@@ -204,7 +181,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
           user.displayName || "",
         );
         if (signupResponse.success) {
-          navigate("/home", { replace: true }); // Redirect to home after registration
+          navigate("/home", { replace: true });
         } else {
           setError("Error with Facebook login.");
         }
@@ -214,7 +191,6 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Logout
   const logout = async () => {
     try {
       await signOut(auth);
@@ -228,6 +204,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     <UserContext.Provider
       value={{
         user,
+        isAuthenticated: !!user, // <- NEW flag
+        isOnboard: user?.is_onboard ?? false,
         error,
         loading,
         loginWithEmail,
@@ -235,7 +213,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
         logout,
         authenWithGoogle,
         signUpWithFacebook,
-        loginWithFacebook: signUpWithFacebook, // Reusing the same function for Facebook login
+        loginWithFacebook: signUpWithFacebook,
         setUser,
         setError,
       }}

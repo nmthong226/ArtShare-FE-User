@@ -22,4 +22,5 @@ export interface User {
   ratings?: Rating[];
   shares?: Share[];
   roles?: UserRole[];
+  is_onboard: boolean;
 }

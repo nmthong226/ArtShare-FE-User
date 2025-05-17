@@ -76,9 +76,11 @@ const Post: React.FC = () => {
         <div className="flex flex-grow justify-center items-center pl-4 h-full overflow-y-scroll no-scrollbar">
           <PostAssets medias={postData!.medias} />
         </div>
-        <div className="flex-shrink-0 py-0 pr-4 pl-8 sm:w-[256px] md:w-[384px] lg:w-[448px] overflow-y-scroll no-scrollbar">
-          <PostArtist artist={postData!.user} postData={postData!} />
-          <PostContent />
+        <div className="relative flex-shrink-0 bg-white shadow py-0 pl-4 rounded-2xl sm:w-[256px] md:w-[384px] lg:w-[448px]">
+          <div className="flex flex-col gap-4 rounded-2xl h-full overflow-y-scroll custom-scrollbar">
+            <PostArtist artist={postData!.user} postData={postData!} />
+            <PostContent />
+          </div>
         </div>
       </div>
     </div>

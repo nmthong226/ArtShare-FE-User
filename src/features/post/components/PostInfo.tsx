@@ -51,7 +51,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
   );
   const [likeCount, setLikeCount] = useState<number>(postData.like_count);
   const [isLiking, setIsLiking] = useState(false); // prevent double taps
-  const [isFetchingLike, setIsFetchingLike] = useState(false);
+  const [isFetchingLike] = useState(false);
 
   // ———————————————————————————————
   // 1) Fetch simple collections once

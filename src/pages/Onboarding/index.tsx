@@ -21,6 +21,8 @@ interface ProfileForm {
   /** ISO‑8601 date string */
   birthday?: string;
   isOnboard?: boolean;
+  profile_picture_option: "url" | "upload";
+  uploaded_image?: File;
 }
 
 const OnboardingProfile: React.FC = () => {
@@ -37,6 +39,7 @@ const OnboardingProfile: React.FC = () => {
       username: "",
       bio: "",
       profile_picture_url: "",
+      profile_picture_option: "url", // Default to URL option
     },
   });
 
@@ -47,6 +50,7 @@ const OnboardingProfile: React.FC = () => {
     ok: boolean;
     text: string;
   } | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const showDialog = (ok: boolean, text: string) => {
     setPopMessage({ ok, text });
@@ -71,6 +75,7 @@ const OnboardingProfile: React.FC = () => {
       showDialog(false, "Failed to update profile");
     }
   };
+
   // Prevent interaction with the rest of the page when dialog is open
   React.useEffect(() => {
     if (open) {
@@ -85,11 +90,19 @@ const OnboardingProfile: React.FC = () => {
       document.body.style.overflow = "";
     };
   }, [open]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50 p-6">
-      <Card className="w-full max-w-xl bg-white shadow-xl border border-neutral-200">
+      <Card className="w-full max-w-xl bg-white shadow-xl border border-neutral-200 p-6 rounded-lg">
         <CardHeader>
-          <h1 className="text-2xl font-bold text-neutral-900">
+          <h1 className="text-2xl font-bold text-neutral-900 text-center">
             Complete your profile
           </h1>
         </CardHeader>
@@ -105,8 +118,11 @@ const OnboardingProfile: React.FC = () => {
               </label>
               <Input
                 id="full_name"
-                placeholder="e.g. Jane Doe"
+                placeholder="your fullname
+                "
+                style={{ color: "#6b7280" }}
                 {...register("full_name", { required: true, maxLength: 80 })}
+                className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.full_name && (
                 <p className="text-xs text-rose-500">
@@ -125,8 +141,10 @@ const OnboardingProfile: React.FC = () => {
               </label>
               <Input
                 id="username"
-                placeholder="jdoe"
+                placeholder="your username"
+                style={{ color: "#6b7280" }}
                 {...register("username", { required: true, minLength: 3 })}
+                className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {errors.username && (
                 <p className="text-xs text-rose-500">Username is required</p>
@@ -160,41 +178,108 @@ const OnboardingProfile: React.FC = () => {
                 className="text-sm font-medium text-neutral-700"
                 htmlFor="birthday"
               >
-                Birthday
+                Birthday <span className="text-rose-500">*</span>
               </label>
-              <Input id="birthday" type="date" {...register("birthday")} />
+              <Input
+                id="birthday"
+                type="date"
+                {...register("birthday", { required: true })}
+                className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              {errors.birthday && (
+                <p className="text-xs text-rose-500">Birthday is required</p>
+              )}
+            </div>
+
+            {/* Profile Picture Option */}
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-neutral-700">
+                Profile Picture
+              </label>
+              <div className="flex gap-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="url"
+                    value="url"
+                    {...register("profile_picture_option")}
+                    checked={watch("profile_picture_option") === "url"}
+                    className="accent-blue-600"
+                  />
+                  <label htmlFor="url">URL</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="upload"
+                    value="upload"
+                    {...register("profile_picture_option")}
+                    checked={watch("profile_picture_option") === "upload"}
+                    className="accent-blue-600"
+                  />
+                  <label htmlFor="upload">Upload</label>
+                </div>
+              </div>
             </div>
 
             {/* Profile picture URL */}
-            <div className="space-y-1">
-              <label
-                className="text-sm font-medium text-neutral-700"
-                htmlFor="profile_picture_url"
-              >
-                Profile picture URL
-              </label>
-              <Input
-                id="profile_picture_url"
-                placeholder="https://..."
-                {...register("profile_picture_url", {
-                  pattern: {
-                    value: /^https?:\/\//,
-                    message: "Must be a valid URL",
-                  },
-                })}
-              />
-              {errors.profile_picture_url && (
-                <p className="text-xs text-rose-500">
-                  {errors.profile_picture_url.message}
-                </p>
-              )}
-            </div>
+            {watch("profile_picture_option") === "url" ? (
+              <div className="space-y-1">
+                <label
+                  className="text-sm font-medium text-neutral-700"
+                  htmlFor="profile_picture_url"
+                >
+                  Profile picture URL
+                </label>
+                <Input
+                  id="profile_picture_url"
+                  placeholder="https://..."
+                  {...register("profile_picture_url", {
+                    pattern: {
+                      value: /^https?:\/\//,
+                      message: "Must be a valid URL",
+                    },
+                  })}
+                  className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                {errors.profile_picture_url && (
+                  <p className="text-xs text-rose-500">
+                    {errors.profile_picture_url.message}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <label
+                  className="text-sm font-medium text-neutral-700"
+                  htmlFor="file-upload"
+                >
+                  Upload Profile Picture
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="w-full p-2 text-sm rounded-lg border border-neutral-300"
+                />
+                {imagePreview && (
+                  <div className="mt-2">
+                    <img
+                      src={imagePreview}
+                      alt="Image preview"
+                      className="max-w-[200px] rounded-md"
+                    />
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Submit button */}
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex justify-center"
+              className="w-full flex justify-center mt-4 bg-blue-600 text-white rounded-lg p-2"
             >
               {isSubmitting && (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

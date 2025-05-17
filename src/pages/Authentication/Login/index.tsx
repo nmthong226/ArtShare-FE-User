@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider";
 import { AxiosError } from "axios";
 import { getAuth } from "firebase/auth";
-import api from "@/api/baseApi";
 import { getUserProfile } from "@/api/authentication/auth";
 
 const Login = () => {

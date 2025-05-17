@@ -7,7 +7,7 @@ import { fetchComments } from "./api/comment.api.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 import PostTags from "./components/PostTags";
-import PostMoreByArtist from "./components/PostMoreByArtist";
+// import PostMoreByArtist from "./components/PostMoreByArtist";
 // import PostShare from "./components/PostShare";
 import LoadingSpinner from "@/components/fallbacks/LoadingSpinner.tsx";
 import { mappedCategoryPost } from "@/lib/utils";

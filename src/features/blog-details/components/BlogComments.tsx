@@ -1,303 +1,124 @@
-import React, { useEffect, useRef, useState } from "react";
+import * as React from "react";
+import { useRef } from "react";
 
-// UI components -------------------------------------------------------------
+//Components
+import { Button, TextareaAutosize } from "@mui/material";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Button,
-  FormControl,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  TextareaAutosize,
-} from "@mui/material";
 
-// Icons ---------------------------------------------------------------------
+//Icons
 import { BiDotsVertical } from "react-icons/bi";
-import { IoFilter, IoPersonRemoveOutline } from "react-icons/io5";
-import { AiOutlineLike } from "react-icons/ai";
 import { SendHorizontal } from "lucide-react";
+import { AiOutlineLike } from "react-icons/ai";
+import { UserComments } from "../mocks";
+import { IoFilter, IoPersonRemoveOutline } from "react-icons/io5";
 
-// Types / utils -------------------------------------------------------------
-import {
-  CommentUI,
-  Comment,
-  CreateCommentDto,
-  TargetType,
-} from "@/types/comment";
+//Libs
 import { formatDate } from "@/lib/utils";
 
-// Converts a Comment to CommentUI (add more fields as needed)
-function toCommentUI(comment: Comment): CommentUI {
-  return {
-    ...comment,
-    created_at: new Date(comment.created_at),
-    updated_at: new Date(comment.updated_at),
-    replies: comment.replies?.map(toCommentUI) ?? [],
-  };
-}
+const BlogComments = () => {
+  const [order, setOrder] = React.useState<"top" | "recent">("recent");
 
-// API helpers ---------------------------------------------------------------
-import { fetchComments, createComment } from "../api/comment.api"; // adjust path if placed elsewhere
-
-/* -------------------------------------------------------------------------- */
-/*                              Component Props                               */
-/* -------------------------------------------------------------------------- */
-interface BlogCommentsProps {
-  blogId: number;
-  targetType?: TargetType; // default "BLOG"
-}
-
-/* -------------------------------------------------------------------------- */
-/*                                Component                                   */
-/* -------------------------------------------------------------------------- */
-const BlogComments: React.FC<BlogCommentsProps> = ({
-  blogId,
-  targetType = "BLOG",
-}) => {
-  // State -------------------------------------------------------------------
-  const [order, setOrder] = useState<"recent" | "top">("recent");
-  const [comments, setComments] = useState<CommentUI[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  // Fetch comments ----------------------------------------------------------
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data: Comment[] = await fetchComments(blogId);
-        if (!mounted) return;
-        const ui = data.map(toCommentUI);
-        setComments(sort(ui, order));
-      } catch (err) {
-        if (mounted) setError("Failed to load comments.");
-        console.error(err);
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [blogId, targetType, order]);
-
-  // Helpers -----------------------------------------------------------------
-  const sort = (list: CommentUI[], by: "recent" | "top") => {
-    const arr = [...list];
-    return by === "recent"
-      ? arr.sort(
-          (a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-        )
-      : arr.sort((a, b) => (b.likes ?? 0) - (a.likes ?? 0));
+  const handleChange = (event: SelectChangeEvent) => {
+    setOrder(event.target.value as "top" | "recent");
   };
 
-  const handleOrderChange = (e: SelectChangeEvent) =>
-    setOrder(e.target.value as "recent" | "top");
-
-  // Submit comment ----------------------------------------------------------
-  const handleSend = async () => {
-    if (sending) return;
-    const content = inputRef.current?.value.trim() || "";
-    if (!content) return;
-
-    // Optimistic UI ---------------------------------------------------------
-    const tempId = Math.random();
-    const optimistic: CommentUI = {
-      id: tempId,
-      user_id: "me",
-      user: {
-        id: "me",
-        username: "me",
-        email: "me@example.com",
-        profile_picture_url: "",
-        created_at: new Date(),
-        followers_count: 0,
-        followings_count: 0,
-        is_onboard: false,
-      },
-      parent_comment_id: null,
-      target_id: blogId,
-      target_type: targetType,
-      content,
-      created_at: new Date(),
-      updated_at: new Date(),
-      replies: [],
-      likes: 0,
-      likedByUser: false,
-      like_count: 0,
-    };
-
-    setComments((prev) => sort([optimistic, ...prev], order));
-    inputRef.current!.value = "";
-    setSending(true);
-
-    const payload: CreateCommentDto = {
-      content,
-      target_id: blogId,
-      target_type: targetType,
-    };
-
-    try {
-      const created = await createComment(payload);
-      const createdUI = toCommentUI(created.data);
-      setComments((prev) => prev.map((c) => (c.id === tempId ? createdUI : c)));
-    } catch (err) {
-      console.error(err);
-      setError("Failed to send comment.");
-      setComments((prev) => prev.filter((c) => c.id !== tempId));
-    } finally {
-      setSending(false);
-    }
-  };
-
-  /* ------------------------------ Render ----------------------------------- */
+  const commentInputRef = useRef<HTMLTextAreaElement>(null);
   return (
-    <div className="mt-8 flex w-full max-w-4xl flex-col items-center space-y-8 rounded-lg bg-white px-4 py-8 shadow">
-      {/* Header ------------------------------------------------------------- */}
-      <div className="flex w-full items-center gap-2">
-        <span className="text-lg font-medium">{comments.length} Comments</span>
-        <FormControl sx={{ m: 1, minWidth: 140 }}>
-          <Select
-            size="small"
-            value={order}
-            onChange={handleOrderChange}
-            renderValue={() =>
-              order === "recent" ? "Recent Comments" : "Top Comments"
-            }
-            MenuProps={{ disableScrollLock: true }}
-            className="relative pl-6"
-          >
-            <MenuItem value="recent">Recent Comments</MenuItem>
-            <MenuItem value="top">Top Comments</MenuItem>
-          </Select>
-          <IoFilter className="absolute left-2 top-1/2 -translate-y-1/2" />
-        </FormControl>
-      </div>
-
-      {/* Input -------------------------------------------------------------- */}
-      <div className="flex w-full items-start gap-2">
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>ME</AvatarFallback>
-        </Avatar>
-
-        <TextareaAutosize
-          ref={inputRef}
-          placeholder="Add a comment"
-          className="flex-1 resize-none rounded-md border-2 border-mountain-200 px-4 py-2"
-          minRows={1}
-        />
-
-        <Button
-          variant="contained"
-          disabled={sending}
-          onClick={handleSend}
-          className="aspect-square h-12 min-w-0 p-0.5"
-        >
-          <SendHorizontal />
-        </Button>
-      </div>
-
-      {/* List --------------------------------------------------------------- */}
-      {loading ? (
-        <p className="text-sm text-mountain-500">Loading comments…</p>
-      ) : error ? (
-        <p className="text-sm text-red-500">{error}</p>
-      ) : (
-        <div className="flex w-full flex-col space-y-4">
-          {comments.map((c) => (
-            <CommentRow key={c.id} comment={c} />
+    <div className="flex flex-col justify-center items-center space-y-8 bg-white shadow mt-8 px-4 py-8 w-[60%] h-full">
+      <div className="flex flex-col justify-center space-y-2 w-full">
+        <div className="flex items-center space-x-2">
+          <span className="font-medium text-lg">2 Comments</span>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
+            <Select
+              value={order}
+              onChange={handleChange}
+              displayEmpty
+              inputProps={{ "aria-label": "Order By" }}
+              MenuProps={{
+                disableScrollLock: true,
+              }}
+              className="relative pl-6"
+            >
+              <MenuItem value={"recent"}>Recent Comments</MenuItem>
+              <MenuItem value={"top"}>Top Comments</MenuItem>
+            </Select>
+            <IoFilter className="top-1/2 left-2 absolute -translate-y-1/2" />
+          </FormControl>
+        </div>
+        <div className="flex items-center">
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+          <div className="flex gap-2 p-4 w-full">
+            <TextareaAutosize
+              ref={commentInputRef}
+              placeholder="Add a comment"
+              className="px-4 py-2 border-2 border-mountain-200 rounded-md w-full h-12 overflow-y-auto resize-none"
+            />
+            <Button
+              variant="contained"
+              className="p-0.5 min-w-auto h-12 aspect-[1/1]"
+            >
+              <SendHorizontal />
+            </Button>
+          </div>
+        </div>
+        {/* User Comments */}
+        <div className="flex flex-col space-y-4 my-4">
+          {UserComments.map((user, index) => (
+            <div key={index} className="flex flex-col w-full">
+              <div className="relative flex space-x-4 w-full">
+                <Avatar className="border-1 border-mountain-200">
+                  <AvatarImage src={user.userInfo.avatar} />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col">
+                  <div className="flex items-center space-x-2 text-mountain-600 text-sm">
+                    <span className="font-semibold">
+                      @{user.userInfo.username} -{" "}
+                    </span>
+                    <span>{formatDate(user.dateCreated)}</span>
+                  </div>
+                  <p className="pr-2">{user.comment}</p>
+                </div>
+                <Popover>
+                  <PopoverTrigger className="top-1/2 right-1 absolute flex justify-center items-center hover:bg-mountain-100 rounded-full w-8 h-8 -translate-y-1/2">
+                    <BiDotsVertical className="size-5 shrink-0" />
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0 border-mountain-200 w-28 text-xs">
+                    <div className="flex items-center hover:bg-mountain-50 px-3 py-2 border-mountain-200 border-b-1 rounded-t-lg hover:cursor-pointer">
+                      <IoPersonRemoveOutline className="mr-2" />
+                      <p>Block User</p>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="flex items-center space-x-2 ml-10">
+                <div className="flex items-center">
+                  <div className="flex justify-center items-center hover:bg-mountain-100 rounded-full w-10 h-10">
+                    <AiOutlineLike className="size-5" />
+                  </div>
+                  <span className="font-medium text-sm">{user.like_count}</span>
+                </div>
+                <div className="flex justify-center items-center hover:bg-mountain-100 rounded-full w-32 h-10 hover:cursor-pointer">
+                  <span className="font-medium text-sm">Reply Comment</span>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
 export default BlogComments;
-
-/* -------------------------------------------------------------------------- */
-/*                            Comment Row component                            */
-/* -------------------------------------------------------------------------- */
-const CommentRow: React.FC<{ comment: CommentUI }> = ({ comment }) => {
-  const [liked, setLiked] = useState(comment.likedByUser ?? false);
-  const [likes, setLikes] = useState(comment.likes ?? 0);
-
-  const handleToggleLike = () => {
-    const willLike = !liked;
-    setLiked(willLike);
-    setLikes((prev) => (willLike ? prev + 1 : Math.max(prev - 1, 0)));
-    // TODO: integrate likeComment/unlikeComment API
-  };
-
-  return (
-    <div className="flex w-full flex-col">
-      {/* Header ----------------------------------------------------------- */}
-      <div className="relative flex w-full gap-4">
-        <Avatar className="border border-mountain-200">
-          <AvatarImage src={comment.user.profile_picture_url ?? undefined} />
-          <AvatarFallback>
-            {comment.user.username.slice(0, 2).toUpperCase()}
-          </AvatarFallback>
-        </Avatar>
-
-        <div className="flex flex-col">
-          <div className="flex items-center gap-1 text-sm text-mountain-600">
-            <span className="font-semibold">@{comment.user.username}</span>
-            <span>·</span>
-            <span>{formatDate(comment.created_at.toISOString())}</span>
-          </div>
-          <p className="pr-2">{comment.content}</p>
-        </div>
-
-        {/* Menu ----------------------------------------------------------- */}
-        <Popover>
-          <PopoverTrigger className="absolute right-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full hover:bg-mountain-100">
-            <BiDotsVertical className="size-5" />
-          </PopoverTrigger>
-          <PopoverContent className="w-28 rounded-lg border border-mountain-200 p-0 text-xs">
-            <div className="flex cursor-pointer items-center border-b border-mountain-200 px-3 py-2 hover:bg-mountain-50">
-              <IoPersonRemoveOutline className="mr-2" />
-              <p>Block User</p>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-
-      {/* Footer ----------------------------------------------------------- */}
-      <div className="ml-10 flex items-center gap-2">
-        <button
-          onClick={handleToggleLike}
-          className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-mountain-100"
-          title={liked ? "Unlike" : "Like"}
-        >
-          <AiOutlineLike className={`size-5 ${liked ? "text-blue-600" : ""}`} />
-        </button>
-        <span className="text-sm font-medium">{likes}</span>
-        <button className="flex h-10 items-center justify-center rounded-full px-3 hover:bg-mountain-100">
-          <span className="text-sm font-medium">Reply Comment</span>
-        </button>
-      </div>
-
-      {/* Replies ---------------------------------------------------------- */}
-      {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-10 mt-4 flex flex-col space-y-4">
-          {comment.replies.map((r) => (
-            <CommentRow key={r.id} comment={toCommentUI(r)} />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};

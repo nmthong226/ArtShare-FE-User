@@ -24,6 +24,7 @@ import api from "@/api/baseApi";
 interface UserContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isOnboard: boolean;
   error: string | null;
   loading: boolean | null;
   signUpWithEmail: (
@@ -204,6 +205,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         isAuthenticated: !!user, // <- NEW flag
+        isOnboard: user?.is_onboard ?? false,
         error,
         loading,
         loginWithEmail,

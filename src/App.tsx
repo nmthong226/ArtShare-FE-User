@@ -61,7 +61,7 @@ const InAppPublicRoutes = [
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/u/:username", element: <UserProfile /> },
+  { path: "/:username", element: <UserProfile /> },
   { path: "/post/:postId/edit", element: <EditPost /> },
   { path: "/posts/new", element: <UploadPost /> },
   { path: "/collections", element: <Collection /> },

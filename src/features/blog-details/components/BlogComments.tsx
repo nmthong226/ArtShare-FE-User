@@ -124,6 +124,7 @@ const BlogComments: React.FC<BlogCommentsProps> = ({
         created_at: new Date(),
         followers_count: 0,
         followings_count: 0,
+        is_onboard: false,
       },
       parent_comment_id: null,
       target_id: blogId,
@@ -134,6 +135,7 @@ const BlogComments: React.FC<BlogCommentsProps> = ({
       replies: [],
       likes: 0,
       likedByUser: false,
+      like_count: 0,
     };
 
     setComments((prev) => sort([optimistic, ...prev], order));

@@ -20,6 +20,7 @@ interface ProfileForm {
   bio?: string;
   /** ISO‑8601 date string */
   birthday?: string;
+  isOnboard?: boolean;
 }
 
 const OnboardingProfile: React.FC = () => {
@@ -59,7 +60,9 @@ const OnboardingProfile: React.FC = () => {
     const payload: ProfileForm = {
       ...raw,
       birthday: raw.birthday ? new Date(raw.birthday).toISOString() : undefined,
+      isOnboard: true,
     };
+
     try {
       await api.patch("/users/profile", payload);
       showDialog(true, "Profile updated");

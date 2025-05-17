@@ -137,22 +137,28 @@ export const UserProfileCard = () => {
     <div>
       <div className="flex justify-between">
         <div className="flex">
-          <ProfileHeader
-            name={profileData.full_name || "Default fullname"}
-            username={profileData.username || ""}
-            avatarUrl={
-              "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-PeikEtNBDB6QS6667WSA8RN6kMQUfR.png"
-            }
-            isFollowing={false}
-          />
+          {profileData.profile_picture_url ? (
+            <ProfileHeader
+              name={profileData.full_name}
+              username={profileData.username || ""}
+              avatarUrl={profileData.profile_picture_url}
+              isFollowing={false}
+            />
+          ) : (
+            <Box display="flex" alignItems="center" gap={2}>
+              <ProfileHeader
+                name={profileData.full_name}
+                username={profileData.username}
+                isFollowing={false}
+              />
+            </Box>
+          )}
           <ProfileInfo
-            name={profileData.full_name ?? "Default name"}
+            name={profileData.full_name}
             username={profileData.username}
             bio={profileData.bio || ""}
-            location={"Vietnam"}
             followings_count={profileData.followings_count}
             followers_count={profileData.followers_count}
-            website={"https://www.pixilart.com/marfish"}
             userId={profileData.id}
           />
         </div>

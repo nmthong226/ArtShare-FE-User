@@ -1,11 +1,10 @@
-import "./App.css";
+import React, { lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
 } from "react-router-dom";
-import React, { lazy, Suspense } from "react";
 
 // Components
 import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
@@ -63,7 +62,6 @@ const InAppPublicRoutes = [
   { path: "/blogs", element: <BrowseBlogs /> },
   { path: "/blogs/:blogId", element: <BlogDetails /> },
   { path: "/search", element: <Search /> },
-  { path: "/onboarding", element: <OnboardingProfile /> },
 ];
 
 const InAppPrivateRoutes = [
@@ -75,9 +73,8 @@ const InAppPrivateRoutes = [
 
 // 🔒 PublicOnlyRoute: redirects to /explore if user is logged in
 const PublicOnlyRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, loading, isOnboard } = useUser();
+  const { isAuthenticated, loading } = useUser();
 
-  // Prevent premature redirect while still loading auth status
   if (loading) return <div>Checking authentication...</div>;
 
   if (isAuthenticated) {
@@ -86,14 +83,14 @@ const PublicOnlyRoute = ({ children }: { children: React.ReactNode }) => {
 
   return <>{children}</>;
 };
-// OnboardingRoute: allows only users who are not onboard to access the /onboarding route
+
+// OnboardingRoute: Restrict users who are onboarded from accessing the onboarding page
 const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, loading, isOnboard } = useUser();
 
-  // Prevent premature redirect while still loading auth status
   if (loading) return <div>Checking authentication...</div>;
 
-  // Redirect to explore if user is authenticated and onboarded
+  // If user is authenticated and onboarded, redirect them to /explore
   if (isAuthenticated && isOnboard) {
     return <Navigate to="/explore" replace />;
   }
@@ -156,6 +153,18 @@ const App: React.FC = () => {
                     }
                   />
                 ))}
+
+                {/* Onboarding Route */}
+                <Route
+                  path="/onboarding"
+                  element={
+                    <OnboardingRoute>
+                      <InAppLayout>
+                        <OnboardingProfile />
+                      </InAppLayout>
+                    </OnboardingRoute>
+                  }
+                />
 
                 {/* Landing page */}
                 <Route path="/" element={<LandingPage />} />

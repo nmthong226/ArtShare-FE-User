@@ -17,16 +17,11 @@ import {
   DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
-import { error } from "console";
 
-/* ------------------------------------------------------------------
- * Fields accepted by PATCH /users/profile
- * ----------------------------------------------------------------*/
 interface ProfileForm {
   full_name: string;
   username: string;
   bio?: string;
-  /** ISO‑8601 date string */
   birthday?: string;
 }
 
@@ -54,7 +49,6 @@ const OnboardingProfile: React.FC = () => {
     ok: boolean;
     text: string;
   } | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const showDialog = (ok: boolean, text: string) => {
     setPopMessage({ ok, text });
@@ -63,7 +57,20 @@ const OnboardingProfile: React.FC = () => {
     timerRef.current = setTimeout(() => setOpen(false), 2500); // Close dialog after 2.5 seconds
   };
 
+  // Age validation function (user must be at least 13 years old)
+  const isAbove13 = (birthday: string) => {
+    const birthDate = new Date(birthday);
+    const age = new Date().getFullYear() - birthDate.getFullYear();
+    return age >= 13;
+  };
+
   const onSubmit = async (raw: ProfileForm) => {
+    // Age check
+    if (raw.birthday && !isAbove13(raw.birthday)) {
+      showDialog(false, "You must be at least 13 years old.");
+      return;
+    }
+
     const payload: ProfileForm = {
       ...raw,
       birthday: raw.birthday ? new Date(raw.birthday).toISOString() : undefined,
@@ -71,12 +78,10 @@ const OnboardingProfile: React.FC = () => {
 
     try {
       await api.patch("/users/profile", payload);
-      alert("Ok");
       reset(raw);
       setTimeout(() => navigate("/explore"), 2600); // Redirect to explore after a successful update
     } catch (err) {
       console.log(err);
-
       showDialog(false, "Failed to update profile");
     }
   };
@@ -95,13 +100,6 @@ const OnboardingProfile: React.FC = () => {
       document.body.style.overflow = "";
     };
   }, [open]);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -128,10 +126,10 @@ const OnboardingProfile: React.FC = () => {
             </label>
             <Input
               id="full_name"
-              placeholder="your fullname"
-              style={{ color: "#6b7280" }}
+              placeholder="Your Fullname"
               {...register("full_name", { required: true, maxLength: 80 })}
-              className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-neutral-400 text-neutral-900"
+              style={{ color: "#6b7280" }} // Ensuring text color is different from placeholder
             />
             {errors.full_name && (
               <p className="text-xs text-rose-500">Display name is required</p>
@@ -148,13 +146,32 @@ const OnboardingProfile: React.FC = () => {
             </label>
             <Input
               id="username"
-              placeholder="your username"
-              style={{ color: "#6b7280" }}
+              placeholder="Your Username"
               {...register("username", { required: true, minLength: 3 })}
-              className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-neutral-400 text-neutral-900"
+              style={{ color: "#6b7280" }}
             />
             {errors.username && (
               <p className="text-xs text-rose-500">Username is required</p>
+            )}
+          </div>
+
+          {/* Birthday */}
+          <div className="space-y-1">
+            <label
+              className="text-sm font-medium text-neutral-700"
+              htmlFor="birthday"
+            >
+              Birthday <span className="text-rose-500">*</span>
+            </label>
+            <Input
+              id="birthday"
+              type="date"
+              {...register("birthday", { required: true })}
+              className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-neutral-900"
+            />
+            {errors.birthday && (
+              <p className="text-xs text-rose-500">Birthday is required</p>
             )}
           </div>
 
@@ -170,32 +187,14 @@ const OnboardingProfile: React.FC = () => {
               id="bio"
               minRows={3}
               maxLength={150}
-              className="w-full rounded-md border border-neutral-300 p-3 focus:outline-none focus:ring-2 focus:ring-blue-600 bg-white text-neutral-900"
+              className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-neutral-900"
               placeholder="A short description about you"
               {...register("bio")}
+              style={{ resize: "none" }}
             />
             <p className="text-xs text-neutral-500">
               {150 - (watch("bio")?.length || 0)} characters left
             </p>
-          </div>
-
-          {/* Birthday */}
-          <div className="space-y-1">
-            <label
-              className="text-sm font-medium text-neutral-700"
-              htmlFor="birthday"
-            >
-              Birthday <span className="text-rose-500">*</span>
-            </label>
-            <Input
-              id="birthday"
-              type="date"
-              {...register("birthday", { required: true })}
-              className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.birthday && (
-              <p className="text-xs text-rose-500">Birthday is required</p>
-            )}
           </div>
 
           {/* Submit button */}
@@ -208,25 +207,6 @@ const OnboardingProfile: React.FC = () => {
             Save changes
           </Button>
         </form>
-        {/* 
-        <DialogFooter>
-          <DialogClose>
-            <DialogContent className="text-center bg-white border border-neutral-200">
-              {popMessage && (
-                <div className="flex flex-col items-center gap-2">
-                  {popMessage.ok ? (
-                    <CheckCircle2 className="h-8 w-8 text-green-500" />
-                  ) : (
-                    <XCircle className="h-8 w-8 text-rose-500" />
-                  )}
-                  <p className="text-sm font-medium text-neutral-800 max-w-xs">
-                    {popMessage.text}
-                  </p>
-                </div>
-              )}
-            </DialogContent>
-          </DialogClose>
-        </DialogFooter> */}
       </DialogContent>
     </Dialog>
   );

@@ -13,7 +13,7 @@ import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { fetchCollectionsForDialog } from "../api/collection.api";
 import { LikesDialog } from "@/components/like/LikesDialog";
 
-// 👉 NEW: API helpers for like / unlike & check status
+// 👉 Like/unlike API helpers
 import { likePost, unlikePost } from "../api/post.api";
 
 interface SimpleCollection {
@@ -25,10 +25,6 @@ const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 type PostInfoProps = {
   postData: Post & {
-    /**
-     * Back-end ghi sẵn user_has_liked để tránh thêm call; nếu không có
-     * sẽ fallback sang GET /likes/status.
-     */
     user_has_liked?: boolean;
   };
 };
@@ -45,17 +41,14 @@ const PostInfo = ({ postData }: PostInfoProps) => {
   const [isLoadingCollections, setIsLoadingCollections] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
 
-  // 👍 Like-state & API integration
+  // Like-state & API integration
   const [userLike, setUserLike] = useState<boolean>(
     postData.user_has_liked ?? false,
   );
   const [likeCount, setLikeCount] = useState<number>(postData.like_count);
-  const [isLiking, setIsLiking] = useState(false); // prevent double taps
+  const [isLiking, setIsLiking] = useState(false);
   const [isFetchingLike] = useState(false);
 
-  // ———————————————————————————————
-  // 1) Fetch simple collections once
-  // ———————————————————————————————
   useEffect(() => {
     const loadCollectionNames = async () => {
       setIsLoadingCollections(true);
@@ -71,7 +64,6 @@ const PostInfo = ({ postData }: PostInfoProps) => {
         setIsLoadingCollections(false);
       }
     };
-
     loadCollectionNames();
   }, [postData.id]);
 
@@ -101,40 +93,34 @@ const PostInfo = ({ postData }: PostInfoProps) => {
     [collectionError],
   );
 
-  // ———————————————————————————————
   // Like / Unlike handler (optimistic update)
-  // ———————————————————————————————
   const handleLikeClick = async () => {
-    if (isLiking || isFetchingLike) return; // không spam khi đang fetch
-
+    if (isLiking || isFetchingLike) return;
     const willLike = !userLike;
-
-    // Optimistic UI
     setUserLike(willLike);
     setLikeCount((prev) => (willLike ? prev + 1 : Math.max(prev - 1, 0)));
     setIsLiking(true);
-
     try {
       willLike ? await likePost(postData.id) : await unlikePost(postData.id);
     } catch (error) {
-      // Rollback
-      console.error("Failed to update like:", error);
       setUserLike(!willLike);
       setLikeCount((prev) => (willLike ? Math.max(prev - 1, 0) : prev + 1));
-      // Optional: snackbar here
     } finally {
       setIsLiking(false);
     }
   };
 
-  // ———————————————————————————————
-  // Early return (SSR safety)
-  // ———————————————————————————————
+  const handleOpenLikesDialog = () => {
+    if (likeCount > 0) setIsLikesDialogOpen(true);
+  };
+  const handleCloseLikesDialog = () => setIsLikesDialogOpen(false);
+
+  const handleFocusCommentInput = () => {
+    postCommentsRef.current?.focusInput();
+  };
+
   if (!postData) return null;
 
-  // ———————————————————————————————
-  // Derived values for dialogs
-  // ———————————————————————————————
   const existingCollectionNames = simpleCollections.map((c) => c.name);
   const disableCreate = isLoadingCollections || !!collectionError;
   const createTooltip = isLoadingCollections
@@ -166,7 +152,6 @@ const PostInfo = ({ postData }: PostInfoProps) => {
               />
             </div>
           </div>
-
           {/* Categories */}
           <div className="flex flex-wrap gap-2">
             {postData.categories?.map((cat) => (
@@ -178,16 +163,12 @@ const PostInfo = ({ postData }: PostInfoProps) => {
               </div>
             ))}
           </div>
-
           <Divider className="border-0.5" />
-
           {/* Stats */}
           <div className="flex gap-6 text-mountain-950">
             <div
               className={`flex items-center gap-1 text-sm ${likeCount > 0 ? "cursor-pointer hover:underline" : "cursor-default"}`}
-              onClick={
-                likeCount > 0 ? () => setIsLikesDialogOpen(true) : undefined
-              }
+              onClick={handleOpenLikesDialog}
               title={likeCount > 0 ? "View who liked this" : "No likes yet"}
             >
               <p className="font-semibold">{likeCount}</p>
@@ -195,7 +176,6 @@ const PostInfo = ({ postData }: PostInfoProps) => {
                 {likeCount > 1 ? " Likes" : " Like"}
               </span>
             </div>
-
             <div className="flex items-center gap-1 text-sm">
               <p className="font-semibold">{postData.comment_count}</p>
               <span className="text-mountain-600">
@@ -203,9 +183,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
               </span>
             </div>
           </div>
-
           <Divider className="border-0.5" />
-
           {/* Actions */}
           <div className="flex justify-between w-full">
             <Button
@@ -220,15 +198,13 @@ const PostInfo = ({ postData }: PostInfoProps) => {
                 <AiOutlineLike className="size-6" />
               )}
             </Button>
-
             <Button
               className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
               title="Comment"
-              onClick={() => postCommentsRef.current?.focusInput()}
+              onClick={handleFocusCommentInput}
             >
               <MessageSquareText className="size-5" />
             </Button>
-
             <Button
               className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
               title="Save"
@@ -236,7 +212,6 @@ const PostInfo = ({ postData }: PostInfoProps) => {
             >
               <Bookmark className="size-5" />
             </Button>
-
             <Button
               className="hover:bg-blue-50 p-2 border-0 rounded-lg w-10 min-w-0 h-10 text-blue-900"
               title="Copy Link"
@@ -246,7 +221,6 @@ const PostInfo = ({ postData }: PostInfoProps) => {
           </div>
         </CardContent>
       </div>
-
       {/* SavePostDialog */}
       <SavePostDialog
         postId={postData.id}
@@ -256,7 +230,6 @@ const PostInfo = ({ postData }: PostInfoProps) => {
         createDisabled={disableCreate}
         createDisabledReason={createTooltip}
       />
-
       {/* CreateCollectionDialog */}
       <CreateCollectionDialog
         open={isCreateDialogOpen}
@@ -264,12 +237,11 @@ const PostInfo = ({ postData }: PostInfoProps) => {
         onSuccess={handleCollectionCreated}
         existingCollectionNames={existingCollectionNames}
       />
-
       {/* Likes Dialog */}
       <LikesDialog
-        contentId={postData.id} // changed from postId to contentId
+        contentId={postData.id}
         open={isLikesDialogOpen}
-        onClose={() => setIsLikesDialogOpen(false)}
+        onClose={handleCloseLikesDialog}
       />
     </>
   );

@@ -27,7 +27,7 @@ const UserProfile = () => {
           gap: 4,
           minHeight: "100vh",
         }}
-        className="bg-white shadow p-2 rounded-md"
+        className="shadow p-2 rounded-md"
       >
         {/* TOP SECTION: Profile card */}
         <Box
@@ -51,7 +51,6 @@ const UserProfile = () => {
                 minHeight: 0,
                 ".MuiTabs-flexContainer": { gap: 2 },
               }}
-              className="text-mountain-950"
             >
               <Tab
                 label="All posts"

@@ -1,9 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Mail } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 import ProfileHeader from "./components/ProfileHeader";
 import ProfileInfo from "./components/ProfileInfo";
-import { Tooltip } from "@mui/material";
+import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material";
 import { getUserProfileByUsername, UserProfile } from "./api/user-profile.api";
 import { useUser } from "@/contexts/UserProvider";
 import { followUser, unfollowUser } from "./api/follow.api";
@@ -12,10 +11,10 @@ import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { AxiosError } from "axios";
 
 export const UserProfileCard = () => {
-  const { username }= useParams();
+  const { username } = useParams();
   const { user } = useUser();
   const queryClient = useQueryClient();
-  const {showSnackbar} = useSnackbar();
+  const { showSnackbar } = useSnackbar();
 
   const {
     data: profileData,
@@ -25,12 +24,12 @@ export const UserProfileCard = () => {
   } = useQuery<UserProfile, Error>({
     queryKey: ["userProfile", username],
     queryFn: () => getUserProfileByUsername(username),
-    enabled: username !== undefined || username === undefined,
+    enabled: !!username,
   });
 
-  console.log('profile: ', profileData);
+  console.log("profile: ", profileData);
 
-   /* ─────────────────── follow / unfollow ────────────── */
+  /* ─────────────────── follow / unfollow ────────────── */
   const followMutation = useMutation({
     mutationFn: () => {
       if (!profileData?.id) {
@@ -40,10 +39,10 @@ export const UserProfileCard = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProfile", username] });
-      showSnackbar('Followed successfully.', 'success');
+      showSnackbar("Followed successfully.", "success");
     },
     onError: (error: unknown) => {
-      let msg = 'Failed to follow user.';
+      let msg = "Failed to follow user.";
 
       if (error instanceof AxiosError && error.response?.data?.message) {
         msg = error.response.data.message;
@@ -51,8 +50,8 @@ export const UserProfileCard = () => {
         msg = error.message;
       }
 
-      showSnackbar(msg, 'error');
-    } 
+      showSnackbar(msg, "error");
+    },
   });
 
   const unfollowMutation = useMutation({
@@ -64,10 +63,10 @@ export const UserProfileCard = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProfile", username] });
-      showSnackbar('Unfollow successfully.', 'success');
+      showSnackbar("Unfollow successfully.", "success");
     },
     onError: (error: unknown) => {
-      let msg = 'Failed to unfollow user.';
+      let msg = "Failed to unfollow user.";
 
       if (error instanceof AxiosError && error.response?.data?.message) {
         msg = error.response.data.message;
@@ -75,30 +74,64 @@ export const UserProfileCard = () => {
         msg = error.message;
       }
 
-      showSnackbar(msg, 'error');
-    }
+      showSnackbar(msg, "error");
+    },
   });
 
+  // Conditional rendering based on loading, error, or data state
+  if (isLoading) {
+    return (
+      <Typography variant="body1" color="textPrimary">
+        Loading profile...
+      </Typography>
+    );
+  }
+
+  if (isError) {
+    // check if error indicates a 404 (Not Found)
+    // to give a more specific "User not found" message.
+    // For example, if (error instanceof AxiosError && error.response?.status === 404)
+    return (
+      <Typography variant="body1" color="textPrimary">
+        Error loading profile: {error?.message || "An unknown error occurred"}
+      </Typography>
+    );
+  }
+
+  // If, after loading and no generic error, profileData is still null/undefined,
+  // it implies the user was not found by the API or the API returned no data.
+  if (!profileData) {
+    return (
+      <Typography variant="body1" color="textPrimary">
+        User profile not found for "{username}".
+      </Typography>
+    );
+  }
+
+  // Now, profileData exists. Check for incompleteness.
+  const isProfileIncomplete =
+    !profileData.birthday || // Checks if birthday is null, undefined, or an empty string
+    !profileData.username || // Checks if username is null, undefined, or an empty string
+    !profileData.full_name; // Checks if full_name is null, undefined, or an empty string
+
+  if (isProfileIncomplete) {
+    return (
+      <Typography variant="body1" color="textPrimary">
+        This user hasn't finished setting up their profile.
+      </Typography>
+    );
+  }
+
   const toggleFollow = () =>
-    profileData?.isFollowing ? unfollowMutation.mutate() : followMutation.mutate();
+    profileData?.isFollowing
+      ? unfollowMutation.mutate()
+      : followMutation.mutate();
 
   const followBtnLoading =
     followMutation.isPending || unfollowMutation.isPending;
 
   const isOwnProfile = user?.id === profileData?.id;
   const isFollowing = profileData?.isFollowing;
-  const iconColor = "white";
-
-  if (isError) {
-    return <div>Error loading profile: {error?.message}</div>;
-  }
-
-  if (!profileData) {
-    return <div>No profile data available.</div>;
-  }
-  if (isLoading) {
-    return <div>Loading profile...</div>;
-  }
 
   return (
     <div>
@@ -107,7 +140,9 @@ export const UserProfileCard = () => {
           <ProfileHeader
             name={profileData.full_name || "Default fullname"}
             username={profileData.username || ""}
-            avatarUrl={"https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-PeikEtNBDB6QS6667WSA8RN6kMQUfR.png"}
+            avatarUrl={
+              "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-PeikEtNBDB6QS6667WSA8RN6kMQUfR.png"
+            }
             isFollowing={false}
           />
           <ProfileInfo
@@ -118,45 +153,36 @@ export const UserProfileCard = () => {
             followings_count={profileData.followings_count}
             followers_count={profileData.followers_count}
             website={"https://www.pixilart.com/marfish"}
-            userId = {profileData.id}
+            userId={profileData.id}
           />
         </div>
-        <div className="flex gap-2">
-          <Tooltip title="Send a message" arrow>
-            <Button
-              variant="ghost"
-              size="lg"
-              className="rounded-full cursor-pointer bg-blue-500 hover:bg-blue-700 text-black dark:text-white"
-            >
-              <Mail className="h-4 w-4" color={iconColor} />
-              <span className="sr-only">Message</span>
-            </Button>
-          </Tooltip>
-          {!isOwnProfile &&
-          <Tooltip title={isFollowing ? "Unfollow" : "Follow"} arrow>
-            <Button
-              onClick={toggleFollow}
-              disabled={followBtnLoading}
-              size="lg"
-              className="rounded-full
-                border border-gray-600 text-black dark:text-white 
-                bg-blue-500 hover:bg-blue-600 cursor-pointer"
+        <Box className="self-start">
+          <Box className="flex gap-2">
+            {!isOwnProfile && (
+              <Tooltip title={isFollowing ? "Unfollow" : "Follow"} arrow>
+                <Button
+                  onClick={toggleFollow}
+                  disabled={followBtnLoading}
+                  variant={isFollowing ? "outlined" : "contained"}
+                  color="primary"
+                  sx={{ borderRadius: "9999px", textTransform: "none" }}
                 >
-              {isFollowing ? "Following" : "Follow"}
-            </Button>
+                  {isFollowing ? "Following" : "Follow"}
+                </Button>
+              </Tooltip>
+            )}
+            <Tooltip title="More options" arrow>
+              <IconButton
+                aria-label="More options"
+                color="primary"
+                size="medium"
+                sx={{ borderRadius: "50%", bgcolor: "transparent" }}
+              >
+                <MoreHorizontal />
+              </IconButton>
             </Tooltip>
-            }
-          <Tooltip title="More options" arrow>
-            <Button
-              variant="ghost"
-              size="lg"
-              className="rounded-full cursor-pointer bg-blue-500 hover:bg-blue-700 text-white"
-            >
-              <MoreHorizontal className="h-4 w-4" color={iconColor} />
-              <span className="sr-only">More options</span>
-            </Button>
-          </Tooltip>
-        </div>
+          </Box>
+        </Box>
       </div>
     </div>
   );

@@ -147,7 +147,36 @@ const OnboardingProfile: React.FC = () => {
             <Input
               id="username"
               placeholder="Your Username"
-              {...register("username", { required: true, minLength: 3 })}
+              {...register("username", {
+                required: "Username is required",
+                minLength: {
+                  value: 3,
+                  message: "Username must be at least 3 characters",
+                },
+                maxLength: {
+                  value: 20,
+                  message: "Username must be at most 20 characters",
+                },
+                pattern: {
+                  value: /^[a-z0-9_-]{3,20}$/,
+                  message:
+                    "Only lowercase letters, numbers, underscores, and hyphens are allowed",
+                },
+                // validate: async (value) => {
+                //   // Check uniqueness via API
+                //   try {
+                //     const res = await api.get(
+                //       `/users/check-username?username=${value}`,
+                //     );
+                //     if (!res.data.available) {
+                //       return "Username is already taken";
+                //     }
+                //   } catch {
+                //     return "Could not validate username";
+                //   }
+                //   return true;
+                // },
+              })}
               className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-neutral-400 text-neutral-900"
               style={{ color: "#6b7280" }}
             />

@@ -157,12 +157,20 @@ const CommentRow = ({
         className="flex gap-3 py-3 w-full"
         style={{ marginLeft: depth * INDENT }}
       >
-        <Avatar
-          name={comment.user.username}
-          size={32}
-          variant="beam"
-          colors={["#84bfc3", "#ff9b62", "#d96153"]}
-        />
+        {comment.user.profile_picture_url ? (
+          <img
+            src={comment.user.profile_picture_url}
+            alt={comment.user.username}
+            className="w-8 h-8 rounded-full object-cover"
+          />
+        ) : (
+          <Avatar
+            name={comment.user.username}
+            size={32}
+            variant="beam"
+            colors={["#84bfc3", "#ff9b62", "#d96153"]}
+          />
+        )}
         <div className="flex flex-col flex-grow">
           <div className="flex items-center gap-2 text-sm">
             <span className="font-bold">@{comment.user.username}</span>
@@ -518,12 +526,20 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
 
         {/* input */}
         <div className="flex gap-3 pt-2 border-t">
-          <Avatar
-            name={CURRENT_USER_ID}
-            size={32}
-            variant="beam"
-            colors={["#ffb870", "#d96153", "#000511"]}
-          />
+          {user?.profile_picture_url ? (
+            <img
+              src={user.profile_picture_url}
+              alt={user.username}
+              className="w-8 h-8 rounded-full object-cover"
+            />
+          ) : (
+            <Avatar
+              name={user?.username || ""}
+              size={32}
+              variant="beam"
+              colors={["#ffb870", "#d96153", "#000511"]}
+            />
+          )}
           <div className="flex flex-col flex-grow gap-2">
             <TextareaAutosize
               ref={textareaRef}

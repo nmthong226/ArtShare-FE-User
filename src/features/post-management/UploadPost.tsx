@@ -14,7 +14,7 @@ import { nanoid } from "nanoid";
 import { useLocation, useNavigate } from "react-router-dom";
 import MediaSelection from "./components/media-selection";
 import { FaMagic } from "react-icons/fa";
-import api from "@/api/baseApi";
+import { generatePostContent } from "./api/generate-post-content.api";
 
 const UploadPost: React.FC = () => {
   const navigate = useNavigate();
@@ -30,8 +30,9 @@ const UploadPost: React.FC = () => {
     File | undefined
   >();
 
-  const [mode, setMode] = useState<'upload' | 'browse'>('upload');
+  // const [mode, setMode] = useState<'upload' | 'browse'>('upload');
   const [isLoading, setIsLoading] = useState(false);
+  const [hasArtNovaImages, setHasArtNovaImages] = useState(false);
 
   // SHARED FIELDS
   const [title, setTitle] = useState("");
@@ -245,70 +246,70 @@ const UploadPost: React.FC = () => {
 
   const isUploadMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
 
-  // LOGIC FOR AI POST UPLOAD
-  const [aiImages, setAIImages] = useState<PromptResult | undefined>();
-  const isBrowseAIValid = (aiImages?.image_urls?.length ?? 0) > 0;
 
   useEffect(() => {
-    const fetchFilesFromUrls = async (urls: string[]) => {
-      for (const url of urls) {
-        try {
-          const response = await fetch(url);
-          if (!response.ok) throw new Error(`HTTP error! ${response.status}`);
-          const blob = await response.blob();
-          console.log("Fetched:", url, blob);
-        } catch (error) {
-          console.error("Failed to fetch:", url, error);
-        }
+    if (!selectedPrompt) return
+
+    const fetchFilesFromUrls = async () => {
+      try {
+        const files: File[] = await Promise.all(
+          selectedPrompt.image_urls.map(async (url) => {
+            // 1️⃣ fetch the URL
+            const res = await fetch(url, {
+              method: 'GET',
+            })
+            if (!res.ok) {
+              throw new Error(`Failed to fetch ${url}: ${res.status}`)
+            }
+
+            // 2️⃣ read it as a Blob
+            const blob = await res.blob()
+
+            // 3️⃣ derive a filename (or hard-code one)
+            const parts = url.split('/')
+            const filename = parts[parts.length - 1] || 'image.jpg'
+
+            // 4️⃣ create a File from the Blob
+            return new File([blob], filename, { type: blob.type })
+          })
+        )
+
+        // 5️⃣ update your state
+        setImageFiles(files)
+        setHasArtNovaImages(true)
+        setThumbnailFile(files[0])
+      } catch (err) {
+        console.error('Error fetching images from S3', err)
       }
-    };
+    }
 
-    if (selectedPrompt) {
-      fetchFilesFromUrls(selectedPrompt.image_urls);
-    }
-  }, [selectedPrompt]);
+    fetchFilesFromUrls()
 
-  const handleCreateAIPost = async (
-  ): Promise<void> => {
-    const formData = {
-      title,
-      description,
-      imageFiles,
-      thumbnailUrl: aiImages?.image_urls[0],
-      isMature,
-      aiCreated,
-      cate_ids,
-    }
-    try {
-      const response = await api.post("/posts", formData);
-      console.log("Post created:", response);
-    } catch (error) {
-      console.error("Error creating post:", error);
-      showSnackbar("Failed to create post.", "error");
-      throw error;
-    }
-  };
+    // clear prompt out of history
+    navigate(location.pathname, {
+      replace: true,       // swap current entry instead of pushing
+      state: {},           // or `state: null`
+    })
+  }, [location.pathname, navigate, selectedPrompt])
 
-  const handleSubmitAIMedia = async () => {
-    setIsSubmitted(true);
-    if (!title.trim()) {
-      showSnackbar("Title is required.", "error");
-      return;
-    }
-    if (!aiImages || aiImages.image_urls.length === 0) {
-      showSnackbar("At least one AI image is required.", "error");
+  const handleGenerateContent = async () => {
+    if (!imageFiles || imageFiles.length === 0) {
+      showSnackbar("Please upload an image first.", "error");
       return;
     }
     try {
       setIsLoading(true);
-      if (!aiImages.image_urls[0]) {
-        throw new Error("Thumbnail is not defined");
-      }
-      await handleCreateAIPost();
-      navigate("/explore");
+      const formData = new FormData();
+      imageFiles.forEach((file) => formData.append("images", file));
+      const response = await generatePostContent(formData);
+      const { title, description, categories } = response;
+      console.log("Generated content:", response);
+      setTitle(title);
+      setDescription(description);
+      setCateIds(categories.map(cate => cate.id));
     } catch (error) {
-      console.error("Error during submission:", error);
-      showSnackbar("Failed to create post or upload video.", "error");
+      console.error("Error generating content:", error);
+      showSnackbar("Failed to generate content.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -333,7 +334,7 @@ const UploadPost: React.FC = () => {
         >
           <CircularProgress color="inherit" />
           <Typography variant="h6" sx={{ mt: 2, color: "white" }}>
-            Creating post...
+            Processing...
           </Typography>
         </Backdrop>
       )}
@@ -344,12 +345,13 @@ const UploadPost: React.FC = () => {
       >
         {/* LEFT COLUMN */}
         <MediaSelection
-          setMode={setMode}
-          aiImages={aiImages!}
-          setAIImages={setAIImages}
           setImageFiles={setImageFiles}
           setVideoFile={setVideoFile}
           setThumbnailFile={handleThumbnailChange}
+          imageFiles={imageFiles ?? []}
+          videoFile={videoFile}
+          hasArtNovaImages={hasArtNovaImages}
+          setHasArtNovaImages={setHasArtNovaImages}
         />
         {/* RIGHT COLUMN: FORM FIELDS & ACTIONS */}
         <Box className="flex flex-col space-y-3 w-[40%]">
@@ -362,15 +364,18 @@ const UploadPost: React.FC = () => {
           {/* Form fields */}
           <Box className="relative pr-4 rounded-md w-full overflow-y-auto custom-scrollbar">
             <Tooltip title="Auto Generate Content (title, description, categories)" arrow placement="left">
-              <div className="top-2 z-50 sticky flex justify-center items-center bg-gradient-to-b from-blue-400 to-purple-400 shadow-md ml-auto rounded-full w-12 h-12 hover:scale-105 duration-300 ease-in-out hover:cursor-pointer transform">
+              <Button
+                className="top-2 z-50 sticky flex justify-center items-center bg-gradient-to-b from-blue-400 to-purple-400 shadow-md ml-auto p-0 rounded-full w-12 min-w-0 h-12 hover:scale-105 duration-300 ease-in-out hover:cursor-pointer transform"
+                onClick={handleGenerateContent}
+              >
                 <FaMagic className="size-5 text-white" />
-              </div>
+              </Button>
             </Tooltip>
             <UploadForm
               thumbnailFile={thumbnailFile}
               originalThumbnailFile={originalThumbnailFile}
               setOriginalThumbnailFile={setOriginalThumbnailFile}
-              existingThumbnailUrl={aiImages?.image_urls[0]}
+              // existingThumbnailUrl={aiImages?.image_urls[0]}
               onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
               cate_ids={cate_ids}
@@ -391,26 +396,12 @@ const UploadPost: React.FC = () => {
           </Box>
           <hr className="border-mountain-300 dark:border-mountain-700 border-t-1 w-full" />
           {/* Bottom actions */}
-          <Box className="flex justify-between bg-none mt-auto pr-4 w-full">
+          <Box className="flex justify-end bg-none mt-auto pr-4 w-full">
             <Button
               variant="contained"
               onClick={handleSubmitMediaUploaded}
-              disabled={!(isUploadMediaValid || isBrowseAIValid)}
-              className="ml-auto rounded-md"
-              sx={{
-                textTransform: "none",
-                background: !(isUploadMediaValid || isBrowseAIValid)
-                  ? "linear-gradient(to right, #9ca3af, #6b7280)" // Tailwind's gray-400 to gray-500
-                  : "linear-gradient(to right, #3730a3, #5b21b6, #4c1d95)", // indigo-violet gradient
-                color: "white",
-                opacity: !(isUploadMediaValid || isBrowseAIValid) ? 0.6 : 1,
-                pointerEvents: !(isUploadMediaValid || isBrowseAIValid) ? "none" : "auto",
-                "&:hover": {
-                  background: !(isUploadMediaValid || isBrowseAIValid)
-                    ? "linear-gradient(to right, #9ca3af, #6b7280)"
-                    : "linear-gradient(to right, #312e81, #4c1d95, #3b0764)",
-                },
-              }}
+              disabled={!(isUploadMediaValid)}
+              className={`w-40 rounded-md ${isUploadMediaValid ? 'bg-gradient-to-r from-blue-700 to-purple-700' : 'bg-mountain-200 text-mountain-50'}`}
             >
               Submit
             </Button>

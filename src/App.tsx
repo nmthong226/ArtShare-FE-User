@@ -40,6 +40,7 @@ const ArtGeneration = lazy(() => import("@/features/gen-art/ArtGenAI"));
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
 import { GlobalSearchProvider } from "@/contexts/SearchProvider";
+import Dashboard from "./features/dashboard/Dashboard";
 
 
 const authRoutes = [
@@ -54,6 +55,7 @@ const privateAuthRoute = [
 ];
 
 const InAppPublicRoutes = [
+  { path: "/dashboard", element: <Dashboard /> },
   { path: "/explore", element: <Explore /> },
   { path: "/posts/:postId", element: <Post /> },
   { path: "/blogs", element: <BrowseBlogs /> },

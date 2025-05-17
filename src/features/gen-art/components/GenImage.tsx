@@ -31,18 +31,20 @@ import { RiFolderUploadLine } from "react-icons/ri";
 import { FiTrash2 } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 import DeleteButton from './DeleteConfirmation';
+import { Check } from 'lucide-react';
 
 interface GenImageProps {
     index: number,
     result: PromptResult;
     otherImages: string[],
+    useToShare?: boolean | null
     // onDelete?: (resultId: number, imgId: number) => void;
 }
 
 const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 
-const GenImage: React.FC<GenImageProps> = ({ index, result, otherImages }) => {
+const GenImage: React.FC<GenImageProps> = ({ index, result, otherImages, useToShare }) => {
     const [deleteImage, setDeleteImage] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [open, setOpen] = useState(false);
@@ -117,12 +119,12 @@ const GenImage: React.FC<GenImageProps> = ({ index, result, otherImages }) => {
                             onClick={() => { setCurrentIndex(index), setOpenDiaLog(true) }}
                         />
                         {deleteImage === true && (
-                            <div className='absolute flex justify-center items-center bg-black/20 w-full h-full'>
+                            <div className={`absolute flex justify-center items-center bg-black/20 w-full h-full`}>
                                 <div className='flex flex-col space-y-2 bg-white p-2 rounded-lg h-fit'>
                                     <p className='text-sm'>Are you sure to delete?</p>
                                     <Dialog>
                                         <DialogTrigger asChild>
-                                            <Button className='bg-mountain-100' onClick={(e) => {
+                                            <Button className={`bg-mountain-100`} onClick={(e) => {
                                                 e.stopPropagation(); // Prevent opening dialog
                                                 handleDelete();
                                             }}>
@@ -143,39 +145,59 @@ const GenImage: React.FC<GenImageProps> = ({ index, result, otherImages }) => {
                             </div>
                         )}
                     </div>
-                    <div className='bottom-2 left-2 absolute flex'>
-                        <Tooltip title="Download">
-                            <div onClick={(e) => {
-                                e.stopPropagation(); // Prevent opening dialog
-                                handleDownload();
-                            }}
-                                className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
-                                <FiDownload className='text-mountain-600' />
+                    {useToShare ? (
+                        <>
+                            <div className='bottom-2 left-2 absolute flex'>
+                                <Tooltip title="Click to share this">
+                                    <div onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleNavigateToUpload(result)
+                                    }}
+                                        className='z-50 flex justify-center items-center bg-white hover:bg-mountain-50 opacity-0 group-hover:opacity-100 rounded-md w-28 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
+                                        <Check className='mr-1 size-4 text-mountain-600' />
+                                        <p>Share This</p>
+                                    </div>
+                                </Tooltip>
                             </div>
-                        </Tooltip>
-                    </div>
-                    <div className='right-2 bottom-2 absolute flex space-x-2'>
-                        <Tooltip title="Edit">
-                            <div onClick={(e) => {
-                                e.stopPropagation(); // Prevent opening dialog
-                                handleNavigateToEdit();
-                            }}
-                                className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
-                                <FaRegPenToSquare className='size-4 text-mountain-600' />
+                        </>
+                    ) : (
+                        <>
+                            <div className='bottom-2 left-2 absolute flex'>
+                                <Tooltip title="Download">
+                                    <div onClick={(e) => {
+                                        e.stopPropagation(); // Prevent opening dialog
+                                        handleDownload();
+                                    }}
+                                        className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
+                                        <FiDownload className='text-mountain-600' />
+                                    </div>
+                                </Tooltip>
                             </div>
-                        </Tooltip>
-                        <Tooltip title="Delete">
-                            <div onClick={(e) => {
-                                e.stopPropagation(); // Prevent opening dialog
-                                setDeleteImage(true);
-                            }}
-                                className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
-                                <FiTrash2 className='text-mountain-600' />
+                            <div className='right-2 bottom-2 absolute flex space-x-2'>
+                                <Tooltip title="Edit">
+                                    <div onClick={(e) => {
+                                        e.stopPropagation(); // Prevent opening dialog
+                                        handleNavigateToEdit();
+                                    }}
+                                        className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
+                                        <FaRegPenToSquare className='size-4 text-mountain-600' />
+                                    </div>
+                                </Tooltip>
+                                <Tooltip title="Delete">
+                                    <div onClick={(e) => {
+                                        e.stopPropagation(); // Prevent opening dialog
+                                        setDeleteImage(true);
+                                    }}
+                                        className='z-50 flex justify-center items-center bg-white opacity-0 group-hover:opacity-100 rounded-full w-6 h-6 duration-300 ease-in-out hover:cursor-pointer transform'>
+                                        <FiTrash2 className='text-mountain-600' />
+                                    </div>
+                                </Tooltip>
                             </div>
-                        </Tooltip>
-                    </div>
-                </div>
-            </DialogTrigger>
+                        </>
+                    )}
+
+                </div >
+            </DialogTrigger >
             <DialogContent className='p-0 border-0 rounded-xl min-w-7xl'>
                 <DialogHeader hidden>
                     <DialogTitle>Image Preview</DialogTitle>
@@ -345,7 +367,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, result, otherImages }) => {
                     </div>
                 </div>
             </DialogContent>
-        </Dialog>
+        </Dialog >
     )
 }
 

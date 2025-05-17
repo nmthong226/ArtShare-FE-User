@@ -144,7 +144,6 @@ const UploadForm: React.FC<{
             Details
           </Typography>
         </Box>
-
         <Box className="space-y-1 px-3 pb-3">
           <Typography className="dark:text-mountain-200 text-base text-left">
             Description
@@ -200,7 +199,7 @@ const UploadForm: React.FC<{
                 </>
               }
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={
                 <Checkbox
                   checked={aiCreated}
@@ -214,7 +213,7 @@ const UploadForm: React.FC<{
               label={
                 <span className="ml-2 dark:text-white">Created with AI</span>
               }
-            />
+            /> */}
           </FormControl>
         </Box>
       </Box>

@@ -1,5 +1,5 @@
 import { Category } from "./category";
-import { Media } from "./media";
+import { MediaDto } from "./media";
 import { User } from "./user";
 
 export interface Post {
@@ -20,7 +20,7 @@ export interface Post {
   is_mature: boolean;
   ai_created: boolean;
 
-  medias: Media[];
+  medias: MediaDto[];
   user: User;
   categories?: Category[];
   thumbnail_crop_meta: string;

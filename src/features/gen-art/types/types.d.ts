@@ -83,3 +83,8 @@ interface PromptResult {
     user_id: string,
     user_prompt: string,
 }
+
+interface HistoryFilter {
+    label: string,
+    value: string
+}

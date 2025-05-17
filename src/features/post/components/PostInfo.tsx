@@ -244,7 +244,7 @@ const PostInfo = ({ postData }: { postData: Post }) => {
 
       {/* --- Render Likes Dialog --- */}
       <LikesDialog
-        postId={postData.id}
+        contentId={postData.id} // changed from postId to contentId
         open={isLikesDialogOpen}
         onClose={handleCloseLikesDialog}
       />

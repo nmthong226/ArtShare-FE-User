@@ -80,42 +80,22 @@ const PublicOnlyRoute = ({ children }: { children: React.ReactNode }) => {
   // Prevent premature redirect while still loading auth status
   if (loading) return <div>Checking authentication...</div>;
 
-  // If authenticated but not onboarded, redirect to onboarding page
-  if (isAuthenticated && !isOnboard) {
-    return <Navigate to="/onboarding" replace />;
-  }
-
-  // If authenticated and onboarded, redirect to explore page
-  if (isAuthenticated && isOnboard) {
+  if (isAuthenticated) {
     return <Navigate to="/explore" replace />;
   }
 
   return <>{children}</>;
 };
-
-// OnboardingRoute: restricts access to onboarding only for users who are not onboarded
+// OnboardingRoute: allows only users who are not onboard to access the /onboarding route
 const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, loading, isOnboard } = useUser();
 
   // Prevent premature redirect while still loading auth status
   if (loading) return <div>Checking authentication...</div>;
 
-  // If user is authenticated and onboarded, redirect to explore
+  // Redirect to explore if user is authenticated and onboarded
   if (isAuthenticated && isOnboard) {
     return <Navigate to="/explore" replace />;
-  }
-
-  // If the user is authenticated but not onboarded, allow access to onboarding route
-  return <>{children}</>;
-};
-
-// Redirect any non-onboarded user trying to access non-onboarding pages
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isOnboard } = useUser();
-
-  // Redirect to /onboarding if user is authenticated but not onboarded
-  if (isAuthenticated && !isOnboard) {
-    return <Navigate to="/onboarding" replace />;
   }
 
   return <>{children}</>;
@@ -177,39 +157,8 @@ const App: React.FC = () => {
                   />
                 ))}
 
-                {/* Onboarding Route - Ensure it's accessible only for non-onboarded users */}
-                <Route
-                  path="/onboarding"
-                  element={
-                    <OnboardingRoute>
-                      <InAppLayout>
-                        <OnboardingProfile />
-                      </InAppLayout>
-                    </OnboardingRoute>
-                  }
-                />
-
-                {/* Protected Routes - Users who are onboarded can access these */}
-                <Route
-                  path="/explore"
-                  element={
-                    <ProtectedRoute>
-                      <InAppLayout>
-                        <Explore />
-                      </InAppLayout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/search"
-                  element={
-                    <ProtectedRoute>
-                      <InAppLayout>
-                        <Search />
-                      </InAppLayout>
-                    </ProtectedRoute>
-                  }
-                />
+                {/* Landing page */}
+                <Route path="/" element={<LandingPage />} />
 
                 {/* Lazy routes */}
                 <Route

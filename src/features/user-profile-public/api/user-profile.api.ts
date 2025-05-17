@@ -28,3 +28,18 @@ export const getUserProfile = async (userId?: string): Promise<UserProfile> => {
     throw error;
   }
 };
+
+export const getUserProfileByUsername = async (username?: string): Promise<UserProfile> => {
+
+  console.log('url for userProfile by username: ', username);
+
+  const url = `/users/profile/username/${username}`;
+
+  try {
+    const { data } = await api.get<UserProfile>(url);
+    return data;
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    throw error;
+  }
+};

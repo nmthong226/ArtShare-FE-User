@@ -4,14 +4,18 @@ import { MoreHorizontal, Mail } from "lucide-react";
 import ProfileHeader from "./components/ProfileHeader";
 import ProfileInfo from "./components/ProfileInfo";
 import { Tooltip } from "@mui/material";
-import { getUserProfile, UserProfile } from "./api/user-profile.api";
+import { getUserProfileByUsername, UserProfile } from "./api/user-profile.api";
 import { useUser } from "@/contexts/UserProvider";
-import { useParams } from "react-router-dom";
 import { followUser, unfollowUser } from "./api/follow.api";
+import { useParams } from "react-router-dom";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
+import { AxiosError } from "axios";
 
 export const UserProfileCard = () => {
-  const { username: userId } = useParams(); 
+  const { username }= useParams();
+  const { user } = useUser();
   const queryClient = useQueryClient();
+  const {showSnackbar} = useSnackbar();
 
   const {
     data: profileData,
@@ -19,22 +23,60 @@ export const UserProfileCard = () => {
     isError,
     error,
   } = useQuery<UserProfile, Error>({
-    queryKey: ["userProfile", userId],
-    queryFn: () => getUserProfile(userId),
-    enabled: userId !== undefined || userId === undefined,
+    queryKey: ["userProfile", username],
+    queryFn: () => getUserProfileByUsername(username),
+    enabled: username !== undefined || username === undefined,
   });
 
   console.log('profile: ', profileData);
 
    /* ─────────────────── follow / unfollow ────────────── */
   const followMutation = useMutation({
-    mutationFn: () => followUser(userId!),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userProfile", userId] }),
+    mutationFn: () => {
+      if (!profileData?.id) {
+        return Promise.reject(new Error("User ID is undefined"));
+      }
+      return followUser(profileData.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userProfile", username] });
+      showSnackbar('Followed successfully.', 'success');
+    },
+    onError: (error: unknown) => {
+      let msg = 'Failed to follow user.';
+
+      if (error instanceof AxiosError && error.response?.data?.message) {
+        msg = error.response.data.message;
+      } else if (error instanceof Error) {
+        msg = error.message;
+      }
+
+      showSnackbar(msg, 'error');
+    } 
   });
 
   const unfollowMutation = useMutation({
-    mutationFn: () => unfollowUser(userId!),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["userProfile", userId] }),
+    mutationFn: () => {
+      if (!profileData?.id) {
+        return Promise.reject(new Error("User ID is undefined"));
+      }
+      return unfollowUser(profileData.id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["userProfile", username] });
+      showSnackbar('Unfollow successfully.', 'success');
+    },
+    onError: (error: unknown) => {
+      let msg = 'Failed to unfollow user.';
+
+      if (error instanceof AxiosError && error.response?.data?.message) {
+        msg = error.response.data.message;
+      } else if (error instanceof Error) {
+        msg = error.message;
+      }
+
+      showSnackbar(msg, 'error');
+    }
   });
 
   const toggleFollow = () =>
@@ -43,8 +85,6 @@ export const UserProfileCard = () => {
   const followBtnLoading =
     followMutation.isPending || unfollowMutation.isPending;
 
-  const { user } = useUser(); 
-  
   const isOwnProfile = user?.id === profileData?.id;
   const isFollowing = profileData?.isFollowing;
   const iconColor = "white";
@@ -78,6 +118,7 @@ export const UserProfileCard = () => {
             followings_count={profileData.followings_count}
             followers_count={profileData.followers_count}
             website={"https://www.pixilart.com/marfish"}
+            userId = {profileData.id}
           />
         </div>
         <div className="flex gap-2">
@@ -96,7 +137,6 @@ export const UserProfileCard = () => {
             <Button
               onClick={toggleFollow}
               disabled={followBtnLoading}
-              variant={isFollowing ? "outline" : "ghost"}
               size="lg"
               className="rounded-full
                 border border-gray-600 text-black dark:text-white 

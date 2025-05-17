@@ -5,3 +5,9 @@ export const followUser = (userId: string) =>
 
 export const unfollowUser = (userId: string) =>
   api.post(`/users/${userId}/unfollow`);
+
+export const getFollowingsListByUserId = (userId: string) => 
+  api.get(`/users/${userId}/followings`)
+
+export const getFollowersListByUserId = (userId: string) =>
+  api.get(`/users/${userId}/followers`)

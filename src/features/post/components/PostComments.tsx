@@ -499,7 +499,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         ref={_ref}
-        className="flex flex-col gap-4 bg-white shadow rounded-2xl p-6 w-full relative"
+        className="flex flex-col gap-4 bg-white shadow rounded-2xl w-full relative"
       >
         <h4 className="font-bold text-sm">COMMENTS</h4>
 

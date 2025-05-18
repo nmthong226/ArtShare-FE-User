@@ -188,6 +188,7 @@ const App: React.FC = () => {
                   element={
                     <ProtectedInAppRoute>
                       <AILayout>
+                        <Suspense fallback={<Loading />}>
                           <ArtGeneration />
                         </Suspense>
                       </AILayout>

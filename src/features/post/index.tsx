@@ -6,7 +6,7 @@ import { fetchPost } from "./api/post.api";
 import { fetchComments } from "./api/comment.api.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-import PostTags from "./components/PostTags";
+
 // import PostMoreByArtist from "./components/PostMoreByArtist";
 // import PostShare from "./components/PostShare";
 import LoadingSpinner from "@/components/fallbacks/LoadingSpinner.tsx";
@@ -52,18 +52,6 @@ const Post: React.FC = () => {
   if (postError || commentsError) {
     return <div>Failed to fetch data.</div>;
   }
-
-  const PostContent = () => {
-    return (
-      <div className="flex flex-col gap-8">
-        <PostInfo postData={postData!} />
-        <PostComments comments={comments!} postId={postData!.id} />
-        <PostTags categories={postData!.categories} />
-        {/* <PostMoreByArtist artist={postData!.user} /> */}
-        {/* <PostShare /> */}
-      </div>
-    );
-  };
 
   return (
     <div className="relative flex-grow bg-mountain-50 p-4 h-[calc(100vh-4rem)] overflow-y-scroll no-scrollbar">

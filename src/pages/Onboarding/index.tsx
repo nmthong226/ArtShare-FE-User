@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import api from "@/api/baseApi";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
-import { useSnackbar } from "@/contexts/SnackbarProvider";
 
 // SHADCN Dialog helpers
 import {
@@ -14,9 +13,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
-  DialogTrigger,
-  DialogClose,
 } from "@/components/ui/dialog";
 
 interface ProfileForm {
@@ -45,7 +41,6 @@ const OnboardingProfile: React.FC = () => {
 
   /* dialog state */
   const [open, setOpen] = useState(true); // Set dialog to open by default
-  const timerRef = React.useRef<NodeJS.Timeout>();
   const [popMessage, setPopMessage] = useState<{
     ok: boolean;
     text: string;
@@ -170,7 +165,10 @@ const OnboardingProfile: React.FC = () => {
               id="username"
               placeholder="Your Username"
               {...register("username", {
-                required: "Username is required",
+                required: {
+                  value: true,
+                  message: "Username is required",
+                },
                 minLength: {
                   value: 3,
                   message: "Username must be at least 3 characters",
@@ -180,30 +178,18 @@ const OnboardingProfile: React.FC = () => {
                   message: "Username must be at most 20 characters",
                 },
                 pattern: {
-                  value: /^[a-z0-9_-]{3,20}$/,
+                  value: /^[a-z0-9_-]{3,20}$/i, // Case-insensitive pattern
                   message:
                     "Only lowercase letters, numbers, underscores, and hyphens are allowed",
                 },
-                // validate: async (value) => {
-                //   // Check uniqueness via API
-                //   try {
-                //     const res = await api.get(
-                //       `/users/check-username?username=${value}`,
-                //     );
-                //     if (!res.data.available) {
-                //       return "Username is already taken";
-                //     }
-                //   } catch {
-                //     return "Could not validate username";
-                //   }
-                //   return true;
-                // },
               })}
               className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-neutral-400 text-neutral-900"
               style={{ color: "#6b7280" }}
             />
+
+            {/* Error handling */}
             {errors.username && (
-              <p className="text-xs text-rose-500">Username is required</p>
+              <p className="text-xs text-rose-500">{errors.username.message}</p>
             )}
           </div>
 

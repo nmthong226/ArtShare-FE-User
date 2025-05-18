@@ -12,9 +12,10 @@ import { CreateCollectionDialog } from "@/features/collection/components/CreateC
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { fetchCollectionsForDialog } from "../api/collection.api";
 import { LikesDialog } from "@/components/like/LikesDialog";
-
+import { useUser } from "@/contexts/UserProvider";
 // 👉 Like/unlike API helpers
 import { likePost, unlikePost } from "../api/post.api";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
 
 interface SimpleCollection {
   id: number;
@@ -31,7 +32,7 @@ type PostInfoProps = {
 
 const PostInfo = ({ postData }: PostInfoProps) => {
   const { postCommentsRef } = useFocusContext();
-
+  const { showSnackbar } = useSnackbar();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isLikesDialogOpen, setIsLikesDialogOpen] = useState(false);
@@ -95,6 +96,11 @@ const PostInfo = ({ postData }: PostInfoProps) => {
 
   // Like / Unlike handler (optimistic update)
   const handleLikeClick = async () => {
+    const user = useUser();
+    if (!user) {
+      showSnackbar("Please log in to like", "error");
+      return;
+    }
     if (isLiking || isFetchingLike) return;
     const willLike = !userLike;
     setUserLike(willLike);

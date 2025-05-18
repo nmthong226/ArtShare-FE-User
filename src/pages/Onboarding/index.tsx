@@ -77,12 +77,15 @@ const OnboardingProfile: React.FC = () => {
     try {
       await api.patch("/users/profile", payload);
       reset(raw);
-      setTimeout(() => navigate("/explore"), 2600); // Redirect to explore after a
+      setTimeout(() => navigate("/explore"), 1000); // Redirect to explore after a
+
       // successful update
       showDialog(true, "Profile updated successfully!");
+      setOpen(false);
     } catch (err) {
       console.log(err);
       showDialog(false, "Failed to update profile");
+      setOpen(false);
     }
   };
 

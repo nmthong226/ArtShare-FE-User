@@ -19,9 +19,9 @@ import {
 import {
   ThumbsUp,
   ThumbsDown,
-  Heart,
   ChevronDown,
   ChevronUp,
+  SendHorizontal,
 } from "lucide-react";
 import Avatar from "boring-avatars";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
@@ -242,9 +242,6 @@ const CommentRow = ({
             >
               Reply
             </button>
-            {depth === 0 && (
-              <Heart size={16} className="text-rose-500" fill="currentColor" />
-            )}
           </div>
         </div>
 
@@ -499,11 +496,11 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         ref={_ref}
-        className="flex flex-col gap-4 bg-white shadow rounded-2xl w-full relative"
+        className="flex flex-col gap-4 bg-white rounded-2xl w-full pb-28"
       >
         <h4 className="font-bold text-sm">COMMENTS</h4>
 
-        <div className="flex flex-col max-h-[480px] overflow-y-auto divide-y divide-neutral-100">
+        <div className="flex flex-col  divide-y divide-neutral-100">
           {comments.map((c) => (
             <CommentRow
               key={c.id}
@@ -525,7 +522,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         </div>
 
         {/* input */}
-        <div className="flex gap-3 pt-2 border-t">
+        <div className="right-0 bottom-0 left-0 absolute flex gap-2 bg-white p-4 border-t-[1px] border-mountain-200 rounded-2xl rounded-t-none">
           {user?.profile_picture_url ? (
             <img
               src={user.profile_picture_url}
@@ -537,38 +534,27 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
               name={user?.username || ""}
               size={32}
               variant="beam"
-              colors={["#ffb870", "#d96153", "#000511"]}
+              colors={["#84bfc3", "#ff9b62", "#d96153"]}
             />
           )}
-          <div className="flex flex-col flex-grow gap-2">
+          <div className="flex flex-grow gap-2">
             <TextareaAutosize
               ref={textareaRef}
               placeholder="Add a comment"
-              className="border border-neutral-300 rounded-lg p-3 w-full resize-none focus:outline-none focus:ring-1 focus:ring-blue-500"
-              minRows={2}
+              className="border border-neutral-300 rounded-lg p-3 w-full resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 "
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               disabled={isPosting}
             />
-            <div className="flex gap-2 self-end">
-              <Button
-                variant="text"
-                onClick={() => {
-                  setNewComment("");
-                  setReplyParentId(null);
-                }}
-                disabled={!newComment.trim() || isPosting}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                onClick={handleAdd}
-                disabled={!newComment.trim() || isPosting}
-              >
-                {isPosting ? "Posting…" : "Comment"}
-              </Button>
-            </div>
+
+            <Button
+              variant="contained"
+              className="p-0.5 min-w-auto h-12 aspect-[1/1]"
+              onClick={handleAdd}
+              disabled={!newComment.trim()}
+            >
+              <SendHorizontal />
+            </Button>
           </div>
         </div>
 

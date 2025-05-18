@@ -25,7 +25,7 @@ const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 type PostInfoProps = {
   postData: Post & {
-    user_has_liked?: boolean;
+    isLikedByCurrentUser?: boolean;
   };
 };
 
@@ -43,7 +43,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
 
   // Like-state & API integration
   const [userLike, setUserLike] = useState<boolean>(
-    postData.user_has_liked ?? false,
+    postData.isLikedByCurrentUser ?? false,
   );
   const [likeCount, setLikeCount] = useState<number>(postData.like_count);
   const [isLiking, setIsLiking] = useState(false);

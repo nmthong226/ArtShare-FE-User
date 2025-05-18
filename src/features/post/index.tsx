@@ -73,7 +73,6 @@ const Post: React.FC = () => {
           <PostAssets medias={postData!.medias} />
           <PostInfo postData={postData!} />
           <PostComments comments={comments!} postId={postData!.id} />
-          <PostTags categories={postData!.categories} />
         </div>
       </div>
       <div className="hidden md:flex flex-row gap-4 h-full">
@@ -85,7 +84,6 @@ const Post: React.FC = () => {
             <PostArtist artist={postData!.user} postData={postData!} />
             <PostInfo postData={postData!} />
             <PostComments comments={comments!} postId={postData!.id} />
-            <PostTags categories={postData!.categories} />
           </div>
         </div>
       </div>

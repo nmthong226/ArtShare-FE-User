@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import api from "@/api/baseApi";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
 
 // SHADCN Dialog helpers
 import {
@@ -77,15 +78,33 @@ const OnboardingProfile: React.FC = () => {
     try {
       await api.patch("/users/profile", payload);
       reset(raw);
-      setTimeout(() => navigate("/explore"), 1000); // Redirect to explore after a
+      setTimeout(() => navigate("/explore"), 3000); // Redirect to explore after a successful update
 
-      // successful update
+      // Successful update
       showDialog(true, "Profile updated successfully!");
       setOpen(false);
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
-      showDialog(false, "Failed to update profile");
-      setOpen(false);
+      // Check if the error is a conflict for the username
+      if (
+        err?.response?.data?.message?.includes(
+          "Duplicate value for field(s): username",
+        )
+      ) {
+        showDialog(
+          false,
+          "Username already exists. Please choose a different username.",
+        );
+        // Focus on the username input field so the user can correct it
+        const usernameInput = document.getElementById("username");
+        if (usernameInput) {
+          usernameInput.focus();
+        }
+      } else {
+        showDialog(false, "Failed to update profile");
+      }
+      // Keep dialog open so user can input again
+      setOpen(true);
     }
   };
 

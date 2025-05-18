@@ -2,20 +2,19 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 //Components
-import { Button, Tooltip } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import BlogComments from "./components/BlogComments";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Blog } from "@/types/blog";
 //Icons
 import { IoPersonAddOutline } from "react-icons/io5";
-import { LuTableOfContents } from "react-icons/lu";
+import { LuLink, LuTableOfContents } from "react-icons/lu";
 import { IoIosArrowUp } from "react-icons/io";
 import RelatedBlogs from "./components/RelatedBlogs";
 import { BiComment } from "react-icons/bi";
 import { AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { MdBookmarkBorder } from "react-icons/md";
 import { LuPlus } from "react-icons/lu";
-import Share from "@/components/dialogs/Share";
 import { LikesDialog } from "@/components/like/LikesDialog";
 import { fetchBlogDetails } from "./api/blog";
 import { formatDistanceToNow } from "date-fns";
@@ -38,6 +37,7 @@ const BlogDetails = () => {
   const { user } = useUser();
   const { showSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
+  const [copied, setCopied] = useState(false);
   const {
     data: blog,
     isLoading,
@@ -351,11 +351,18 @@ const BlogDetails = () => {
                   <MdBookmarkBorder className="size-4" />
                 </div>
               </Tooltip>
-              <Share
-                tooltipDirection="right"
-                link="http://localhost:5173/blogs/ambessa-arcane-fan-art"
-                className="flex justify-center items-center shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer"
-              />
+              <Tooltip title={copied ? "Link copied!" : "Copy link"} arrow>
+                <IconButton
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="flex justify-center items-center shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer"
+                >
+                  <LuLink className="size-4" />
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
         </div>

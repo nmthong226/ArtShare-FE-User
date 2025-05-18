@@ -8,22 +8,24 @@ import { Button, Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { Ellipsis, LoaderPinwheel } from "lucide-react";
 import { AiFillFire } from "react-icons/ai";
 import { IoHeartCircleOutline } from "react-icons/io5";
+import { FiSearch } from "react-icons/fi";
+import { TiDeleteOutline } from "react-icons/ti";
 
 //Components
 import { Categories, DataPopper } from "./components/Categories";
-import { BlogList, categoriesData } from "./mocks";
 import { useSearch } from "@/contexts/SearchProvider";
 import { useNavigate } from "react-router-dom";
-import { FiSearch } from "react-icons/fi";
 import { Input } from "@/components/ui/input";
-import { TiDeleteOutline } from "react-icons/ti";
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import BlogCard from "@/components/cards/BlogCard";
+
+//Mocks
+import { BlogList, categoriesData } from "./mocks";
 
 //Style
 import './BrowseBlogs.css'
 import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
-import BlogCard from "@/components/cards/BlogCard";
 
 // import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
 

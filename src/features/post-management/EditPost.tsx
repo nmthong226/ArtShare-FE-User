@@ -23,7 +23,7 @@ import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
 import { nanoid } from "nanoid";
 import { Post } from "@/types";
-import { MEDIA_TYPE } from "@/constants";
+import { MEDIA_TYPE } from "@/utils/constants";
 import { Area } from "react-easy-crop";
 
 const VIDEO_STORAGE_DIRECTORY = "posts";

@@ -1,4 +1,4 @@
-import { MEDIA_TYPE } from "@/constants";
+import { MEDIA_TYPE } from "@/utils";
 
 export interface Media {
   url: string;

@@ -4,7 +4,7 @@ import {
   MdAdd,
   MdClose,
 } from "react-icons/md";
-import { MEDIA_TYPE } from "@/constants";
+import { MEDIA_TYPE } from "@/utils/constants";
 import TabValue from "../enum/media-tab-value";
 import MediaUploadTab from "./media-upload-tab";
 import AutoSizer from "react-virtualized-auto-sizer";

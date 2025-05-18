@@ -22,14 +22,15 @@ import Explore from "@/features/explore";
 import BrowseBlogs from "@/features/browse-blogs/BrowseBlogs";
 import Collection from "@/features/collection";
 // import SubmitMedia from "@/pages/SubmitMedia";
-import AuthAction from "@/pages/Authentication/HandleCallback";
 import Post from "@/features/post";
+import AuthAction from "@/pages/Authentication/HandleCallback";
 import UploadPost from "@/features/post-management/UploadPost";
-import Search from "@/pages/Search";
-import BlogDetails from "./features/blog-details/BlogDetails";
-import EditPost from "./features/post-management/EditPost";
+import BlogDetails from "@/features/blog-details/BlogDetails";
+import EditPost from "@/features/post-management/EditPost";
 import UserProfile from "@/features/UserProfile/UserProfile";
+import Dashboard from "@/features/dashboard/Dashboard";
 import Loading from "@/pages/Loading";
+import Search from "@/pages/Search";
 
 //Significant Features
 const WriteBlog = lazy(() => import("@/features/write-blog/WriteBlog"));
@@ -40,8 +41,6 @@ const ArtGeneration = lazy(() => import("@/features/gen-art/ArtGenAI"));
 import { LanguageProvider } from "@/contexts/LanguageProvider";
 import { UserProvider } from "@/contexts/UserProvider";
 import { GlobalSearchProvider } from "@/contexts/SearchProvider";
-import Dashboard from "./features/dashboard/Dashboard";
-
 
 const authRoutes = [
   { path: "/login", element: <Login /> },

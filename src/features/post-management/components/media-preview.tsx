@@ -1,4 +1,4 @@
-import { MEDIA_TYPE } from "@/constants";
+import { MEDIA_TYPE } from "@/utils/constants";
 import { Media,  } from "../types/media";
 import { Box } from "@mui/material";
 

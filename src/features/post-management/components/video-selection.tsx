@@ -9,7 +9,7 @@ import {
 
 import React, { useEffect, useRef, useState } from "react";
 import { Media } from "@/types";
-import { MEDIA_TYPE } from "@/constants";
+import { MEDIA_TYPE } from "@/utils";
 
 export default function VideoSelection({
   imageFilesPreview,

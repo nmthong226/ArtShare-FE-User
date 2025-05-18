@@ -156,33 +156,15 @@ body {
   font-family: "Roboto", sans-serif;
   scrollbar-gutter: "stable";
 
-  /* Hide scrollbars by default */
-  .hover-scroll::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
   }
 
-  .hover-scroll {
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
     scrollbar-width: none;
     /* Firefox */
-    -ms-overflow-style: none;
-    /* IE & Edge */
-  }
-
-  /* Show scrollbar on hover of parent */
-  .group:hover .hover-scroll::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .group:hover .hover-scroll::-webkit-scrollbar-thumb {
-    background-color: rgba(100, 100, 100, 0.5);
-    border-radius: 4px;
-  }
-
-  .group:hover .hover-scroll {
-    scrollbar-width: thin;
-    /* Firefox */
-    -ms-overflow-style: auto;
   }
 
   background-color: var(--background);
@@ -194,20 +176,50 @@ body {
 
 .sidebar {
   overflow-y: scroll;
+
+  /* Scrollbar Styling (WebKit Browsers) */
+  scrollbar-width: thin;
+  /* Firefox */
+  scrollbar-color: #888 transparent;
+
+  /* Scrollbar Styling (Chrome, Edge, Safari) */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Mask gradient for fade effect */
   mask-image: linear-gradient(to top, transparent, black),
-    linear-gradient(to left, transparent 17px, black 17px);
+  linear-gradient(to left, transparent 17px, black 17px);
   mask-size: 100% 20000px;
   mask-position: left bottom;
   -webkit-mask-image: linear-gradient(to top, transparent, black),
-    linear-gradient(to left, transparent 17px, black 17px);
+  linear-gradient(to left, transparent 17px, black 17px);
   -webkit-mask-size: 100% 20000px;
   -webkit-mask-position: left bottom;
-  transition: mask-position 0.3s, -webkit-mask-position 0.3s;
+
+  transition: mask-position 0.3s,
+  -webkit-mask-position 0.3s;
 }
 
 .sidebar:hover {
   -webkit-mask-position: left top;
+  mask-position: left top;
 }
+
 
 @layer base {
   body {

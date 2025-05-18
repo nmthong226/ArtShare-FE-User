@@ -354,7 +354,7 @@ const ArtGenAI = () => {
                                         </div>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="flex flex-col mt-4 border-mountain-200 min-w-48 select-none">
-                                        {Object.entries(HistoryFilter).map(([__, value]) => (
+                                        {Object.entries(HistoryFilter).map(([, value]) => (
                                             <div
                                                 key={value}
                                                 onClick={() => setHistoryFilter(value as HistoryFilter)}

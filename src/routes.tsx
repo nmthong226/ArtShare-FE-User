@@ -1,5 +1,5 @@
 // src/routes.tsx
-import React, { lazy } from "react";
+import { lazy } from "react";
 import { Navigate, RouteObject, useRoutes, Outlet } from "react-router-dom";
 
 // Layouts & Wrappers
@@ -11,42 +11,40 @@ import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
 import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute";
 import GuestRoute from "@/components/routes/guest-route";
 
-// Loading fallback
-import Loading from "@/pages/Loading";
 
 // Lazy imports for pages/features
-const LandingPage      = lazy(() => import("@/pages/Home"));
-const Login            = lazy(() => import("@/pages/Authentication/Login"));
-const SignUp           = lazy(() => import("@/pages/Authentication/SignUp"));
-const ForgotPassword   = lazy(() => import("@/pages/Authentication/ForgotPassword"));
+const LandingPage = lazy(() => import("@/pages/Home"));
+const Login = lazy(() => import("@/pages/Authentication/Login"));
+const SignUp = lazy(() => import("@/pages/Authentication/SignUp"));
+const ForgotPassword = lazy(() => import("@/pages/Authentication/ForgotPassword"));
 const AccountActivation = lazy(() => import("@/pages/Authentication/Activation"));
-const AuthAction       = lazy(() => import("@/pages/Authentication/HandleCallback"));
-const Explore          = lazy(() => import("@/features/explore"));
-const BrowseBlogs      = lazy(() => import("@/features/browse-blogs/BrowseBlogs"));
-const BlogDetails      = lazy(() => import("@/features/blog-details/BlogDetails"));
-const Search           = lazy(() => import("@/pages/Search"));
-const Post             = lazy(() => import("@/features/post"));
-const EditPost         = lazy(() => import("@/features/post-management/EditPost"));
-const UploadPost       = lazy(() => import("@/features/post-management/UploadPost"));
-const Collection       = lazy(() => import("@/features/collection"));
-const UserProfile      = lazy(() => import("@/features/user-profile-private/UserProfile"));
-const WriteBlog        = lazy(() => import("@/features/write-blog/WriteBlog"));
-const ArtGeneration    = lazy(() => import("@/features/gen-art/ArtGenAI"));
-const ImageEditor      = lazy(() => import("@/features/edit-image/EditImage"));
+const AuthAction = lazy(() => import("@/pages/Authentication/HandleCallback"));
+const Explore = lazy(() => import("@/features/explore"));
+const BrowseBlogs = lazy(() => import("@/features/browse-blogs/BrowseBlogs"));
+const BlogDetails = lazy(() => import("@/features/blog-details/BlogDetails"));
+const Search = lazy(() => import("@/pages/Search"));
+const Post = lazy(() => import("@/features/post"));
+const EditPost = lazy(() => import("@/features/post-management/EditPost"));
+const UploadPost = lazy(() => import("@/features/post-management/UploadPost"));
+const Collection = lazy(() => import("@/features/collection"));
+const UserProfile = lazy(() => import("@/features/user-profile-private/UserProfile"));
+const WriteBlog = lazy(() => import("@/features/write-blog/WriteBlog"));
+const ArtGeneration = lazy(() => import("@/features/gen-art/ArtGenAI"));
+const ImageEditor = lazy(() => import("@/features/edit-image/EditImage"));
 
 /**
  * Flat route tree using useRoutes
  */
 const routeConfig: RouteObject[] = [
   {
-    element: <RootLayout><Outlet/></RootLayout>,
+    element: <RootLayout><Outlet /></RootLayout>,
     children: [
       // Landing
       { index: true, element: <LandingPage /> },
 
       // Public Auth
       {
-        element: <AuthenLayout><Outlet/></AuthenLayout>,
+        element: <AuthenLayout><Outlet /></AuthenLayout>,
         children: [
           { path: "/login", element: <GuestRoute><Login /></GuestRoute> },
           { path: "/signup", element: <SignUp /> },
@@ -57,7 +55,7 @@ const routeConfig: RouteObject[] = [
 
       // Private Auth
       {
-        element: <ProtectedAuthRoute><AuthenLayout><Outlet/></AuthenLayout></ProtectedAuthRoute>,
+        element: <ProtectedAuthRoute><AuthenLayout><Outlet /></AuthenLayout></ProtectedAuthRoute>,
         children: [
           { path: "/activate-account/:token", element: <AccountActivation /> }
         ]
@@ -65,7 +63,7 @@ const routeConfig: RouteObject[] = [
 
       // In-App Public
       {
-        element: <InAppLayout><Outlet/></InAppLayout>,
+        element: <InAppLayout><Outlet /></InAppLayout>,
         children: [
           { path: "/explore", element: <Explore /> },
           { path: "/posts/:postId", element: <Post /> },
@@ -77,22 +75,15 @@ const routeConfig: RouteObject[] = [
 
       // In-App Private
       {
-        element: <ProtectedInAppRoute><InAppLayout><Outlet/></InAppLayout></ProtectedInAppRoute>,
+        element: <ProtectedInAppRoute><InAppLayout><Outlet /></InAppLayout></ProtectedInAppRoute>,
         children: [
           { path: "/:username", element: <UserProfile /> },
           { path: "/post/:postId/edit", element: <EditPost /> },
           { path: "/posts/new", element: <UploadPost /> },
-          { path: "/collections", element: <Collection /> }
-        ]
-      },
-
-      // Special Suspended Routes
-      {
-        element: <ProtectedInAppRoute><InAppLayout><Outlet/></InAppLayout></ProtectedInAppRoute>,
-        children: [
-          { path: "/blogs/new", element: <React.Suspense fallback={<Loading />}><WriteBlog /></React.Suspense> },
-          { path: "/image/tool/text-to-image", element: <React.Suspense fallback={<Loading />}><AILayout><ArtGeneration /></AILayout></React.Suspense> },
-          { path: "/image/tool/editor", element: <React.Suspense fallback={<Loading />}><AILayout><ImageEditor /></AILayout></React.Suspense> }
+          { path: "/collections", element: <Collection /> },
+          { path: "/blogs/new", element: <WriteBlog /> },
+          { path: "/image/tool/text-to-image", element: <AILayout><ArtGeneration /></AILayout> },
+          { path: "/image/tool/editor", element: <AILayout><ImageEditor /></AILayout> },
         ]
       },
 

@@ -1,4 +1,4 @@
-export interface Media {
+export interface MediaDto {
   id: number;
   post_id: number;
   media_type: MediaType;

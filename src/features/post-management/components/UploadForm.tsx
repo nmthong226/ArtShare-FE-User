@@ -59,8 +59,8 @@ const UploadForm: React.FC<{
   setDescription,
   isMature,
   setIsMature,
-  aiCreated,
-  setAiCreated,
+  // aiCreated,
+  // setAiCreated,
   originalThumbnailFile,
   lastCrop,
   lastZoom,
@@ -200,7 +200,7 @@ const UploadForm: React.FC<{
                 </>
               }
             />
-            <FormControlLabel
+            {/* <FormControlLabel
               control={
                 <Checkbox
                   checked={aiCreated}
@@ -214,7 +214,7 @@ const UploadForm: React.FC<{
               label={
                 <span className="ml-2 dark:text-white">Created with AI</span>
               }
-            />
+            /> */}
           </FormControl>
         </Box>
       </Box>
@@ -255,7 +255,7 @@ const UploadForm: React.FC<{
             thumbnailFile || existingThumbnailUrl
               ? "border-none"
               : "border-gray-500 border-dashed"
-          } rounded min-h-32 overflow-hidden`}
+          } rounded min-h-32 overflow-hidden bg-mountain-200`}
           component="label"
         >
           {thumbnailFile ? (
@@ -306,7 +306,6 @@ const UploadForm: React.FC<{
                 className="border border-gray-300 dark:border-white text-gray-900 dark:text-white"
               >
                 <MdPhotoCameraBack />
-
                 <input
                   type="file"
                   accept="image/*"
@@ -337,7 +336,7 @@ const UploadForm: React.FC<{
         </Box>
 
         {/* Art type */}
-        <Box className="flex flex-col space-y-1  pb-3 w-full">
+        <Box className="flex flex-col space-y-1 pb-3 w-full">
           {/* Dialog for Selection */}
           <Box className="space-y-1 px-3 pb-3">
             {/** TODO: uncomment this */}

@@ -2,35 +2,169 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 //Components
-import { Button, Tooltip } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import BlogComments from "./components/BlogComments";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Blog } from "@/types/blog";
 //Icons
 import { IoPersonAddOutline } from "react-icons/io5";
-import { LuTableOfContents } from "react-icons/lu";
+import { LuLink, LuTableOfContents } from "react-icons/lu";
 import { IoIosArrowUp } from "react-icons/io";
 import RelatedBlogs from "./components/RelatedBlogs";
 import { BiComment } from "react-icons/bi";
-import { AiOutlineLike } from "react-icons/ai";
+import { AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { MdBookmarkBorder } from "react-icons/md";
 import { LuPlus } from "react-icons/lu";
-import Share from "@/components/dialogs/Share";
 import { LikesDialog } from "@/components/like/LikesDialog";
 import { fetchBlogDetails } from "./api/blog";
 import { formatDistanceToNow } from "date-fns";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useUser } from "@/contexts/UserProvider";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
+import {
+  followUser,
+  unfollowUser,
+} from "../user-profile-public/api/follow.api";
+import { AxiosError } from "axios";
+import { createLike, removeLike } from "./api/like-blog";
+import { TargetType } from "@/types/likes";
 
 const BlogDetails = () => {
   const { blogId } = useParams<{ blogId: string }>(); // get blogId from URL
   const [showAuthorBadge, setShowAuthorBadge] = useState(false);
   // states for the likes dialog
   const [likesDialogOpen, setLikesDialogOpen] = useState(false);
-  const [likeCount, setLikeCount] = useState(14);
-  const [isLiked, setIsLiked] = useState(false);
+  const { user } = useUser();
+  const { showSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+  const [copied, setCopied] = useState(false);
+  const {
+    data: blog,
+    isLoading,
+    error,
+    refetch, // we’ll call this after follow/unfollow
+  } = useQuery<Blog, Error>({
+    queryKey: ["blogDetails", blogId],
+    queryFn: () => fetchBlogDetails(Number(blogId)),
+    enabled: !!blogId,
+  });
 
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
+  const followMutation = useMutation({
+    mutationFn: () => followUser(blog!.user.id),
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error: unknown) => {
+      const msg =
+        error instanceof AxiosError && error.response?.data?.message
+          ? error.response.data.message
+          : "Failed to follow user.";
+      showSnackbar(msg, "error");
+    },
+  });
+
+  const unfollowMutation = useMutation({
+    mutationFn: () => unfollowUser(blog!.user.id),
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error: unknown) => {
+      const msg =
+        error instanceof AxiosError && error.response?.data?.message
+          ? error.response.data.message
+          : "Failed to unfollow user.";
+      showSnackbar(msg, "error");
+    },
+  });
+
+  // Like/unlike mutations
+  const likeMutation = useMutation({
+    mutationFn: () =>
+      createLike({
+        target_id: Number(blogId),
+        target_type: TargetType.BLOG,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogDetails", blogId] });
+    },
+    onError: (error: unknown) => {
+      const msg =
+        error instanceof AxiosError && error.response?.data?.message
+          ? error.response.data.message
+          : "Failed to like blog.";
+      showSnackbar(msg, "error");
+    },
+  });
+
+  const unlikeMutation = useMutation({
+    mutationFn: () =>
+      removeLike({
+        target_id: Number(blogId),
+        target_type: TargetType.BLOG,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogDetails", blogId] });
+    },
+    onError: (error: unknown) => {
+      const msg =
+        error instanceof AxiosError && error.response?.data?.message
+          ? error.response.data.message
+          : "Failed to unlike blog.";
+      showSnackbar(msg, "error");
+    },
+  });
+
+  const isOwnProfile = user?.id === blog?.user.id;
+  const isFollowing = blog?.user.is_following;
+  const toggleFollow = () => {
+    if (!user) {
+      showSnackbar(
+        "Please login to follow users",
+        "warning",
+        <Button
+          size="small"
+          color="inherit"
+          onClick={() => (window.location.href = "/login")}
+        >
+          Login
+        </Button>,
+      );
+      return;
+    }
+    isFollowing ? unfollowMutation.mutate() : followMutation.mutate();
+  };
+
+  const followBtnLoading =
+    followMutation.isPending || unfollowMutation.isPending;
+  // Check if user has liked the blog
+  const isLiked = blog?.isLikedByCurrentUser || false;
+  const likeCount = blog?.like_count || 0;
+
+  // Function to handle toggling like status
+  const handleToggleLike = () => {
+    if (!user) {
+      showSnackbar(
+        "Please login to like this blog.",
+        "warning",
+        // action slot:
+        <Button
+          size="small"
+          color="inherit"
+          onClick={() => (window.location.href = "/login")}
+        >
+          Login
+        </Button>,
+      );
+      return;
+    }
+
+    if (isLiked) {
+      unlikeMutation.mutate();
+    } else {
+      likeMutation.mutate();
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -45,6 +179,20 @@ const BlogDetails = () => {
   }, []);
 
   const handleOpenLikesDialog = () => {
+    if (!user) {
+      showSnackbar(
+        "Please login to see who liked this",
+        "warning",
+        <Button
+          size="small"
+          color="inherit"
+          onClick={() => (window.location.href = "/login")}
+        >
+          Login
+        </Button>,
+      );
+      return;
+    }
     setLikesDialogOpen(true);
   };
 
@@ -52,33 +200,7 @@ const BlogDetails = () => {
     setLikesDialogOpen(false);
   };
 
-  // Function to handle toggling like status
-  const handleToggleLike = () => {
-    // Toggle like status
-    setIsLiked(!isLiked);
-
-    // Update like count based on the new state
-    setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
-  };
-
-  useEffect(() => {
-    if (!blogId) return;
-
-    setLoading(true);
-    fetchBlogDetails(Number(blogId))
-      .then((data) => {
-        setBlog(data);
-      })
-      .catch((err) => {
-        console.error("Failed to load blog:", err);
-        setError("Could not load blog details.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [blogId]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
         <p>Loading…</p>
@@ -87,7 +209,7 @@ const BlogDetails = () => {
   }
 
   if (error) {
-    return <div className="text-red-500 p-4">{error}</div>;
+    return <div className="text-red-500 p-4">{error.message}</div>;
   }
   if (!blog) return null;
 
@@ -124,25 +246,48 @@ const BlogDetails = () => {
             <span>•</span>
             <p>{readingTime}m reading</p>
           </div>
-          <div className="flex justify-between items-center bg-gradient-to-r from-indigo-100 to-purple-100 shadow-sm p-2 py-4 rounded-lg">
-            <div className="flex space-x-2">
-              <Avatar>
+          <div
+            className="
+    flex justify-between items-center
+    bg-gradient-to-r from-indigo-100 to-purple-100
+    shadow-sm p-4 rounded-lg
+  "
+          >
+            <div className="flex items-center space-x-4">
+              <Avatar className="w-12 h-12">
                 <AvatarImage src={blog.user.profile_picture_url ?? undefined} />
                 <AvatarFallback>
                   {blog.user.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col justify-between">
-                <p>{blog.user.full_name || blog.user.username}</p>
-                <p className="text-mountain-600 text-sm">
-                  @{blog.user.username}
+
+              <div className="flex flex-col">
+                <p className="text-lg font-medium text-gray-900">
+                  {blog.user.full_name}
                 </p>
+                <div className="flex items-center space-x-3 text-sm text-gray-600">
+                  <span>@{blog.user.username}</span>
+                  <span className="text-gray-400">•</span>
+                  <span>
+                    {blog.user.followers_count.toLocaleString()}{" "}
+                    {blog.user.followers_count <= 1 ? "follower" : "followers"}
+                  </span>
+                </div>
               </div>
             </div>
-            <Button className="flex items-center bg-white shadow w-32 h-12 font-thin text">
-              <IoPersonAddOutline className="mr-2 size-4" />
-              <p>Follow</p>
-            </Button>
+
+            {!isOwnProfile && (
+              <Button
+                onClick={toggleFollow}
+                disabled={followBtnLoading}
+                variant="outlined" // ← same style both ways
+                color="primary"
+                className="flex items-center shadow w-32 h-10 font-medium text-sm"
+              >
+                <IoPersonAddOutline className="mr-2 text-blue-500" />
+                {isFollowing ? "Unfollow" : "Follow"}
+              </Button>
+            )}
           </div>
           <div
             className="prose lg:prose-xl max-w-none p-2 rounded-md" // Added prose classes for styling
@@ -167,21 +312,29 @@ const BlogDetails = () => {
             <div
               className={`space-y-2 flex-col transition ease-in-out duration-300 flex justify-between items-center py-1 bg-white shadow-md rounded-full h-full w-full`}
             >
-              <Tooltip title="Like" placement="right" arrow>
-                <div className="flex justify-center items-center bg-blue-50 hover:bg-blue-100 shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer">
-                  <AiOutlineLike
-                    className={`size-5 ${isLiked ? "text-blue-500" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent event bubbling
-                      handleToggleLike();
-                    }} // Add onClick to toggle like
-                  />
+              <Tooltip
+                title={isLiked ? "Unlike" : "Like"}
+                placement="right"
+                arrow
+              >
+                <div
+                  className="flex justify-center items-center bg-blue-50 hover:bg-blue-100 shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer"
+                  onClick={handleToggleLike}
+                  aria-disabled={
+                    likeMutation.isPending || unlikeMutation.isPending
+                  }
+                >
+                  {isLiked ? (
+                    <AiFillLike className="size-5 text-blue-500" />
+                  ) : (
+                    <AiOutlineLike className="size-5" />
+                  )}
                   <p
                     className="ml-1 hover:underline"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent event bubbling
                       handleOpenLikesDialog();
-                    }} // Add onClick to just the number to open dialog
+                    }}
                   >
                     {likeCount}
                   </p>
@@ -198,11 +351,18 @@ const BlogDetails = () => {
                   <MdBookmarkBorder className="size-4" />
                 </div>
               </Tooltip>
-              <Share
-                tooltipDirection="right"
-                link="http://localhost:5173/blogs/ambessa-arcane-fan-art"
-                className="flex justify-center items-center shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer"
-              />
+              <Tooltip title={copied ? "Link copied!" : "Copy link"} arrow>
+                <IconButton
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="flex justify-center items-center shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer"
+                >
+                  <LuLink className="size-4" />
+                </IconButton>
+              </Tooltip>
             </div>
           </div>
         </div>

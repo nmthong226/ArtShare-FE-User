@@ -8,7 +8,7 @@ import {
 } from "react-icons/md";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Media } from "@/types";
+import { MediaDto } from "@/types";
 import { MEDIA_TYPE } from "@/constants";
 
 export default function VideoSelection({
@@ -26,7 +26,7 @@ export default function VideoSelection({
   setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
   setVideoPreviewUrl: (url: string | undefined) => void;
   hidden: boolean;
-  initialMedias?: Media[];
+  initialMedias?: MediaDto[];
 }) {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isVideoManuallyRemoved, setIsVideoManuallyRemoved] = useState(false);

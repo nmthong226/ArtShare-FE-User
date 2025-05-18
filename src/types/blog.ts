@@ -15,10 +15,13 @@ export interface Blog {
   pictures: string[];
   embedded_videos: string[];
   view_count: number;
+  isLikedByCurrentUser: boolean;
   user: {
     id: string;
     username: string;
     full_name?: string | null;
     profile_picture_url?: string | null;
+    followers_count: number;
+    is_following: boolean;
   };
 }

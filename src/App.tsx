@@ -31,7 +31,8 @@ import UploadPost from "@/features/post-management/UploadPost";
 import Search from "@/pages/Search";
 import BlogDetails from "./features/blog-details/BlogDetails";
 import EditPost from "./features/post-management/EditPost";
-import UserProfile from "@/features/UserProfile/UserProfile";
+import UserProfile from "@/features/user-profile-private/UserProfile";
+import Loading from "@/pages/Loading";
 
 // Lazy loaded features
 const WriteBlog = lazy(() => import("@/features/write-blog/WriteBlog"));
@@ -65,7 +66,7 @@ const InAppPublicRoutes = [
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/u/:username", element: <UserProfile /> },
+  { path: "/:username", element: <UserProfile /> },
   { path: "/post/:postId/edit", element: <EditPost /> },
   { path: "/posts/new", element: <UploadPost /> },
   { path: "/collections", element: <Collection /> },
@@ -175,7 +176,7 @@ const App: React.FC = () => {
                   element={
                     <ProtectedInAppRoute>
                       <InAppLayout>
-                        <Suspense fallback={<div>Loading blog editor...</div>}>
+                        <Suspense fallback={<Loading />}>
                           <WriteBlog />
                         </Suspense>
                       </InAppLayout>
@@ -187,9 +188,6 @@ const App: React.FC = () => {
                   element={
                     <ProtectedInAppRoute>
                       <AILayout>
-                        <Suspense
-                          fallback={<div>Loading image generator...</div>}
-                        >
                           <ArtGeneration />
                         </Suspense>
                       </AILayout>
@@ -201,7 +199,7 @@ const App: React.FC = () => {
                   element={
                     <ProtectedInAppRoute>
                       <AILayout>
-                        <Suspense fallback={<div>Loading image editor...</div>}>
+                        <Suspense fallback={<Loading />}>
                           <ImageEditor />
                         </Suspense>
                       </AILayout>

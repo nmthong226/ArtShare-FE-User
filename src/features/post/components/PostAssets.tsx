@@ -1,8 +1,8 @@
-import { Media } from "@/types";
+import { MediaDto } from "@/types";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 
-const PostAssets = ({ medias }: { medias: Media[] }) => {
+const PostAssets = ({ medias }: { medias: MediaDto[] }) => {
   return (
     <PhotoProvider maskOpacity={0.9}>
       <div

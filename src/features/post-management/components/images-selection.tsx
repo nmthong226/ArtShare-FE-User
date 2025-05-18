@@ -3,7 +3,7 @@
 import { Avatar, Box, Button, IconButton, Typography } from "@mui/material";
 import { useImageFilesHandler } from "../hooks/use-image-files";
 import { MdCloudUpload, MdAdd, MdClose } from "react-icons/md";
-import { Media } from "@/types";
+import { MediaDto } from "@/types";
 import { useEffect, useRef } from "react";
 import { MEDIA_TYPE } from "@/constants";
 
@@ -25,7 +25,7 @@ export default function ImagesSelection({
   setImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
   setThumbnailFile: (file: File | undefined, isOriginal?: boolean) => void;
   hidden: boolean;
-  initialMedias?: Media[];
+  initialMedias?: MediaDto[];
   setExistingImageUrls: React.Dispatch<React.SetStateAction<string[]>>;
 }) {
   const {

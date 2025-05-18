@@ -20,5 +20,7 @@ export interface Blog {
     username: string;
     full_name?: string | null;
     profile_picture_url?: string | null;
+    followers_count: number;
+    is_following: boolean;
   };
 }

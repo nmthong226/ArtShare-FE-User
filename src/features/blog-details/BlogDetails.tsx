@@ -19,6 +19,14 @@ import Share from "@/components/dialogs/Share";
 import { LikesDialog } from "@/components/like/LikesDialog";
 import { fetchBlogDetails } from "./api/blog";
 import { formatDistanceToNow } from "date-fns";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useUser } from "@/contexts/UserProvider";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
+import {
+  followUser,
+  unfollowUser,
+} from "../user-profile-public/api/follow.api";
+import { AxiosError } from "axios";
 
 const BlogDetails = () => {
   const { blogId } = useParams<{ blogId: string }>(); // get blogId from URL
@@ -28,9 +36,55 @@ const BlogDetails = () => {
   const [likeCount, setLikeCount] = useState(14);
   const [isLiked, setIsLiked] = useState(false);
 
-  const [blog, setBlog] = useState<Blog | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
+  const { user } = useUser();
+  const { showSnackbar } = useSnackbar();
+  const {
+    data: blog,
+    isLoading,
+    error,
+    refetch, // we’ll call this after follow/unfollow
+  } = useQuery<Blog, Error>({
+    queryKey: ["blogDetails", blogId],
+    queryFn: () => fetchBlogDetails(Number(blogId)),
+    enabled: !!blogId,
+  });
+
+  const followMutation = useMutation({
+    mutationFn: () => followUser(blog!.user.id),
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error: unknown) => {
+      const msg =
+        error instanceof AxiosError && error.response?.data?.message
+          ? error.response.data.message
+          : "Failed to follow user.";
+      showSnackbar(msg, "error");
+    },
+  });
+
+  const unfollowMutation = useMutation({
+    mutationFn: () => unfollowUser(blog!.user.id),
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error: unknown) => {
+      const msg =
+        error instanceof AxiosError && error.response?.data?.message
+          ? error.response.data.message
+          : "Failed to unfollow user.";
+      showSnackbar(msg, "error");
+    },
+  });
+
+  const isOwnProfile = user?.id === blog?.user.id;
+  const isFollowing = blog?.user.is_following;
+  const toggleFollow = () =>
+    isFollowing ? unfollowMutation.mutate() : followMutation.mutate();
+  const followBtnLoading =
+    followMutation.isPending || unfollowMutation.isPending;
+
+  console.log("@@blog data", blog);
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -61,24 +115,7 @@ const BlogDetails = () => {
     setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
   };
 
-  useEffect(() => {
-    if (!blogId) return;
-
-    setLoading(true);
-    fetchBlogDetails(Number(blogId))
-      .then((data) => {
-        setBlog(data);
-      })
-      .catch((err) => {
-        console.error("Failed to load blog:", err);
-        setError("Could not load blog details.");
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [blogId]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-full">
         <p>Loading…</p>
@@ -87,7 +124,7 @@ const BlogDetails = () => {
   }
 
   if (error) {
-    return <div className="text-red-500 p-4">{error}</div>;
+    return <div className="text-red-500 p-4">{error.message}</div>;
   }
   if (!blog) return null;
 
@@ -124,25 +161,48 @@ const BlogDetails = () => {
             <span>•</span>
             <p>{readingTime}m reading</p>
           </div>
-          <div className="flex justify-between items-center bg-gradient-to-r from-indigo-100 to-purple-100 shadow-sm p-2 py-4 rounded-lg">
-            <div className="flex space-x-2">
-              <Avatar>
+          <div
+            className="
+    flex justify-between items-center
+    bg-gradient-to-r from-indigo-100 to-purple-100
+    shadow-sm p-4 rounded-lg
+  "
+          >
+            <div className="flex items-center space-x-4">
+              <Avatar className="w-12 h-12">
                 <AvatarImage src={blog.user.profile_picture_url ?? undefined} />
                 <AvatarFallback>
                   {blog.user.username.charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-col justify-between">
-                <p>{blog.user.full_name || blog.user.username}</p>
-                <p className="text-mountain-600 text-sm">
-                  @{blog.user.username}
+
+              <div className="flex flex-col">
+                <p className="text-lg font-medium text-gray-900">
+                  {blog.user.full_name}
                 </p>
+                <div className="flex items-center space-x-3 text-sm text-gray-600">
+                  <span>@{blog.user.username}</span>
+                  <span className="text-gray-400">•</span>
+                  <span>
+                    {blog.user.followers_count.toLocaleString()}{" "}
+                    {blog.user.followers_count <= 1 ? "follower" : "followers"}
+                  </span>
+                </div>
               </div>
             </div>
-            <Button className="flex items-center bg-white shadow w-32 h-12 font-thin text">
-              <IoPersonAddOutline className="mr-2 size-4" />
-              <p>Follow</p>
-            </Button>
+
+            {!isOwnProfile && (
+              <Button
+                onClick={toggleFollow}
+                disabled={followBtnLoading}
+                variant="outlined" // ← same style both ways
+                color="primary"
+                className="flex items-center shadow w-32 h-10 font-medium text-sm"
+              >
+                <IoPersonAddOutline className="mr-2 text-blue-500" />
+                {isFollowing ? "Unfollow" : "Follow"}
+              </Button>
+            )}
           </div>
           <div
             className="prose lg:prose-xl max-w-none p-2 rounded-md" // Added prose classes for styling

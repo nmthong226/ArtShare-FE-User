@@ -22,10 +22,12 @@ import { IoFilter, IoPersonRemoveOutline } from "react-icons/io5";
 
 //Libs
 import { formatDate } from "@/lib/utils";
+import { useUser } from "@/contexts/UserProvider";
+import { Link } from "react-router-dom";
 
 const BlogComments = () => {
   const [order, setOrder] = React.useState<"top" | "recent">("recent");
-
+  const { user } = useUser();
   const handleChange = (event: SelectChangeEvent) => {
     setOrder(event.target.value as "top" | "recent");
   };
@@ -53,25 +55,37 @@ const BlogComments = () => {
             <IoFilter className="top-1/2 left-2 absolute -translate-y-1/2" />
           </FormControl>
         </div>
-        <div className="flex items-center">
-          <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
-          <div className="flex gap-2 p-4 w-full">
-            <TextareaAutosize
-              ref={commentInputRef}
-              placeholder="Add a comment"
-              className="px-4 py-2 border-2 border-mountain-200 rounded-md w-full h-12 overflow-y-auto resize-none"
-            />
-            <Button
-              variant="contained"
-              className="p-0.5 min-w-auto h-12 aspect-[1/1]"
-            >
-              <SendHorizontal />
-            </Button>
+        {user ? (
+          <div className="flex items-center">
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <div className="flex gap-2 p-4 w-full">
+              <TextareaAutosize
+                ref={commentInputRef}
+                placeholder="Add a comment"
+                className="px-4 py-2 border-2 border-mountain-200 rounded-md w-full h-12 overflow-y-auto resize-none"
+              />
+              <Button
+                variant="contained"
+                className="p-0.5 min-w-auto h-12 aspect-[1/1]"
+              >
+                <SendHorizontal />
+              </Button>
+            </div>
           </div>
-        </div>
+        ) : (
+          <p className="text-sm text-mountain-500 italic ml-4">
+            <Link
+              to="/login"
+              className="underline text-blue-500 hover:text-blue-700"
+            >
+              Login
+            </Link>{" "}
+            to write a comment
+          </p>
+        )}
         {/* User Comments */}
         <div className="flex flex-col space-y-4 my-4">
           {UserComments.map((user, index) => (

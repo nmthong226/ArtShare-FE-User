@@ -12,14 +12,14 @@ import { LuTableOfContents } from "react-icons/lu";
 import { IoIosArrowUp } from "react-icons/io";
 import RelatedBlogs from "./components/RelatedBlogs";
 import { BiComment } from "react-icons/bi";
-import { AiOutlineLike } from "react-icons/ai";
+import { AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { MdBookmarkBorder } from "react-icons/md";
 import { LuPlus } from "react-icons/lu";
 import Share from "@/components/dialogs/Share";
 import { LikesDialog } from "@/components/like/LikesDialog";
 import { fetchBlogDetails } from "./api/blog";
 import { formatDistanceToNow } from "date-fns";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/contexts/UserProvider";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 import {
@@ -27,17 +27,17 @@ import {
   unfollowUser,
 } from "../user-profile-public/api/follow.api";
 import { AxiosError } from "axios";
+import { createLike, removeLike } from "./api/like-blog";
+import { TargetType } from "@/types/likes";
 
 const BlogDetails = () => {
   const { blogId } = useParams<{ blogId: string }>(); // get blogId from URL
   const [showAuthorBadge, setShowAuthorBadge] = useState(false);
   // states for the likes dialog
   const [likesDialogOpen, setLikesDialogOpen] = useState(false);
-  const [likeCount, setLikeCount] = useState(14);
-  const [isLiked, setIsLiked] = useState(false);
-
   const { user } = useUser();
   const { showSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
   const {
     data: blog,
     isLoading,
@@ -77,14 +77,94 @@ const BlogDetails = () => {
     },
   });
 
+  // Like/unlike mutations
+  const likeMutation = useMutation({
+    mutationFn: () =>
+      createLike({
+        target_id: Number(blogId),
+        target_type: TargetType.BLOG,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogDetails", blogId] });
+    },
+    onError: (error: unknown) => {
+      const msg =
+        error instanceof AxiosError && error.response?.data?.message
+          ? error.response.data.message
+          : "Failed to like blog.";
+      showSnackbar(msg, "error");
+    },
+  });
+
+  const unlikeMutation = useMutation({
+    mutationFn: () =>
+      removeLike({
+        target_id: Number(blogId),
+        target_type: TargetType.BLOG,
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["blogDetails", blogId] });
+    },
+    onError: (error: unknown) => {
+      const msg =
+        error instanceof AxiosError && error.response?.data?.message
+          ? error.response.data.message
+          : "Failed to unlike blog.";
+      showSnackbar(msg, "error");
+    },
+  });
+
   const isOwnProfile = user?.id === blog?.user.id;
   const isFollowing = blog?.user.is_following;
-  const toggleFollow = () =>
+  const toggleFollow = () => {
+    if (!user) {
+      showSnackbar(
+        "Please login to follow users",
+        "warning",
+        <Button
+          size="small"
+          color="inherit"
+          onClick={() => (window.location.href = "/login")}
+        >
+          Login
+        </Button>,
+      );
+      return;
+    }
     isFollowing ? unfollowMutation.mutate() : followMutation.mutate();
+  };
+
   const followBtnLoading =
     followMutation.isPending || unfollowMutation.isPending;
+  // Check if user has liked the blog
+  const isLiked = blog?.isLikedByCurrentUser || false;
+  const likeCount = blog?.like_count || 0;
 
-  console.log("@@blog data", blog);
+  // Function to handle toggling like status
+  const handleToggleLike = () => {
+    if (!user) {
+      showSnackbar(
+        "Please login to like this blog.",
+        "warning",
+        // action slot:
+        <Button
+          size="small"
+          color="inherit"
+          onClick={() => (window.location.href = "/login")}
+        >
+          Login
+        </Button>,
+      );
+      return;
+    }
+
+    if (isLiked) {
+      unlikeMutation.mutate();
+    } else {
+      likeMutation.mutate();
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -99,20 +179,25 @@ const BlogDetails = () => {
   }, []);
 
   const handleOpenLikesDialog = () => {
+    if (!user) {
+      showSnackbar(
+        "Please login to see who liked this",
+        "warning",
+        <Button
+          size="small"
+          color="inherit"
+          onClick={() => (window.location.href = "/login")}
+        >
+          Login
+        </Button>,
+      );
+      return;
+    }
     setLikesDialogOpen(true);
   };
 
   const handleCloseLikesDialog = () => {
     setLikesDialogOpen(false);
-  };
-
-  // Function to handle toggling like status
-  const handleToggleLike = () => {
-    // Toggle like status
-    setIsLiked(!isLiked);
-
-    // Update like count based on the new state
-    setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
   };
 
   if (isLoading) {
@@ -227,21 +312,29 @@ const BlogDetails = () => {
             <div
               className={`space-y-2 flex-col transition ease-in-out duration-300 flex justify-between items-center py-1 bg-white shadow-md rounded-full h-full w-full`}
             >
-              <Tooltip title="Like" placement="right" arrow>
-                <div className="flex justify-center items-center bg-blue-50 hover:bg-blue-100 shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer">
-                  <AiOutlineLike
-                    className={`size-5 ${isLiked ? "text-blue-500" : ""}`}
-                    onClick={(e) => {
-                      e.stopPropagation(); // Prevent event bubbling
-                      handleToggleLike();
-                    }} // Add onClick to toggle like
-                  />
+              <Tooltip
+                title={isLiked ? "Unlike" : "Like"}
+                placement="right"
+                arrow
+              >
+                <div
+                  className="flex justify-center items-center bg-blue-50 hover:bg-blue-100 shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer"
+                  onClick={handleToggleLike}
+                  aria-disabled={
+                    likeMutation.isPending || unlikeMutation.isPending
+                  }
+                >
+                  {isLiked ? (
+                    <AiFillLike className="size-5 text-blue-500" />
+                  ) : (
+                    <AiOutlineLike className="size-5" />
+                  )}
                   <p
                     className="ml-1 hover:underline"
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent event bubbling
                       handleOpenLikesDialog();
-                    }} // Add onClick to just the number to open dialog
+                    }}
                   >
                     {likeCount}
                   </p>

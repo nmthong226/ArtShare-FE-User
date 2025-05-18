@@ -15,6 +15,7 @@ export interface Blog {
   pictures: string[];
   embedded_videos: string[];
   view_count: number;
+  isLikedByCurrentUser: boolean;
   user: {
     id: string;
     username: string;

@@ -17,7 +17,7 @@ import {
 } from "firebase/auth";
 import { login, signup } from "@/api/authentication/auth"; // Import your backend login and signup functions
 import { User } from "@/types";
-import { getUserProfile } from "@/features/UserProfile/api/get-user-profile";
+import { getUserProfile } from "@/features/user-profile-private/api/get-user-profile";
 import { useNavigate } from "react-router-dom";
 import api from "@/api/baseApi";
 

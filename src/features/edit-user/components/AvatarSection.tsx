@@ -26,7 +26,8 @@ export function AvatarSection({
   const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
-  }, [preview])
+    setPreview(profilePictureUrl ?? null);
+  }, [profilePictureUrl]);
 
   const uploadMutation = useMutation<string, Error, File>({
     mutationFn: async (file) => {
@@ -49,7 +50,8 @@ export function AvatarSection({
         setPreview(fileUrl);
         onUploadSuccess(fileUrl);
         showSnackbar("Avatar updated", "success");
-      } catch (err: any) {
+      } catch (err: unknown) {
+        console.log(err);
         showSnackbar("Saved to storage, but failed to update profile", "error");
       }
     },

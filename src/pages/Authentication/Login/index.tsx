@@ -28,6 +28,10 @@ const Login = () => {
     setPasswordError("");
     try {
       await loginWithEmail(email, password);
+      const user = getAuth();
+      const data = await getUserProfile(user.currentUser!.uid);
+      console.log(data);
+      if (!data.is_onboard) navigate("/onboarding");
       navigate("/explore");
     } catch (err) {
       let errorMessage = "";

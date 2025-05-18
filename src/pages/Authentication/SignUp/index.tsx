@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserProvider";
 import { AxiosError } from "axios";
+import { getAuth } from "firebase/auth";
+import { getUserProfile } from "@/api/authentication/auth";
 
 const SignUp = () => {
   const { signUpWithEmail, authenWithGoogle, signUpWithFacebook } = useUser();
@@ -56,6 +58,10 @@ const SignUp = () => {
   const handleGoogleLogin = async () => {
     try {
       await authenWithGoogle();
+      const user = getAuth();
+      const data = await getUserProfile(user.currentUser!.uid);
+      console.log(data);
+      if (!data.is_onboard) navigate("/onboarding");
       navigate("/explore"); // Redirect after successful login
     } catch (error) {
       let message = "Something went wrong. Please try again.";
@@ -63,7 +69,8 @@ const SignUp = () => {
         const code = error.code;
         switch (code) {
           case "auth/popup-closed-by-user":
-            message = "Login was cancelled. You closed the popup before signing in.";
+            message =
+              "Login was cancelled. You closed the popup before signing in.";
             break;
           case "auth/cancelled-popup-request":
             message = "Login was interrupted by another popup request.";
@@ -73,7 +80,8 @@ const SignUp = () => {
               "An account already exists with a different sign-in method. Try logging in using that method.";
             break;
           case "auth/popup-blocked":
-            message = "The login popup was blocked by your browser. Please enable popups and try again.";
+            message =
+              "The login popup was blocked by your browser. Please enable popups and try again.";
             break;
           default:
             message = error.message;
@@ -102,8 +110,7 @@ const SignUp = () => {
           Create an ArtShare account
         </p>
         <p className="mt-4 text-mountain-500 dark:text-mountain-300 text-xs xl:text-sm xl:text-nowrap">
-          Join a vibrant community where you can create, share, & celebrate
-          art.
+          Join a vibrant community where you can create, share, & celebrate art.
         </p>
       </div>
       <div className="flex flex-col justify-between space-x-4 space-y-4 mt-4">
@@ -169,7 +176,9 @@ const SignUp = () => {
             onChange={(e) => setEmail(e.target.value)}
           />
           {emailError && emailError.length > 0 && (
-            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{emailError}</p>
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">
+              {emailError}
+            </p>
           )}
         </div>
         <div>
@@ -187,7 +196,9 @@ const SignUp = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           {passwordError && passwordError.length > 0 && (
-            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">{passwordError}</p>
+            <p className="mt-2 text-red-600 dark:text-red-400 text-sm">
+              {passwordError}
+            </p>
           )}
         </div>
         <div className="flex justify-between items-center mt-4">

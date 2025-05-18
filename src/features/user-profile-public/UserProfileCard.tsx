@@ -2,13 +2,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MoreHorizontal } from "lucide-react";
 import ProfileHeader from "./components/ProfileHeader";
 import ProfileInfo from "./components/ProfileInfo";
-import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material";
+import { Box, Button, IconButton, Menu, MenuItem, Tooltip, Typography } from "@mui/material";
 import { getUserProfileByUsername, UserProfile } from "./api/user-profile.api";
 import { useUser } from "@/contexts/UserProvider";
 import { followUser, unfollowUser } from "./api/follow.api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { AxiosError } from "axios";
+import { MouseEvent, useState } from "react";
 
 export const UserProfileCard = () => {
   const { username } = useParams();
@@ -77,6 +78,28 @@ export const UserProfileCard = () => {
       showSnackbar(msg, "error");
     },
   });
+
+  // Dropdown menu state
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const navigate = useNavigate()
+  const menuOpen = Boolean(anchorEl);
+
+  const handleMenuOpen = (e: MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleReport = () => {
+    handleMenuClose();
+    console.log("Report user", profileData?.id);
+  };
+
+  const handleEdit = () => {
+    handleMenuClose();
+    navigate('/edit-user');
+  };
 
   // Conditional rendering based on loading, error, or data state
   if (isLoading) {
@@ -183,10 +206,24 @@ export const UserProfileCard = () => {
                 color="primary"
                 size="medium"
                 sx={{ borderRadius: "50%", bgcolor: "transparent" }}
+                onClick={handleMenuOpen}
               >
                 <MoreHorizontal />
               </IconButton>
             </Tooltip>
+
+            <Menu
+            anchorEl={anchorEl}
+            open={menuOpen}
+            onClose={handleMenuClose}
+            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+            transformOrigin={{ vertical: "top", horizontal: "right" }}
+          >
+            {isOwnProfile && (
+              <MenuItem onClick={handleEdit}>Edit Profile</MenuItem>
+            )}
+            <MenuItem onClick={handleReport}>Report User</MenuItem>
+          </Menu>
           </Box>
         </Box>
       </div>

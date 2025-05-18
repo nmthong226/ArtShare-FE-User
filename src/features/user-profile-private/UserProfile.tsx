@@ -1,11 +1,9 @@
-// TODO: implement is owner for user profile
-
 // import { useParams } from "react-router-dom";
 // import { useUser } from "@/contexts/UserProvider";
-import UserPosts from "@/features/UserProfile/components/UserPosts";
+import UserPosts from "@/features/user-profile-private/components/UserPosts";
 import { Box, Tabs, Tab } from "@mui/material";
 import { useState } from "react";
-import { UserProfileCard } from "../user-profile/UserProfileCard";
+import { UserProfileCard } from "../user-profile-public/UserProfileCard";
 import UserBlogs from "./components/UserBlogs";
 
 const UserProfile = () => {
@@ -20,7 +18,7 @@ const UserProfile = () => {
   };
 
   return (
-    <Box className="dark:bg-mountain-1000 p-4 text-white">
+    <Box className="sm:px-6 md:px-4 lg:px-6 py-4 bg-white dark:bg-mountain-1000 text-white">
       {/* Container for Posts + Profile Sidebar */}
       <Box
         sx={{
@@ -29,11 +27,11 @@ const UserProfile = () => {
           gap: 4,
           minHeight: "100vh",
         }}
-        className="bg-white shadow p-2 rounded-md"
+        className="shadow p-2 rounded-md"
       >
         {/* TOP SECTION: Profile card */}
         <Box
-          className="bg-mountain-100 dark:bg-mountain-950 p-8 rounded-lg w-full"
+          className="w-full bg-[#E4E6EB] dark:bg-mountain-950 rounded-lg p-8"
           sx={{
             overflowY: "auto",
           }}
@@ -53,7 +51,6 @@ const UserProfile = () => {
                 minHeight: 0,
                 ".MuiTabs-flexContainer": { gap: 2 },
               }}
-              className="text-mountain-950"
             >
               <Tab
                 label="All posts"

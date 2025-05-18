@@ -120,7 +120,7 @@ export const HorizontalSlider = <T extends object>({
 
               return (
                 <>
-                  <div className="-right-4 z-10 absolute flex bg-gradient-to-l from-black/60 to-transparent opacity-0 group-hover:opacity-100 w-20 h-full pointer-events-none" />
+                  <div className="-right-4 z-10 absolute flex bg-gradient-to-l from-black/60 to-transparent opacity-0 group-hover:opacity-100 w-20 h-full transition duration-300 ease-in-out pointer-events-none" />
                   <div className="top-1/2 right-2 z-20 absolute opacity-0 group-hover:opacity-100 transition-opacity -translate-y-1/2">
                     <DefaultRightArrow />
                   </div>

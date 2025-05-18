@@ -401,7 +401,21 @@ const UploadPost: React.FC = () => {
               variant="contained"
               onClick={handleSubmitMediaUploaded}
               disabled={!(isUploadMediaValid)}
-              className={`w-40 rounded-md ${isUploadMediaValid ? 'bg-gradient-to-r from-blue-700 to-purple-700' : 'bg-mountain-200 text-mountain-50'}`}
+              className="ml-auto rounded-md"
+              sx={{
+                textTransform: "none",
+                background: !(isUploadMediaValid)
+                  ? "linear-gradient(to right, #9ca3af, #6b7280)" // Tailwind's gray-400 to gray-500
+                  : "linear-gradient(to right, #3730a3, #5b21b6, #4c1d95)", // indigo-violet gradient
+                color: "white",
+                opacity: !(isUploadMediaValid) ? 0.6 : 1,
+                pointerEvents: !(isUploadMediaValid) ? "none" : "auto",
+                "&:hover": {
+                  background: !(isUploadMediaValid)
+                    ? "linear-gradient(to right, #9ca3af, #6b7280)"
+                    : "linear-gradient(to right, #312e81, #4c1d95, #3b0764)",
+                },
+              }}
             >
               Submit
             </Button>

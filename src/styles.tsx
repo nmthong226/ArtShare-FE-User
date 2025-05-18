@@ -294,6 +294,32 @@ export const lightTheme = createTheme({
         },
       },
     },
+    MuiTabs: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          backgroundColor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+        }),
+        flexContainer: ({ theme }) => ({
+          // gap: theme.spacing(2) — TS error avoided by using the function form
+          gap: theme.spacing(2),
+        }),
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          textTransform: "none",
+          minHeight: 0,
+          minWidth: 0,
+          fontWeight: theme.typography.fontWeightMedium,
+          color: theme.palette.text.secondary,
+          "&.Mui-selected": {
+            color: theme.palette.primary.main,
+          },
+        }),
+      },
+    },
   },
 });
 
@@ -493,6 +519,31 @@ export const darkTheme = createTheme({
             "&:hover": { backgroundColor: "rgba(239,68,68,.16)" },
           },
         },
+      },
+    },
+    MuiTabs: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          color: theme.palette.text.primary,
+        }),
+        flexContainer: ({ theme }) => ({
+          // gap: theme.spacing(2) — TS error avoided by using the function form
+          gap: theme.spacing(2),
+        }),
+      },
+    },
+    MuiTab: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          textTransform: "none",
+          minHeight: 0,
+          minWidth: 0,
+          fontWeight: theme.typography.fontWeightMedium,
+          color: theme.palette.text.secondary,
+          "&.Mui-selected": {
+            color: theme.palette.primary.main,
+          },
+        }),
       },
     },
   },

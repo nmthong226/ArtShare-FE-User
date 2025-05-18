@@ -27,7 +27,7 @@ import AuthAction from "@/pages/Authentication/HandleCallback";
 import UploadPost from "@/features/post-management/UploadPost";
 import BlogDetails from "@/features/blog-details/BlogDetails";
 import EditPost from "@/features/post-management/EditPost";
-import UserProfile from "@/features/UserProfile/UserProfile";
+import UserProfile from "@/features/user-profile-private/UserProfile";
 import Dashboard from "@/features/dashboard/Dashboard";
 import Loading from "@/pages/Loading";
 import Search from "@/pages/Search";
@@ -63,7 +63,7 @@ const InAppPublicRoutes = [
 ];
 
 const InAppPrivateRoutes = [
-  { path: "/u/:username", element: <UserProfile /> },
+  { path: "/:username", element: <UserProfile /> },
   { path: "/post/:postId/edit", element: <EditPost /> },
   { path: "/posts/new", element: <UploadPost /> },
   { path: "/collections", element: <Collection /> },

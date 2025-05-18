@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/dialog"
 import api from "@/api/baseApi";
 import { HistoryFilter } from "@/features/gen-art/enum";
-import { BiInfoCircle } from "react-icons/bi";
 import PromptResult from "@/features/gen-art/components/PromptResult";
 import { Clock } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -22,9 +21,7 @@ interface BrowseAiImagesProps {
   handleImageFilesChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const BrowseAiImages: React.FC<BrowseAiImagesProps> = ({
-  handleImageFilesChange,
-}) => {
+const BrowseAiImages: React.FC<BrowseAiImagesProps> = ({}) => {
   const PAGE_SIZE = 5;
   const [promptResultList, setPromptResultList] = useState<PromptResult[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);

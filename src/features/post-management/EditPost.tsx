@@ -326,6 +326,7 @@ const EditPost: React.FC = () => {
         {/* LEFT: Media selection */}
         <MediaSelection
           setImageFiles={setImageFiles}
+          imageFiles={imageFiles}
           setVideoFile={setVideoFile}
           setThumbnailFile={(f) => setThumbnailFile(f)}
           initialMedias={postData.medias}

@@ -77,6 +77,9 @@ export default function MediaSelectorPanel({
   setVideoFile,
   setImageFiles,
   setThumbnailFile,
+  // setExistingImageUrls,
+  // initialMedias,
+  // setExistingVideoUrl,
   imageFiles,
   videoFile,
   hasArtNovaImages,
@@ -128,6 +131,10 @@ export default function MediaSelectorPanel({
       : []
     return [...imgPreviews, ...vidPreview]
   }, [imageFiles, videoFile])
+
+  // const didInit = useRef(false);
+  // const inputRef = useRef<HTMLInputElement | null>(null);
+  // const [isVideoManuallyRemoved, setIsVideoManuallyRemoved] = useState(false);
 
   // const didInit = useRef(false);
   // const inputRef = useRef<HTMLInputElement | null>(null);

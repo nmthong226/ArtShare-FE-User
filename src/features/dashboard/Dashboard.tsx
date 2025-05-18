@@ -54,7 +54,7 @@ const Dashboard = () => {
             <div key={index} className='group relative flex flex-col bg-white shadow-md border border-mountain-200 rounded-xl w-72 h-86'>
               <div className='flex flex-col'>
                 <div className='flex rounded-t-xl h-48 overflow-hidden'>
-                  <img src={feature.url} className='flex rounded-t-xl object-cover group-hover:scale-105 duration-300 ease-in-out transform' />
+                  <img src={feature.url} className='flex rounded-t-xl w-full object-cover group-hover:scale-105 duration-300 ease-in-out transform' />
                 </div>
                 <div className='flex flex-col space-y-2 p-2'>
                   <p className='font-medium text-lg line-clamp-1'>{feature.label}</p>

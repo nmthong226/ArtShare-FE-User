@@ -1,16 +1,17 @@
 // components/SnackbarProvider.tsx
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, ReactNode } from "react";
 import { Snackbar, Alert } from "@mui/material";
 
 type SnackbarContextType = {
   showSnackbar: (
     message: string,
-    severity?: "success" | "info" | "warning" | "error"
+    severity?: "success" | "info" | "warning" | "error",
+    action?: ReactNode,
   ) => void;
 };
 
 const SnackbarContext = createContext<SnackbarContextType | undefined>(
-  undefined
+  undefined,
 );
 
 export const useSnackbar = () => {
@@ -28,13 +29,16 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
   const [severity, setSeverity] = useState<
     "success" | "info" | "warning" | "error"
   >("info");
+  const [actionNode, setActionNode] = useState<ReactNode>(null);
 
   const showSnackbar = (
     msg: string,
-    sev: "success" | "info" | "warning" | "error" = "info"
+    sev: "success" | "info" | "warning" | "error" = "info",
+    action?: ReactNode,
   ) => {
     setMessage(msg);
-    setSeverity(sev); // ✅ Now TypeScript knows sev is valid
+    setSeverity(sev);
+    setActionNode(action ?? null);
     setOpen(true);
   };
 
@@ -51,6 +55,7 @@ export const SnackbarProvider: React.FC<{ children: React.ReactNode }> = ({
           onClose={() => setOpen(false)}
           severity={severity}
           variant="filled"
+          action={actionNode}
           sx={{ width: "100%" }}
         >
           {message}

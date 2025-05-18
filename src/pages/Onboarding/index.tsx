@@ -54,7 +54,20 @@ const OnboardingProfile: React.FC = () => {
   // Age validation function (user must be at least 13 years old)
   const isAbove13 = (birthday: string) => {
     const birthDate = new Date(birthday);
-    const age = new Date().getFullYear() - birthDate.getFullYear();
+    const currentDate = new Date();
+
+    // Calculate the age by comparing the year
+    let age = currentDate.getFullYear() - birthDate.getFullYear();
+
+    // If the birth date hasn't occurred yet this year, subtract 1 from age
+    if (
+      currentDate.getMonth() < birthDate.getMonth() ||
+      (currentDate.getMonth() === birthDate.getMonth() &&
+        currentDate.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
     return age >= 13;
   };
 

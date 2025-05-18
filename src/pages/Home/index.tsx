@@ -72,7 +72,6 @@ export const TIERS: PricingTier[] = [
       "Organize your work professionally with portfolio collections.",
       "Customize your profile layout to better reflect your brand.",
       "Benefit from increased artwork storage capacity.",
-      "Receive priority access to customer support.",
     ],
     cta: "Get started",
     actionType: "checkout",

@@ -346,7 +346,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
               </Popover>
               <CollapsibleContent className="space-y-1 ml-6 px-1 border-mountain-400 border-l-1 overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
                 {[
-                  { label: 'Text To Image', href: '/image/tool/text-to-image' },
+                  { label: 'Image Generation', href: '/image/tool/text-to-image' },
                   { label: 'Creative Upscale', href: '#' },
                   { label: 'Image Editor', href: '/image/tool/editor' },
                 ].map((item, index) => {

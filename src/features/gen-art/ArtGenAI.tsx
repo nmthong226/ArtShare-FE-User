@@ -7,6 +7,14 @@ import PromptResult from './components/PromptResult';
 import TokenPopover from './components/TokenPopover';
 import SettingsPanel from './components/SettingsPanel/SettingsPanel';
 import AIBot from './components/AI/AIBot';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 
 //Icons
 import { TbChessQueenFilled } from "react-icons/tb";
@@ -20,6 +28,9 @@ import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 import { DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { aspectOptions, cameraOptions, HistoryFilter, lightingOptions, ModelKey } from './enum';
 import { MockModelOptionsData } from './mock/Data';
+import { BiInfoCircle } from 'react-icons/bi';
+import { PricingTier } from '@/components/ui/pricing-card';
+import { PricingSection } from '@/components/ui/pricing-section';
 
 {/*
 A stunning realistic scene featuring a woman astronaut curiously peeking out of 
@@ -31,6 +42,91 @@ The artwork is richly detailed and realistic, inspired by the visionary style of
 capturing the intricate design of the space station and the dynamic activity in orbit, 
 with stars twinkling in the background creating a sense of vastness in space.
 */}
+
+export const PAYMENT_FREQUENCIES = ["monthly", "yearly"];
+
+export const TIERS: PricingTier[] = [
+    {
+        id: "individual",
+        name: "Individuals",
+        price: {
+            monthly: "Free",
+            yearly: "Free",
+        },
+        description: "Used by art lovers",
+        features: [
+            "Showcase art & build public portfolio.",
+            "Connect with community of artists, fans.",
+            "Generate AI art with daily credits.",
+            "Explore AI artworks and prompts.",
+            "Get prompt ideas from popular styles.",
+            "Like, comment, follow, and share art.",
+        ],
+        cta: "Get started",
+        actionType: "none",
+    },
+    {
+        id: "artist",
+        name: "Pro Artists",
+        price: {
+            monthly: 12,
+            yearly: 10,
+        },
+        description: "Great for small businesses",
+        features: [
+            "Includes all Free plan features.",
+            "Use advanced AI models for better art.",
+            "Get a larger monthly AI quota.",
+            "Generate high-res art without watermark.",
+            "Gain commercial rights (T&Cs apply).",
+            "Smarter, trend-based prompt suggestions.",
+            "Organize art with portfolio collections.",
+            "More storage for your artwork.",
+        ],
+        cta: "Get started",
+        actionType: "checkout",
+        popular: true,
+    },
+    {
+        id: "studio",
+        name: "Studios",
+        price: {
+            monthly: 30,
+            yearly: 24,
+        },
+        description: "Great for large businesses",
+        features: [
+            "Everything in Pro Artists plan.",
+            "Equip your team with collaborative tools (includes multiple user seats).",
+            "Access a massive, shared pool of AI generation credits for team projects.",
+            "Track team usage and artwork performance with analytics.",
+            "Ensure faster workflows with top priority in the AI generation queue.",
+            "Secure robust commercial rights suitable for agency and studio work.",
+        ],
+        cta: "Get started",
+        actionType: "checkout",
+    },
+    {
+        id: "enterprise",
+        name: "Masterpiece",
+        price: {
+            monthly: "Custom",
+            yearly: "Custom",
+        },
+        description: "For Large art agencies & businesses",
+        features: [
+            "Everything in Studios plan.",
+            "Receive a fully bespoke platform solution tailored to enterprise needs.",
+            "Negotiate custom AI generation volumes, potentially unlimited.",
+            "Secure enterprise-grade Service Level Agreements (SLAs).",
+            "Discuss potential white-labeling solutions for your brand.",
+            "Fund custom feature development specific to your requirements.",
+        ],
+        cta: "Contact Us",
+        actionType: "contact",
+        highlighted: true,
+    },
+];
 
 const ArtGenAI = () => {
     const [promptResultList, setPromptResultList] = useState<PromptResult[]>([]);
@@ -46,9 +142,6 @@ const ArtGenAI = () => {
     const [loading, setLoading] = useState(true);
     const [historyFilter, setHistoryFilter] = useState<HistoryFilter>(HistoryFilter.TODAY)
     const [filteredResults, setFilteredResults] = useState<PromptResult[]>([]);
-
-    //Loading
-    const [loadingProgress, setLoadingProgress] = useState([0, 0, 0, 0]);
 
     //Setting Panel
     const [modelKey] = useState<ModelKey>(ModelKey.GPT_IMAGE_1);
@@ -158,7 +251,6 @@ const ArtGenAI = () => {
 
         setGeneratingImage(true);
         setCommittedPrompt(userPrompt);
-        setLoadingProgress(Array(numberOfImages).fill(0));
 
         const payload = {
             prompt: userPrompt,
@@ -217,10 +309,6 @@ const ArtGenAI = () => {
         };
     }, [promptExpanded]);
 
-    const handleDeleteResult = (resultId: number) => {
-        setPromptResultList(prev => prev.filter((result) => result.id !== resultId));
-    };
-
     // const handleDeleteSingleResult = (resultId: string, imageId: string) => {
     //     setPromptResults((prev) => {
     //         const updated = prev.map((result) =>
@@ -266,7 +354,7 @@ const ArtGenAI = () => {
                                         </div>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="flex flex-col mt-4 border-mountain-200 min-w-48 select-none">
-                                        {Object.entries(HistoryFilter).map(([value]) => (
+                                        {Object.entries(HistoryFilter).map(([, value]) => (
                                             <div
                                                 key={value}
                                                 onClick={() => setHistoryFilter(value as HistoryFilter)}
@@ -281,10 +369,30 @@ const ArtGenAI = () => {
                             </div>
                         </div>
                         <TokenPopover tokenNumber={tokenNumber} />
-                        <Button className='flex justify-center items-center bg-indigo-100 rounded-lg w-28 h-full font-normal shrink-0'>
-                            <TbChessQueenFilled className='mr-2 size-5' />
-                            <p>Get Token</p>
-                        </Button>
+                        <Dialog>
+                            <DialogTrigger asChild>
+                                <Button className='flex justify-center items-center bg-indigo-100 rounded-lg w-28 h-full font-normal shrink-0'>
+                                    <TbChessQueenFilled className='mr-2 size-5' />
+                                    <p>Upgrade</p>
+                                </Button>
+                            </DialogTrigger>
+                            <DialogContent className="flex flex-col min-w-[96%] h-[96%]">
+                                <DialogHeader className=''>
+                                    <DialogTitle>ArtShare Upgrade Packs</DialogTitle>
+                                    <DialogDescription>
+                                        Make changes to your journey of discovering art and generating arts.
+                                    </DialogDescription>
+                                </DialogHeader>
+                                <div className="flex flex-col justify-center bg-white w-full h-fit">
+                                    <div className="relative flex justify-between items-center w-full">
+                                        <div className="-z-10 absolute inset-0">
+                                            <div className="bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:35px_35px] opacity-30 w-full h-full [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
+                                        </div>
+                                        <PricingSection frequencies={PAYMENT_FREQUENCIES} tiers={TIERS} />
+                                    </div>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
                     </div>
                 </div>
                 <div className='relative flex justify-end w-full h-full'>
@@ -298,27 +406,26 @@ const ArtGenAI = () => {
                             </div>
                         ) : (
                             <div ref={scrollRef} className='flex flex-col space-y-10 pr-4 w-full h-full overflow-y-auto custom-scrollbar'>
-                                {filteredResults
+                                {(filteredResults && filteredResults.length > 0) || generatingImage ? filteredResults
                                     .map((result, index) => (
                                         <PromptResult
                                             key={index}
-                                            prompt={result.user_prompt}
-                                            images={result.image_urls}
+                                            result={result}
                                             generating={false}
-                                            index={index}
-                                            onDelete={() => handleDeleteResult(result.id)}
-                                            // onDeleteSingle={handleDeleteSingleResult}
-                                            onDeleteSingle={() => { }}
-                                            resultId={result.id}
                                         />
-                                    ))}
+                                    )) : (
+                                    <div className='flex justify-center items-center h-full text-mountain-600'>
+                                        <BiInfoCircle className='mr-2 size-5' />
+                                        <p className=''>There is no prompt result. What's on your mind?</p>
+                                    </div>
+                                )}
                                 {generatingImage &&
                                     <>
                                         <PromptResult
-                                            prompt={" " + committedPrompt}
-                                            images={Array(numberOfImages).fill('https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/artshare-asset/utzac220yrts0ujnjjq1?blur=300&q=1')}
+                                            tempPrompt={" " + committedPrompt}
+                                            tempResult={Array(numberOfImages).fill('https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/artshare-asset/utzac220yrts0ujnjjq1?blur=300&q=1')}
                                             generating={true}
-                                            progress={loadingProgress}
+                                            result={promptResult!}
                                         />
                                     </>
                                 }
@@ -366,6 +473,7 @@ const ArtGenAI = () => {
                     <AIBot />
                 </div>
             </div>
+
         </div>
     )
 }

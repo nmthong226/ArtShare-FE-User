@@ -34,18 +34,15 @@ import DeleteButton from './DeleteConfirmation';
 
 interface GenImageProps {
     index: number,
-    imageId: number,
-    resultId: number,
-    image: string,
-    images: string[],
-    prompt: string,
-    onDelete?: (resultId: number, imgId: number) => void;
+    result: PromptResult;
+    otherImages: string[],
+    // onDelete?: (resultId: number, imgId: number) => void;
 }
 
 const AnyShowMoreText: ElementType = ShowMoreText as unknown as ElementType;
 
 
-const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, images, prompt, onDelete }) => {
+const GenImage: React.FC<GenImageProps> = ({ index, result, otherImages }) => {
     const [deleteImage, setDeleteImage] = useState(false);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [open, setOpen] = useState(false);
@@ -53,21 +50,21 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
     const navigate = useNavigate();
 
     const handlePrev = () => {
-        setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+        setCurrentIndex((prev) => (prev - 1 + otherImages.length) % otherImages.length);
     };
 
     const handleNav = (index: number) => {
-        if (index >= 0 && index < images.length) {
+        if (index >= 0 && index < otherImages.length) {
             setCurrentIndex(index);
         }
     };
 
     const handleNext = () => {
-        setCurrentIndex((prev) => (prev + 1) % images.length);
+        setCurrentIndex((prev) => (prev + 1) % otherImages.length);
     };
 
     const handleDownload = () => {
-        const currentImageUrl = images[currentIndex];
+        const currentImageUrl = otherImages[currentIndex];
         const link = document.createElement('a');
         link.href = currentImageUrl;
         link.download = `image-${currentIndex + 1}.jpg`; // or use original file name
@@ -78,6 +75,10 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
 
     const handleNavigateToEdit = () => {
         navigate("/image/tool/editor");
+    }
+
+    const handleNavigateToUpload = (prompt: PromptResult) => {
+        navigate("/posts/new?type=ai-gen", { state: { prompt } });
     };
 
     useEffect(() => {
@@ -85,7 +86,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
 
         if (open) {
             timeout = setTimeout(() => {
-                onDelete?.(resultId, imageId);
+                // onDelete?.(result.id, result); --> RESOVLE HERE
                 setOpen(false); // Close dialog after delete
                 setOpenDiaLog(false);
             }, 2000);
@@ -96,7 +97,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
 
     const handleDelete = () => {
         setTimeout(() => {
-            onDelete?.(resultId, imageId);
+            // onDelete?.(resultId, imageId); --> RESOVLE HERE
             setOpen(false);
             setDeleteImage(false);
         }, 2000);
@@ -108,8 +109,8 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
                 <div className='group relative flex h-full'>
                     <div className='relative flex'>
                         <img
-                            src={image}
-                            alt={`Image ${imageId}`}
+                            src={result.image_urls[index]}
+                            alt={`Image ${result.id}`}
                             loading="lazy"
                             className='relative flex shadow-md h-full object-cover cursor-pointer'
                             style={{ borderRadius: '8px' }}
@@ -188,10 +189,10 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
                                 className="flex h-full transition-transform duration-500 ease-in-out"
                                 style={{
                                     transform: `translateX(-${currentIndex * 100}%)`,
-                                    width: `${images.length * 100}%`,
+                                    width: `${otherImages.length * 100}%`,
                                 }}
                             >
-                                {images.map((_img, index) => (
+                                {otherImages.map((_img, index) => (
                                     <div key={index} className="flex flex-shrink-0 justify-center items-center w-full h-full">
                                         <img
                                             src={_img}
@@ -202,7 +203,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
                                 ))}
                             </div>
                         </div>
-                        <div className={`${images.length === 1 ? 'hidden' : 'flex'}`}>
+                        <div className={`${otherImages.length === 1 ? 'hidden' : 'flex'}`}>
                             {/* Left Arrow */}
                             <div
                                 onClick={handlePrev}
@@ -223,7 +224,7 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
                                 className='bottom-4 left-1/2 z-50 absolute flex justify-center items-center space-x-2 rounded-full -translate-x-1/2 -translate-y-1/2 duration-300 ease-in-out cursor-pointer transform'
                             >
                                 <div className={`gap-2 flex`}>
-                                    {images.map((_, index) => {
+                                    {otherImages.map((_, index) => {
                                         let navIndex;
                                         switch (index) {
                                             case 0:
@@ -282,72 +283,64 @@ const GenImage: React.FC<GenImageProps> = ({ index, imageId, resultId, image, im
                                         <IoCopyOutline className='size-5' />
                                     </Button>
                                 </div>
-                                <div className='flex h-40 overflow-y-auto custom-scrollbar'>
+                                <div className='flex w-full h-40 overflow-y-auto custom-scrollbar'>
                                     <AnyShowMoreText
                                         lines={3}
                                         more="Show more"
                                         less="Show less"
-                                        className="text-sm break-words"
+                                        className="flex w-full text-sm break-words"
                                         anchorClass="cursor-pointer hover:text-indigo-400 block py-2 underline text-sm"
                                         expanded={false}
                                         truncatedEndingComponent={"... "}
                                     >
-                                        {prompt}
+                                        {result.user_prompt.replace(/\n/g, ' ')}
                                     </AnyShowMoreText>
                                 </div>
                             </div>
                             <div className='flex p-4 w-full'>
                                 <div className='flex flex-col space-y-2 w-1/3'>
-                                    <div className='flex items-center w-full'>
-                                        <p className='font-medium'>Model</p>
-                                    </div>
+                                    <p className='font-medium'>Style</p>
                                     <div className='flex items-center space-x-2'>
                                         <img src={example_1} className='rounded-xs w-5 h-5' />
-                                        <p className='text-mountain-600 line-clamp-1'>Ultra Realism</p>
+                                        <p className='text-mountain-600 capitalize line-clamp-1'>{result.style}</p>
                                     </div>
                                 </div>
                                 <div className='flex flex-col space-y-2 w-1/3'>
-                                    <div className='flex items-center w-full'>
-                                        <p className='font-medium'>Aspect Ratio</p>
-                                    </div>
+                                    <p className='font-medium'>Aspect Ratio</p>
                                     <div className='flex items-center space-x-2'>
                                         <IoIosSquareOutline className='size-5' />
-                                        <p className='text-mountain-600'>1:1</p>
+                                        <p className='text-mountain-600'>{result.aspect_ratio.charAt(0).toUpperCase() + result.aspect_ratio.slice(1).toLowerCase()}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div className='flex justify-between px-4 w-full'>
-                                <div className='flex flex-col space-y-2 w-1/3'>
-                                    <div className='flex justify-between items-center w-full'>
-                                        <p className='font-medium'>Styles</p>
-                                    </div>
-                                    <div className='flex items-center'>
-                                        <p className='text-mountain-600'>Default</p>
-                                    </div>
-                                </div>
+                            <div className='flex px-4 w-full'>
                                 <div className='flex flex-col space-y-2 w-1/3'>
                                     <div className='flex justify-between items-center w-full'>
                                         <p className='font-medium'>Lighting</p>
                                     </div>
                                     <div className='flex items-center'>
-                                        <p className='text-mountain-600'>Default</p>
+                                        <p className='text-mountain-600 capitalize'>{result.lighting}</p>
                                     </div>
                                 </div>
                                 <div className='flex flex-col space-y-2 w-1/3'>
-                                    <div className='flex justify-between items-center w-full'>
-                                        <p className='font-medium'>Camera</p>
+                                    <p className='font-medium'>Camera</p>
+                                    <div className='flex text'>
+                                        <p className='text-mountain-600 capitalize'>{result.camera}</p>
                                     </div>
+                                </div>
+                                <div className='flex flex-col space-y-2 w-1/3'>
+                                    <p className='w-full font-medium'>Image Size</p>
                                     <div className='flex items-center'>
-                                        <p className='text-mountain-600'>Default</p>
+                                        <p className='text-mountain-600 capitalize'>1024x1024</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className='p-2'>
-                            <Button className='bg-indigo-200 shadow-sm border border-mountain-300 w-full h-12 font-normal'>
+                            <div onClick={() => handleNavigateToUpload(result)} className='flex justify-center items-center bg-indigo-100 hover:bg-indigo-200/80 shadow-sm border border-mountain-300 rounded-lg w-full h-12 font-normal duration-300 ease-in-out hover:cursor-pointer select-none transform'>
                                 <RiFolderUploadLine className='mr-2 size-5' />
-                                <p>Post My Media</p>
-                            </Button>
+                                <p>Post This Image</p>
+                            </div>
                         </div>
                     </div>
                 </div>

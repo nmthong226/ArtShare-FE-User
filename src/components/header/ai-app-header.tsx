@@ -22,7 +22,7 @@ const AIHeader = () => {
     const routes = [
         {
             path: "/image/tool/text-to-image",
-            label: "Text To Image",
+            label: "Image Generation",
             description: "Use AI tools to bring your creative ideas to life"
         },
         {
@@ -52,7 +52,7 @@ const AIHeader = () => {
                     </Tooltip>
                 </div>
             </div>
-            <div className="hidden top-1/2 left-1/2 absolute lg:flex justify-between items-center space-x-2 bg-mountain-50 px-2 rounded-2xl w-128 h-10 -translate-x-1/2 -translate-y-1/2">
+            <div className="hidden top-1/2 left-1/2 absolute lg:flex justify-between items-center space-x-2 bg-mountain-50 px-1 rounded-2xl w-128 h-10 -translate-x-1/2 -translate-y-1/2">
                 {[
                     { label: 'Text To Image', href: '/image/tool/text-to-image', icon: RiImageAiLine },
                     { label: 'Creative Upscale', href: '/image/tool/upscale', icon: LuImageUpscale },

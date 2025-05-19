@@ -15,13 +15,7 @@ import {
   CircularProgress,
   Snackbar,
 } from "@mui/material";
-import {
-  ThumbsUp,
-  ThumbsDown,
-  ChevronDown,
-  ChevronUp,
-  SendHorizontal,
-} from "lucide-react";
+import { ThumbsUp, ChevronDown, ChevronUp, SendHorizontal } from "lucide-react";
 import Avatar from "boring-avatars";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
 import api from "@/api/baseApi";
@@ -135,7 +129,7 @@ const CommentRow = ({
         setLoading(true);
         const replies = await fetchComments(comment.id);
 
-        onRepliesFetched(comment.id, replies as CommentUI[]);
+        onRepliesFetched(comment.id, replies as CommentUI[]); // Fetch replies when needed
       } catch (err) {
         console.error(err);
         Snackbar({
@@ -147,7 +141,7 @@ const CommentRow = ({
         setLoading(false);
       }
     }
-    setShowReplies((s) => !s);
+    setShowReplies((s) => !s); // Toggle visibility of replies
   };
 
   return (
@@ -173,7 +167,14 @@ const CommentRow = ({
         )}
         <div className="flex flex-col flex-grow">
           <div className="flex items-center gap-2 text-sm">
-            <span className="font-bold">@{comment.user.username}</span>
+            {/* Comment Username */}
+            <span className="font-bold">
+              {comment.user?.username ? (
+                `@${comment.user.username}`
+              ) : (
+                <span>Loading...</span>
+              )}
+            </span>
             <span className="text-neutral-500 text-xs">
               {new Date(comment.created_at).toLocaleDateString()}
             </span>
@@ -235,7 +236,7 @@ const CommentRow = ({
               <ThumbsUp size={16} />
               <span>{comment.like_count ?? 0}</span>
             </button>
-            <ThumbsDown size={16} className="cursor-pointer hover:text-black" />
+
             <button
               onClick={() => onReply(comment.id, comment.user.username)}
               className="hover:text-black"
@@ -281,9 +282,7 @@ const CommentRow = ({
           >
             {showReplies ? <ChevronUp size={14} /> : <ChevronDown size={14} />}{" "}
             {showReplies ? "Hide" : "View"}{" "}
-            {comment.replies
-              ? `${comment.replies.length} ${comment.replies.length === 1 ? "reply" : "replies"}`
-              : "replies"}
+            {comment.replies ? comment.replies.length : ""} replies
           </button>
           {loading && (
             <div className="flex items-center gap-1 text-xs text-neutral-500 p-2">
@@ -318,10 +317,12 @@ const CommentRow = ({
 interface Props {
   comments: CommentUI[];
   postId: number;
+  onCommentAdded: () => void; // Function to update comment count
+  onCommentDeleted: () => void;
 }
 
 const PostComments = forwardRef<HTMLDivElement, Props>(
-  ({ comments: initial, postId }, _ref) => {
+  ({ comments: initial, postId, onCommentAdded, onCommentDeleted }, _ref) => {
     const { user } = useUser();
     const CURRENT_USER_ID = user?.id;
     const { postCommentsRef } = useFocusContext();
@@ -391,12 +392,8 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       };
 
       // Optimistically update UI to show the new comment
-      setComments((prev) =>
-        replyParentId
-          ? addReplyRecursive(prev, replyParentId, optimistic)
-          : [...prev, optimistic],
-      );
-
+      setComments((prev) => [optimistic, ...prev]);
+      onCommentAdded();
       setNewComment("");
       setReplyParentId(null);
       setIsPosting(true);
@@ -427,6 +424,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       const prev = comments;
       setComments(removeRecursive(prev, id));
       setDeletingId(id);
+      onCommentDeleted();
       try {
         await api.delete(`/comments/${id}`);
       } catch (err) {
@@ -466,7 +464,6 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         .find((c) => c.id === id);
 
       const alreadyLiked = comment?.likedByCurrentUser;
-      console.log(alreadyLiked);
 
       setComments((prev) => toggleLikeRecursive(prev, id));
       try {
@@ -479,7 +476,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         console.error(_err);
         Snackbar({
           open: true,
-          message: "Failed to load replies.",
+          message: "Failed to update like status.",
           autoHideDuration: 3000,
         });
       }
@@ -493,7 +490,6 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           setComments(data as CommentUI[]);
         } catch (err) {
           console.error("Failed to load comments:", err);
-          // ignore
         }
       };
       loadComments();
@@ -506,25 +502,31 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       >
         <h4 className="font-bold text-sm">COMMENTS</h4>
 
-        <div className="flex flex-col  divide-y divide-neutral-100">
-          {comments.map((c) => (
-            <CommentRow
-              key={c.id}
-              comment={c}
-              onLike={handleLike}
-              onReply={(id, username) => {
-                setReplyParentId(id);
-                setNewComment(`@${username} `);
-                textareaRef.current?.focus();
-              }}
-              onDelete={handleDelete}
-              onRepliesFetched={attachReplies}
-              editingId={editingId}
-              onStartEdit={startEdit}
-              onAbortEdit={abortEdit}
-              onCommitEdit={commitEdit}
-            />
-          ))}
+        <div className="flex flex-col divide-y divide-neutral-100">
+          {comments.length === 0 ? (
+            <div className="p-4 text-center text-neutral-500">
+              No comments yet
+            </div>
+          ) : (
+            comments.map((c) => (
+              <CommentRow
+                key={c.id}
+                comment={c}
+                onLike={handleLike}
+                onReply={(id, username) => {
+                  setReplyParentId(id);
+                  setNewComment(`@${username} `);
+                  textareaRef.current?.focus();
+                }}
+                onDelete={handleDelete}
+                onRepliesFetched={attachReplies}
+                editingId={editingId}
+                onStartEdit={startEdit}
+                onAbortEdit={abortEdit}
+                onCommitEdit={commitEdit}
+              />
+            ))
+          )}
         </div>
 
         {/* input */}

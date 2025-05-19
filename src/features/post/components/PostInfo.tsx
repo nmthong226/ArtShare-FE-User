@@ -32,11 +32,7 @@ type PostInfoProps = {
   setCommentCount: React.Dispatch<React.SetStateAction<number>>; // Accept setState function for comment count
 };
 
-const PostInfo = ({
-  postData,
-  commentCount,
-  setCommentCount,
-}: PostInfoProps) => {
+const PostInfo = ({ postData }: PostInfoProps) => {
   const { postCommentsRef } = useFocusContext();
   const { showSnackbar } = useSnackbar();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -73,11 +69,7 @@ const PostInfo = ({
     };
     loadCollectionNames();
   }, [postData.id]);
-  const handleCommentAdded = () => {
-    console.log("Comment added. Previous count:", commentCount);
-    setCommentCount((prev) => prev + 1); // Increment comment count when a comment is added
-    console.log("Updated comment count:", commentCount + 1);
-  };
+
   const handleOpenSaveDialog = () => {
     setIsCreateDialogOpen(false);
     setIsSaveDialogOpen(true);

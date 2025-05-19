@@ -16,6 +16,7 @@ import { FiX as CloseIcon } from "react-icons/fi";
 import Box from "@mui/material/Box";
 import { fetchPostLikingUsers, fetchBlogLikingUsers } from "./api/likes.api";
 import type { LikingUser } from "./types/user";
+import BoringAvatar from "boring-avatars";
 
 export type LikesDialogVariant = "post" | "blog";
 
@@ -120,10 +121,22 @@ export const LikesDialog: React.FC<LikesDialogProps> = ({
                 onClick={() => navigate(`/${u.username}`)}
               >
                 <ListItemAvatar>
-                  <Avatar src={u.profile_picture_url || undefined}>
-                    {!u.profile_picture_url &&
-                      u.username.charAt(0).toUpperCase()}
-                  </Avatar>
+                  {u.profile_picture_url ? (
+                    <Avatar src={u.profile_picture_url} />
+                  ) : (
+                    <BoringAvatar
+                      size={40}
+                      name={u.username}
+                      variant="beam"
+                      colors={[
+                        "#84bfc3",
+                        "#fff5d6",
+                        "#ffb870",
+                        "#d96153",
+                        "#000511",
+                      ]}
+                    />
+                  )}
                 </ListItemAvatar>
 
                 <ListItemText

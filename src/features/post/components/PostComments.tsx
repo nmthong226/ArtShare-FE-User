@@ -1,4 +1,3 @@
-/* PostComments.tsx ------------------------------------------------------ */
 import {
   forwardRef,
   useImperativeHandle,
@@ -34,6 +33,7 @@ import {
 } from "../api/comment.api";
 import { CommentUI, CreateCommentDto } from "@/types/comment";
 import { useUser } from "@/contexts/UserProvider";
+import { User } from "@/types";
 
 /* ------------------------------------------------------------------ */
 /* Constants & helpers                                                */
@@ -281,7 +281,9 @@ const CommentRow = ({
           >
             {showReplies ? <ChevronUp size={14} /> : <ChevronDown size={14} />}{" "}
             {showReplies ? "Hide" : "View"}{" "}
-            {comment.replies ? comment.replies.length : ""} replies
+            {comment.replies
+              ? `${comment.replies.length} ${comment.replies.length === 1 ? "reply" : "replies"}`
+              : "replies"}
           </button>
           {loading && (
             <div className="flex items-center gap-1 text-xs text-neutral-500 p-2">
@@ -289,7 +291,7 @@ const CommentRow = ({
             </div>
           )}
           {showReplies &&
-            comment.replies?.map((r: any) => (
+            comment.replies?.map((r: CommentUI) => (
               <CommentRow
                 key={r.id}
                 depth={depth + 1}
@@ -376,7 +378,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       const optimistic: CommentUI = {
         id: tmpId,
         user_id: CURRENT_USER_ID || "",
-        user: { id: CURRENT_USER_ID, username: CURRENT_USER_ID } as any,
+        user: { id: CURRENT_USER_ID, username: CURRENT_USER_ID } as User,
         parent_comment_id: replyParentId,
         target_id: postId,
         target_type: "POST",
@@ -487,6 +489,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           const data = await fetchComments(postId);
           setComments(data as CommentUI[]);
         } catch (err) {
+          console.error("Failed to load comments:", err);
           // ignore
         }
       };

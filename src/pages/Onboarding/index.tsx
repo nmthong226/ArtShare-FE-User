@@ -19,7 +19,7 @@ interface ProfileForm {
   full_name: string;
   username: string;
   bio?: string;
-  birthday?: string;
+  birthday: string;
 }
 
 const OnboardingProfile: React.FC = () => {
@@ -80,7 +80,7 @@ const OnboardingProfile: React.FC = () => {
 
     const payload: ProfileForm = {
       ...raw,
-      birthday: raw.birthday ? new Date(raw.birthday).toISOString() : undefined,
+      birthday: new Date(raw.birthday).toISOString(),
     };
 
     try {
@@ -191,9 +191,10 @@ const OnboardingProfile: React.FC = () => {
                   message: "Username must be at most 20 characters",
                 },
                 pattern: {
-                  value: /^[a-z0-9_-]{3,20}$/i, // Case-insensitive pattern
+                  // no spaces anywhere + only a–z, 0–9, _ or –, length 3–20
+                  value: /^(?!.*\s)[a-z0-9_-]{3,20}$/i,
                   message:
-                    "Only lowercase letters, numbers, underscores, and hyphens are allowed",
+                    "Use only lowercase letters, numbers, _, and - (no spaces)",
                 },
               })}
               className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-neutral-400 text-neutral-900"
@@ -217,11 +218,17 @@ const OnboardingProfile: React.FC = () => {
             <Input
               id="birthday"
               type="date"
-              {...register("birthday", { required: true })}
-              className="w-full px-4 py-2 rounded-lg border border-neutral-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-neutral-900"
+              {...register("birthday", {
+                required: "Birthday is required",
+                validate: (value) =>
+                  typeof value === "string" && isAbove13(value)
+                    ? true
+                    : "You must be at least 13 years old.",
+              })}
             />
+
             {errors.birthday && (
-              <p className="text-xs text-rose-500">Birthday is required</p>
+              <p className="text-xs text-rose-500">{errors.birthday.message}</p>
             )}
           </div>
 

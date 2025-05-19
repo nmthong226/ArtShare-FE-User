@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import axios, { AxiosError } from "axios";
 
 interface ProfileForm {
   full_name: string;
@@ -91,28 +92,33 @@ const OnboardingProfile: React.FC = () => {
       // Successful update
       showDialog(true, "Profile updated successfully!");
       setOpen(false);
-    } catch (err: any) {
-      console.log(err);
-      // Check if the error is a conflict for the username
-      if (
-        err?.response?.data?.message?.includes(
-          "Duplicate value for field(s): username",
-        )
-      ) {
-        showDialog(
-          false,
-          "Username already exists. Please choose a different username.",
-        );
-        // Focus on the username input field so the user can correct it
-        const usernameInput = document.getElementById("username");
-        if (usernameInput) {
-          usernameInput.focus();
+    } catch (err: unknown) {
+      // ──── 1. Axios error? ───────────────────────────────────────
+      if (axios.isAxiosError(err)) {
+        const axiosErr = err as AxiosError<{ message?: string }>;
+
+        const msg = axiosErr.response?.data?.message ?? axiosErr.message;
+
+        if (msg.includes("Duplicate value for field(s): username")) {
+          showDialog(
+            false,
+            "Username already exists. Please choose a different username.",
+          );
+          document.getElementById("username")?.focus();
+        } else {
+          showDialog(false, msg || "Failed to update profile");
         }
-      } else {
-        showDialog(false, "Failed to update profile");
+        return;
       }
-      // Keep dialog open so user can input again
-      setOpen(true);
+
+      // ──── 2. Plain JS Error ─────────────────────────────────────
+      if (err instanceof Error) {
+        showDialog(false, err.message);
+        return;
+      }
+
+      // ──── 3. Unknown thrown value (string, number, etc.) ────────
+      showDialog(false, "Failed to update profile");
     }
   };
 

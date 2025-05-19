@@ -475,10 +475,13 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         } else {
           await likeComment(id);
         }
-      } catch (err) {
-        // revert optimistic update
-        setComments((prev) => toggleLikeRecursive(prev, id));
-        alert("Could not update like status.");
+      } catch (_err) {
+        console.error(_err);
+        Snackbar({
+          open: true,
+          message: "Failed to load replies.",
+          autoHideDuration: 3000,
+        });
       }
     };
 

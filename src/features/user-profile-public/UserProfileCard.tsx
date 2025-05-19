@@ -222,7 +222,9 @@ export const UserProfileCard = () => {
             {isOwnProfile && (
               <MenuItem onClick={handleEdit}>Edit Profile</MenuItem>
             )}
-            <MenuItem onClick={handleReport}>Report User</MenuItem>
+            {!isOwnProfile && (
+              <MenuItem onClick={handleReport}>Report User</MenuItem>
+            )}
           </Menu>
           </Box>
         </Box>

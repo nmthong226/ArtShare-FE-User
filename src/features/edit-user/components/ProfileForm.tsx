@@ -91,21 +91,6 @@ export function ProfileForm({
         </Box>
       )}
 
-      {/* Profile Picture URL */}
-      <Box className="space-y-2">
-        <Typography>Profile Picture URL</Typography>
-        <TextField
-          fullWidth
-          name="profile_picture_url"
-          value={formData.profile_picture_url || ""}
-          onChange={handleChange}
-          disabled={isSubmitting}
-          variant="outlined"
-          className="bg-[#1e1e1e] rounded"
-          InputProps={{ className: "text-white" }}
-        />
-      </Box>
-
       {/* Bio */}
       <Box className="space-y-2">
         <Typography>Bio</Typography>

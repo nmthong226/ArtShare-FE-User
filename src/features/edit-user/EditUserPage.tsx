@@ -91,14 +91,7 @@ export default function EditUser() {
     <Container disableGutters className="min-h-screen bg-[#121212]">
       <ProfileHeader />
 
-      <Box className="p-6 m-0 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ProfileForm
-          formData={formData}
-          handleChange={handleChange}
-          onSubmit={handleSave}
-          isSubmitting={saving}
-        />
-        <Box>
+      <Box className="p-6">
           <AvatarSection
             profilePictureUrl={formData.profile_picture_url}
             onUploadSuccess={(newUrl: string) =>
@@ -107,10 +100,18 @@ export default function EditUser() {
             )
         }
           />
-        </Box>
       </Box>
 
-      <Box className="p-6">
+      <Box className="p-6 m-0 grid grid-cols-1 md:grid-cols-1 gap-6">
+        <ProfileForm
+          formData={formData}
+          handleChange={handleChange}
+          onSubmit={handleSave}
+          isSubmitting={saving}
+        />
+      </Box>
+
+      <Box className="p-6 pt-3">
         <Button
           variant="contained"
           onClick={handleSave}

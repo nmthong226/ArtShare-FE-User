@@ -248,6 +248,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
         contentId={postData.id}
         open={isLikesDialogOpen}
         onClose={handleCloseLikesDialog}
+        variant="post"
       />
     </>
   );

@@ -31,8 +31,11 @@ const Login = () => {
       const user = getAuth();
       const data = await getUserProfile(user.currentUser!.uid);
       console.log(data);
-      if (!data.is_onboard) navigate("/onboarding");
-      navigate("/explore");
+      if (!data.is_onboard) {
+        navigate("/onboarding");
+      } else {
+        navigate("/explore");
+      }
     } catch (err) {
       let errorMessage = "";
       if (err instanceof AxiosError) {

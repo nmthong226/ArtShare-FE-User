@@ -10,6 +10,7 @@ import AILayout from "@/layouts/AILayout";
 import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
 import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute";
 import GuestRoute from "@/components/routes/guest-route";
+import Dashboard from "./features/dashboard/Dashboard";
 
 
 // Lazy imports for pages/features
@@ -65,6 +66,7 @@ const routeConfig: RouteObject[] = [
       {
         element: <InAppLayout><Outlet /></InAppLayout>,
         children: [
+          { path: "/dashboard", element: <Dashboard /> },
           { path: "/explore", element: <Explore /> },
           { path: "/posts/:postId", element: <Post /> },
           { path: "/blogs", element: <BrowseBlogs /> },
@@ -82,11 +84,11 @@ const routeConfig: RouteObject[] = [
           { path: "/posts/new", element: <UploadPost /> },
           { path: "/collections", element: <Collection /> },
           { path: "/blogs/new", element: <WriteBlog /> },
-          { path: "/image/tool/text-to-image", element: <AILayout><ArtGeneration /></AILayout> },
-          { path: "/image/tool/editor", element: <AILayout><ImageEditor /></AILayout> },
         ]
       },
-
+      { path: "/image/tool/editor", element: <AILayout><ImageEditor /></AILayout> },
+      { path: "/image/tool/text-to-image", element: <AILayout><ArtGeneration /></AILayout> },
+      
       // Catch-all -> redirect
       { path: "*", element: <Navigate to="/" replace /> }
     ]

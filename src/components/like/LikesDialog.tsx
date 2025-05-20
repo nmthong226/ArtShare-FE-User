@@ -118,6 +118,8 @@ export const LikesDialog: React.FC<LikesDialogProps> = ({
               <ListItem
                 key={u.id}
                 sx={{ px: 2, py: 1, cursor: "pointer" }}
+                role="button"
+                aria-label={`Navigate to ${u.username}'s profile`}
                 onClick={() => navigate(`/${u.username}`)}
               >
                 <ListItemAvatar>

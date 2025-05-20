@@ -2,25 +2,13 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useUser } from "@/contexts/UserProvider";
 
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const { loading, isAuthenticated } = useUser();
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, loading } = useUser();
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
-  console.log("@@ onboard", user.is_onboard);
-  if (!user.is_onboard) {
-    return <Navigate to="/onboarding" replace />;
-  }
+  if (loading) return <div>Loading…</div>;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   return <>{children}</>;
 };

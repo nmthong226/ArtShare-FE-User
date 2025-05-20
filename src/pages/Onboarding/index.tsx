@@ -15,6 +15,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import axios, { AxiosError } from "axios";
+import { useUser } from "@/contexts/UserProvider";
+import { User } from "@/types";
 
 interface ProfileForm {
   full_name: string;
@@ -39,6 +41,7 @@ const OnboardingProfile: React.FC = () => {
       birthday: "",
     },
   });
+  const { user, setUser } = useUser();
 
   /* dialog state */
   const [open, setOpen] = useState(true); // Set dialog to open by default
@@ -86,11 +89,11 @@ const OnboardingProfile: React.FC = () => {
 
     try {
       await api.patch("/users/profile", payload);
+      // mark them onboarded in context so guards will let them through
+      setUser!({ ...(user as User), is_onboard: true });
       reset(raw);
-      setTimeout(() => navigate("/explore"), 3000); // Redirect to explore after a successful update
-
+      navigate("/explore");
       // Successful update
-      showDialog(true, "Profile updated successfully!");
       setOpen(false);
     } catch (err: unknown) {
       // ──── 1. Axios error? ───────────────────────────────────────

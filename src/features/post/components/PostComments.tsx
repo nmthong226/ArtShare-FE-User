@@ -47,7 +47,7 @@ const addReplyRecursive = (
 ): CommentUI[] =>
   list.map((c) =>
     c.id === parentId
-      ? { ...c, replies: c.replies ? [reply, ...c.replies] : [reply] }
+      ? { ...c, replies: c.replies ? [...c.replies, reply] : [reply] }
       : c.replies?.length
         ? { ...c, replies: addReplyRecursive(c.replies, parentId, reply) }
         : c,
@@ -120,7 +120,7 @@ const CommentRow = ({
   const isMine = comment.user_id === CURRENT_USER_ID;
   const isEditing = editingId === comment.id;
   const editRef = useRef<HTMLTextAreaElement>(null);
-
+  const prevReplyCountRef = useRef(comment.replies?.length || 0); //// keep track of how many replies we *had* last render
   const [showReplies, setShowReplies] = useState(false);
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -128,6 +128,16 @@ const CommentRow = ({
   const handleMenu = (e: MouseEvent<HTMLButtonElement>) =>
     setAnchorEl(e.currentTarget);
   const closeMenu = () => setAnchorEl(null);
+
+  useEffect(() => {
+    const prev = prevReplyCountRef.current;
+    const curr = comment.replies?.length ?? 0;
+    // if we went from 0 → >0, open the thread
+    if (prev === 0 && curr > 0) {
+      setShowReplies(true);
+    }
+    prevReplyCountRef.current = curr;
+  }, [comment.replies]);
 
   const toggleReplies = async () => {
     if (!showReplies && comment.replies === undefined) {
@@ -575,38 +585,8 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
     useEffect(() => {
       const loadComments = async () => {
         try {
-          const data = await fetchComments(postId);
-
-          // Process the comments to ensure correct parent-child relationships
-          const topLevelComments = data.filter(
-            (comment) => !comment.parent_comment_id,
-          ) as CommentUI[];
-
-          // Find replies and attach them to parents
-          const replies = data.filter(
-            (comment) => comment.parent_comment_id,
-          ) as CommentUI[];
-
-          // Group replies by parent
-          const replyMap = new Map<number, CommentUI[]>();
-          replies.forEach((reply) => {
-            const parentId = reply.parent_comment_id as number;
-            if (!replyMap.has(parentId)) {
-              replyMap.set(parentId, []);
-            }
-            replyMap.get(parentId)?.push(reply);
-          });
-
-          // Attach replies to their parents
-          const processedComments = topLevelComments.map((comment) => {
-            const commentReplies = replyMap.get(comment.id) || [];
-            return {
-              ...comment,
-              replies: commentReplies,
-            };
-          });
-
-          setComments(processedComments);
+          const data = await fetchComments(postId); // already nested
+          setComments(data as CommentUI[]);
         } catch (err) {
           console.error("Failed to load comments:", err);
         }

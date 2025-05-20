@@ -318,10 +318,12 @@ const CommentRow = ({
 interface Props {
   comments: CommentUI[];
   postId: number;
+  onCommentAdded(): void;
+  onCommentDeleted(): void;
 }
 
 const PostComments = forwardRef<HTMLDivElement, Props>(
-  ({ comments: initial, postId }, _ref) => {
+  ({ comments: initial, postId, onCommentAdded, onCommentDeleted }, _ref) => {
     const { user } = useUser();
     const CURRENT_USER_ID = user?.id;
     const { postCommentsRef } = useFocusContext();
@@ -403,6 +405,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
 
       // Clear input and set states
       setNewComment("");
+      onCommentAdded();
       setReplyParentId(null);
       setIsPosting(true);
 
@@ -514,6 +517,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       } catch (err) {
         console.error(err);
         setComments(prev);
+        onCommentDeleted();
         alert("Could not delete comment.");
       } finally {
         setDeletingId(null);

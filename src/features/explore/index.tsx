@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 
 //Libs
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { Button, Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 //Icons
@@ -9,15 +9,19 @@ import { Ellipsis, LoaderPinwheel } from "lucide-react";
 import { BsFilter } from "react-icons/bs";
 
 //Components
-import { Categories, DataPopper } from "@/components/carousels/categories/Categories";
-import { categoriesData, propsData } from "@/components/carousels/categories/mocks";
+import {
+  Categories,
+  DataPopper,
+} from "@/components/carousels/categories/Categories";
 import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
 
-import { Post } from "@/types";
+import { Category, Post } from "@/types";
 import { fetchPosts } from "./api/get-post";
 
 //Contexts
 import { useSearch } from "@/contexts/SearchProvider";
+import { categoryService } from "@/components/carousels/categories/api/categories.api";
+import { CategoryTypeValues } from "@/constants";
 
 const getMediaDimensions = (
   url: string,
@@ -31,7 +35,6 @@ const getMediaDimensions = (
     img.onload = () => resolve({ width: img.width, height: img.height });
     img.onerror = (err) => {
       console.error("Error loading image for dimensions:", url, err);
-
       resolve({ width: 500, height: 500 });
     };
     img.src = url;
@@ -40,6 +43,8 @@ const getMediaDimensions = (
 
 const Explore: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedMediums, setSelectedMediums] = useState<string[]>([]);
+
   const [openCP, setOpenCP] = useState(false);
   const [openPP, setOpenPP] = useState(false);
   const [anchorElCP, setAnchorElCP] = useState<null | HTMLElement>(null);
@@ -47,26 +52,47 @@ const Explore: React.FC = () => {
   const [tab, setTab] = useState<string>("for-you");
   const galleryAreaRef = useRef<HTMLDivElement>(null);
   const { query } = useSearch();
+
   const {
-    data,
-    error,
-    isError,
-    isLoading,
+    data: allCategories,
+    isLoading: isLoadingAllCategories,
+    isError: isErrorAllCategories,
+  } = useQuery<Category[], Error>({
+    queryKey: ["allCategories"],
+    queryFn: () => categoryService.getAllCategories(1, 200),
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const attributeCategories = useMemo(() => {
+    if (!allCategories) return [];
+    return allCategories.filter(
+      (cat) => cat.type === CategoryTypeValues.ATTRIBUTE,
+    );
+  }, [allCategories]);
+
+  const mediumCategories = useMemo(() => {
+    if (!allCategories) return [];
+    return allCategories.filter(
+      (cat) => cat.type === CategoryTypeValues.MEDIUM,
+    );
+  }, [allCategories]);
+
+  const {
+    data: postsData,
+    error: postsError,
+    isError: isPostsError,
+    isLoading: isLoadingPosts,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["posts", tab, query, selectedCategories],
+    queryKey: ["posts", tab, query, selectedCategories, selectedMediums],
     retry: 2,
     queryFn: async ({ pageParam = 1 }): Promise<GalleryPhoto[]> => {
-      const posts: Post[] = await fetchPosts(
-        pageParam,
-        tab,
-        query,
-        selectedCategories,
-      );
-      console.log("Fetched posts:", posts);
-
+      const posts: Post[] = await fetchPosts(pageParam, tab, query, [
+        ...selectedCategories,
+        ...selectedMediums,
+      ]);
       const galleryPhotosPromises = posts
         .filter(
           (post) =>
@@ -76,7 +102,6 @@ const Explore: React.FC = () => {
           try {
             const imageUrl = post.thumbnail_url || post.medias[0]?.url;
             if (!imageUrl) return null;
-
             const mediaDimensions = await getMediaDimensions(imageUrl);
             return {
               key: post.id.toString(),
@@ -96,10 +121,10 @@ const Explore: React.FC = () => {
             return null;
           }
         });
-
       const resolvedPhotos = await Promise.all(galleryPhotosPromises);
-
-      return resolvedPhotos.filter((photo) => photo !== null) as GalleryPhoto[];
+      return resolvedPhotos.filter(
+        (photo): photo is GalleryPhoto => photo !== null,
+      );
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
@@ -129,68 +154,81 @@ const Explore: React.FC = () => {
     _: React.MouseEvent<HTMLElement>,
     newTab: string | null,
   ) => {
-    if (newTab) {
-      setTab(newTab);
-    }
+    if (newTab) setTab(newTab);
   };
 
+  const handleAllChannelsClick = () => {
+    setSelectedCategories([]);
+    setSelectedMediums([]);
+  };
   useEffect(() => {
     const galleryElement = galleryAreaRef.current;
     if (!galleryElement) return;
 
     const handleScroll = () => {
-      const scrollThreshold = 200;
-      const scrolledFromTop = galleryElement.scrollTop;
-      const elementHeight = galleryElement.clientHeight;
-      const scrollableHeight = galleryElement.scrollHeight;
-
       if (
-        elementHeight + scrolledFromTop >= scrollableHeight - scrollThreshold &&
+        galleryElement.scrollTop + galleryElement.clientHeight >=
+          galleryElement.scrollHeight - 200 &&
         hasNextPage &&
         !isFetchingNextPage
       ) {
-        console.log("Fetching next page...");
         fetchNextPage();
       }
     };
-
     const checkInitialContentHeight = () => {
       if (
         galleryElement.scrollHeight <= galleryElement.clientHeight &&
         hasNextPage &&
         !isFetchingNextPage &&
-        !isLoading
+        !isLoadingPosts
       ) {
-        console.log("Initial content too short, fetching next page...");
         fetchNextPage();
       }
     };
-
     galleryElement.addEventListener("scroll", handleScroll);
-
     const timeoutId = setTimeout(checkInitialContentHeight, 500);
-
     return () => {
       galleryElement.removeEventListener("scroll", handleScroll);
       clearTimeout(timeoutId);
     };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, data, isLoading]);
+  }, [
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    postsData,
+    isLoadingPosts,
+  ]);
 
   const galleryPhotos: GalleryPhoto[] =
-    data?.pages?.flat().filter(Boolean) ?? [];
-  console.log("Processed galleryPhotos:", galleryPhotos);
+    postsData?.pages?.flat().filter(Boolean) ?? [];
+
+  let isPostsDataEffectivelyEmpty = true;
+  if (postsData && postsData.pages && Array.isArray(postsData.pages)) {
+    if (
+      postsData.pages.length > 0 &&
+      postsData.pages.some((page) => page.length > 0)
+    ) {
+      isPostsDataEffectivelyEmpty = false;
+    }
+  }
+  const isInitialGalleryLoading = isLoadingPosts && isPostsDataEffectivelyEmpty;
 
   return (
     <div className="relative flex flex-col h-full">
-      <div className="top-16 z-10 sticky flex flex-col gap-4 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950 p-4">
-        <div className="flex items-center gap-6 w-full categories-bar">
+      <div className="sticky z-10 flex flex-col gap-4 p-4 top-16 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950">
+        <div className="flex items-center w-full gap-6 categories-bar">
           <Button
             className="flex flex-shrink-0 gap-2 dark:bg-mountain-900 shadow-none p-2 rounded-lg min-w-auto aspect-[1/1] font-normal dark:text-mountain-50 normal-case all-channels-btn"
             variant="contained"
             disableElevation
             onClick={handleToggleCP}
+            disabled={isLoadingAllCategories}
           >
-            <Ellipsis />
+            {isLoadingAllCategories ? (
+              <LoaderPinwheel size={16} className="animate-spin" />
+            ) : (
+              <Ellipsis />
+            )}
           </Button>
           <DataPopper
             open={openCP}
@@ -198,7 +236,7 @@ const Explore: React.FC = () => {
             onClose={() => setOpenCP(false)}
             onSave={(categories) => setSelectedCategories(categories)}
             selectedData={selectedCategories}
-            data={categoriesData}
+            data={attributeCategories}
             placement="bottom-start"
             renderItem="category"
           />
@@ -210,7 +248,7 @@ const Explore: React.FC = () => {
                 : "dark:bg-mountain-900"
             }  dark:text-mountain-200 normal-case font-normal shadow-none`}
             variant={selectedCategories.length === 0 ? "contained" : "outlined"}
-            onClick={() => setSelectedCategories([])}
+            onClick={handleAllChannelsClick}
             disableElevation={selectedCategories.length === 0}
           >
             <div
@@ -225,6 +263,9 @@ const Explore: React.FC = () => {
             <Categories
               onSelectCategory={handleCategoriesChange}
               selectedCategories={selectedCategories}
+              data={attributeCategories}
+              isLoading={isLoadingAllCategories}
+              isError={isErrorAllCategories}
             />
           </div>
 
@@ -233,16 +274,21 @@ const Explore: React.FC = () => {
             variant="contained"
             disableElevation
             onClick={handleTogglePP}
+            disabled={isLoadingAllCategories}
           >
-            <BsFilter size={24} />
+            {isLoadingAllCategories ? (
+              <LoaderPinwheel size={16} className="animate-spin" />
+            ) : (
+              <BsFilter size={24} />
+            )}
           </Button>
           <DataPopper
             open={openPP}
             onClose={() => setOpenPP(false)}
-            onSave={(props) => console.log("Props saved:", props)}
+            onSave={(mediums) => setSelectedMediums(mediums)}
             anchorEl={anchorElPP}
-            data={propsData}
-            selectedData={[]}
+            data={mediumCategories}
+            selectedData={selectedMediums}
             placement="bottom-end"
             renderItem="prop"
           />
@@ -254,13 +300,14 @@ const Explore: React.FC = () => {
       >
         <IGallery
           photos={galleryPhotos}
-          isLoading={isLoading && !data}
+          isLoading={isInitialGalleryLoading}
           isFetchingNextPage={isFetchingNextPage}
-          isError={isError}
-          error={error as Error | null}
+          isError={isPostsError}
+          error={postsError as Error | null}
         />
       </div>
-      <Paper className="bottom-4 left-1/2 z-50 fixed bg-white dark:bg-mountain-800 shadow-lg rounded-full -translate-x-1/2 transform">
+      <Paper className="fixed z-50 transform -translate-x-1/2 bg-white rounded-full shadow-lg bottom-4 left-1/2 dark:bg-mountain-800">
+        {/* ... (ToggleButtonGroup remains the same) ... */}
         <ToggleButtonGroup
           className="flex gap-2 m-1.5"
           size="small"

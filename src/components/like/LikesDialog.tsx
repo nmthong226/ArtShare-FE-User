@@ -17,6 +17,8 @@ import Box from "@mui/material/Box";
 import { fetchPostLikingUsers, fetchBlogLikingUsers } from "./api/likes.api";
 import type { LikingUser } from "./types/user";
 import BoringAvatar from "boring-avatars";
+import { useTheme, Theme } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
 
 export type LikesDialogVariant = "post" | "blog";
 
@@ -41,6 +43,8 @@ export const LikesDialog: React.FC<LikesDialogProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const theme = useTheme<Theme>();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   useEffect(() => {
     if (!open || !contentId) {
@@ -70,12 +74,15 @@ export const LikesDialog: React.FC<LikesDialogProps> = ({
     <Dialog
       open={open}
       onClose={onClose}
+      fullWidth
       aria-labelledby="likes-dialog-title"
-      maxWidth="xs"
+      maxWidth={false}
+      fullScreen={fullScreen}
       sx={{
         "& .MuiDialog-paper": {
-          width: 300,
-          maxHeight: "70vh",
+          width: 400,
+          height: "60vh",
+          mx: "auto",
         },
       }}
     >

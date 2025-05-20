@@ -15,7 +15,13 @@ import {
   CircularProgress,
   Snackbar,
 } from "@mui/material";
-import { ThumbsUp, ChevronDown, ChevronUp, SendHorizontal } from "lucide-react";
+import {
+  ThumbsUp,
+  ThumbsDown,
+  ChevronDown,
+  ChevronUp,
+  SendHorizontal,
+} from "lucide-react";
 import Avatar from "boring-avatars";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
 import api from "@/api/baseApi";
@@ -41,7 +47,7 @@ const addReplyRecursive = (
 ): CommentUI[] =>
   list.map((c) =>
     c.id === parentId
-      ? { ...c, replies: c.replies ? [...c.replies, reply] : [reply] }
+      ? { ...c, replies: c.replies ? [reply, ...c.replies] : [reply] }
       : c.replies?.length
         ? { ...c, replies: addReplyRecursive(c.replies, parentId, reply) }
         : c,
@@ -129,7 +135,7 @@ const CommentRow = ({
         setLoading(true);
         const replies = await fetchComments(comment.id);
 
-        onRepliesFetched(comment.id, replies as CommentUI[]); // Fetch replies when needed
+        onRepliesFetched(comment.id, replies as CommentUI[]);
       } catch (err) {
         console.error(err);
         Snackbar({
@@ -141,7 +147,7 @@ const CommentRow = ({
         setLoading(false);
       }
     }
-    setShowReplies((s) => !s); // Toggle visibility of replies
+    setShowReplies((s) => !s);
   };
 
   return (
@@ -167,14 +173,7 @@ const CommentRow = ({
         )}
         <div className="flex flex-col flex-grow">
           <div className="flex items-center gap-2 text-sm">
-            {/* Comment Username */}
-            <span className="font-bold">
-              {comment.user?.username ? (
-                `@${comment.user.username}`
-              ) : (
-                <span>Loading...</span>
-              )}
-            </span>
+            <span className="font-bold">@{comment.user.username}</span>
             <span className="text-neutral-500 text-xs">
               {new Date(comment.created_at).toLocaleDateString()}
             </span>
@@ -236,7 +235,7 @@ const CommentRow = ({
               <ThumbsUp size={16} />
               <span>{comment.like_count ?? 0}</span>
             </button>
-
+            <ThumbsDown size={16} className="cursor-pointer hover:text-black" />
             <button
               onClick={() => onReply(comment.id, comment.user.username)}
               className="hover:text-black"
@@ -282,7 +281,9 @@ const CommentRow = ({
           >
             {showReplies ? <ChevronUp size={14} /> : <ChevronDown size={14} />}{" "}
             {showReplies ? "Hide" : "View"}{" "}
-            {comment.replies ? comment.replies.length : ""} replies
+            {comment.replies
+              ? `${comment.replies.length} ${comment.replies.length === 1 ? "reply" : "replies"}`
+              : "replies"}
           </button>
           {loading && (
             <div className="flex items-center gap-1 text-xs text-neutral-500 p-2">
@@ -317,17 +318,15 @@ const CommentRow = ({
 interface Props {
   comments: CommentUI[];
   postId: number;
-  onCommentAdded: () => void; // Function to update comment count
-  onCommentDeleted: () => void;
 }
 
 const PostComments = forwardRef<HTMLDivElement, Props>(
-  ({ comments: initial, postId, onCommentAdded, onCommentDeleted }, _ref) => {
+  ({ comments: initial, postId }, _ref) => {
     const { user } = useUser();
     const CURRENT_USER_ID = user?.id;
     const { postCommentsRef } = useFocusContext();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+    const listRef = useRef<HTMLDivElement>(null); // scroll target
     const [comments, setComments] = useState<CommentUI[]>(initial);
     const [newComment, setNewComment] = useState("");
     const [replyParentId, setReplyParentId] = useState<number | null>(null);
@@ -375,11 +374,15 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       const tmpId = Date.now();
       const now = new Date();
 
-      // Check if the current user has liked this post
+      // Create optimistic comment
       const optimistic: CommentUI = {
         id: tmpId,
         user_id: CURRENT_USER_ID || "",
-        user: { id: CURRENT_USER_ID, username: CURRENT_USER_ID } as User,
+        user: {
+          id: CURRENT_USER_ID!,
+          username: user?.username || "",
+          profile_picture_url: user?.profile_picture_url,
+        } as User,
         parent_comment_id: replyParentId,
         target_id: postId,
         target_type: "POST",
@@ -392,8 +395,13 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       };
 
       // Optimistically update UI to show the new comment
-      setComments((prev) => [optimistic, ...prev]);
-      onCommentAdded();
+      setComments((prev) =>
+        replyParentId
+          ? addReplyRecursive(prev, replyParentId, optimistic)
+          : [optimistic, ...prev],
+      );
+
+      // Clear input and set states
       setNewComment("");
       setReplyParentId(null);
       setIsPosting(true);
@@ -407,9 +415,56 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         };
 
         const { data } = await createComment(payload);
-        setComments((prev) =>
-          prev.map((c) => (c.id === tmpId ? { ...data } : c)),
-        );
+
+        // Replace the optimistic comment while preserving hierarchy
+        if (replyParentId) {
+          // For replies, update within the nested structure
+          setComments((prev) =>
+            prev.map((comment) => {
+              if (comment.id === replyParentId) {
+                // Replace the temp reply with the real one in this parent
+                return {
+                  ...comment,
+                  replies:
+                    comment.replies?.map((reply) =>
+                      reply.id === tmpId ? data : reply,
+                    ) || [],
+                };
+              } else if (comment.replies?.length) {
+                // Search deeper in the tree
+                return {
+                  ...comment,
+                  replies: updateReplyInNestedStructure(
+                    comment.replies,
+                    replyParentId,
+                    tmpId,
+                    data,
+                  ),
+                };
+              }
+              return comment;
+            }),
+          );
+        } else {
+          // For top-level comments, replace the temp one with the real one
+          setComments((prev) => prev.map((c) => (c.id === tmpId ? data : c)));
+        }
+
+        // Scroll the list to see the new comment
+        setTimeout(() => {
+          if (replyParentId) {
+            // Find the parent comment element and scroll to it
+            const parentEl = document.getElementById(
+              `comment-${replyParentId}`,
+            );
+            if (parentEl) {
+              parentEl.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+          } else {
+            // For top-level comments, scroll to top
+            listRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }, 100);
       } catch (err) {
         console.error(err);
         setComments((prev) => removeRecursive(prev, tmpId));
@@ -419,12 +474,41 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       }
     };
 
+    // Helper function to update a reply in a nested comment structure
+    const updateReplyInNestedStructure = (
+      replies: CommentUI[],
+      parentId: number,
+      tmpId: number,
+      newData: CommentUI,
+    ): CommentUI[] => {
+      return replies.map((reply) => {
+        if (reply.id === parentId) {
+          // This is the parent, replace the temp reply
+          return {
+            ...reply,
+            replies:
+              reply.replies?.map((r) => (r.id === tmpId ? newData : r)) || [],
+          };
+        } else if (reply.replies?.length) {
+          // Continue searching
+          return {
+            ...reply,
+            replies: updateReplyInNestedStructure(
+              reply.replies,
+              parentId,
+              tmpId,
+              newData,
+            ),
+          };
+        }
+        return reply;
+      });
+    };
     /* -------------------- DELETE ---------------------------------- */
     const handleDelete = async (id: number) => {
       const prev = comments;
       setComments(removeRecursive(prev, id));
       setDeletingId(id);
-      onCommentDeleted();
       try {
         await api.delete(`/comments/${id}`);
       } catch (err) {
@@ -464,6 +548,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         .find((c) => c.id === id);
 
       const alreadyLiked = comment?.likedByCurrentUser;
+      console.log(alreadyLiked);
 
       setComments((prev) => toggleLikeRecursive(prev, id));
       try {
@@ -476,7 +561,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         console.error(_err);
         Snackbar({
           open: true,
-          message: "Failed to update like status.",
+          message: "Failed to load replies.",
           autoHideDuration: 3000,
         });
       }
@@ -487,7 +572,37 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       const loadComments = async () => {
         try {
           const data = await fetchComments(postId);
-          setComments(data as CommentUI[]);
+
+          // Process the comments to ensure correct parent-child relationships
+          const topLevelComments = data.filter(
+            (comment) => !comment.parent_comment_id,
+          ) as CommentUI[];
+
+          // Find replies and attach them to parents
+          const replies = data.filter(
+            (comment) => comment.parent_comment_id,
+          ) as CommentUI[];
+
+          // Group replies by parent
+          const replyMap = new Map<number, CommentUI[]>();
+          replies.forEach((reply) => {
+            const parentId = reply.parent_comment_id as number;
+            if (!replyMap.has(parentId)) {
+              replyMap.set(parentId, []);
+            }
+            replyMap.get(parentId)?.push(reply);
+          });
+
+          // Attach replies to their parents
+          const processedComments = topLevelComments.map((comment) => {
+            const commentReplies = replyMap.get(comment.id) || [];
+            return {
+              ...comment,
+              replies: commentReplies,
+            };
+          });
+
+          setComments(processedComments);
         } catch (err) {
           console.error("Failed to load comments:", err);
         }
@@ -500,13 +615,16 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         ref={_ref}
         className="flex flex-col gap-4 bg-white rounded-2xl w-full pb-28"
       >
-        <h4 className="font-bold text-sm">COMMENTS</h4>
+        <h4 className="font-bold text-sm">Comments</h4>
 
-        <div className="flex flex-col divide-y divide-neutral-100">
+        <div
+          ref={listRef}
+          className="flex flex-col divide-y divide-neutral-100 overflow-y-auto"
+        >
           {comments.length === 0 ? (
-            <div className="p-4 text-center text-neutral-500">
-              No comments yet
-            </div>
+            <p className="text-sm text-center text-mountain-500 py-4">
+              No comments yet. Be the first to comment!
+            </p>
           ) : (
             comments.map((c) => (
               <CommentRow

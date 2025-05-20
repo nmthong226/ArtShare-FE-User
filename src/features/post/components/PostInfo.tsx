@@ -140,7 +140,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
   return (
     <>
       <div className="bg-white rounded-2xl overflow-none">
-        <CardContent className="flex flex-col gap-4 p-0">
+        <CardContent className="flex flex-col gap-2 p-0">
           {/* Title, description, date */}
           <div className="flex flex-col gap-2">
             <div className="font-bold text-xl">{postData.title}</div>

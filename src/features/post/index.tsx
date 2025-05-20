@@ -8,7 +8,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 // import PostShare from "@/components/posts/PostShare";
 import { mappedCategoryPost } from "@/lib/utils";
-import { fetchPost } from "./api/post.api";
 import { CircularProgress } from "@mui/material";
 
 const Post: React.FC = () => {

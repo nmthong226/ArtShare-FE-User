@@ -43,7 +43,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
   >([]);
   const [isLoadingCollections, setIsLoadingCollections] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
-
+  const user = useUser();
   // Like-state & API integration
   const [userLike, setUserLike] = useState<boolean>(
     postData.isLikedByCurrentUser ?? false,
@@ -98,11 +98,11 @@ const PostInfo = ({ postData }: PostInfoProps) => {
 
   // Like / Unlike handler (optimistic update)
   const handleLikeClick = async () => {
-    const user = useUser();
     if (!user) {
       showSnackbar("Please log in to like", "error");
       return;
     }
+    console.log("HELLO");
     if (isLiking || isFetchingLike) return;
     const willLike = !userLike;
     setUserLike(willLike);

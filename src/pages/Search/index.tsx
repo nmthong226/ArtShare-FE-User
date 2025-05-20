@@ -1,5 +1,5 @@
 //Core
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 //Icons
@@ -16,18 +16,19 @@ import { useSearch } from "@/contexts/SearchProvider";
 import { Input } from "@/components/ui/input";
 import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
 import { DataPopper } from "@/components/carousels/categories/Categories";
-import { categoriesData } from "@/components/carousels/categories/mocks";
 import { Button } from "@/components/ui/button";
 import SortMenu from "@/components/dropdowns/Sort";
 import CategoryList from "@/components/filters/Filter";
 
 //Libs/Utils/Helpers
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { getMediaDimensions } from "@/utils/helpers/gallery.helper";
 import { fetchPosts } from "@/features/explore/api/get-post";
 
 //Types
-import { Post } from "@/types";
+import { Category, Post } from "@/types";
+import { CategoryTypeValues } from "@/constants";
+import { categoryService } from "@/components/carousels/categories/api/categories.api";
 
 const Search = () => {
   const { query, setQuery } = useSearch();
@@ -42,23 +43,25 @@ const Search = () => {
   const [anchorElCP, setAnchorElCP] = useState<null | HTMLElement>(null);
   const [sort, setSort] = useState("Sort by Relevance");
 
-  useEffect(() => {
-    const q = searchParams.get("q") || "";
-    setQuery(q);
-    setInputValue(q);
-  }, [searchParams]);
+  const { data: allCategories } = useQuery<Category[], Error>({
+    queryKey: ["allCategories"],
+    queryFn: () => categoryService.getAllCategories(1, 200),
+    staleTime: 1000 * 60 * 5,
+  });
 
-  useEffect(() => {
-    // Trigger your fetch or filter logic here
-    console.log("Search query changed:", query);
-  }, [query]);
+  const attributeCategories = useMemo(() => {
+    if (!allCategories) return [];
+    return allCategories.filter(
+      (cat) => cat.type === CategoryTypeValues.ATTRIBUTE,
+    );
+  }, [allCategories]);
 
   const galleryAreaRef = useRef<HTMLDivElement>(null);
   const {
-    data,
-    error,
-    isError,
-    isLoading,
+    data: postsData,
+    error: postsError,
+    isError: isPostsError,
+    isLoading: isLoadingPosts,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -72,8 +75,6 @@ const Search = () => {
         query,
         selectedCategories,
       );
-      console.log("Fetched posts:", posts);
-
       const galleryPhotosPromises = posts
         .filter(
           (post) =>
@@ -83,12 +84,11 @@ const Search = () => {
           try {
             const imageUrl = post.thumbnail_url || post.medias[0]?.url;
             if (!imageUrl) return null;
-
             const mediaDimensions = await getMediaDimensions(imageUrl);
             return {
               key: post.id.toString(),
               title: post.title || "",
-              author: post.user?.full_name || "Unknown Author",
+              author: post.user?.username || "Unknown Author",
               src: imageUrl,
               width: mediaDimensions.width,
               height: mediaDimensions.height,
@@ -103,10 +103,10 @@ const Search = () => {
             return null;
           }
         });
-
       const resolvedPhotos = await Promise.all(galleryPhotosPromises);
-
-      return resolvedPhotos.filter((photo) => photo !== null) as GalleryPhoto[];
+      return resolvedPhotos.filter(
+        (photo): photo is GalleryPhoto => photo !== null,
+      );
     },
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
@@ -114,6 +114,16 @@ const Search = () => {
     },
   });
 
+  useEffect(() => {
+    const q = searchParams.get("q") || "";
+    setQuery(q);
+    setInputValue(q);
+  }, [searchParams]);
+
+  useEffect(() => {
+    // Trigger your fetch or filter logic here
+    console.log("Search query changed:", query);
+  }, [query]);
 
   const handleToggleCP = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorElCP(event.currentTarget);
@@ -145,37 +155,51 @@ const Search = () => {
         galleryElement.scrollHeight <= galleryElement.clientHeight &&
         hasNextPage &&
         !isFetchingNextPage &&
-        !isLoading
+        !isLoadingPosts
       ) {
-        console.log("Initial content too short, fetching next page...");
         fetchNextPage();
       }
     };
-
     galleryElement.addEventListener("scroll", handleScroll);
-
     const timeoutId = setTimeout(checkInitialContentHeight, 500);
-
     return () => {
       galleryElement.removeEventListener("scroll", handleScroll);
       clearTimeout(timeoutId);
     };
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage, data, isLoading]);
+  }, [
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    postsData,
+    isLoadingPosts,
+  ]);
 
   const galleryPhotos: GalleryPhoto[] =
-    data?.pages?.flat().filter(Boolean) ?? [];
-  console.log("Processed galleryPhotos:", galleryPhotos);
+    postsData?.pages?.flat().filter(Boolean) ?? [];
+
+  let isPostsDataEffectivelyEmpty = true;
+  if (postsData && postsData.pages && Array.isArray(postsData.pages)) {
+    if (
+      postsData.pages.length > 0 &&
+      postsData.pages.some((page) => page.length > 0)
+    ) {
+      isPostsDataEffectivelyEmpty = false;
+    }
+  }
+  const isInitialGalleryLoading = isLoadingPosts && isPostsDataEffectivelyEmpty;
 
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="flex flex-col justify-end items-center space-x-4 space-y-4 bg-white pt-10 border-mountain-100 border-b-1 w-full h-fit">
-        <p className="inline-block bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 font-medium text-transparent text-3xl">Seek</p>
-        <div className="flex justify-center items-center mb-6">
+      <div className="flex flex-col items-center justify-end w-full pt-10 space-x-4 space-y-4 bg-white border-mountain-100 border-b-1 h-fit">
+        <p className="inline-block text-3xl font-medium text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+          Seek
+        </p>
+        <div className="flex items-center justify-center mb-6">
           <div className="relative flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl w-168 h-14 text-neutral-700 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-neutral-300">
-            <FiSearch className="left-2 absolute w-5 h-5" />
+            <FiSearch className="absolute w-5 h-5 left-2" />
             <Input
               ref={inputRef}
-              className="shadow-inner pr-8 pl-8 rounded-2xl w-full h-full placeholder:text-mountain-400 md:text-lg"
+              className="w-full h-full pl-8 pr-8 shadow-inner rounded-2xl placeholder:text-mountain-400 md:text-lg"
               placeholder="Search"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
@@ -198,12 +222,15 @@ const Search = () => {
           </div>
         </div>
       </div>
-      <div className="top-16 z-50 sticky flex bg-white px-4 h-16">
+      <div className="sticky z-50 flex h-16 px-4 bg-white top-16">
         {/* Left side - Filter */}
-        <div className="top-1/2 left-4 absolute flex items-center space-x-4 -translate-y-1/2 transform">
+        <div className="absolute flex items-center space-x-4 transform -translate-y-1/2 top-1/2 left-4">
           <div
-            className={`flex items-center space-x-2 hover:bg-mountain-50 px-2 py-1 rounded-lg hover:cursor-pointer ${showFilters ? "text-mountain-950 font-medium" : "text-mountain-600 font-normal"
-              }`}
+            className={`flex items-center space-x-2 hover:bg-mountain-50 px-2 py-1 rounded-lg hover:cursor-pointer ${
+              showFilters
+                ? "text-mountain-950 font-medium"
+                : "text-mountain-600 font-normal"
+            }`}
             onClick={() => {
               setShowFilters((prev) => !prev);
               setShowChannelDropdown(false);
@@ -216,7 +243,7 @@ const Search = () => {
           {showFilters && (
             <div className="relative">
               <Button
-                className="flex justify-center items-center bg-white hover:bg-mountain-50 py-1 border border-mountain-200 rounded-full w-32 text-mountain-950 cursor-pointer"
+                className="flex items-center justify-center w-32 py-1 bg-white border rounded-full cursor-pointer hover:bg-mountain-50 border-mountain-200 text-mountain-950"
                 onClick={handleToggleCP}
               >
                 <TbCategory size={16} />
@@ -229,65 +256,71 @@ const Search = () => {
                 onClose={() => setOpenCP(false)}
                 onSave={(categories) => setSelectedCategories(categories)}
                 selectedData={selectedCategories}
-                data={categoriesData}
+                data={attributeCategories}
                 placement="bottom-start"
                 renderItem="category"
-                className="max-h-[50vh]"
               />
             </div>
           )}
         </div>
         {/* Center - Tabs */}
-        <div className="top-1/2 left-1/2 absolute flex items-center h-full -translate-x-1/2 -translate-y-1/2 transform">
+        <div className="absolute flex items-center h-full transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
           <div
             onClick={() => setTab("posts")}
-            className={`${tab === "posts"
-              ? "border-indigo-400"
-              : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
-              } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg`}
+            className={`${
+              tab === "posts"
+                ? "border-indigo-400"
+                : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
+            } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg`}
           >
             Posts
           </div>
           <div
             onClick={() => setTab("users")}
-            className={`${tab === "users"
-              ? "border-indigo-400"
-              : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
-              } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg`}
+            className={`${
+              tab === "users"
+                ? "border-indigo-400"
+                : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
+            } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg`}
           >
             Users
           </div>
         </div>
 
         {/* Right side - Sort */}
-        <div className="top-1/2 right-4 absolute flex items-center space-x-2 -translate-y-1/2 transform">
+        <div className="absolute flex items-center space-x-2 transform -translate-y-1/2 top-1/2 right-4">
           <SortMenu sort={sort} setSort={setSort} />
         </div>
       </div>
-      <div className="flex flex-col justify-center items-center my-6 w-full h-full">
-        <div className="flex justify-center items-center w-full h-12">
+      <div className="flex flex-col items-center justify-center w-full h-full my-6">
+        <div className="flex items-center justify-center w-full h-12">
           {selectedCategories.length > 0 ? (
             <>
               <p className="mr-2 text-mountain-400">In: </p>
-              <CategoryList selectedCategories={selectedCategories} setSelectedCategories={setSelectedCategories} />
+              <CategoryList
+                selectedCategories={selectedCategories}
+                setSelectedCategories={setSelectedCategories}
+              />
             </>
           ) : (
-            <div className="text-mountain-400">Tips: Want more specific results? Try adding filters.</div>
+            <div className="text-mountain-400">
+              Tips: Want more specific results? Try adding filters.
+            </div>
           )}
         </div>
-        <div className="justify-center items-center mt-4 p-4 w-full h-full gallery-area">
+        <div className="items-center justify-center w-full h-full p-4 mt-4 gallery-area">
           {/* <IGallery query={query} filter={selectedCategories}/> */}
           <IGallery
             photos={galleryPhotos}
-            isLoading={isLoading && !data}
+            isLoading={isInitialGalleryLoading}
             isFetchingNextPage={isFetchingNextPage}
-            isError={isError}
-            error={error as Error | null}
+            isError={isPostsError}
+            error={postsError as Error | null}
           />
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Search
+export default Search;

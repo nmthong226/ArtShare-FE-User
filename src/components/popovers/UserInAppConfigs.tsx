@@ -6,8 +6,7 @@ import { useTheme } from "@/contexts/ThemeProvider";
 import { useUser } from "@/contexts/UserProvider";
 
 // Icons
-import { FaReact } from "react-icons/fa";
-import { MdDarkMode } from "react-icons/md";
+import { MdDarkMode, MdMoreVert } from "react-icons/md";
 import { MdLightMode } from "react-icons/md";
 
 // Components
@@ -17,7 +16,10 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// Avatars
+import BoringAvatar from "boring-avatars";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link, useNavigate } from "react-router-dom";
@@ -31,12 +33,11 @@ const UserInAppConfigs = () => {
   const [aiContent, setAiContent] = useState(false);
 
   const handleLogout = () => {
-    setOpen(false); // Close modal immediately
-    // Wait for 300ms before calling logout to allow UI transition
+    setOpen(false);
     setTimeout(() => {
-      logout(); // Call logout function from UserProvider
+      logout();
+      navigate("/login");
     }, 300);
-    navigate("/explore");
   };
 
   if (loading)
@@ -52,15 +53,39 @@ const UserInAppConfigs = () => {
         <div>
           <Button
             variant="ghost"
-            title="More"
+            title="User menu"
             className={`flex items-center bg-gradient-to-b ${
               user
                 ? "from-blue-800 to-pink-800"
-                : "from-mountain-800 to-mountain-300 "
-            } rounded-full w-8 h-8`}
+                : "from-mountain-800 to-mountain-300"
+            } rounded-full w-8 h-8 p-0`}
             onMouseEnter={() => setOpen(true)}
           >
-            <FaReact className="size-5 text-white" />
+            {user ? (
+              user.profile_picture_url ? (
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src={user.profile_picture_url} />
+                  <AvatarFallback>
+                    {user.username.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              ) : (
+                <BoringAvatar
+                  size={32}
+                  name={user.username}
+                  variant="beam"
+                  colors={[
+                    "#84bfc3",
+                    "#fff5d6",
+                    "#ffb870",
+                    "#d96153",
+                    "#000511",
+                  ]}
+                />
+              )
+            ) : (
+              <MdMoreVert className="size-5 text-white" />
+            )}
           </Button>
         </div>
       </PopoverTrigger>
@@ -71,24 +96,39 @@ const UserInAppConfigs = () => {
       >
         {user && (
           <>
-            <div className="flex p-3 py-2 w-full">
-              <div className="flex items-end space-x-2">
+            <div className="flex p-3 items-center space-x-2">
+              {user.profile_picture_url ? (
                 <Avatar className="w-10 h-10">
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage src={user.profile_picture_url} />
+                  <AvatarFallback>
+                    {user.username.charAt(0).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col">
-                  <p className="text-mountain-950 dark:text-mountain-50">
-                    {user.username}
-                  </p>
-                  <p className="text-mountain-500 text-xs">{user.email}</p>
-                </div>
+              ) : (
+                <BoringAvatar
+                  size={40}
+                  name={user.username}
+                  variant="beam"
+                  colors={[
+                    "#84bfc3",
+                    "#fff5d6",
+                    "#ffb870",
+                    "#d96153",
+                    "#000511",
+                  ]}
+                />
+              )}
+              <div className="flex flex-col">
+                <p className="text-mountain-950 dark:text-mountain-50">
+                  {user.username}
+                </p>
+                <p className="text-mountain-500 text-xs">{user.email}</p>
               </div>
             </div>
-            <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
+            <hr className="my-2 border-mountain-100 dark:border-mountain-800" />
             <Link
               to={`/${user.username}`}
-              className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer"
+              className="block hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3"
             >
               <p className="text-sm">User Profile</p>
             </Link>

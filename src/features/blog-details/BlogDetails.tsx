@@ -216,6 +216,8 @@ const BlogDetails = () => {
   // 5) Compute reading time:
   const readingTime = Math.ceil(blog.content.split(/\s+/).length / 200);
 
+  console.log("@@ Current user:", user);
+
   return (
     <div className="flex flex-col items-center w-full h-full">
       <div className="flex w-full h-full">
@@ -369,6 +371,7 @@ const BlogDetails = () => {
         contentId={Number(blogId)} // pass contentId from URL
         open={likesDialogOpen}
         onClose={handleCloseLikesDialog}
+        variant="blog"
       />
     </div>
   );

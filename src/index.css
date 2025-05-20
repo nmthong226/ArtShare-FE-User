@@ -161,8 +161,10 @@ body {
   }
 
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 
   background-color: var(--background);
@@ -171,6 +173,53 @@ body {
 .bounce-item {
   @apply transition-transform hover:-translate-y-1 duration-500 transform;
 }
+
+.sidebar {
+  overflow-y: scroll;
+
+  /* Scrollbar Styling (WebKit Browsers) */
+  scrollbar-width: thin;
+  /* Firefox */
+  scrollbar-color: #888 transparent;
+
+  /* Scrollbar Styling (Chrome, Edge, Safari) */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-button {
+    display: none;
+    height: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  /* Mask gradient for fade effect */
+  mask-image: linear-gradient(to top, transparent, black),
+  linear-gradient(to left, transparent 17px, black 17px);
+  mask-size: 100% 20000px;
+  mask-position: left bottom;
+  -webkit-mask-image: linear-gradient(to top, transparent, black),
+  linear-gradient(to left, transparent 17px, black 17px);
+  -webkit-mask-size: 100% 20000px;
+  -webkit-mask-position: left bottom;
+
+  transition: mask-position 0.3s,
+  -webkit-mask-position 0.3s;
+}
+
+.sidebar:hover {
+  -webkit-mask-position: left top;
+  mask-position: left top;
+}
+
 
 @layer base {
   body {

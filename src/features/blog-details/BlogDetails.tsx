@@ -209,7 +209,7 @@ const BlogDetails = () => {
   }
 
   if (error) {
-    return <div className="text-red-500 p-4">{error.message}</div>;
+    return <div className="p-4 text-red-500">{error.message}</div>;
   }
   if (!blog) return null;
 
@@ -247,11 +247,7 @@ const BlogDetails = () => {
             <p>{readingTime}m reading</p>
           </div>
           <div
-            className="
-    flex justify-between items-center
-    bg-gradient-to-r from-indigo-100 to-purple-100
-    shadow-sm p-4 rounded-lg
-  "
+            className="flex justify-between items-center bg-gradient-to-r from-indigo-100 to-purple-100 shadow-sm p-4 rounded-lg"
           >
             <div className="flex items-center space-x-4">
               <Avatar className="w-12 h-12">
@@ -262,10 +258,10 @@ const BlogDetails = () => {
               </Avatar>
 
               <div className="flex flex-col">
-                <p className="text-lg font-medium text-gray-900">
+                <p className="font-medium text-gray-900 text-lg">
                   {blog.user.full_name}
                 </p>
-                <div className="flex items-center space-x-3 text-sm text-gray-600">
+                <div className="flex items-center space-x-3 text-gray-600 text-sm">
                   <span>@{blog.user.username}</span>
                   <span className="text-gray-400">•</span>
                   <span>
@@ -290,7 +286,7 @@ const BlogDetails = () => {
             )}
           </div>
           <div
-            className="prose lg:prose-xl max-w-none p-2 rounded-md" // Added prose classes for styling
+            className="p-2 rounded-md max-w-none prose lg:prose-xl" // Added prose classes for styling
             dangerouslySetInnerHTML={{ __html: blog.content }}
           />
         </div>

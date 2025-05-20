@@ -6,12 +6,13 @@ import { fetchPost } from "./api/post.api";
 import { fetchComments } from "./api/comment.api.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
-
-// import PostMoreByArtist from "./components/PostMoreByArtist";
-// import PostShare from "./components/PostShare";
-import LoadingSpinner from "@/components/fallbacks/LoadingSpinner.tsx";
+// import PostShare from "@/components/posts/PostShare";
 import { mappedCategoryPost } from "@/lib/utils";
+
 import { useEffect, useState } from "react";
+
+import { CircularProgress } from "@mui/material";
+
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -73,8 +74,9 @@ const Post: React.FC = () => {
   };
   if (isPostLoading || isCommentsLoading) {
     return (
-      <div className="m-4 text-center">
-        <LoadingSpinner />
+      <div className="flex m-4 text-center">
+        <CircularProgress size={36} />
+        <p>Loading...</p>
       </div>
     );
   }

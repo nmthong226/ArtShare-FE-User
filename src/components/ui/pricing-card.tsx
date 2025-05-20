@@ -6,7 +6,6 @@ import NumberFlow from "@number-flow/react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
 import {
   createCheckoutSession,
   CreateCheckoutSessionPayload,
@@ -97,12 +96,9 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
   const ctaProps = getCtaProps();
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
-      transition={{ duration: 0.5, delay: 1.2 }}
+    <div
       className={cn(
-        "relative flex flex-col gap-8 overflow-hidden p-6 rounded-lg border border-mountain-300",
+        "relative flex flex-1 flex-col gap-8 overflow-hidden p-6 rounded-lg border border-mountain-300",
         isHighlighted
           ? "bg-gradient-to-b from-blue-800 to-purple-800 text-white"
           : "bg-white ",
@@ -159,7 +155,7 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
                 isHighlighted ? "text-mountain-200" : "text-muted-foreground",
               )}
             >
-              <BadgeCheck className="w-4 h-4 flex-shrink-0" />
+              <BadgeCheck className="flex-shrink-0 w-4 h-4" />
               {feature}
             </li>
           ))}
@@ -170,7 +166,7 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
       {ctaProps && (
         <Button
           variant={isHighlighted ? "secondary" : "default"}
-          className="bg-mountain-950 w-full text-mountain-50 z-50 cursor-pointer"
+          className={`z-50  w-full text-mountain-50 cursor-pointer ${isHighlighted ? 'bg-mountain-950 hover:bg-mountain-900' : 'bg-mountain-50 hover:bg-mountain-100 text-mountain-950 border border-mountain-100'}`}
           onClick={ctaProps.action}
           asChild={ctaProps.asChild}
         >
@@ -188,7 +184,7 @@ export function PricingCard({ tier, paymentFrequency }: PricingCardProps) {
           )}
         </Button>
       )}
-    </motion.div>
+    </div>
   );
 }
 

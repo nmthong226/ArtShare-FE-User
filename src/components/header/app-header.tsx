@@ -30,6 +30,11 @@ const Header: React.FC = () => {
 
     const routes = [
         {
+            path: "/dashboard",
+            label: "Home Page",
+            description: "Discovering what we supply for your artistic journey"
+        },
+        {
             path: "/explore",
             label: "Explore Arts",
             description: "Discover stunning creations shared by artists worldwide"

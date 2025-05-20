@@ -365,15 +365,7 @@ const UploadPost: React.FC = () => {
           <Box className="relative pr-4 rounded-md w-full overflow-y-auto custom-scrollbar">
             <Tooltip title="Auto Generate Content (title, description, categories)" arrow placement="left">
               <Button
-                className="
-                top-2 z-50 sticky 
-                flex justify-center items-center 
-                bg-gradient-to-b from-blue-400 to-purple-400 shadow-md 
-                ml-auto rounded-full w-12 h-12
-                hover:scale-105 duration-300 ease-in-out hover:cursor-pointer transform
-                p-0
-                min-w-0 
-                "
+                className="top-2 z-50 sticky flex justify-center items-center bg-gradient-to-b from-blue-400 to-purple-400 shadow-md ml-auto p-0 rounded-full w-12 min-w-0 h-12 hover:scale-105 duration-300 ease-in-out hover:cursor-pointer transform"
                 onClick={handleGenerateContent}
               >
                 <FaMagic className="size-5 text-white" />
@@ -404,7 +396,7 @@ const UploadPost: React.FC = () => {
           </Box>
           <hr className="border-mountain-300 dark:border-mountain-700 border-t-1 w-full" />
           {/* Bottom actions */}
-          <Box className="flex justify-between bg-none mt-auto pr-4 w-full">
+          <Box className="flex justify-end bg-none mt-auto pr-4 w-full">
             <Button
               variant="contained"
               onClick={handleSubmitMediaUploaded}

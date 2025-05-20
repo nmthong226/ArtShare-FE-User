@@ -11,8 +11,13 @@ import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
 import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute";
 import GuestRoute from "@/components/routes/guest-route";
 import OnboardingProfile from "./pages/Onboarding";
+
 import OnboardingRoute from "./components/ProtectedItems/OnboardingRoute";
 import RequireOnboard from "./components/ProtectedItems/RequireOnboard";
+
+import { useUser } from "./contexts/UserProvider"; import Dashboard from "./features/dashboard/Dashboard";
+
+
 
 // Lazy imports for pages/features
 const LandingPage = lazy(() => import("@/pages/Home"));
@@ -53,7 +58,6 @@ const routeConfig: RouteObject[] = [
     children: [
       // Landing
       { index: true, element: <LandingPage /> },
-
       // Public Auth
       {
         element: (
@@ -75,8 +79,6 @@ const routeConfig: RouteObject[] = [
           { path: "/auth", element: <AuthAction /> },
         ],
       },
-
-      // Private Auth
       {
         element: (
           <ProtectedAuthRoute>
@@ -94,8 +96,6 @@ const routeConfig: RouteObject[] = [
         element: (
           <ProtectedAuthRoute>
             <OnboardingRoute>
-              {" "}
-              {/* kicks already-onboard users to /explore */}
               <InAppLayout>
                 <OnboardingProfile />
               </InAppLayout>
@@ -103,8 +103,6 @@ const routeConfig: RouteObject[] = [
           </ProtectedAuthRoute>
         ),
       },
-
-      // In-App Public
       {
         element: (
           <RequireOnboard>
@@ -114,6 +112,7 @@ const routeConfig: RouteObject[] = [
           </RequireOnboard>
         ),
         children: [
+          { path: "/dashboard", element: <Dashboard /> },
           { path: "/explore", element: <Explore /> },
           { path: "/posts/:postId", element: <Post /> },
           { path: "/blogs", element: <BrowseBlogs /> },
@@ -121,8 +120,6 @@ const routeConfig: RouteObject[] = [
           { path: "/search", element: <Search /> },
         ],
       },
-
-      // In-App Private
       {
         element: (
           <RequireOnboard>
@@ -141,25 +138,21 @@ const routeConfig: RouteObject[] = [
           { path: "/posts/new", element: <UploadPost /> },
           { path: "/collections", element: <Collection /> },
           { path: "/blogs/new", element: <WriteBlog /> },
-          {
-            path: "/image/tool/text-to-image",
-            element: (
-              <AILayout>
-                <ArtGeneration />
-              </AILayout>
-            ),
-          },
-          {
-            path: "/image/tool/editor",
-            element: (
-              <AILayout>
-                <ImageEditor />
-              </AILayout>
-            ),
-          },
-        ],
+        ]
       },
-
+      {
+        element: (
+          <ProtectedInAppRoute>
+            <AILayout>
+              <Outlet />
+            </AILayout>
+          </ProtectedInAppRoute>
+        ),
+        children: [
+          { path: "/image/tool/editor", element: <ImageEditor /> },
+          { path: "/image/tool/text-to-image", element: <ArtGeneration /> },
+        ]
+      },
       // Catch-all -> redirect
       { path: "*", element: <Navigate to="/" replace /> },
     ],

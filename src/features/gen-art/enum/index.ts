@@ -15,11 +15,11 @@ export enum ModelKey {
     // Add other models your backend supports
 }
 
-export enum HistoryFilter {
-    TODAY = "today",
-    YESTERDAY = "yesterday",
-    LAST7DAYS = "last7days",
-    LAST30DAYS = "last30days"
+export const HistoryFilter = {
+    TODAY: {label: 'Today', value: 'today'},
+    YESTERDAY: {label: 'Yesterday', value: 'yesterday'},
+    LAST7DAYS: {label: 'Last 7 Days', value: 'last7days'},
+    LAST30DAYS: {label: 'Last 30 days', value: "last30days"}
 }
 
 export const styleOptions = [

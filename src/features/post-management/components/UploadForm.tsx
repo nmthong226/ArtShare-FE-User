@@ -144,7 +144,6 @@ const UploadForm: React.FC<{
             Details
           </Typography>
         </Box>
-
         <Box className="space-y-1 px-3 pb-3">
           <Typography className="dark:text-mountain-200 text-base text-left">
             Description

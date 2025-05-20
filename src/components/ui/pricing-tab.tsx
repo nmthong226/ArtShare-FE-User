@@ -29,8 +29,7 @@ export function Tab({
       {selected && (
         <motion.span
           layoutId="tab"
-          transition={{ type: "spring", duration: 0.4 }}
-          className="z-0 absolute inset-0 bg-background shadow-sm rounded-full"
+          className="z-0 absolute inset-0 bg-background shadow-sm border border-mountain-100 rounded-full"
         />
       )}
       {discount && (

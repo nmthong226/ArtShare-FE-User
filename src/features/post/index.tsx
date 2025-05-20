@@ -1,7 +1,9 @@
-import PostInfo from "@/features/post/components/PostInfo";
-import PostAssets from "@/features/post/components/PostAssets";
-import PostArtist from "@/features/post/components/PostArtist";
-import PostComments from "@/features/post/components/PostComments";
+import PostInfo from "./components/PostInfo";
+import PostAssets from "./components/PostAssets";
+import PostArtist from "./components/PostArtist";
+import PostComments from "./components/PostComments";
+import { fetchPost } from "./api/post.api";
+import { fetchComments } from "./api/comment.api.ts";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 // import PostShare from "@/components/posts/PostShare";
@@ -11,10 +13,11 @@ import { CircularProgress } from "@mui/material";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
+
   const {
     data: postData,
-    isLoading,
-    error,
+    isLoading: isPostLoading,
+    error: postError,
   } = useQuery({
     queryKey: ["postData", postId],
     queryFn: async () => {
@@ -25,7 +28,19 @@ const Post: React.FC = () => {
     },
   });
 
-  if (isLoading) {
+  const {
+    data: comments,
+    isLoading: isCommentsLoading,
+    error: commentsError,
+  } = useQuery({
+    queryKey: ["comments", postId],
+    queryFn: async () => {
+      return await fetchComments(parseInt(postId!));
+    },
+    enabled: !!postId, // Ensure postId is available before fetching comments
+  });
+  console.log(comments);
+  if (isPostLoading || isCommentsLoading) {
     return (
       <div className="flex m-4 text-center">
         <CircularProgress size={36} />
@@ -34,8 +49,8 @@ const Post: React.FC = () => {
     );
   }
 
-  if (error) {
-    return <div>Failed to fetch post data.</div>;
+  if (postError || commentsError) {
+    return <div>Failed to fetch data.</div>;
   }
 
   return (
@@ -45,7 +60,7 @@ const Post: React.FC = () => {
           <PostArtist artist={postData!.user} postData={postData!} />
           <PostAssets medias={postData!.medias} />
           <PostInfo postData={postData!} />
-          <PostComments />
+          <PostComments comments={comments!} postId={postData!.id} />
         </div>
       </div>
       <div className="hidden md:flex flex-row gap-4 h-full">
@@ -56,7 +71,7 @@ const Post: React.FC = () => {
           <div className="flex flex-col gap-4 rounded-2xl h-full overflow-y-scroll custom-scrollbar">
             <PostArtist artist={postData!.user} postData={postData!} />
             <PostInfo postData={postData!} />
-            <PostComments />
+            <PostComments comments={comments!} postId={postData!.id} />
           </div>
         </div>
       </div>

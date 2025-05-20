@@ -1,19 +1,13 @@
 
-import React, { useEffect, useState } from "react";
-import { Box, Button, Container } from "@mui/material";
+import { useEffect, useState } from "react";
+import { Box, Container } from "@mui/material";
 import { ProfileHeader } from "./components/ProfileHeader";
-import { ProfileForm } from "./components/ProfileForm";
 import { AvatarSection } from "./components/AvatarSection";
 import { getUserProfile, UserProfile } from "../user-profile-public/api/user-profile.api";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useSnackbar } from "@/contexts/SnackbarProvider";
-import { UpdateUserDTO, updateUserProfile } from "./api/user-profile.api";
-import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
-
+import { useQuery } from "@tanstack/react-query";
+import EditProfileForm from "./components/EditProfileForm";
 
 export default function EditUser() {
-    const queryClient = useQueryClient();
-    const { showSnackbar } = useSnackbar();
     const {
     data: profileData, 
     isLoading: loadingProfile
@@ -28,23 +22,23 @@ export default function EditUser() {
     }
   }, [profileData]);
 
-  const { mutate: saveProfile, isPending: saving } = useMutation<
-    UserProfile,
-    Error,
-    UpdateUserDTO
-  >({
-    mutationFn: async (payload: UpdateUserDTO) => {
-      const response = await updateUserProfile(payload);
-      return response.data;
-    },
-    onSuccess: (updated) => {
-      queryClient.setQueryData(["userProfile"], updated);
-      showSnackbar("Profile updated successfully.", "success");
-    },
-    onError: (err) => {
-      showSnackbar(err.message ?? "Failed to update profile.", "error");
-    },
-  });
+  // const { mutate: saveProfile } = useMutation<
+  //   UserProfile,
+  //   Error,
+  //   UpdateUserDTO
+  // >({
+  //   mutationFn: async (payload: UpdateUserDTO) => {
+  //     const response = await updateUserProfile(payload);
+  //     return response.data;
+  //   },
+  //   onSuccess: (updated) => {
+  //     queryClient.setQueryData(["userProfile"], updated);
+  //     showSnackbar("Profile updated successfully.", "success");
+  //   },
+  //   onError: (err) => {
+  //     showSnackbar(err.message ?? "Failed to update profile.", "error");
+  //   },
+  // });
 
   const [formData, setFormData] = useState<UserProfile | null>({
     id: profileData?.id ?? "",
@@ -59,31 +53,11 @@ export default function EditUser() {
     birthday: profileData?.birthday ?? "",
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((f) => (f ? { ...f, [name]: value } : f));
-  };
-
-  const handleSave = () => {
-    if (!formData) return;
-    const payload: UpdateUserDTO = {
-      email: formData.email,
-      username: formData.username,
-      full_name: formData.full_name,
-      bio: formData.bio,
-      profile_picture_url: formData.profile_picture_url,
-      birthday: formData.birthday,
-    };
-    saveProfile(payload);
-  };
-
   if (loadingProfile || !formData) {
     return (
       <div className="m-4 text-center">
-        <LoadingSpinner />
-      </div>
+        Loading....
+      </div>  
     );
   }
 
@@ -91,7 +65,7 @@ export default function EditUser() {
     <Container disableGutters className="min-h-screen bg-[#121212]">
       <ProfileHeader />
 
-      <Box className="p-6">
+      <Box className="p-6 pt-2">
           <AvatarSection
             profilePictureUrl={formData.profile_picture_url}
             onUploadSuccess={(newUrl: string) =>
@@ -103,15 +77,16 @@ export default function EditUser() {
       </Box>
 
       <Box className="p-6 m-0 grid grid-cols-1 md:grid-cols-1 gap-6">
-        <ProfileForm
+        {/* <ProfileForm
           formData={formData}
           handleChange={handleChange}
           onSubmit={handleSave}
           isSubmitting={saving}
-        />
+        /> */}
+        {profileData && <EditProfileForm initialData={profileData} />}
       </Box>
 
-      <Box className="p-6 pt-3">
+      {/* <Box className="p-6 pt-3">
         <Button
           variant="contained"
           onClick={handleSave}
@@ -120,7 +95,7 @@ export default function EditUser() {
         >
           {saving ? "Saving…" : "Save"}
         </Button>
-      </Box>
+      </Box> */}
     </Container>
   );
 }

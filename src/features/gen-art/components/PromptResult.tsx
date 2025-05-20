@@ -31,6 +31,7 @@ interface promptResultProps {
     tempPrompt?: string,
     result?: PromptResult,
     generating: boolean | null,
+    useToShare?: boolean | null
 }
 
 const PromptResult: React.FC<promptResultProps> = ({
@@ -38,6 +39,7 @@ const PromptResult: React.FC<promptResultProps> = ({
     tempPrompt,
     result,
     generating,
+    useToShare
 }) => {
     const [open, setOpen] = useState(false);
     const handleDownloadAll = async () => {
@@ -81,19 +83,20 @@ const PromptResult: React.FC<promptResultProps> = ({
                     <p className='line-clamp-1'><span className='mr-2 font-sans font-medium'>Prompt</span>{result?.user_prompt}</p>
                     <div className='flex items-center space-x-2'>
                         <Tooltip title="Share Post" placement='bottom' arrow>
-                            <Button onClick={() => handleNavigateToUploadPost(result!)} className='flex bg-mountain-100 w-8' title='Share Post'>
+                            <Button onClick={() => handleNavigateToUploadPost(result!)} className={`flex bg-mountain-100 ${useToShare ? 'w-36' : 'w-8'}`}>
                                 <RiShareBoxFill className='size-5' />
+                                <p className={`${!useToShare ? 'hidden' : 'ml-2 font-normal'}`}>Share These</p>
                             </Button>
                         </Tooltip>
                         <Tooltip title="Download" placement='bottom' arrow>
-                            <Button className='bg-mountain-100' onClick={handleDownloadAll}>
+                            <Button className='bg-mountain-100' onClick={handleDownloadAll} hidden={useToShare || false}>
                                 <FiDownload className='size-5' />
                             </Button>
                         </Tooltip>
                         <Popover open={open} onOpenChange={setOpen}>
                             <PopoverTrigger asChild>
                                 <Tooltip title="Delete" placement='bottom' arrow>
-                                    <Button className='flex bg-mountain-100 w-4'>
+                                    <Button className='flex bg-mountain-100 w-4' hidden={useToShare || false}>
                                         <FiTrash2 className='size-5 text-red-900' />
                                     </Button>
                                 </Tooltip>
@@ -130,6 +133,7 @@ const PromptResult: React.FC<promptResultProps> = ({
                                     result={result}
                                     otherImages={result.image_urls}
                                     index={index}
+                                    useToShare={useToShare}
                                 // onDelete={onDeleteSingle!}
                                 />
                             </ImageListItem>

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Typography, Button } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Button, Tooltip } from "@mui/material";
 import UploadForm from "./components/UploadForm"; // Adjust import path as needed
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { createPost } from "./api/create-post";
@@ -11,11 +11,15 @@ import {
   uploadFile,
 } from "@/api/storage";
 import { nanoid } from "nanoid";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import MediaSelection from "./components/media-selection";
+import { FaMagic } from "react-icons/fa";
+import { generatePostContent } from "./api/generate-post-content.api";
 
 const UploadPost: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const selectedPrompt: PromptResult | undefined = location.state?.prompt;
   const { showSnackbar } = useSnackbar();
   const [lastCrop, setLastCrop] = useState<{ x: number; y: number }>({
     x: 0,
@@ -26,21 +30,25 @@ const UploadPost: React.FC = () => {
     File | undefined
   >();
 
+  // const [mode, setMode] = useState<'upload' | 'browse'>('upload');
+  const [isLoading, setIsLoading] = useState(false);
+  const [hasArtNovaImages, setHasArtNovaImages] = useState(false);
+
+  // SHARED FIELDS
   const [title, setTitle] = useState("");
-  // Thumbnail states
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [cate_ids, setCateIds] = useState<number[]>([]);
   const [description, setDescription] = useState("");
+  const [isMature, setIsMature] = useState(false);
+  const [aiCreated, setAiCreated] = useState(false);
+
+  // UPLOAD INFO
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
-
   const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(
     undefined,
   );
   const [thumbnailCropMeta, setThumbnailCropMeta] = useState<string>("{}");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isMature, setIsMature] = useState(false);
-  const [aiCreated, setAiCreated] = useState(false);
 
   const VIDEO_STORAGE_DIRECTORY = "posts";
 
@@ -56,7 +64,6 @@ const UploadPost: React.FC = () => {
     cate_ids?: number[],
   ) => {
     const formData = new FormData();
-
     formData.append("title", title);
     if (description) formData.append("description", description);
     // TODO: delete this when we have backend for categories
@@ -106,21 +113,16 @@ const UploadPost: React.FC = () => {
   };
 
   // Function to handle the form submission
-  const handleSubmit = async () => {
+  const handleSubmitMediaUploaded = async () => {
     setIsSubmitted(true);
-
-    // Validation for required fields
     if (!title.trim()) {
       showSnackbar("Title is required.", "error");
       return;
     }
-
     if ((!imageFiles || imageFiles.length === 0) && !videoFile) {
       showSnackbar("At least one image or video is required.", "error");
       return;
     }
-
-    // ✅ Video length validation
     if (videoFile) {
       const isVideoValid = await validateVideoDuration(videoFile, 60); // 60 sec max
       if (!isVideoValid) {
@@ -128,28 +130,22 @@ const UploadPost: React.FC = () => {
         return;
       }
     }
-
     try {
       setIsLoading(true);
-
       if (!thumbnailFile) {
         throw new Error("Thumbnail file is not defined");
       }
-
       // Create promises to upload video and create post at the same time
       const uploadVideoPromise = handleUploadVideo();
       const uploadInitThumbnailPromise = handleUploadInitialThumbnail();
       const uploadThumbnailPromise = handleUploadThumbnail();
-
       // Use Promise.all with await to wait for both operations to complete
       const [videoUrl, initialThumbnail, thumbnailUrl] = await Promise.all([
         uploadVideoPromise,
         uploadInitThumbnailPromise,
         uploadThumbnailPromise,
       ]);
-
       await handleCreatePost(thumbnailUrl, initialThumbnail, videoUrl);
-
       navigate("/explore");
     } catch (error) {
       console.error("Error during submission:", error);
@@ -163,7 +159,6 @@ const UploadPost: React.FC = () => {
     if (!videoFile) {
       return Promise.resolve(undefined);
     }
-
     try {
       const presignedUrlResponse: GetPresignedUrlResponse =
         await getPresignedUrl(
@@ -172,9 +167,7 @@ const UploadPost: React.FC = () => {
           "video",
           VIDEO_STORAGE_DIRECTORY,
         );
-
       await uploadFile(videoFile, presignedUrlResponse.presignedUrl);
-
       console.log("Video uploaded successfully:", presignedUrlResponse.fileUrl);
       return presignedUrlResponse.fileUrl;
     } catch (error) {
@@ -200,7 +193,6 @@ const UploadPost: React.FC = () => {
       aiCreated,
       cate_ids,
     );
-
     try {
       const response = await createPost(formData);
       console.log("Post created:", response);
@@ -213,16 +205,13 @@ const UploadPost: React.FC = () => {
 
   const handleUploadThumbnail = async (): Promise<string> => {
     const thumbnailFileName = `thumbnail_${nanoid(6)}`;
-
     const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
       thumbnailFileName,
       thumbnailFile!.type.split("/")[1],
       "image",
       VIDEO_STORAGE_DIRECTORY,
     );
-
     await uploadFile(thumbnailFile!, presignedUrlResponse.presignedUrl);
-
     return presignedUrlResponse.fileUrl;
   };
 
@@ -255,7 +244,76 @@ const UploadPost: React.FC = () => {
     }
   };
 
-  const isMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
+  const isUploadMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
+
+
+  useEffect(() => {
+    if (!selectedPrompt) return
+
+    const fetchFilesFromUrls = async () => {
+      try {
+        const files: File[] = await Promise.all(
+          selectedPrompt.image_urls.map(async (url) => {
+            // 1️⃣ fetch the URL
+            const res = await fetch(url, {
+              method: 'GET',
+            })
+            if (!res.ok) {
+              throw new Error(`Failed to fetch ${url}: ${res.status}`)
+            }
+
+            // 2️⃣ read it as a Blob
+            const blob = await res.blob()
+
+            // 3️⃣ derive a filename (or hard-code one)
+            const parts = url.split('/')
+            const filename = parts[parts.length - 1] || 'image.jpg'
+
+            // 4️⃣ create a File from the Blob
+            return new File([blob], filename, { type: blob.type })
+          })
+        )
+
+        // 5️⃣ update your state
+        setImageFiles(files)
+        setHasArtNovaImages(true)
+        setThumbnailFile(files[0])
+      } catch (err) {
+        console.error('Error fetching images from S3', err)
+      }
+    }
+
+    fetchFilesFromUrls()
+
+    // clear prompt out of history
+    navigate(location.pathname, {
+      replace: true,       // swap current entry instead of pushing
+      state: {},           // or `state: null`
+    })
+  }, [location.pathname, navigate, selectedPrompt])
+
+  const handleGenerateContent = async () => {
+    if (!imageFiles || imageFiles.length === 0) {
+      showSnackbar("Please upload an image first.", "error");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      const formData = new FormData();
+      imageFiles.forEach((file) => formData.append("images", file));
+      const response = await generatePostContent(formData);
+      const { title, description, categories } = response;
+      console.log("Generated content:", response);
+      setTitle(title);
+      setDescription(description);
+      setCateIds(categories.map(cate => cate.id));
+    } catch (error) {
+      console.error("Error generating content:", error);
+      showSnackbar("Failed to generate content.", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Box className="dark:bg-mountain-950 w-full h-full">
@@ -276,7 +334,7 @@ const UploadPost: React.FC = () => {
         >
           <CircularProgress color="inherit" />
           <Typography variant="h6" sx={{ mt: 2, color: "white" }}>
-            Creating post...
+            Processing...
           </Typography>
         </Backdrop>
       )}
@@ -286,14 +344,17 @@ const UploadPost: React.FC = () => {
         style={{ overflow: "hidden" }}
       >
         {/* LEFT COLUMN */}
-
         <MediaSelection
           setImageFiles={setImageFiles}
           setVideoFile={setVideoFile}
           setThumbnailFile={handleThumbnailChange}
+          imageFiles={imageFiles ?? []}
+          videoFile={videoFile}
+          hasArtNovaImages={hasArtNovaImages}
+          setHasArtNovaImages={setHasArtNovaImages}
         />
         {/* RIGHT COLUMN: FORM FIELDS & ACTIONS */}
-        <Box className="flex flex-col space-y-3 w-[50%]">
+        <Box className="flex flex-col space-y-3 w-[40%]">
           {/* <Box className="mb-2">
             <UploadToggle
               isImageUpload={isImageUpload}
@@ -301,10 +362,28 @@ const UploadPost: React.FC = () => {
             />
           </Box> */}
           {/* Form fields */}
-          <Box className="pr-4 rounded-md overflow-y-auto custom-scrollbar">
+          <Box className="relative pr-4 rounded-md w-full overflow-y-auto custom-scrollbar">
+            <Tooltip title="Auto Generate Content (title, description, categories)" arrow placement="left">
+              <Button
+                className="
+                top-2 z-50 sticky 
+                flex justify-center items-center 
+                bg-gradient-to-b from-blue-400 to-purple-400 shadow-md 
+                ml-auto rounded-full w-12 h-12
+                hover:scale-105 duration-300 ease-in-out hover:cursor-pointer transform
+                p-0
+                min-w-0 
+                "
+                onClick={handleGenerateContent}
+              >
+                <FaMagic className="size-5 text-white" />
+              </Button>
+            </Tooltip>
             <UploadForm
               thumbnailFile={thumbnailFile}
+              originalThumbnailFile={originalThumbnailFile}
               setOriginalThumbnailFile={setOriginalThumbnailFile}
+              // existingThumbnailUrl={aiImages?.image_urls[0]}
               onThumbnailChange={handleThumbnailChange}
               isSubmitted={isSubmitted}
               cate_ids={cate_ids}
@@ -321,29 +400,26 @@ const UploadPost: React.FC = () => {
               lastZoom={lastZoom}
               setLastCrop={setLastCrop}
               setLastZoom={setLastZoom}
-              originalThumbnailFile={originalThumbnailFile}
             />
           </Box>
-
           <hr className="border-mountain-300 dark:border-mountain-700 border-t-1 w-full" />
-
           {/* Bottom actions */}
-          <Box className="flex justify-between mt-auto pr-4 w-full">
+          <Box className="flex justify-between bg-none mt-auto pr-4 w-full">
             <Button
               variant="contained"
-              onClick={handleSubmit}
-              disabled={!isMediaValid}
+              onClick={handleSubmitMediaUploaded}
+              disabled={!(isUploadMediaValid)}
               className="ml-auto rounded-md"
               sx={{
                 textTransform: "none",
-                background: !isMediaValid
+                background: !(isUploadMediaValid)
                   ? "linear-gradient(to right, #9ca3af, #6b7280)" // Tailwind's gray-400 to gray-500
                   : "linear-gradient(to right, #3730a3, #5b21b6, #4c1d95)", // indigo-violet gradient
                 color: "white",
-                opacity: !isMediaValid ? 0.6 : 1,
-                pointerEvents: !isMediaValid ? "none" : "auto",
+                opacity: !(isUploadMediaValid) ? 0.6 : 1,
+                pointerEvents: !(isUploadMediaValid) ? "none" : "auto",
                 "&:hover": {
-                  background: !isMediaValid
+                  background: !(isUploadMediaValid)
                     ? "linear-gradient(to right, #9ca3af, #6b7280)"
                     : "linear-gradient(to right, #312e81, #4c1d95, #3b0764)",
                 },

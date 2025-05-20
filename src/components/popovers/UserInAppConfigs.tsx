@@ -87,7 +87,7 @@ const UserInAppConfigs = () => {
             </div>
             <hr className="my-2 border-mountain-100 dark:border-mountain-800 border-t-1" />
             <Link
-              to={`/u/${user.username}`}
+              to={`/${user.username}`}
               className="flex hover:bg-mountain-50 dark:hover:bg-mountain-800 p-3 py-2 w-full hover:cursor-pointer"
             >
               <p className="text-sm">User Profile</p>

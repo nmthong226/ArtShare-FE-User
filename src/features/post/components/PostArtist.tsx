@@ -65,13 +65,7 @@ const PostArtist = ({ artist, postData }: { artist: User; postData: Post }) => {
               ) : (
                 <Avatar
                   name={artist.username || "Unknown"}
-                  colors={[
-                    "#84bfc3",
-                    "#fff5d6",
-                    "#ffb870",
-                    "#d96153",
-                    "#000511",
-                  ]}
+                  colors={["#84bfc3", "#ff9b62", "#d96153"]}
                   variant="beam"
                   size={48}
                 />

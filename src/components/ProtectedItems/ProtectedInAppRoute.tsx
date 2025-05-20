@@ -7,13 +7,21 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, loading } = useUser(); // Access `loading` from context
+  const { user, loading } = useUser();
+
   if (loading) {
-    return;
+    return <div>Loading...</div>;
   }
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
+
+  console.log("@@ onboard", user.is_onboard);
+  if (!user.is_onboard) {
+    return <Navigate to="/onboarding" replace />;
+  }
+
   return <>{children}</>;
 };
 

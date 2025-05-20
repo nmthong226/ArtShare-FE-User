@@ -4,7 +4,7 @@ import { Photo, RowsPhotoAlbum, RenderPhotoContext } from "react-photo-album";
 import "react-photo-album/rows.css";
 
 import { ImageRenderer } from "./ImageRenderer";
-import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
+import { CircularProgress } from "@mui/material";
 
 export interface GalleryPhoto extends Photo {
   key: string;
@@ -42,8 +42,9 @@ const IGallery: React.FC<IGalleryProps> = ({
 }) => {
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <LoadingSpinner />
+      <div className="flex justify-center items-center space-x-4 h-64">
+        <CircularProgress size={36}/>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -80,8 +81,9 @@ const IGallery: React.FC<IGalleryProps> = ({
       />
       {/* --- Loading More Spinner --- */}
       {isFetchingNextPage && (
-        <div className="my-4 text-center">
-          <LoadingSpinner />
+        <div className="flex my-4 text-center">
+          <CircularProgress size={48}/>
+          <p>Loading...</p>
         </div>
       )}
       {isError && !isLoading && photos.length > 0 && (

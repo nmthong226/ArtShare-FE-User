@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 
 //Libs
 // import { useInfiniteQuery } from "@tanstack/react-query";
-import { Button, Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { Button, CircularProgress, Paper, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 //Icons
 import { Ellipsis, LoaderPinwheel } from "lucide-react";
@@ -25,7 +25,6 @@ import { BlogList, categoriesData } from "./mocks";
 
 //Style
 import './BrowseBlogs.css'
-import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 
 // import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
 
@@ -329,8 +328,9 @@ const BrowseBlogs: React.FC = () => {
         </div>
       </div>
       {loading ?
-        <div className="flex justify-center items-center w-full h-[calc(100vh-20rem)]">
-          <LoadingSpinner />
+        <div className="flex justify-center items-center space-x-4 w-full h-[calc(100vh-20rem)]">
+          <CircularProgress size={36} />
+          <p>Loading...</p>
         </div> :
         <div
           ref={galleryAreaRef}

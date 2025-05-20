@@ -5,9 +5,9 @@ import PostComments from "@/features/post/components/PostComments";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
 // import PostShare from "@/components/posts/PostShare";
-import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
 import { fetchPost } from "./api/post.api";
+import { CircularProgress } from "@mui/material";
 
 const Post: React.FC = () => {
   const { postId } = useParams<{ postId: string }>();
@@ -27,8 +27,9 @@ const Post: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="m-4 text-center">
-        <LoadingSpinner />
+      <div className="flex m-4 text-center">
+        <CircularProgress size={36} />
+        <p>Loading...</p>
       </div>
     );
   }

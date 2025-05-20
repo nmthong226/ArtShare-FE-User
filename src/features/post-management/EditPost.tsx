@@ -19,7 +19,6 @@ import { fetchPost } from "../post/api/post.api";
 import { updatePost } from "./api/update-post";
 import UploadForm from "./components/UploadForm";
 import MediaSelection from "./components/media-selection";
-import LoadingSpinner from "@/components/fallbacks/LoadingSpinner";
 import { mappedCategoryPost } from "@/lib/utils";
 import { nanoid } from "nanoid";
 import { Post } from "@/types";
@@ -296,8 +295,9 @@ const EditPost: React.FC = () => {
     console.log({ postData, isPostLoading, postError });
 
     return (
-      <Box className="flex justify-center items-center h-full">
-        <LoadingSpinner />
+      <Box className="flex justify-center items-center space-x-4 h-full">
+        <CircularProgress size={36} />
+        <p>Loading...</p>
       </Box>
     );
   }

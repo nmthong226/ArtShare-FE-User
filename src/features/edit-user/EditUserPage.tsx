@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from "react";
 import { Box, Container } from "@mui/material";
-import { ProfileHeader } from "./components/ProfileHeader";
 import { AvatarSection } from "./components/AvatarSection";
 import { getUserProfile, UserProfile } from "../user-profile-public/api/user-profile.api";
 import { useQuery } from "@tanstack/react-query";

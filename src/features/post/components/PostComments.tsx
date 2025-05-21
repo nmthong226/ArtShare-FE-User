@@ -174,7 +174,7 @@ const CommentRow = ({
         <div className="flex flex-col flex-grow">
           <div className="flex items-center gap-2 text-sm">
             <span className="font-bold">@{comment.user.username}</span>
-            <span className="text-neutral-500 text-xs">
+            <span className="text-neutral-500 dark:text-neutral-400 text-xs">
               {new Date(comment.created_at).toLocaleDateString()}
             </span>
             {new Date(comment.updated_at).getTime() !==
@@ -225,20 +225,20 @@ const CommentRow = ({
             <div className="text-sm whitespace-pre-wrap">{comment.content}</div>
           )}
 
-          <div className="flex items-center gap-4 mt-1 text-xs text-neutral-600">
+          <div className="flex items-center gap-4 mt-1 text-xs text-neutral-600 dark:text-neutral-400">
             <button
               onClick={() => onLike(comment.id)}
-              className={`flex items-center gap-1 hover:text-black ${
-                comment.likedByCurrentUser ? "text-blue-600 font-semibold" : ""
+              className={`flex items-center gap-1 hover:text-black hover:dark:text-white ${
+                comment.likedByCurrentUser ? "text-blue-600 dark:text-blue-200 font-semibold" : ""
               }`}
             >
               <ThumbsUp size={16} />
               <span>{comment.like_count ?? 0}</span>
             </button>
-            <ThumbsDown size={16} className="cursor-pointer hover:text-black" />
+            <ThumbsDown size={16} className="cursor-pointer hover:text-black hover:dark:text-white" />
             <button
               onClick={() => onReply(comment.id, comment.user.username)}
-              className="hover:text-black"
+              className="hover:text-black hover:dark:text-white"
             >
               Reply
             </button>
@@ -277,7 +277,7 @@ const CommentRow = ({
         <div className="ml-[32px] flex flex-col gap-1">
           <button
             onClick={toggleReplies}
-            className="flex items-center gap-1 text-xs text-blue-600"
+            className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-200"
           >
             {showReplies ? <ChevronUp size={14} /> : <ChevronDown size={14} />}{" "}
             {showReplies ? "Hide" : "View"}{" "}
@@ -286,7 +286,7 @@ const CommentRow = ({
               : "replies"}
           </button>
           {loading && (
-            <div className="flex items-center gap-1 text-xs text-neutral-500 p-2">
+            <div className="flex items-center gap-1 text-xs text-neutral-500 dark:text-neutral-300 p-2">
               <CircularProgress size={12} /> Loading replies…
             </div>
           )}
@@ -502,7 +502,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         ref={_ref}
-        className="flex flex-col gap-4 bg-white rounded-2xl w-full pb-28"
+        className="flex flex-col gap-4 bg-white dark:bg-mountain-950 rounded-2xl w-full pb-28"
       >
         <h4 className="font-bold text-sm">COMMENTS</h4>
 
@@ -528,7 +528,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         </div>
 
         {/* input */}
-        <div className="right-0 bottom-0 left-0 absolute flex gap-2 bg-white p-4 border-t-[1px] border-mountain-200 rounded-2xl rounded-t-none">
+        <div className="right-0 bottom-0 left-0 absolute flex gap-2 bg-white dark:bg-mountain-950 p-4 border-t-[1px] border-mountain-200 rounded-2xl rounded-t-none">
           {user?.profile_picture_url ? (
             <img
               src={user.profile_picture_url}

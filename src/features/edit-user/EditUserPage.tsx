@@ -63,7 +63,7 @@ export default function EditUser() {
 
   return (
     <Container disableGutters className="min-h-screen bg-[#121212]">
-      <ProfileHeader />
+      {/* <ProfileHeader /> */}
 
       <Box className="p-6 pt-2">
           <AvatarSection

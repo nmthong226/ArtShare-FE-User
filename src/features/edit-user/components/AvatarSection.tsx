@@ -82,7 +82,7 @@ export function AvatarSection({
       </Backdrop>
 
       <Box className="mb-6">
-        <Typography variant="body1" className="mb-2 text-white">
+        <Typography variant="h5" className="mb-2 text-white">
           Avatar
         </Typography>
         <Paper className="bg-[#1e1e1e] p-4 flex flex-col items-center justify-center">

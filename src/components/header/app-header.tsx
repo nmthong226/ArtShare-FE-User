@@ -73,6 +73,11 @@ const Header: React.FC = () => {
             path: "/collections",
             label: "My Collections",
             description: "",
+        }, 
+        {
+            path: "/edit-user",
+            label: "Profile",
+            description: "Update your user profile information if needed",
         }
     ];
 

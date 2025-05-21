@@ -1,7 +1,6 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import {
   Box,
-  Typography,
   Button,
   Paper,
   Backdrop,
@@ -81,11 +80,8 @@ export function AvatarSection({
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      <Box className="mb-6">
-        <Typography variant="h5" className="mb-2 text-white">
-          Avatar
-        </Typography>
-        <Paper className="bg-[#1e1e1e] p-4 flex flex-col items-center justify-center">
+      <Box>
+        <Paper className="bg-[#E4E6EB] dark:bg-[#1e1e1e] p-4 flex flex-col items-center justify-center">
           <Box className="w-32 h-32 rounded-full overflow-hidden bg-gray-700 mb-4 flex items-center justify-center">
             {preview ? (
               <img

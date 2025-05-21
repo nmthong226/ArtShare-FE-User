@@ -61,7 +61,7 @@ export default function EditUser() {
   }
 
   return (
-    <Container disableGutters className="min-h-screen bg-[#121212]">
+    <Container disableGutters className="min-h-screen bg-white dark:bg-[#121212]">
       {/* <ProfileHeader /> */}
 
       <Box className="p-6 pt-2">
@@ -75,7 +75,7 @@ export default function EditUser() {
           />
       </Box>
 
-      <Box className="p-6 m-0 grid grid-cols-1 md:grid-cols-1 gap-6">
+      <Box className="px-6 pt-2 m-0 grid grid-cols-1 md:grid-cols-1 gap-6">
         {/* <ProfileForm
           formData={formData}
           handleChange={handleChange}

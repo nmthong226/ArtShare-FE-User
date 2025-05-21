@@ -218,6 +218,7 @@ export const UserProfileCard = () => {
             onClose={handleMenuClose}
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             transformOrigin={{ vertical: "top", horizontal: "right" }}
+            className="m-2"
           >
             {isOwnProfile && (
               <MenuItem onClick={handleEdit}>Edit Profile</MenuItem>

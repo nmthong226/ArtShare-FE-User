@@ -13,7 +13,7 @@ import { Typography } from "@mui/material";
 import { AiOutlineInfo } from "react-icons/ai";
 
 interface InfoMediaRemainingProps {
-    ImageRemaining: number,
+    currentImageCount: number,
     MaxImage: number,
     hasVideo: boolean,
     MaxVideo: number,
@@ -21,7 +21,7 @@ interface InfoMediaRemainingProps {
 }
 
 const InfoMediaRemaining: React.FC<InfoMediaRemainingProps> = ({
-    ImageRemaining,
+    currentImageCount,
     MaxImage,
     hasVideo,
     MaxVideo,
@@ -42,7 +42,7 @@ const InfoMediaRemaining: React.FC<InfoMediaRemainingProps> = ({
                 <div className="flex px-2 py-1">
                     <span className="mr-2 font-medium">Up to: </span>
                     <Typography className="text-gray-900 dark:text-mountain-200 text-base">
-                        {ImageRemaining}/{MaxImage} images
+                        {currentImageCount}/{MaxImage} images
                     </Typography>
 
                     {hasAI && <Typography className="text-gray-900 dark:text-mountain-200 text-base">

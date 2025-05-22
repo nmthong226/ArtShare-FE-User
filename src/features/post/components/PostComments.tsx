@@ -16,11 +16,11 @@ import {
   Snackbar,
 } from "@mui/material";
 import {
-  ThumbsUp,
-  ThumbsDown,
   ChevronDown,
   ChevronUp,
   SendHorizontal,
+  Heart,
+  MoreVertical,
 } from "lucide-react";
 import Avatar from "boring-avatars";
 import { useFocusContext } from "@/contexts/focus/useFocusText";
@@ -129,6 +129,21 @@ const CommentRow = ({
     setAnchorEl(e.currentTarget);
   const closeMenu = () => setAnchorEl(null);
 
+  // Date formatting options
+  const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  };
+
+  const DATETIME_FORMAT_OPTIONS_FOR_TITLE: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  };
+
   useEffect(() => {
     const prev = prevReplyCountRef.current;
     const curr = comment.replies?.length ?? 0;
@@ -184,26 +199,25 @@ const CommentRow = ({
         <div className="flex flex-col flex-grow">
           <div className="flex items-center gap-2 text-sm">
             <span className="font-bold">@{comment.user.username}</span>
-            <span className="text-neutral-500 text-xs">
-              {new Date(comment.created_at).toLocaleDateString()}
+            <span
+              className="text-neutral-500 text-xs"
+              title={
+                new Date(comment.updated_at).getTime() !==
+                new Date(comment.created_at).getTime()
+                  ? `Edited ${new Date(comment.updated_at).toLocaleString(
+                      undefined,
+                      DATETIME_FORMAT_OPTIONS_FOR_TITLE,
+                    )}`
+                  : undefined
+              }
+            >
+              {new Date(comment.created_at).toLocaleDateString(
+                undefined,
+                DATE_FORMAT_OPTIONS,
+              )}
+              {new Date(comment.updated_at).getTime() !==
+                new Date(comment.created_at).getTime() && " (edited)"}
             </span>
-            {new Date(comment.updated_at).getTime() !==
-              new Date(comment.created_at).getTime() && (
-              <>
-                <span className="mx-0.5 text-neutral-400">·</span>
-                <span
-                  className="text-xs italic text-neutral-400"
-                  title={`edited ${new Date(comment.updated_at).toLocaleString()}`}
-                >
-                  edited at{" "}
-                  {new Date(comment.updated_at).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}{" "}
-                  on {new Date(comment.updated_at).toLocaleDateString()}
-                </span>
-              </>
-            )}
           </div>
 
           {isEditing ? (
@@ -242,10 +256,9 @@ const CommentRow = ({
                 comment.likedByCurrentUser ? "text-blue-600 font-semibold" : ""
               }`}
             >
-              <ThumbsUp size={16} />
+              <Heart size={16} />
               <span>{comment.like_count ?? 0}</span>
             </button>
-            <ThumbsDown size={16} className="cursor-pointer hover:text-black" />
             <button
               onClick={() => onReply(comment.id, comment.user.username)}
               className="hover:text-black"
@@ -257,8 +270,8 @@ const CommentRow = ({
 
         {isMine && !isEditing && (
           <>
-            <IconButton className="!p-1" onClick={handleMenu}>
-              <span>•••</span>
+            <IconButton onClick={handleMenu} className="!p-1">
+              <MoreVertical size={20} />
             </IconButton>
             <Menu anchorEl={anchorEl} open={openMenu} onClose={closeMenu}>
               <MenuItem
@@ -413,6 +426,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           : [optimistic, ...prev],
       );
 
+      listRef.current?.scrollTo({ top: 0, behavior: "smooth" });
       // Clear input and set states
       setNewComment("");
       onCommentAdded();
@@ -524,10 +538,10 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       setDeletingId(id);
       try {
         await api.delete(`/comments/${id}`);
+        onCommentDeleted();
       } catch (err) {
         console.error(err);
         setComments(prev);
-        onCommentDeleted();
         alert("Could not delete comment.");
       } finally {
         setDeletingId(null);
@@ -591,7 +605,10 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           console.error("Failed to load comments:", err);
         }
       };
-      loadComments();
+      if (postId) {
+        // Ensure postId is available
+        loadComments();
+      }
     }, [postId]);
 
     return (
@@ -650,27 +667,39 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           <div className="flex flex-grow gap-2">
             <TextareaAutosize
               ref={textareaRef}
-              placeholder="Add a comment"
+              placeholder={replyParentId ? `Replying to...` : "Add a comment"}
               className="border border-neutral-300 rounded-lg p-3 w-full resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 "
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               disabled={isPosting}
+              onKeyDown={(e) => {
+                // submit on Enter, new line on Shift+Enter
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  if (newComment.trim()) handleAdd();
+                }
+              }}
             />
 
             <Button
               variant="contained"
               className="p-0.5 min-w-auto h-12 aspect-[1/1]"
               onClick={handleAdd}
-              disabled={!newComment.trim()}
+              disabled={!newComment.trim() || isPosting}
             >
-              <SendHorizontal />
+              {isPosting ? (
+                <CircularProgress size={24} color="inherit" />
+              ) : (
+                <SendHorizontal />
+              )}
             </Button>
           </div>
         </div>
 
         {deletingId && (
           <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-sm">
-            Deleting…
+            <CircularProgress size={20} />{" "}
+            <span className="ml-2">Deleting…</span>
           </div>
         )}
       </div>

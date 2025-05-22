@@ -109,6 +109,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
     try {
       willLike ? await likePost(postData.id) : await unlikePost(postData.id);
     } catch (error) {
+      console.error(error)
       setUserLike(!willLike);
       setLikeCount((prev) => (willLike ? Math.max(prev - 1, 0) : prev + 1));
     } finally {

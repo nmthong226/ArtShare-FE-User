@@ -42,7 +42,9 @@ const getMediaDimensions = (
 };
 
 const Explore: React.FC = () => {
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string | null>(
+    null,
+  );
   const [selectedMediums, setSelectedMediums] = useState<string[]>([]);
 
   const [openCP, setOpenCP] = useState(false);
@@ -89,8 +91,13 @@ const Explore: React.FC = () => {
     queryKey: ["posts", tab, query, selectedCategories, selectedMediums],
     retry: 2,
     queryFn: async ({ pageParam = 1 }): Promise<GalleryPhoto[]> => {
+      const categoriesToFetch: string[] = [];
+      if (selectedCategories) {
+        categoriesToFetch.push(selectedCategories);
+      }
+
       const posts: Post[] = await fetchPosts(pageParam, tab, query, [
-        ...selectedCategories,
+        ...categoriesToFetch,
         ...selectedMediums,
       ]);
       const galleryPhotosPromises = posts
@@ -132,12 +139,8 @@ const Explore: React.FC = () => {
     },
   });
 
-  const handleCategoriesChange = (categoryName: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(categoryName)
-        ? prev.filter((cat) => cat !== categoryName)
-        : [...prev, categoryName],
-    );
+  const handleCategoriesChange = (categoryName: string | null) => {
+    setSelectedCategories(categoryName);
   };
 
   const handleToggleCP = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -158,9 +161,11 @@ const Explore: React.FC = () => {
   };
 
   const handleAllChannelsClick = () => {
-    setSelectedCategories([]);
-    setSelectedMediums([]);
+    setSelectedCategories(null);
+
+    if (openCP) setOpenCP(false);
   };
+
   useEffect(() => {
     const galleryElement = galleryAreaRef.current;
     if (!galleryElement) return;
@@ -213,6 +218,8 @@ const Explore: React.FC = () => {
   }
   const isInitialGalleryLoading = isLoadingPosts && isPostsDataEffectivelyEmpty;
 
+  const isAllChannelsSelected = selectedCategories === null;
+
   return (
     <div className="relative flex flex-col h-full">
       <div className="sticky z-10 flex flex-col gap-4 p-4 top-16 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950">
@@ -234,27 +241,35 @@ const Explore: React.FC = () => {
             open={openCP}
             anchorEl={anchorElCP}
             onClose={() => setOpenCP(false)}
-            onSave={(categories) => setSelectedCategories(categories)}
+            onSave={(category) =>
+              setSelectedCategories(category as string | null)
+            }
             selectedData={selectedCategories}
             data={attributeCategories}
             placement="bottom-start"
             renderItem="category"
+            selectionMode="single"
           />
 
           <Button
             className={`all-channels-btn flex gap-2 flex-shrink-0 rounded-lg p-2 ${
-              selectedCategories.length === 0
+              isAllChannelsSelected
                 ? " dark:bg-mountain-800"
                 : "dark:bg-mountain-900"
             }  dark:text-mountain-200 normal-case font-normal shadow-none`}
-            variant={selectedCategories.length === 0 ? "contained" : "outlined"}
+            variant={isAllChannelsSelected ? "contained" : "outlined"}
             onClick={handleAllChannelsClick}
-            disableElevation={selectedCategories.length === 0}
+            disableElevation={isAllChannelsSelected}
           >
             <div
-              className={`p-2 rounded aspect-[1/1] ${selectedCategories.length === 0 ? "text-indigo-400 bg-mountain-50" : "text-mountain-900 bg-mountain-200"} dark:bg-mountain-700 `}
+              className={`p-2 rounded aspect-[1/1] ${
+                isAllChannelsSelected
+                  ? "text-indigo-400 bg-mountain-50 dark:bg-mountain-700 dark:text-primary-400"
+                  : "text-mountain-900 bg-mountain-200 dark:bg-mountain-800 dark:text-mountain-300"
+              } `}
             >
-              <LoaderPinwheel size={16} />
+              <LoaderPinwheel size={16} />{" "}
+              {/* Consider a different icon for "All" */}
             </div>
             <span className="flex-shrink-0">All Channels</span>
           </Button>
@@ -262,7 +277,7 @@ const Explore: React.FC = () => {
           <div className="flex-grow overflow-x-auto scrollbar-hide">
             <Categories
               onSelectCategory={handleCategoriesChange}
-              selectedCategories={selectedCategories}
+              selectedCategory={selectedCategories}
               data={attributeCategories}
               isLoading={isLoadingAllCategories}
               isError={isErrorAllCategories}
@@ -274,7 +289,7 @@ const Explore: React.FC = () => {
             variant="contained"
             disableElevation
             onClick={handleTogglePP}
-            disabled={isLoadingAllCategories}
+            disabled={isLoadingAllCategories || mediumCategories.length === 0}
           >
             {isLoadingAllCategories ? (
               <LoaderPinwheel size={16} className="animate-spin" />
@@ -285,12 +300,14 @@ const Explore: React.FC = () => {
           <DataPopper
             open={openPP}
             onClose={() => setOpenPP(false)}
-            onSave={(mediums) => setSelectedMediums(mediums)}
+            onSave={(mediums) => setSelectedMediums(mediums as string[])}
             anchorEl={anchorElPP}
             data={mediumCategories}
             selectedData={selectedMediums}
             placement="bottom-end"
             renderItem="prop"
+            selectionMode="multiple"
+            showClearAllButton={true}
           />
         </div>
       </div>
@@ -307,7 +324,6 @@ const Explore: React.FC = () => {
         />
       </div>
       <Paper className="fixed z-50 transform -translate-x-1/2 bg-white rounded-full shadow-lg bottom-4 left-1/2 dark:bg-mountain-800">
-        {/* ... (ToggleButtonGroup remains the same) ... */}
         <ToggleButtonGroup
           className="flex gap-2 m-1.5"
           size="small"

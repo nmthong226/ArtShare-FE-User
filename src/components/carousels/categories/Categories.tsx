@@ -18,25 +18,24 @@ import { Category } from "@/types";
 import { ImageWithFallback } from "@/components/ui/ImageWithFallback";
 import { LoaderPinwheel } from "lucide-react";
 
+// ... (CategoriesScrollerProps and Categories component remain the same) ...
 export interface CategoriesScrollerProps {
-  onSelectCategory: (categoryName: string) => void;
-  selectedCategories: string[];
-  data: Category[]; // Data passed from parent
+  onSelectCategory: (categoryName: string | null) => void;
+  selectedCategory: string | null;
+  data: Category[];
   isLoading?: boolean;
   isError?: boolean;
 }
 
-// --- Categories Component ---
 export const Categories: React.FC<CategoriesScrollerProps> = ({
   onSelectCategory,
-  selectedCategories,
+  selectedCategory,
   data,
   isLoading,
   isError,
 }) => {
-  // Internal rendering logic for an item in the slider
   const renderCategoryItemInSlider = (category: Category) => {
-    const isSelected = selectedCategories.includes(category.name);
+    const isSelected = selectedCategory === category.name;
     const imageUrl =
       category.example_images && category.example_images.length > 0
         ? category.example_images[0]
@@ -73,8 +72,6 @@ export const Categories: React.FC<CategoriesScrollerProps> = ({
   if (isLoading) {
     return (
       <div className="flex-grow flex items-center justify-center p-4 min-h-[76px]">
-        {" "}
-        {/* min-h to match item height */}
         <LoaderPinwheel className="w-8 h-8 animate-spin text-primary-500" />
       </div>
     );
@@ -105,25 +102,21 @@ export const Categories: React.FC<CategoriesScrollerProps> = ({
   );
 };
 
-// ... (The DataPopper and its related functions remain the same for now)
-// If DataPopper also needs to be filtered when showing categories,
-// the `data` prop passed to it would need to be pre-filtered similarly.
-
-// --- DataPopper and its renderers ---
-// (Assuming these are defined below or imported, code from previous response)
 interface DataPopperProps {
   open: boolean;
   anchorEl: HTMLElement | null;
   onClose: () => void;
-  onSave: (selectedData: string[]) => void;
-  selectedData: string[];
-  data: Category[]; // If DataPopper is used for categories, this 'data' prop
-  // would need to be filtered by its parent if it should also only show ATTRIBUTE types
+  onSave: (selectedData: string[] | string | null) => void;
+  selectedData: string[] | string | null;
+  data: Category[];
   renderItem: "category" | "prop";
   placement?: PopperPlacementType;
   className?: string;
+  selectionMode?: "single" | "multiple";
+  showClearAllButton?: boolean; // Added prop
 }
 
+// ... (renderCategoryItemForPopper and renderPropItemForPopper remain the same) ...
 const renderCategoryItemForPopper = (
   item: Category,
   isSelected: boolean,
@@ -143,10 +136,10 @@ const renderCategoryItemForPopper = (
       } rounded-lg p-2 gap-2 my-2`}
       onClick={onClick}
     >
-      <ImageWithFallback // <<< USE ImageWithFallback HERE
+      <ImageWithFallback
         src={imageUrl}
         alt={item.name}
-        className="rounded-lg w-12 h-12 object-center object-cover aspect-[1/1]" // Ensure h-12 for aspect ratio
+        className="rounded-lg w-12 h-12 object-center object-cover aspect-[1/1]"
       />
       <span className="text-sm text-gray-800 dark:text-mountain-200 text-wrap">
         {item.name}
@@ -161,7 +154,7 @@ const renderPropItemForPopper = (
   onClick: () => void,
 ) => (
   <div
-    className="flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-mountain-100"
+    className="flex items-center gap-2 p-2 rounded-lg cursor-pointer hover:bg-mountain-100 dark:hover:bg-mountain-900" // Added dark hover
     onClick={onClick}
   >
     <input
@@ -173,7 +166,7 @@ const renderPropItemForPopper = (
     />
     <label
       htmlFor={`prop-${item.id}-${item.name}`}
-      className="w-full text-sm text-gray-800 pointer-events-none"
+      className="w-full text-sm text-gray-800 pointer-events-none dark:text-mountain-200" // Added dark text
     >
       {item.name}
     </label>
@@ -190,21 +183,47 @@ export const DataPopper: React.FC<DataPopperProps> = ({
   renderItem,
   placement,
   className,
+  selectionMode = "multiple",
+  showClearAllButton = false, // Added default
 }) => {
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [selectedData, setSelectedData] = useState<string[]>(selectedDataProp);
+  const [internalSelectedData, setInternalSelectedData] = useState<
+    string[] | string | null
+  >(selectedDataProp);
 
   useEffect(() => {
-    setSelectedData(selectedDataProp);
-  }, [selectedDataProp]);
+    if (open) {
+      setInternalSelectedData(selectedDataProp);
+    } else {
+      // Optionally reset search query when popper closes
+      // setSearchQuery("");
+    }
+  }, [selectedDataProp, open]);
 
   const handleDataClick = (name: string) => {
-    setSelectedData((prev) =>
-      prev.includes(name)
-        ? prev.filter((item) => item !== name)
-        : [...prev, name],
-    );
+    if (selectionMode === "single") {
+      setInternalSelectedData(name);
+    } else {
+      setInternalSelectedData((prev) => {
+        const currentArray = Array.isArray(prev) ? prev : [];
+        return currentArray.includes(name)
+          ? currentArray.filter((item) => item !== name)
+          : [...currentArray, name];
+      });
+    }
   };
+
+  const handleClearAll = () => {
+    if (selectionMode === "multiple") {
+      setInternalSelectedData([]);
+    }
+  };
+
+  const canClearAll =
+    showClearAllButton &&
+    selectionMode === "multiple" &&
+    Array.isArray(internalSelectedData) &&
+    internalSelectedData.length > 0;
 
   return (
     <Popper
@@ -223,28 +242,27 @@ export const DataPopper: React.FC<DataPopperProps> = ({
               className,
             )}
           >
-            <div className="sticky top-0 w-full p-4 bg-white border-b">
-              {/* Search Input */}
-              <div className="relative flex items-center h-10 bg-mountain-50 dark:bg-mountain-1000 rounded-2xl text-mountain-500">
+            <div className="sticky top-0 w-full p-4 bg-white border-b dark:bg-mountain-950 dark:border-mountain-800">
+              <div className="relative flex items-center h-10 bg-mountain-50 dark:bg-mountain-900 rounded-2xl text-mountain-500 dark:text-mountain-400">
                 <FiSearch className="absolute w-5 h-5 left-2" />
                 <Input
-                  className="w-full h-full pl-8 pr-8 shadow-inner border-1 border-mountain-500 rounded-2xl"
+                  className="w-full h-full pl-8 pr-8 bg-transparent shadow-inner border-1 border-mountain-500 dark:border-mountain-700 rounded-2xl text-mountain-800 dark:text-mountain-200"
                   placeholder="Search"
                   disableUnderline
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <TiDeleteOutline
-                  className="absolute w-5 h-5 cursor-pointer right-2"
-                  onClick={() => setSearchQuery("")}
-                />
+                {searchQuery && (
+                  <TiDeleteOutline
+                    className="absolute w-5 h-5 cursor-pointer right-2 hover:text-mountain-700 dark:hover:text-mountain-300"
+                    onClick={() => setSearchQuery("")}
+                  />
+                )}
               </div>
             </div>
 
             <div className="px-4">
-              {/* Data mapping in Popper */}
-              {data // This 'data' prop in DataPopper is NOT automatically filtered by the changes above.
-                // If it needs filtering, the parent component instantiating DataPopper must provide filtered data.
+              {data
                 .filter((item) =>
                   item.name.toLowerCase().includes(searchQuery.toLowerCase()),
                 )
@@ -254,8 +272,17 @@ export const DataPopper: React.FC<DataPopperProps> = ({
                       ? renderCategoryItemForPopper
                       : renderPropItemForPopper;
 
+                  let isItemSelected: boolean;
+                  if (selectionMode === "single") {
+                    isItemSelected = internalSelectedData === item.name;
+                  } else {
+                    isItemSelected =
+                      Array.isArray(internalSelectedData) &&
+                      internalSelectedData.includes(item.name);
+                  }
+
                   return React.cloneElement(
-                    renderer(item, selectedData.includes(item.name), () =>
+                    renderer(item, isItemSelected, () =>
                       handleDataClick(item.name),
                     ),
                     { key: item.id },
@@ -263,27 +290,47 @@ export const DataPopper: React.FC<DataPopperProps> = ({
                 })}
             </div>
 
-            <div className="sticky bottom-0 flex justify-end gap-2 p-4 bg-white border-t">
-              {/* Action Buttons */}
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  onClose();
-                  setSelectedData(selectedDataProp);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="contained"
-                disableElevation
-                onClick={() => {
-                  onSave(selectedData);
-                  onClose();
-                }}
-              >
-                Save
-              </Button>
+            <div className="sticky bottom-0 flex items-center justify-between gap-2 p-4 bg-white border-t dark:bg-mountain-950 dark:border-mountain-800">
+              {/* Clear All Button - Conditionally Rendered on the left */}
+              <div>
+                {" "}
+                {/* Wrapper to push Clear All to the left */}
+                {canClearAll && (
+                  <Button
+                    variant="text" // Or "outlined" if you prefer
+                    color="error" // Or "primary" / "secondary"
+                    onClick={handleClearAll}
+                    size="small"
+                    className="normal-case"
+                  >
+                    Clear All
+                  </Button>
+                )}
+              </div>
+
+              {/* Action Buttons - Grouped on the right */}
+              <div className="flex gap-2">
+                <Button
+                  variant="outlined"
+                  onClick={() => {
+                    onClose();
+                  }}
+                  className="normal-case"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="contained"
+                  disableElevation
+                  onClick={() => {
+                    onSave(internalSelectedData);
+                    onClose();
+                  }}
+                  className="normal-case"
+                >
+                  Save
+                </Button>
+              </div>
             </div>
           </Paper>
         </Fade>

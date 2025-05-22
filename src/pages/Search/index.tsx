@@ -35,9 +35,11 @@ const Search = () => {
   const [inputValue, setInputValue] = useState(query);
   const inputRef = useRef<HTMLInputElement>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [, setShowChannelDropdown] = useState(false);
   const [tab, setTab] = useState<string>("posts");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  const [selectedCategories, setSelectedCategories] = useState<string | null>(
+    null,
+  );
   const [searchParams, setSearchParams] = useSearchParams();
   const [openCP, setOpenCP] = useState(false);
   const [anchorElCP, setAnchorElCP] = useState<null | HTMLElement>(null);
@@ -69,11 +71,16 @@ const Search = () => {
     queryKey: ["posts", tab, query, selectedCategories],
     retry: 2,
     queryFn: async ({ pageParam = 1 }): Promise<GalleryPhoto[]> => {
+      const categoriesToFetch: string[] = [];
+      if (selectedCategories) {
+        categoriesToFetch.push(selectedCategories);
+      }
+
       const posts: Post[] = await fetchPosts(
         pageParam,
         tab,
         query,
-        selectedCategories,
+        categoriesToFetch,
       );
       const galleryPhotosPromises = posts
         .filter(
@@ -118,12 +125,7 @@ const Search = () => {
     const q = searchParams.get("q") || "";
     setQuery(q);
     setInputValue(q);
-  }, [searchParams]);
-
-  useEffect(() => {
-    // Trigger your fetch or filter logic here
-    console.log("Search query changed:", query);
-  }, [query]);
+  }, [searchParams, setQuery]);
 
   const handleToggleCP = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorElCP(event.currentTarget);
@@ -145,7 +147,6 @@ const Search = () => {
         hasNextPage &&
         !isFetchingNextPage
       ) {
-        console.log("Fetching next page...");
         fetchNextPage();
       }
     };
@@ -188,18 +189,22 @@ const Search = () => {
   }
   const isInitialGalleryLoading = isLoadingPosts && isPostsDataEffectivelyEmpty;
 
+  const handleRemoveSelectedCategory = () => {
+    setSelectedCategories(null);
+  };
+
   return (
     <div className="flex flex-col w-full h-full">
-      <div className="flex flex-col items-center justify-end w-full pt-10 space-x-4 space-y-4 bg-white border-mountain-100 border-b-1 h-fit">
+      <div className="flex flex-col items-center justify-end w-full pt-10 space-x-4 space-y-4 bg-white border-mountain-100 dark:bg-mountain-950 dark:border-mountain-800 border-b-1 h-fit">
         <p className="inline-block text-3xl font-medium text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
           Seek
         </p>
         <div className="flex items-center justify-center mb-6">
-          <div className="relative flex items-center bg-mountain-50 dark:bg-mountain-1000 rounded-2xl w-168 h-14 text-neutral-700 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-neutral-300">
+          <div className="relative flex items-center bg-mountain-50 dark:bg-mountain-900 rounded-2xl w-168 h-14 text-neutral-700 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 dark:text-neutral-300">
             <FiSearch className="absolute w-5 h-5 left-2" />
             <Input
               ref={inputRef}
-              className="w-full h-full pl-8 pr-8 shadow-inner rounded-2xl placeholder:text-mountain-400 md:text-lg"
+              className="w-full h-full pl-8 pr-8 bg-transparent border-none shadow-inner rounded-2xl placeholder:text-mountain-400 md:text-lg focus-visible:ring-0 focus-visible:ring-offset-0"
               placeholder="Search"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
@@ -211,29 +216,33 @@ const Search = () => {
                 }
               }}
             />
-            <TiDeleteOutline
-              className={`right-2 text-mountain-600 absolute w-5 h-5 ${inputValue.length <= 0 ? "hidden" : "flex"}`}
-              onClick={() => {
-                setInputValue("");
-                setQuery("");
-                setSearchParams({});
-              }}
-            />
+            {inputValue.length > 0 && (
+              <TiDeleteOutline
+                className={`right-2 text-mountain-600 dark:text-mountain-400 absolute w-5 h-5 cursor-pointer`}
+                onClick={() => {
+                  setInputValue("");
+                  setQuery("");
+
+                  const newSearchParams = new URLSearchParams(searchParams);
+                  newSearchParams.delete("q");
+                  setSearchParams(newSearchParams);
+                }}
+              />
+            )}
           </div>
         </div>
       </div>
-      <div className="sticky z-50 flex h-16 px-4 bg-white top-16">
+      <div className="sticky z-50 flex h-16 px-4 bg-white dark:bg-mountain-950 dark:border-b dark:border-mountain-800 top-16">
         {/* Left side - Filter */}
         <div className="absolute flex items-center space-x-4 transform -translate-y-1/2 top-1/2 left-4">
           <div
-            className={`flex items-center space-x-2 hover:bg-mountain-50 px-2 py-1 rounded-lg hover:cursor-pointer ${
+            className={`flex items-center space-x-2 hover:bg-mountain-50 dark:hover:bg-mountain-900 px-2 py-1 rounded-lg hover:cursor-pointer ${
               showFilters
-                ? "text-mountain-950 font-medium"
-                : "text-mountain-600 font-normal"
+                ? "text-mountain-950 dark:text-mountain-50 font-medium"
+                : "text-mountain-600 dark:text-mountain-400 font-normal"
             }`}
             onClick={() => {
               setShowFilters((prev) => !prev);
-              setShowChannelDropdown(false);
             }}
           >
             <BsFilter size={16} />
@@ -243,22 +252,28 @@ const Search = () => {
           {showFilters && (
             <div className="relative">
               <Button
-                className="flex items-center justify-center w-32 py-1 bg-white border rounded-full cursor-pointer hover:bg-mountain-50 border-mountain-200 text-mountain-950"
+                variant="outline"
+                className="flex items-center justify-center w-auto px-3 py-1 bg-white border rounded-full cursor-pointer dark:bg-mountain-900 hover:bg-mountain-50 dark:hover:bg-mountain-800 border-mountain-200 dark:border-mountain-700 text-mountain-950 dark:text-mountain-200"
                 onClick={handleToggleCP}
               >
-                <TbCategory size={16} />
-                <p>Channels</p>
+                <TbCategory size={16} className="mr-1" />
+                <p className="mr-1">
+                  {selectedCategories ? "Channel" : "Channels"}
+                </p>
                 <IoMdArrowDropdown />
               </Button>
               <DataPopper
                 open={openCP}
                 anchorEl={anchorElCP}
                 onClose={() => setOpenCP(false)}
-                onSave={(categories) => setSelectedCategories(categories)}
+                onSave={(category) => {
+                  setSelectedCategories(category as string | null);
+                }}
                 selectedData={selectedCategories}
                 data={attributeCategories}
                 placement="bottom-start"
                 renderItem="category"
+                selectionMode="single"
               />
             </div>
           )}
@@ -269,9 +284,9 @@ const Search = () => {
             onClick={() => setTab("posts")}
             className={`${
               tab === "posts"
-                ? "border-indigo-400"
-                : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
-            } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg`}
+                ? "border-indigo-400 text-indigo-600 dark:text-indigo-400 dark:border-indigo-500 font-semibold"
+                : "text-mountain-600 dark:text-mountain-400 hover:bg-mountain-50 dark:hover:bg-mountain-900 border-transparent hover:border-mountain-200 dark:hover:border-mountain-700"
+            } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg transition-colors duration-150`}
           >
             Posts
           </div>
@@ -279,9 +294,9 @@ const Search = () => {
             onClick={() => setTab("users")}
             className={`${
               tab === "users"
-                ? "border-indigo-400"
-                : "text-mountain-600 hover:bg-mountain-50 border-white hover:border-mountain-50"
-            } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg`}
+                ? "border-indigo-400 text-indigo-600 dark:text-indigo-400 dark:border-indigo-500 font-semibold"
+                : "text-mountain-600 dark:text-mountain-400 hover:bg-mountain-50 dark:hover:bg-mountain-900 border-transparent hover:border-mountain-200 dark:hover:border-mountain-700"
+            } hover:cursor-pointer flex justify-center items-center py-4 px-2 border-b-4 w-32 text-lg transition-colors duration-150`}
           >
             Users
           </div>
@@ -292,24 +307,46 @@ const Search = () => {
           <SortMenu sort={sort} setSort={setSort} />
         </div>
       </div>
-      <div className="flex flex-col items-center justify-center w-full h-full my-6">
-        <div className="flex items-center justify-center w-full h-12">
-          {selectedCategories.length > 0 ? (
+      <div
+        ref={galleryAreaRef}
+        className="flex flex-col items-center justify-start flex-grow w-full h-full my-6 overflow-y-auto"
+      >
+        {" "}
+        {/* Added flex-grow and justify-start */}
+        <div className="flex items-center justify-center w-full h-12 px-4">
+          {" "}
+          {/* Added px-4 for padding */}
+          {selectedCategories ? (
             <>
-              <p className="mr-2 text-mountain-400">In: </p>
+              <p className="mr-2 text-mountain-400 dark:text-mountain-500">
+                In Channel:{" "}
+              </p>
+              {/* 
+                MODIFICATION NEEDED for CategoryList:
+                CategoryList was likely designed for an array of strings.
+                You'll need to adapt CategoryList to accept `selectedCategory: string | null`
+                and `onRemoveCategory: () => void` (or similar).
+                For now, I'll pass it as an array of one or empty.
+                A better approach is to refactor CategoryList.
+              */}
               <CategoryList
-                selectedCategories={selectedCategories}
-                setSelectedCategories={setSelectedCategories}
+                selectedCategories={
+                  selectedCategories ? [selectedCategories] : []
+                }
+                setSelectedCategories={(newCats) => {
+                  if (newCats.length === 0) {
+                    handleRemoveSelectedCategory();
+                  }
+                }}
               />
             </>
           ) : (
-            <div className="text-mountain-400">
-              Tips: Want more specific results? Try adding filters.
+            <div className="text-mountain-400 dark:text-mountain-500">
+              Tips: Want more specific results? Try adding a channel filter.
             </div>
           )}
         </div>
         <div className="items-center justify-center w-full h-full p-4 mt-4 gallery-area">
-          {/* <IGallery query={query} filter={selectedCategories}/> */}
           <IGallery
             photos={galleryPhotos}
             isLoading={isInitialGalleryLoading}
@@ -318,6 +355,23 @@ const Search = () => {
             error={postsError as Error | null}
           />
         </div>
+        {isFetchingNextPage && (
+          <div className="flex items-center justify-center w-full py-4">
+            {/* You can use your LoaderPinwheel here */}
+            <p className="text-mountain-500 dark:text-mountain-400">
+              Loading more...
+            </p>
+          </div>
+        )}
+        {!hasNextPage &&
+          !isInitialGalleryLoading &&
+          galleryPhotos.length > 0 && (
+            <div className="flex items-center justify-center w-full py-4">
+              <p className="text-mountain-500 dark:text-mountain-400">
+                You've reached the end!
+              </p>
+            </div>
+          )}
       </div>
     </div>
   );

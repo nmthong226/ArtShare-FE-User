@@ -1,19 +1,22 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { Box, Button, Backdrop, CircularProgress } from "@mui/material";
+import { Box, Backdrop, CircularProgress, IconButton } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { getPresignedUrl, uploadFile } from "@/api/storage";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { nanoid } from "nanoid";
 import { updateUserProfile } from "../api/user-profile.api";
-
+import { Edit2 } from "lucide-react";
+import Avatar from "boring-avatars";
 interface AvatarSectionProps {
   profilePictureUrl?: string | null;
   onUploadSuccess: (newUrl: string) => void;
+  username?: string;
 }
 
 export function AvatarSection({
   profilePictureUrl,
   onUploadSuccess,
+  username,
 }: AvatarSectionProps) {
   const [preview, setPreview] = useState<string | null>(
     profilePictureUrl || null,
@@ -38,17 +41,10 @@ export function AvatarSection({
       return fileUrl;
     },
     onSuccess: async (fileUrl) => {
-      try {
-        // 3) update user record
-        await updateUserProfile({ profile_picture_url: fileUrl });
-        // 4) update local preview + notify parent
-        setPreview(fileUrl);
-        onUploadSuccess(fileUrl);
-        showSnackbar("Avatar updated", "success");
-      } catch (err: unknown) {
-        console.log(err);
-        showSnackbar("Saved to storage, but failed to update profile", "error");
-      }
+      await updateUserProfile({ profile_picture_url: fileUrl });
+      setPreview(fileUrl);
+      onUploadSuccess(fileUrl);
+      showSnackbar("Avatar updated", "success");
     },
     onError: (err) => {
       showSnackbar(err.message || "Failed to upload avatar", "error");
@@ -58,7 +54,7 @@ export function AvatarSection({
   const handleAvatarUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    // preview immediately
+    // immediate preview
     const reader = new FileReader();
     reader.onload = (ev) => {
       if (ev.target?.result) {
@@ -66,7 +62,6 @@ export function AvatarSection({
       }
     };
     reader.readAsDataURL(file);
-    // kick off the mutation
     uploadMutation.mutate(file);
   };
 
@@ -76,9 +71,10 @@ export function AvatarSection({
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      <Box>
-        <Box className="bg-transparent pb-2 flex flex-col items-center justify-center">
-          <Box className="w-32 h-32 rounded-full overflow-hidden bg-gray-700 mb-4 flex items-center justify-center">
+      <Box className="flex flex-col items-center">
+        <Box className="relative w-24 h-24">
+          {/* 1) Crop the photo */}
+          <div className="w-full h-full rounded-full overflow-hidden bg-gray-700">
             {preview ? (
               <img
                 src={preview}
@@ -86,20 +82,33 @@ export function AvatarSection({
                 className="w-full h-full object-cover"
               />
             ) : (
-              <img
-                src="/placeholder.svg?height=128&width=128"
-                alt="Default avatar"
-                className="w-full h-full object-cover"
+              // 2) Show a boring-avatar when there's no preview
+              <Avatar
+                size={96} // match the Box 24×24 (px * 4)
+                name={username || "Unknown"}
+                variant="beam" // pick your favorite style
+                colors={["#84bfc3", "#ff9b62", "#d96153"]}
               />
             )}
-          </Box>
-          <Button
+          </div>
+
+          {/* 2) Overlay IconButton */}
+          <IconButton
             component="label"
-            variant="contained"
-            className="bg-[#1e1e1e] hover:bg-gray-700 text-white border border-gray-600"
+            size="small"
             disabled={uploadMutation.isPending}
+            sx={{
+              position: "absolute",
+              bottom: 4,
+              right: 3,
+              bgcolor: "primary.main",
+              color: "white",
+              "&:hover": { bgcolor: "primary.dark" },
+              width: 32,
+              height: 32,
+            }}
           >
-            {uploadMutation.isPending ? "Uploading…" : "Upload New Avatar"}
+            <Edit2 fontSize="small" />
             <input
               type="file"
               hidden
@@ -107,7 +116,7 @@ export function AvatarSection({
               onChange={handleAvatarUpload}
               disabled={uploadMutation.isPending}
             />
-          </Button>
+          </IconButton>
         </Box>
       </Box>
     </>

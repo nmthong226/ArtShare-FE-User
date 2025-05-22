@@ -174,7 +174,7 @@ export const EditProfileForm: React.FC<{ initialData: UserProfile }> = ({
       </Box>
 
       {/* Submit */}
-      <Box className="text-center">
+      <Box className="text-right">
         <Button
           type="submit"
           disabled={isSubmitting}

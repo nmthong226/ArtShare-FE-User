@@ -59,12 +59,13 @@ export default function EditUser() {
   }
 
   return (
-    <Container disableGutters className="px-15 py-2">
+    <Container disableGutters className="px-15 pt-6 h-full">
       {/* <ProfileHeader /> */}
 
       <Box>
         <AvatarSection
           profilePictureUrl={formData.profile_picture_url}
+          username={formData.username}
           onUploadSuccess={(newUrl: string) =>
             setFormData((prev) =>
               prev ? { ...prev, profile_picture_url: newUrl } : prev,

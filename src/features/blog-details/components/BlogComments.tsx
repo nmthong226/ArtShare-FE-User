@@ -1,138 +1,256 @@
-import * as React from "react";
-import { useRef } from "react";
-
-//Components
-import { Button, TextareaAutosize } from "@mui/material";
+import React, { useEffect, useRef, useState, forwardRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
 import {
   Popover,
-  PopoverContent,
   PopoverTrigger,
+  PopoverContent,
 } from "@/components/ui/popover";
-
-//Icons
+import {
+  Button,
+  CircularProgress,
+  TextareaAutosize,
+  Tooltip,
+} from "@mui/material";
 import { BiDotsVertical } from "react-icons/bi";
-import { SendHorizontal } from "lucide-react";
 import { AiOutlineLike } from "react-icons/ai";
-import { UserComments } from "../mocks";
-import { IoFilter, IoPersonRemoveOutline } from "react-icons/io5";
+import { SendHorizontal } from "lucide-react";
+import { formatDistanceToNow } from "date-fns";
 
-//Libs
-import { formatDate } from "@/lib/utils";
+import {
+  fetchComments,
+  createComment,
+  likeComment,
+  unlikeComment,
+  deleteComment,
+} from "../api/comment.api";
+
 import { useUser } from "@/contexts/UserProvider";
+import { useSnackbar } from "@/contexts/SnackbarProvider";
+import type { CommentUI } from "@/types/comment";
 import { Link } from "react-router-dom";
 
-const BlogComments = () => {
-  const [order, setOrder] = React.useState<"top" | "recent">("recent");
-  const { user } = useUser();
-  const handleChange = (event: SelectChangeEvent) => {
-    setOrder(event.target.value as "top" | "recent");
-  };
+type Props = {
+  blogId: number;
+  comments: CommentUI[];
+  onCommentAdded: () => void;
+  onCommentDeleted: () => void;
+};
 
-  const commentInputRef = useRef<HTMLTextAreaElement>(null);
-  return (
-    <div className="flex flex-col justify-center items-center space-y-8 bg-white shadow mt-8 px-4 py-8 w-[60%] h-full">
-      <div className="flex flex-col justify-center space-y-2 w-full">
-        <div className="flex items-center space-x-2">
-          <span className="font-medium text-lg">2 Comments</span>
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
-            <Select
-              value={order}
-              onChange={handleChange}
-              displayEmpty
-              inputProps={{ "aria-label": "Order By" }}
-              MenuProps={{
-                disableScrollLock: true,
-              }}
-              className="relative pl-6"
-            >
-              <MenuItem value={"recent"}>Recent Comments</MenuItem>
-              <MenuItem value={"top"}>Top Comments</MenuItem>
-            </Select>
-            <IoFilter className="top-1/2 left-2 absolute -translate-y-1/2" />
-          </FormControl>
+const BlogComments = forwardRef<HTMLDivElement, Props>(
+  ({ comments: initial, blogId, onCommentAdded, onCommentDeleted }, _ref) => {
+    const { user } = useUser();
+    const { showSnackbar } = useSnackbar();
+    const [comments, setComments] = useState<CommentUI[]>(initial);
+    const [loading, setLoading] = useState(true);
+    const [newComment, setNewComment] = useState("");
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    /* ───────── create comment ───────── */
+    const handleAddComment = async () => {
+      const content = newComment.trim();
+      if (!content) return;
+      if (!user) {
+        showSnackbar?.("Please login to comment", "warning");
+        return;
+      }
+
+      const tmpId = Date.now();
+      const optimistic: CommentUI = {
+        id: tmpId,
+        user_id: user.id,
+        parent_comment_id: null,
+        target_id: blogId,
+        target_type: "BLOG",
+        content,
+        created_at: new Date(),
+        updated_at: new Date(),
+        like_count: 0,
+        likedByCurrentUser: false,
+        user: {
+          id: user.id,
+          username: user.username,
+          profile_picture_url: user.profile_picture_url,
+          full_name: user.full_name,
+          followers_count: 0,
+          email: "",
+          created_at: user.created_at,
+          followings_count: user.followings_count,
+          is_onboard: user.is_onboard,
+        },
+        replies: [],
+      };
+
+      setComments((prev) => [optimistic, ...prev]);
+      setNewComment("");
+      onCommentAdded();
+
+      try {
+        const { data } = await createComment({
+          content,
+          target_id: blogId,
+          target_type: "BLOG",
+        });
+        setComments((prev) => prev.map((c) => (c.id === tmpId ? data : c)));
+      } catch (e) {
+        showSnackbar?.("Failed to post comment", "error");
+        setComments((prev) => prev.filter((c) => c.id !== tmpId));
+        onCommentDeleted();
+      }
+    };
+
+    /* ───────── like / unlike ───────── */
+    const toggleLike = async (id: number) => {
+      setComments((prev) =>
+        prev.map((c) =>
+          c.id === id
+            ? {
+                ...c,
+                likedByCurrentUser: !c.likedByCurrentUser,
+                like_count: c.like_count + (c.likedByCurrentUser ? -1 : 1),
+              }
+            : c,
+        ),
+      );
+
+      try {
+        const target = comments.find((c) => c.id === id);
+        if (target?.likedByCurrentUser) {
+          await unlikeComment(id);
+        } else {
+          await likeComment(id);
+        }
+      } catch {
+        // rollback
+        setComments((prev) =>
+          prev.map((c) =>
+            c.id === id
+              ? {
+                  ...c,
+                  likedByCurrentUser: !c.likedByCurrentUser,
+                  like_count: c.like_count + (c.likedByCurrentUser ? -1 : 1),
+                }
+              : c,
+          ),
+        );
+      }
+    };
+
+    /* ───────── delete comment ───────── */
+    const handleDelete = async (id: number) => {
+      const backup = comments;
+      setComments((prev) => prev.filter((c) => c.id !== id));
+      onCommentDeleted();
+      try {
+        await deleteComment(id);
+      } catch {
+        setComments(backup);
+        onCommentAdded();
+        showSnackbar?.("Failed to delete", "error");
+      }
+    };
+
+    /* ───────── UI ───────── */
+    return (
+      <div className="flex flex-col items-center bg-white shadow px-4 py-8 w-[60%] mt-8 space-y-6">
+        {/* header */}
+        <div className="flex items-center space-x-2 w-full">
+          <span className="font-medium text-lg">
+            {comments.length} Comments
+          </span>
         </div>
+
+        {/* add comment box */}
         {user ? (
-          <div className="flex items-center">
+          <div className="flex items-start space-x-3 w-full">
             <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarImage src={user.profile_picture_url ?? undefined} />
+              <AvatarFallback>{user.username[0].toUpperCase()}</AvatarFallback>
             </Avatar>
-            <div className="flex gap-2 p-4 w-full">
+            <div className="flex flex-grow gap-2">
               <TextareaAutosize
-                ref={commentInputRef}
+                ref={textareaRef}
+                value={newComment}
+                onChange={(e) => setNewComment(e.target.value)}
                 placeholder="Add a comment"
-                className="px-4 py-2 border-2 border-mountain-200 rounded-md w-full h-12 overflow-y-auto resize-none"
+                className="w-full border-2 border-mountain-200 rounded-md p-3 resize-none"
               />
               <Button
+                disabled={!newComment.trim()}
+                onClick={handleAddComment}
                 variant="contained"
-                className="p-0.5 min-w-auto h-12 aspect-[1/1]"
+                className="min-w-[48px] h-[48px] p-0"
               >
-                <SendHorizontal />
+                <SendHorizontal className="h-5 w-5" />
               </Button>
             </div>
           </div>
         ) : (
-          <p className="text-sm text-mountain-500 italic ml-4">
-            <Link
-              to="/login"
-              className="underline text-blue-500 hover:text-blue-700"
-            >
-              Login
+          <p className="text-sm text-mountain-500 italic">
+            Please&nbsp;
+            <Link to="/login" className="underline text-blue-500">
+              login
             </Link>{" "}
-            to write a comment
+            to comment
           </p>
         )}
-        {/* User Comments */}
-        <div className="flex flex-col space-y-4 my-4">
-          {UserComments.map((user, index) => (
-            <div key={index} className="flex flex-col w-full">
-              <div className="relative flex space-x-4 w-full">
-                <Avatar className="border-1 border-mountain-200">
-                  <AvatarImage src={user.userInfo.avatar} />
-                  <AvatarFallback>CN</AvatarFallback>
+
+        <div className="flex flex-col space-y-4 w-full">
+          {comments.map((c) => (
+            <div key={c.id} className="flex flex-col w-full">
+              <div className="flex space-x-3">
+                <Avatar>
+                  <AvatarImage src={c.user.profile_picture_url ?? undefined} />
+                  <AvatarFallback>
+                    {c.user.username[0].toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col">
-                  <div className="flex items-center space-x-2 text-mountain-600 text-sm">
-                    <span className="font-semibold">
-                      @{user.userInfo.username} -{" "}
+                <div className="flex flex-col flex-grow">
+                  <div className="flex items-center text-sm text-mountain-600 space-x-1">
+                    <span className="font-semibold">@{c.user.username}</span>
+                    <span>•</span>
+                    <span>
+                      {formatDistanceToNow(new Date(c.created_at), {
+                        addSuffix: true,
+                      })}
                     </span>
-                    <span>{formatDate(user.dateCreated)}</span>
                   </div>
-                  <p className="pr-2">{user.comment}</p>
+                  <p>{c.content}</p>
                 </div>
-                <Popover>
-                  <PopoverTrigger className="top-1/2 right-1 absolute flex justify-center items-center hover:bg-mountain-100 rounded-full w-8 h-8 -translate-y-1/2">
-                    <BiDotsVertical className="size-5 shrink-0" />
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 border-mountain-200 w-28 text-xs">
-                    <div className="flex items-center hover:bg-mountain-50 px-3 py-2 border-mountain-200 border-b-1 rounded-t-lg hover:cursor-pointer">
-                      <IoPersonRemoveOutline className="mr-2" />
-                      <p>Block User</p>
-                    </div>
-                  </PopoverContent>
-                </Popover>
+
+                {user?.id === c.user.id && (
+                  <Popover>
+                    <PopoverTrigger className="hover:bg-mountain-100 rounded-full p-1">
+                      <BiDotsVertical />
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0 w-28 text-xs">
+                      <div
+                        onClick={() => handleDelete(c.id)}
+                        className="px-3 py-2 hover:bg-mountain-50 cursor-pointer"
+                      >
+                        Delete
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                )}
               </div>
-              <div className="flex items-center space-x-2 ml-10">
-                <div className="flex items-center">
-                  <div className="flex justify-center items-center hover:bg-mountain-100 rounded-full w-10 h-10">
-                    <AiOutlineLike className="size-5" />
-                  </div>
-                  <span className="font-medium text-sm">{user.like_count}</span>
+
+              <div className="flex items-center space-x-2 ml-12">
+                <div
+                  onClick={() => toggleLike(c.id)}
+                  className="flex items-center hover:bg-mountain-100 rounded-full w-8 h-8 justify-center cursor-pointer"
+                >
+                  <AiOutlineLike
+                    className={`h-5 w-5 ${c.likedByCurrentUser ? "text-blue-600" : ""}`}
+                  />
                 </div>
-                <div className="flex justify-center items-center hover:bg-mountain-100 rounded-full w-32 h-10 hover:cursor-pointer">
-                  <span className="font-medium text-sm">Reply Comment</span>
-                </div>
+                <span>{c.like_count}</span>
               </div>
             </div>
           ))}
         </div>
       </div>
-    </div>
-  );
-};
+    );
+  },
+);
 
 export default BlogComments;

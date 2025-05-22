@@ -13,6 +13,17 @@ export const fetchComments = async (postId: number): Promise<Comment[]> => {
   console.log(data);
   return data;
 };
+export const fetchBlogComments = async (postId: number): Promise<Comment[]> => {
+  const { data } = await api.get<Comment[]>("/comments", {
+    params: {
+      target_id: postId,
+      target_type: "BLOG",
+      likedByCurrentUser: Boolean,
+    },
+  });
+  console.log(data);
+  return data;
+};
 /** NEW: create a comment (or reply) */
 export const createComment = async (payload: CreateCommentDto) => {
   return await api.post<Comment>("/comments/create", payload);

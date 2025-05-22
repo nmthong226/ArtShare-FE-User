@@ -1,11 +1,11 @@
-import type React from "react"
-import { Box, Typography, TextField } from "@mui/material"
+import type React from "react";
+import { Box, Typography, TextField } from "@mui/material";
 import { UserProfile } from "@/features/user-profile-public/api/user-profile.api";
 
 interface ProfileFormProps {
   formData: UserProfile;
   handleChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => void;
   handleDateChange?: (date: Date | null, fieldName: string) => void;
   onSubmit: () => void;
@@ -22,9 +22,7 @@ export function ProfileForm({
     <Box className="space-y-6 dark:text-white">
       {/* Email */}
       <Box className="space-y-2 ">
-        <Typography>
-             Email
-        </Typography>
+        <Typography>Email</Typography>
         <TextField
           fullWidth
           name="email"
@@ -39,9 +37,7 @@ export function ProfileForm({
 
       {/* Username */}
       <Box className="space-y-2 ">
-        <Typography>
-          Username
-        </Typography>
+        <Typography>Username</Typography>
         <TextField
           fullWidth
           name="username"
@@ -56,9 +52,7 @@ export function ProfileForm({
 
       {/* Full Name */}
       <Box className="space-y-2">
-        <Typography>
-           Full Name
-        </Typography>
+        <Typography>Full Name</Typography>
         <TextField
           fullWidth
           name="full_name"
@@ -85,8 +79,7 @@ export function ProfileForm({
             }
             disabled={isSubmitting}
             variant="outlined"
-            className="bg-[#1e1e1e] rounded"
-            InputProps={{ className: "text-white" }}
+            className="bg-[#1e1e1e] rounded text-white"
           />
         </Box>
       )}

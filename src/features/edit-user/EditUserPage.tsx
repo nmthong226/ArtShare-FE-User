@@ -1,16 +1,18 @@
-
 import { useEffect, useState } from "react";
 import { Box, Container } from "@mui/material";
 import { AvatarSection } from "./components/AvatarSection";
-import { getUserProfile, UserProfile } from "../user-profile-public/api/user-profile.api";
+import {
+  getUserProfile,
+  UserProfile,
+} from "../user-profile-public/api/user-profile.api";
 import { useQuery } from "@tanstack/react-query";
 import EditProfileForm from "./components/EditProfileForm";
 
 export default function EditUser() {
-    const {
-    data: profileData, 
-    isLoading: loadingProfile
-  } = useQuery<UserProfile, Error>({
+  const { data: profileData, isLoading: loadingProfile } = useQuery<
+    UserProfile,
+    Error
+  >({
     queryKey: ["userProfile"],
     queryFn: () => getUserProfile(),
   });
@@ -53,37 +55,31 @@ export default function EditUser() {
   });
 
   if (loadingProfile || !formData) {
-    return (
-      <div className="m-4 text-center">
-        Loading....
-      </div>  
-    );
+    return <div className="m-4 text-center">Loading....</div>;
   }
 
   return (
-    <Container disableGutters className="min-h-screen bg-white dark:bg-[#121212]">
+    <Container disableGutters className="px-15 py-2">
       {/* <ProfileHeader /> */}
 
-      <Box className="p-6 pt-2">
-          <AvatarSection
-            profilePictureUrl={formData.profile_picture_url}
-            onUploadSuccess={(newUrl: string) =>
+      <Box>
+        <AvatarSection
+          profilePictureUrl={formData.profile_picture_url}
+          onUploadSuccess={(newUrl: string) =>
             setFormData((prev) =>
-              prev ? { ...prev, profile_picture_url: newUrl } : prev
+              prev ? { ...prev, profile_picture_url: newUrl } : prev,
             )
-        }
-          />
+          }
+        />
       </Box>
 
-      <Box className="px-6 pt-2 m-0 grid grid-cols-1 md:grid-cols-1 gap-6">
-        {/* <ProfileForm
+      {/* <ProfileForm
           formData={formData}
           handleChange={handleChange}
           onSubmit={handleSave}
           isSubmitting={saving}
         /> */}
-        {profileData && <EditProfileForm initialData={profileData} />}
-      </Box>
+      {profileData && <EditProfileForm initialData={profileData} />}
 
       {/* <Box className="p-6 pt-3">
         <Button

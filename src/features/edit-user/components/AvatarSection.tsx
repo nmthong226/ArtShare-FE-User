@@ -1,11 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Paper,
-  Backdrop,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Button, Backdrop, CircularProgress } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { getPresignedUrl, uploadFile } from "@/api/storage";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
@@ -21,7 +15,9 @@ export function AvatarSection({
   profilePictureUrl,
   onUploadSuccess,
 }: AvatarSectionProps) {
-  const [preview, setPreview] = useState<string | null>(profilePictureUrl || null);
+  const [preview, setPreview] = useState<string | null>(
+    profilePictureUrl || null,
+  );
   const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
@@ -36,7 +32,7 @@ export function AvatarSection({
         key,
         ext,
         "image",
-        "users"
+        "users",
       );
       await uploadFile(file, presignedUrl);
       return fileUrl;
@@ -81,7 +77,7 @@ export function AvatarSection({
       </Backdrop>
 
       <Box>
-        <Paper className="bg-[#E4E6EB] dark:bg-[#1e1e1e] p-4 flex flex-col items-center justify-center">
+        <Box className="bg-transparent pb-2 flex flex-col items-center justify-center">
           <Box className="w-32 h-32 rounded-full overflow-hidden bg-gray-700 mb-4 flex items-center justify-center">
             {preview ? (
               <img
@@ -112,7 +108,7 @@ export function AvatarSection({
               disabled={uploadMutation.isPending}
             />
           </Button>
-        </Paper>
+        </Box>
       </Box>
     </>
   );

@@ -5,13 +5,13 @@ import { RiFileVideoFill } from "react-icons/ri";
 import { MediaPreviewContainer } from "./media-preview-container";
 
 interface UploadFromDeviceProps {
-  handleImageFilesChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  handleVideoFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onAddImages: (event: ChangeEvent<HTMLInputElement>) => void;
+  onAddVideo: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const UploadFromDevice: React.FC<UploadFromDeviceProps> = ({
-  handleImageFilesChange,
-  handleVideoFileChange,
+  onAddImages,
+  onAddVideo,
 }) => {
   return (
     <MediaPreviewContainer
@@ -20,7 +20,7 @@ const UploadFromDevice: React.FC<UploadFromDeviceProps> = ({
         e.preventDefault();
         const droppedFiles = e.dataTransfer.files;
         if (droppedFiles && droppedFiles.length > 0) {
-          handleImageFilesChange({
+          onAddImages({
             target: { files: droppedFiles },
           } as ChangeEvent<HTMLInputElement>);
         }
@@ -45,7 +45,7 @@ const UploadFromDevice: React.FC<UploadFromDeviceProps> = ({
             multiple
             accept="image/*"
             hidden
-            onChange={handleImageFilesChange}
+            onChange={onAddImages}
           />
           <BsImageFill className="mb-2 size-10 text-mountain-600" />
           <Typography variant="body1" className="text-sm">Upload Image</Typography>
@@ -67,7 +67,7 @@ const UploadFromDevice: React.FC<UploadFromDeviceProps> = ({
             type="file"
             accept="video/*"
             hidden
-            onChange={handleVideoFileChange}
+            onChange={onAddVideo}
           />
           <RiFileVideoFill className="mb-2 size-10 text-mountain-600" />
           <Typography variant="body1" className="text-sm">Upload Video</Typography>

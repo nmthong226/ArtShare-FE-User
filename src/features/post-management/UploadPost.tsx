@@ -5,32 +5,29 @@ import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { createPost } from "./api/create-post";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import {
-  getPresignedUrl,
-  GetPresignedUrlResponse,
-  uploadFile,
-} from "@/api/storage";
-import { nanoid } from "nanoid";
+
 import { useLocation, useNavigate } from "react-router-dom";
 import MediaSelection from "./components/media-selection";
 import { FaMagic } from "react-icons/fa";
 import { generatePostContent } from "./api/generate-post-content.api";
+import { fetchImageFileFromUrl } from "@/utils/fetch-media.utils";
+import { PostMedia } from "./types/post-media";
+import { createFormData } from "./helpers/upload-post.helper";
+import { MEDIA_TYPE } from "@/utils/constants";
+import { usePostMediaUploader } from "./hooks/use-post-medias-uploader";
 
 const UploadPost: React.FC = () => {
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
   const location = useLocation();
   const selectedPrompt: PromptResult | undefined = location.state?.prompt;
-  const { showSnackbar } = useSnackbar();
   const [lastCrop, setLastCrop] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
   });
   const [lastZoom, setLastZoom] = useState(1);
-  const [originalThumbnailFile, setOriginalThumbnailFile] = useState<
-    File | undefined
-  >();
+  const [originalThumbnailFile, setOriginalThumbnailFile] = useState<File | undefined>();
 
-  // const [mode, setMode] = useState<'upload' | 'browse'>('upload');
   const [isLoading, setIsLoading] = useState(false);
   const [hasArtNovaImages, setHasArtNovaImages] = useState(false);
 
@@ -40,55 +37,18 @@ const UploadPost: React.FC = () => {
   const [cate_ids, setCateIds] = useState<number[]>([]);
   const [description, setDescription] = useState("");
   const [isMature, setIsMature] = useState(false);
-  const [aiCreated, setAiCreated] = useState(false);
 
-  // UPLOAD INFO
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [videoFile, setVideoFile] = useState<File | undefined>(undefined);
-  const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(
-    undefined,
-  );
+  const [postMedias, setPostMedias] = useState<PostMedia[]>([])
+  const [thumbnailFile, setThumbnailFile] = useState<File | undefined>(undefined);
   const [thumbnailCropMeta, setThumbnailCropMeta] = useState<string>("{}");
 
-  const VIDEO_STORAGE_DIRECTORY = "posts";
-
-  const createFormData = (
-    title: string,
-    description?: string,
-    imageFiles?: File[],
-    videoUrl?: string,
-    initialThumbnail?: string,
-    thumbnailUrl?: string,
-    isMature?: boolean,
-    aiCreated?: boolean,
-    cate_ids?: number[],
-  ) => {
-    const formData = new FormData();
-    formData.append("title", title);
-    if (description) formData.append("description", description);
-    // TODO: delete this when we have backend for categories
-    // formData.append("ids", JSON.stringify([]));
-    if (videoUrl) formData.append("video_url", videoUrl);
-    if (thumbnailUrl) formData.append("thumbnail_url", thumbnailUrl);
-    if (imageFiles) {
-      imageFiles.forEach((file) => formData.append("images", file));
-    }
-    formData.append("is_mature", String(isMature));
-    formData.append("ai_created", String(aiCreated));
-    formData.append("cate_ids", JSON.stringify(cate_ids));
-    formData.append(
-      "thumbnail_crop_meta",
-      JSON.stringify({
-        ...JSON.parse(thumbnailCropMeta),
-        initialThumbnail: initialThumbnail,
-      }),
-    );
-    console.log("formData contents:");
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
-    return formData;
-  };
+  const isUploadMediaValid = postMedias.length > 0;
+  const imageFiles = postMedias.filter((media) => media.type === "image").map((media) => media.file);
+  const videoFile = postMedias.find((media) => media.type === "video")?.file;
+  const {
+    handleUploadVideo,
+    handleUploadImageFile,
+  } = usePostMediaUploader();
 
   const validateVideoDuration = (
     file: File,
@@ -119,7 +79,7 @@ const UploadPost: React.FC = () => {
       showSnackbar("Title is required.", "error");
       return;
     }
-    if ((!imageFiles || imageFiles.length === 0) && !videoFile) {
+    if (!isUploadMediaValid) {
       showSnackbar("At least one image or video is required.", "error");
       return;
     }
@@ -135,45 +95,21 @@ const UploadPost: React.FC = () => {
       if (!thumbnailFile) {
         throw new Error("Thumbnail file is not defined");
       }
-      // Create promises to upload video and create post at the same time
-      const uploadVideoPromise = handleUploadVideo();
-      const uploadInitThumbnailPromise = handleUploadInitialThumbnail();
-      const uploadThumbnailPromise = handleUploadThumbnail();
-      // Use Promise.all with await to wait for both operations to complete
-      const [videoUrl, initialThumbnail, thumbnailUrl] = await Promise.all([
-        uploadVideoPromise,
-        uploadInitThumbnailPromise,
-        uploadThumbnailPromise,
-      ]);
-      await handleCreatePost(thumbnailUrl, initialThumbnail, videoUrl);
+
+      const [videoUrl, initialThumbnail, thumbnailUrl] =
+        await Promise.all([
+          videoFile && handleUploadVideo(videoFile),
+          originalThumbnailFile && handleUploadImageFile(originalThumbnailFile, "original_thumbnail"),
+          thumbnailFile && handleUploadImageFile(thumbnailFile, "thumbnail"),
+        ] as Promise<string | undefined>[]);
+
+      await handleCreatePost(thumbnailUrl!, initialThumbnail, videoUrl);
       navigate("/explore");
     } catch (error) {
       console.error("Error during submission:", error);
       showSnackbar("Failed to create post or upload video.", "error");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleUploadVideo = async (): Promise<string | undefined> => {
-    if (!videoFile) {
-      return Promise.resolve(undefined);
-    }
-    try {
-      const presignedUrlResponse: GetPresignedUrlResponse =
-        await getPresignedUrl(
-          `${videoFile.name.split(".")[0]}_${nanoid(6)}`,
-          videoFile.type.split("/")[1],
-          "video",
-          VIDEO_STORAGE_DIRECTORY,
-        );
-      await uploadFile(videoFile, presignedUrlResponse.presignedUrl);
-      console.log("Video uploaded successfully:", presignedUrlResponse.fileUrl);
-      return presignedUrlResponse.fileUrl;
-    } catch (error) {
-      console.error("Error getting presigned URL:", error);
-      showSnackbar("Failed to get presigned URL.", "error");
-      throw error; // Throw error to be caught in Promise.all
     }
   };
 
@@ -184,13 +120,14 @@ const UploadPost: React.FC = () => {
   ): Promise<void> => {
     const formData = createFormData(
       title,
+      thumbnailUrl,
+      thumbnailCropMeta,
       description,
       imageFiles,
       videoUrl,
       initialThumbnail,
-      thumbnailUrl,
       isMature,
-      aiCreated,
+      hasArtNovaImages,
       cate_ids,
     );
     try {
@@ -201,32 +138,6 @@ const UploadPost: React.FC = () => {
       showSnackbar("Failed to create post.", "error");
       throw error;
     }
-  };
-
-  const handleUploadThumbnail = async (): Promise<string> => {
-    const thumbnailFileName = `thumbnail_${nanoid(6)}`;
-    const presignedUrlResponse: GetPresignedUrlResponse = await getPresignedUrl(
-      thumbnailFileName,
-      thumbnailFile!.type.split("/")[1],
-      "image",
-      VIDEO_STORAGE_DIRECTORY,
-    );
-    await uploadFile(thumbnailFile!, presignedUrlResponse.presignedUrl);
-    return presignedUrlResponse.fileUrl;
-  };
-
-  const handleUploadInitialThumbnail = async (): Promise<
-    string | undefined
-  > => {
-    if (!originalThumbnailFile) return undefined;
-    const presigned: GetPresignedUrlResponse = await getPresignedUrl(
-      `initial_thumbnail_${nanoid(6)}`,
-      originalThumbnailFile.type.split("/")[1],
-      "image",
-      VIDEO_STORAGE_DIRECTORY,
-    );
-    await uploadFile(originalThumbnailFile, presigned.presignedUrl);
-    return presigned.fileUrl;
   };
 
   const handleThumbnailChange = (
@@ -244,40 +155,32 @@ const UploadPost: React.FC = () => {
     }
   };
 
-  const isUploadMediaValid = (imageFiles?.length ?? 0) > 0 || videoFile;
-
-
   useEffect(() => {
     if (!selectedPrompt) return
 
     const fetchFilesFromUrls = async () => {
       try {
-        const files: File[] = await Promise.all(
-          selectedPrompt.image_urls.map(async (url) => {
-            // 1️⃣ fetch the URL
-            const res = await fetch(url, {
-              method: 'GET',
-            })
-            if (!res.ok) {
-              throw new Error(`Failed to fetch ${url}: ${res.status}`)
-            }
+        const aiImageMedias = selectedPrompt.image_urls.map((url) => ({
+          type: MEDIA_TYPE.IMAGE,
+          url: url,
+          file: new File([], "temp_image.png", { type: "image/png" }), // Placeholder file
+        }))
+        setPostMedias(aiImageMedias)
 
-            // 2️⃣ read it as a Blob
-            const blob = await res.blob()
+        // update medias file in the background
+        const updatePostMediasFileAsync = async () => {
+          const aiImageMediasWithRealFile = await Promise.all(
+            aiImageMedias.map(async (media) => {
+              const file = await fetchImageFileFromUrl(media.url);
+              return { ...media, file };
+            }),
+          );
+          setPostMedias(aiImageMediasWithRealFile)
 
-            // 3️⃣ derive a filename (or hard-code one)
-            const parts = url.split('/')
-            const filename = parts[parts.length - 1] || 'image.jpg'
-
-            // 4️⃣ create a File from the Blob
-            return new File([blob], filename, { type: blob.type })
-          })
-        )
-
-        // 5️⃣ update your state
-        setImageFiles(files)
+          setThumbnailFile(aiImageMediasWithRealFile[0].file)
+        }
         setHasArtNovaImages(true)
-        setThumbnailFile(files[0])
+        updatePostMediasFileAsync()
       } catch (err) {
         console.error('Error fetching images from S3', err)
       }
@@ -345,11 +248,9 @@ const UploadPost: React.FC = () => {
       >
         {/* LEFT COLUMN */}
         <MediaSelection
-          setImageFiles={setImageFiles}
-          setVideoFile={setVideoFile}
+          postMedias={postMedias}
+          setPostMedias={setPostMedias}
           setThumbnailFile={handleThumbnailChange}
-          imageFiles={imageFiles ?? []}
-          videoFile={videoFile}
           hasArtNovaImages={hasArtNovaImages}
           setHasArtNovaImages={setHasArtNovaImages}
         />
@@ -386,8 +287,6 @@ const UploadPost: React.FC = () => {
               setDescription={setDescription}
               isMature={isMature}
               setIsMature={setIsMature}
-              aiCreated={aiCreated}
-              setAiCreated={setAiCreated}
               lastCrop={lastCrop}
               lastZoom={lastZoom}
               setLastCrop={setLastCrop}

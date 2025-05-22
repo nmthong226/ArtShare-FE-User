@@ -185,7 +185,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
             <div className="flex items-center gap-1 text-sm">
               <p className="font-semibold">{postData.comment_count}</p>
               <span className="text-mountain-600">
-                {postData.comment_count !== 1 ? " Comments" : " Comment"}
+                {postData.comment_count > 1 ? " Comments" : " Comment"}
               </span>
             </div>
           </div>
@@ -248,6 +248,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
         contentId={postData.id}
         open={isLikesDialogOpen}
         onClose={handleCloseLikesDialog}
+        variant="post"
       />
     </>
   );

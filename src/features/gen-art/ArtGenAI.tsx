@@ -1,5 +1,5 @@
 //Core
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 //Components
 import { Button, CircularProgress, TextareaAutosize } from '@mui/material';
@@ -7,30 +7,24 @@ import PromptResult from './components/PromptResult';
 import TokenPopover from './components/TokenPopover';
 import SettingsPanel from './components/SettingsPanel/SettingsPanel';
 import AIBot from './components/AI/AIBot';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
+import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
+import { DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import PurchaseButton from './components/PurchaseButton';
 
 //Icons
-import { TbChessQueenFilled } from "react-icons/tb";
 import { IoMdArrowDropdown } from "react-icons/io";
+import { BiInfoCircle } from 'react-icons/bi';
 
 //Css files
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import api from '@/api/baseApi';
-import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
-import { DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
+//Mock/Enum
 import { aspectOptions, cameraOptions, HistoryFilter, lightingOptions, ModelKey } from './enum';
 import { MockModelOptionsData } from './mock/Data';
-import { BiInfoCircle } from 'react-icons/bi';
-import { PricingTier } from '@/components/ui/pricing-card';
-import { PricingSection } from '@/components/ui/pricing-section';
+
+//API Backend
+import api from '@/api/baseApi';
 
 {/*
 A stunning realistic scene featuring a woman astronaut curiously peeking out of 
@@ -43,90 +37,7 @@ capturing the intricate design of the space station and the dynamic activity in 
 with stars twinkling in the background creating a sense of vastness in space.
 */}
 
-export const PAYMENT_FREQUENCIES = ["monthly", "yearly"];
-
-export const TIERS: PricingTier[] = [
-    {
-        id: "individual",
-        name: "Individuals",
-        price: {
-            monthly: "Free",
-            yearly: "Free",
-        },
-        description: "Used by art lovers",
-        features: [
-            "Showcase art & build public portfolio.",
-            "Connect with community of artists, fans.",
-            "Generate AI art with daily credits.",
-            "Explore AI artworks and prompts.",
-            "Get prompt ideas from popular styles.",
-            "Like, comment, follow, and share art.",
-        ],
-        cta: "Get started",
-        actionType: "none",
-    },
-    {
-        id: "artist",
-        name: "Pro Artists",
-        price: {
-            monthly: 12,
-            yearly: 10,
-        },
-        description: "Great for small businesses",
-        features: [
-            "Includes all Free plan features.",
-            "Use advanced AI models for better art.",
-            "Get a larger monthly AI quota.",
-            "Generate high-res art without watermark.",
-            "Gain commercial rights (T&Cs apply).",
-            "Smarter, trend-based prompt suggestions.",
-            "Organize art with portfolio collections.",
-            "More storage for your artwork.",
-        ],
-        cta: "Get started",
-        actionType: "checkout",
-        popular: true,
-    },
-    {
-        id: "studio",
-        name: "Studios",
-        price: {
-            monthly: 30,
-            yearly: 24,
-        },
-        description: "Great for large businesses",
-        features: [
-            "Everything in Pro Artists plan.",
-            "Equip your team with collaborative tools (includes multiple user seats).",
-            "Access a massive, shared pool of AI generation credits for team projects.",
-            "Track team usage and artwork performance with analytics.",
-            "Ensure faster workflows with top priority in the AI generation queue.",
-            "Secure robust commercial rights suitable for agency and studio work.",
-        ],
-        cta: "Get started",
-        actionType: "checkout",
-    },
-    {
-        id: "enterprise",
-        name: "Masterpiece",
-        price: {
-            monthly: "Custom",
-            yearly: "Custom",
-        },
-        description: "For Large art agencies & businesses",
-        features: [
-            "Everything in Studios plan.",
-            "Receive a fully bespoke platform solution tailored to enterprise needs.",
-            "Negotiate custom AI generation volumes, potentially unlimited.",
-            "Secure enterprise-grade Service Level Agreements (SLAs).",
-            "Discuss potential white-labeling solutions for your brand.",
-            "Fund custom feature development specific to your requirements.",
-        ],
-        cta: "Contact Us",
-        actionType: "contact",
-        highlighted: true,
-    },
-];
+const PAGE_SIZE = 5;
 
 const ArtGenAI = () => {
     const [promptResultList, setPromptResultList] = useState<PromptResult[]>([]);
@@ -137,11 +48,14 @@ const ArtGenAI = () => {
     const [userPrompt, setUserPrompt] = useState('');
     const [committedPrompt, setCommittedPrompt] = useState('');
     const [generatingImage, setGeneratingImage] = useState<boolean | null>(null);
-    const scrollRef = useRef<HTMLDivElement>(null);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [loading, setLoading] = useState(true);
-    const [historyFilter, setHistoryFilter] = useState<HistoryFilter>(HistoryFilter.TODAY)
-    const [filteredResults, setFilteredResults] = useState<PromptResult[]>([]);
+    const [historyFilter, setHistoryFilter] = useState(HistoryFilter.TODAY)
+    const scrollRef = useRef<HTMLDivElement>(null);
+    const [loadedCount, setLoadedCount] = useState(PAGE_SIZE);
+    const [displayedResults, setDisplayedResults] = useState<PromptResult[]>([]);
+    const [initialScrollDone, setInitialScrollDone] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
 
     //Setting Panel
     const [modelKey] = useState<ModelKey>(ModelKey.GPT_IMAGE_1);
@@ -151,46 +65,26 @@ const ArtGenAI = () => {
     const [camera, setCamera] = useState<CameraOption>(cameraOptions[0]);
     const [numberOfImages, setNumberOfImages] = useState<number>(1);
 
-    useEffect(() => {
-        const timer = setTimeout(() => {
-            setLoading(false);
-        }, 1000);
-        return () => clearTimeout(timer);
-    }, []);
-
-    const getLabel = (filter: HistoryFilter) => {
-        switch (filter) {
-            case HistoryFilter.TODAY:
-                return "Today";
-            case HistoryFilter.YESTERDAY:
-                return "Yesterday";
-            case HistoryFilter.LAST7DAYS:
-                return "Last 7 Days";
-            case HistoryFilter.LAST30DAYS:
-                return "Last 30 Days";
-            default:
-                return "";
-        }
-    };
-
     const handleGetPromptHistory = async () => {
-        setTimeout(() => {
-            scrollRef.current?.scrollTo({
-                top: scrollRef.current.scrollHeight,
-                behavior: 'smooth',
-            });
-        }, 100);
         try {
-            const response = await api.get('/art-generation/prompt-history');
-            setPromptResultList(response.data)
+            const response = await api.get('/art-generation/prompt-history')
+            setPromptResultList(response.data);
         } catch (e) {
             console.log(e);
         }
     }
 
     useEffect(() => {
-        handleGetPromptHistory();
-    }, [promptResult]);
+        const fetchHistory = async () => {
+            try {
+                await handleGetPromptHistory();
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchHistory();
+    }, []);
 
     const isInFilterRange = (createdAt: string): boolean => {
         const createdDate = new Date(createdAt);
@@ -223,34 +117,78 @@ const ArtGenAI = () => {
         }
     };
 
+    const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
-        setTimeout(() => {
-            scrollRef.current?.scrollTo({
-                top: scrollRef.current.scrollHeight,
-                behavior: 'smooth',
-            });
-        }, 100);
-        const filtered = promptResultList.filter(result =>
-            isInFilterRange(result.created_at)
-        ).reverse();
-        setFilteredResults(filtered);
+        setLoadedCount(PAGE_SIZE);
+        setInitialScrollDone(false);
     }, [historyFilter, promptResultList]);
+
+    const filtered = useMemo(() => {
+        return promptResultList.filter(result => isInFilterRange(result.created_at));
+    }, [promptResultList, historyFilter]);
+
+    const reversed = useMemo(() => filtered.slice().reverse(), [filtered]);
+
+    useEffect(() => {
+        const startIndex = Math.max(0, reversed.length - loadedCount);
+        const slice = reversed.slice(startIndex);
+        setDisplayedResults(slice);
+    }, [reversed, loadedCount]);
+
+    useLayoutEffect(() => {
+        if (!initialScrollDone && scrollRef.current && displayedResults.length > 0) {
+            const container = scrollRef.current;
+            container.scrollTop = container.scrollHeight;
+            setInitialScrollDone(true);
+        }
+    }, [displayedResults, initialScrollDone]);
+
+    const handleScroll = useCallback(() => {
+        const container = scrollRef.current;
+        if (!container || loadingMore) return;
+
+        if (container.scrollTop < 100 && displayedResults.length < reversed.length) {
+            const prevScrollHeight = container.scrollHeight;
+
+            setLoadingMore(true);
+            setLoadedCount(prev => prev + PAGE_SIZE);
+
+            // Restore scroll position after more items are added
+            scrollTimeout.current = setTimeout(() => {
+                const newScrollHeight = container.scrollHeight;
+                container.scrollTop = newScrollHeight - prevScrollHeight + container.scrollTop;
+                setLoadingMore(false);
+            }, 50);
+        }
+    }, [loadingMore, displayedResults.length, reversed.length]);
+
+    useEffect(() => {
+        const container = scrollRef.current;
+        if (!container) return;
+
+        container.addEventListener('scroll', handleScroll);
+
+        return () => {
+            container.removeEventListener('scroll', handleScroll);
+            if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+        };
+    }, [handleScroll]);
 
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const handleGenerate = async () => {
         if (!userPrompt.trim() || generatingImage) return;
 
+        setGeneratingImage(true);
+        setCommittedPrompt(userPrompt);
+
         setTimeout(() => {
             scrollRef.current?.scrollTo({
                 top: scrollRef.current.scrollHeight,
                 behavior: 'smooth',
             });
         }, 100);
-
-        setGeneratingImage(true);
-        setCommittedPrompt(userPrompt);
 
         const payload = {
             prompt: userPrompt,
@@ -299,7 +237,6 @@ const ArtGenAI = () => {
                 setPromptExpanded(false);
             }
         };
-
         if (promptExpanded) {
             document.addEventListener('mousedown', handleClickOutside);
         }
@@ -348,20 +285,20 @@ const ArtGenAI = () => {
                                     <DropdownMenuTrigger className="justify-start outline-none w-full hover:cursor-pointer">
                                         <div className="flex items-center space-x-2">
                                             <p>
-                                                Show <span className="font-medium">{getLabel(historyFilter)}</span>
+                                                Show <span className="font-medium">{historyFilter.label}</span>
                                             </p>
                                             <IoMdArrowDropdown />
                                         </div>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent className="flex flex-col mt-4 border-mountain-200 min-w-48 select-none">
-                                        {Object.entries(HistoryFilter).map(([, value]) => (
+                                        {Object.values(HistoryFilter).map((filter, index) => (
                                             <div
-                                                key={value}
-                                                onClick={() => setHistoryFilter(value as HistoryFilter)}
-                                                className={`${loading && 'pointer-events-none'} flex p-1.5 hover:bg-mountain-100 hover:cursor-pointer ${historyFilter === value ? "bg-indigo-50 font-medium text-mountain-800" : ""
+                                                key={index}
+                                                onClick={() => setHistoryFilter(filter)}
+                                                className={`${loading && 'pointer-events-none'} flex p-1.5 hover:bg-mountain-100 hover:cursor-pointer ${historyFilter.value == filter.value ? "bg-indigo-50 font-medium text-mountain-800" : ""
                                                     }`}
                                             >
-                                                {getLabel(value as HistoryFilter)}
+                                                {filter.label}
                                             </div>
                                         ))}
                                     </DropdownMenuContent>
@@ -369,30 +306,7 @@ const ArtGenAI = () => {
                             </div>
                         </div>
                         <TokenPopover tokenNumber={tokenNumber} />
-                        <Dialog>
-                            <DialogTrigger asChild>
-                                <Button className='flex justify-center items-center bg-indigo-100 rounded-lg w-28 h-full font-normal shrink-0'>
-                                    <TbChessQueenFilled className='mr-2 size-5' />
-                                    <p>Upgrade</p>
-                                </Button>
-                            </DialogTrigger>
-                            <DialogContent className="flex flex-col min-w-[96%] h-[96%]">
-                                <DialogHeader className=''>
-                                    <DialogTitle>ArtShare Upgrade Packs</DialogTitle>
-                                    <DialogDescription>
-                                        Make changes to your journey of discovering art and generating arts.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="flex flex-col justify-center bg-white w-full h-fit">
-                                    <div className="relative flex justify-between items-center w-full">
-                                        <div className="-z-10 absolute inset-0">
-                                            <div className="bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:35px_35px] opacity-30 w-full h-full [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)]" />
-                                        </div>
-                                        <PricingSection frequencies={PAYMENT_FREQUENCIES} tiers={TIERS} />
-                                    </div>
-                                </div>
-                            </DialogContent>
-                        </Dialog>
+                        <PurchaseButton />
                     </div>
                 </div>
                 <div className='relative flex justify-end w-full h-full'>
@@ -405,8 +319,8 @@ const ArtGenAI = () => {
                                 </div>
                             </div>
                         ) : (
-                            <div ref={scrollRef} className='flex flex-col space-y-10 pr-4 w-full h-full overflow-y-auto custom-scrollbar'>
-                                {(filteredResults && filteredResults.length > 0) || generatingImage ? filteredResults
+                            <div ref={scrollRef} onScroll={handleScroll} className='flex flex-col space-y-10 pr-4 w-full h-full overflow-y-auto custom-scrollbar'>
+                                {(displayedResults && displayedResults.length > 0) || generatingImage ? displayedResults
                                     .map((result, index) => (
                                         <PromptResult
                                             key={index}
@@ -473,7 +387,6 @@ const ArtGenAI = () => {
                     <AIBot />
                 </div>
             </div>
-
         </div>
     )
 }

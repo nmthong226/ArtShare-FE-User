@@ -69,36 +69,36 @@ const model12_img4 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q
 const model12_img5 = "https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Models-Mock/Model-12/f4oquhimazftztbky8il?blur=300&q=1";
 
 // Trending Mocks
-const trending_1 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/s2t3xlwkryfr3xskvfoq';
-const trending_2 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/lxvdlxysstemizqemlkb';
-const trending_3 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/gu48fnijrdfldbavx34n';
-const trending_4 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/ugzh4of9n6ulnncre5a4';
-const trending_5 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/lt25vcbklpptkmi8mnyq';
-const trending_6 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/na9utmatbks9olfcs34r';
-const trending_7 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/nc9si7eigub7he6kmu0o';
-const trending_8 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/boq21qrmqmwdqe0a4yit';
-const trending_9 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/tdjmge5thhso7g4rfena';
-const trending_10 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/jha3b1j2euk8mmxfdotz';
-const trending_11 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/xmemhoj6va2r5lvurfxw';
-const trending_12 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/q7zqfdctnosh3wbh6fwy';
-const trending_13 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/xc7tbjvu2klia76tetio';
-const trending_14 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/pfqt8nbnktxmqlmlehom';
-const trending_15 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/eamzbfmjifyvcca4ahb3';
-const trending_16 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/bj7ff29nxqfhshtsdj6n';
-const trending_17 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/ch0dk3uvd1qdkydxxmnf';
-const trending_18 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/zgllzne9fxiht2mozish';
-const trending_19 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/qduuflfgitz2nrp8xn7z';
-const trending_20 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/twykiobrf8ergvf1hldd';
-const trending_21 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/qoxwf1xaafcnxeoyd1mt';
-const trending_22 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/ebnaruggolynxuzx0i8r';
-const trending_23 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/uegozgqthaqzrraqfmor';
-const trending_24 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/dirlstw9xl49xfgnkwjp';
-const trending_25 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/x529kl4ivnt7mtgxchm8';
-const trending_26 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/okly969vhm6xx8w4icnv';
-const trending_27 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/jylghoyws3zfbuqyfzpu';
-const trending_28 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/qoozkiuln50unza8yguv';
-const trending_29 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/eteulba4t1vknr5wfopj';
-const trending_30 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/cgtddixkdljv38c0gzuo';
+const trending_1 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/s2t3xlwkryfr3xskvfoq?blur=300&q=1';
+const trending_2 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/lxvdlxysstemizqemlkb?blur=300&q=1';
+const trending_3 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/gu48fnijrdfldbavx34n?blur=300&q=1';
+const trending_4 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/ugzh4of9n6ulnncre5a4?blur=300&q=1';
+const trending_5 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/lt25vcbklpptkmi8mnyq?blur=300&q=1';
+const trending_6 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/na9utmatbks9olfcs34r?blur=300&q=1';
+const trending_7 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/nc9si7eigub7he6kmu0o?blur=300&q=1';
+const trending_8 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/boq21qrmqmwdqe0a4yit?blur=300&q=1';
+const trending_9 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/tdjmge5thhso7g4rfena?blur=300&q=1';
+const trending_10 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/jha3b1j2euk8mmxfdotz?blur=300&q=1';
+const trending_11 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/xmemhoj6va2r5lvurfxw?blur=300&q=1';
+const trending_12 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/q7zqfdctnosh3wbh6fwy?blur=300&q=1';
+const trending_13 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/xc7tbjvu2klia76tetio?blur=300&q=1';
+const trending_14 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/pfqt8nbnktxmqlmlehom?blur=300&q=1';
+const trending_15 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/eamzbfmjifyvcca4ahb3?blur=300&q=1';
+const trending_16 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/bj7ff29nxqfhshtsdj6n?blur=300&q=1';
+const trending_17 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/ch0dk3uvd1qdkydxxmnf?blur=300&q=1';
+const trending_18 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/zgllzne9fxiht2mozish?blur=300&q=1';
+const trending_19 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/qduuflfgitz2nrp8xn7z?blur=300&q=1';
+const trending_20 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/twykiobrf8ergvf1hldd?blur=300&q=1';
+const trending_21 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/qoxwf1xaafcnxeoyd1mt?blur=300&q=1';
+const trending_22 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/ebnaruggolynxuzx0i8r?blur=300&q=1';
+const trending_23 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/uegozgqthaqzrraqfmor?blur=300&q=1';
+const trending_24 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/dirlstw9xl49xfgnkwjp?blur=300&q=1';
+const trending_25 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/x529kl4ivnt7mtgxchm8?blur=300&q=1';
+const trending_26 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/okly969vhm6xx8w4icnv?blur=300&q=1';
+const trending_27 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/jylghoyws3zfbuqyfzpu?blur=300&q=1';
+const trending_28 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/qoozkiuln50unza8yguv?blur=300&q=1';
+const trending_29 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/eteulba4t1vknr5wfopj?blur=300&q=1';
+const trending_30 = 'https://res.cloudinary.com/dqxtf297o/image/upload/f_auto,q_auto/v1/Trending-Mock/cgtddixkdljv38c0gzuo?blur=300&q=1';
 
 export const MockModelOptionsData = [
     {

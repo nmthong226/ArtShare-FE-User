@@ -78,11 +78,11 @@ export default {
                 "caret-blink": "caret-blink 1.25s ease-out infinite",
             },
             screens: {
-                xs : '425px',
+                xs: '425px',
                 xl: '1280px',
             }
         }
     },
-    plugins: [tailwindcssAnimate, require('@tailwindcss/line-clamp'),],
+    plugins: [tailwindcssAnimate, require('@tailwindcss/line-clamp'), require('tailwind-scrollbar')],
 }
 

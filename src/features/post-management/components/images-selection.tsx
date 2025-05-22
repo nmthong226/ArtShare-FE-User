@@ -5,7 +5,7 @@ import { useImageFilesHandler } from "../hooks/use-image-files";
 import { MdCloudUpload, MdAdd, MdClose } from "react-icons/md";
 import { MediaDto } from "@/types";
 import { useEffect, useRef } from "react";
-import { MEDIA_TYPE } from "@/constants";
+import { MEDIA_TYPE } from "@/utils/constants";
 
 const MAX_IMAGES = 5;
 
@@ -77,12 +77,12 @@ export default function ImagesSelection({
 
   return (
     <Box
-      className="items-center w-full h-full text-gray-900 dark:text-white overflow-hidden flex flex-col"
+      className="flex flex-col items-center w-full h-full overflow-hidden text-gray-900 dark:text-white"
       hidden={hidden}
     >
       {/* Top row (info + delete button) */}
       <Box
-        className="flex justify-between items-center w-full mb-2"
+        className="flex justify-between items-center mb-2 w-full"
         sx={{ flexShrink: 0 }}
       >
         <Typography className="text-gray-900 dark:text-mountain-200 text-base">
@@ -161,7 +161,7 @@ export default function ImagesSelection({
 
       {/* Carousel (previews) */}
       <Box
-        className="flex gap-2 custom-scrollbar pt-4"
+        className="flex gap-2 pt-4 custom-scrollbar"
         sx={{
           flexShrink: 0,
           overflowX: "auto",
@@ -191,10 +191,10 @@ export default function ImagesSelection({
                   handleRemoveImagePreview(file);
                 }}
                 size="small"
-                className="-top-2 -right-2 absolute opacity-60 bg-gray-600 hover:bg-gray-400 group "
+                className="group -top-2 -right-2 absolute bg-gray-600 hover:bg-gray-400 opacity-60"
               >
                 <MdClose
-                  className="text-white text-sm group-hover:text-black"
+                  className="text-white group-hover:text-black text-sm"
                   size={16}
                 />
               </IconButton>

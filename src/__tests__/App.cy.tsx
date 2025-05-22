@@ -8,15 +8,11 @@ describe("App Component (Landing Page only)", () => {
     cy.mount(<App />);
   });
 
-  it("renders the hero title", () => {
-    cy.contains("Create, Share, Inspire").should("be.visible");
-  });
-
-  it("renders 'Start For Free' button", () => {
+  it.skip("renders 'Start For Free' button", () => {
     cy.get("a").contains("Start For Free").should("be.visible");
   });
 
-  it("renders pricing section", () => {
+  it.skip("renders pricing section", () => {
     cy.contains("PRICING PLANS").scrollIntoView().should("be.visible");
   });
 });

@@ -84,7 +84,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
           <div className="flex-grow" />
           <div
             onClick={() => setExpand(!expand)}
-            className={`flex justify-center items-center hover:bg-gray-100 rounded-full w-6 h-6 hover:cursor-pointer max-pointer-events-none`}>
+            className={`flex justify-center items-center hover:bg-gray-100 dark:hover:bg-mountain-800 rounded-full w-6 h-6 hover:cursor-pointer max-pointer-events-none`}>
             {expand ? (
               <GoSidebarExpand className="size-5 text-gray-600" />
             ) : (
@@ -112,7 +112,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
                   <Link
                     to={item.href}
                     key={item.label}
-                    className={`${isActive ? 'bg-gray-100 text-black' : 'hover:bg-gray-100 bg-white text-mountain-500'} group flex items-center px-4 rounded-md w-full h-10 hover:text-mountain-950 hover:cursor-pointer`}
+                    className={`${isActive ? 'bg-gray-100 text-black dark:text-white dark:bg-mountain-800' : 'hover:bg-gray-100 dark:hover:bg-mountain-800 bg-white dark:bg-mountain-950 text-mountain-500 dark:text-mountain-300'} group flex items-center px-4 rounded-md w-full h-10 hover:text-mountain-950 dark:hover:text-white hover:cursor-pointer`}
                   >
                     <item.icon className="flex-shrink-0 size-4" />
                     <div className={`overflow-hidden transition-all duration-500 origin-left ${expand ? 'ml-2 w-auto' : 'w-0'}`}>
@@ -133,10 +133,10 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
               className="flex flex-col w-full"
             >
               <CollapsibleTrigger asChild onClick={handleClick('posts')}>
-                <button className={`group flex px-4 justify-between items-center  hover:bg-gray-100 py-2 rounded-md w-full transition `}>
+                <button className={`group flex px-4 justify-between items-center hover:bg-gray-100 dark:hover:bg-mountain-800 py-2 rounded-md w-full transition dark:text-mountain-300`}>
                   <div className="flex items-center space-x-2">
                     <HiOutlineNewspaper className="size-4 shrink-0" />
-                    <p className={`text-nowrap text-sm ${pathname === '/posts/new' || pathname === '/posts/manage' ? 'text-mountain-950' : 'text-mountain-500'} transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-medium text-sm`}>
+                    <p className={`text-nowrap text-sm ${pathname === '/posts/new' || pathname === '/posts/manage' ? 'text-mountain-950 dark:text-mountain-100' : 'text-mountain-500 dark:text-mountain-300'} transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-medium text-sm`}>
                       Posts
                     </p>
                   </div>
@@ -155,7 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
                     <Link
                       to={item.href}
                       key={index}
-                      className={`${isActive ? 'bg-gray-100 text-black' : 'hover:bg-gray-100 bg-white text-mountain-500'} group flex pr-1.5 items-center rounded-md justify-between w-full h-8 hover:text-mountain-950 hover:cursor-pointer`}>
+                      className={`${isActive ? 'bg-gray-100 text-black dark:bg-mountain-800 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-mountain-800 bg-white dark:bg-mountain-950 text-mountain-500 dark:text-mountain-300'} group flex pr-1.5 items-center rounded-md justify-between w-full h-8 hover:text-mountain-950 dark:hover:text-white hover:cursor-pointer`}>
                       <div className="flex justify-center items-center transition-all duration-500">
                         <MdDragIndicator className={`invisible ${isActive && 'visible'} group-hover:visible size-4 text-mountain-400`} />
                         <p className={`flex text-nowrap transition-opacity duration-500 opacity-100 font-normal text-sm`}>{item.label}</p>
@@ -211,10 +211,10 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
               className="flex flex-col w-full"
             >
               <CollapsibleTrigger asChild onClick={handleClick('blogs')}>
-                <button className={`group flex px-4 justify-between items-center  hover:bg-gray-100 py-2 rounded-md w-full transition`}>
+                <button className={`group flex px-4 justify-between items-center dark:text-mountain-300 hover:bg-gray-100 dark:hover:bg-mountain-800 py-2 rounded-md w-full transition`}>
                   <div className="flex items-center space-x-2">
                     <LuBookOpenText className="size-4" />
-                    <p className={`text-nowrap text-sm ${pathname === '/blogs/new' || pathname === '/blogs/manage' ? 'text-mountain-950' : 'text-mountain-500'} transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-medium text-sm`}>
+                    <p className={`text-nowrap text-sm ${pathname === '/blogs/new' || pathname === '/blogs/manage' ? 'text-mountain-950 dark:text-mountain-100' : 'text-mountain-500 dark:text-mountain-300'} transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-medium text-sm`}>
                       Blogs
                     </p>
                   </div>
@@ -233,7 +233,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
                     <Link
                       to={item.href}
                       key={index}
-                      className={`${isActive ? 'bg-gray-100 text-black' : 'hover:bg-gray-100 bg-white text-mountain-500'} group flex pr-1.5 items-center rounded-md justify-between w-full h-8 hover:text-mountain-950 hover:cursor-pointer`}>
+                      className={`${isActive ? 'bg-gray-100 text-black dark:bg-mountain-800 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-mountain-800 bg-white dark:bg-mountain-950 text-mountain-500 dark:text-mountain-300'} group flex pr-1.5 items-center rounded-md justify-between w-full h-8 hover:text-mountain-950 dark:hover:text-white hover:cursor-pointer`}>
                       <div className="flex justify-center items-center transition-all duration-500">
                         <MdDragIndicator className={`invisible ${isActive && 'visible'} group-hover:visible size-4 text-mountain-400`} />
                         <p className={`flex text-nowrap transition-opacity duration-500 opacity-100 font-normal text-sm`}>{item.label}</p>
@@ -293,7 +293,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
               className="flex flex-col w-full"
             >
               <CollapsibleTrigger asChild onClick={handleClick('ai')}>
-                <button className={`group flex px-4 text-mountain-500 justify-between items-center  hover:bg-gray-100 py-2 rounded-md w-full transition`}>
+                <button className={`group flex px-4 text-mountain-500 dark:text-mountain-300 justify-between items-center  hover:bg-gray-100 dark:hover:bg-mountain-800 py-2 rounded-md w-full transition`}>
                   <div className="flex items-center space-x-2">
                     <RiImageAiLine className="size-4" />
                     <p className={`text-nowrap text-sm transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-medium text-sm`}>
@@ -358,7 +358,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
                     <Link
                       to={item.href}
                       key={index}
-                      className={`${isActive ? 'bg-gray-100 text-black' : 'hover:bg-gray-100 bg-white text-mountain-500'} group flex pr-1.5 items-center rounded-md justify-between w-full h-8 hover:text-mountain-950 hover:cursor-pointer`}>
+                      className={`${isActive ? 'bg-gray-100 text-black dark:bg-mountain-800 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-mountain-800 bg-white dark:bg-mountain-950 text-mountain-500 dark:text-mountain-300'} group flex pr-1.5 items-center rounded-md justify-between w-full h-8 hover:text-mountain-950 dark:hover:text-white hover:cursor-pointer`}>
                       <div className="flex justify-center items-center transition-all duration-500">
                         <MdDragIndicator className={`invisible ${isActive && 'visible'} group-hover:visible size-4 text-mountain-400`} />
                         <p className={`flex text-nowrap transition-opacity duration-500 opacity-100 font-normal text-sm`}>{item.label}</p>
@@ -377,7 +377,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
               className="flex flex-col w-full"
             >
               <CollapsibleTrigger asChild onClick={handleClick('auto')}>
-                <button className={`group flex px-4 text-mountain-500 justify-between items-center  hover:bg-gray-100 py-2 rounded-md w-full transition`}>
+                <button className={`group flex px-4 text-mountain-500 dark:text-mountain-300 justify-between items-center  hover:bg-gray-100 dark:hover:bg-mountain-800 py-2 rounded-md w-full transition`}>
                   <div className="flex items-center space-x-2">
                     <MdAutoMode className="size-4" />
                     <p className={`text-nowrap text-sm transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-medium text-sm`}>
@@ -442,7 +442,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
                     <Link
                       to={item.href}
                       key={index}
-                      className={`${isActive ? 'bg-gray-100 text-black' : 'hover:bg-gray-100 bg-white text-mountain-500'} group flex pr-1.5 items-center rounded-md justify-between w-full h-8 hover:text-mountain-950 hover:cursor-pointer`}>
+                      className={`${isActive ? 'bg-gray-100 text-black dark:bg-mountain-800 dark:text-white' : 'hover:bg-gray-100 dark:hover:bg-mountain-800 bg-white dark:bg-mountain-950 text-mountain-500 dark:text-mountain-300'} group flex pr-1.5 items-center rounded-md justify-between w-full h-8 hover:text-mountain-950 dark:hover:text-white hover:cursor-pointer`}>
                       <div className="flex justify-center items-center transition-all duration-500">
                         <MdDragIndicator className={`invisible ${isActive && 'visible'} group-hover:visible size-4 text-mountain-400`} />
                         <p className={`flex text-nowrap transition-opacity duration-500 opacity-100 font-normal text-sm`}>{item.label}</p>

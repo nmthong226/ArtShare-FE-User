@@ -33,8 +33,6 @@ const UploadForm: React.FC<{
   setDescription: (value: string) => void;
   isMature: boolean;
   setIsMature: (value: boolean) => void;
-  aiCreated: boolean;
-  setAiCreated: (value: boolean) => void;
   originalThumbnailFile: File | undefined;
   setOriginalThumbnailFile: (file: File | undefined) => void;
   lastCrop: { x: number; y: number };
@@ -59,8 +57,6 @@ const UploadForm: React.FC<{
   setDescription,
   isMature,
   setIsMature,
-  // aiCreated,
-  // setAiCreated,
   originalThumbnailFile,
   lastCrop,
   lastZoom,

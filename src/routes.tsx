@@ -10,10 +10,14 @@ import AILayout from "@/layouts/AILayout";
 import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
 import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute";
 import GuestRoute from "@/components/routes/guest-route";
+import EditUser from "./features/edit-user/EditUserPage";
 import OnboardingProfile from "./pages/Onboarding";
+
 import Dashboard from "./features/dashboard/Dashboard";
 import OnboardingRoute from "./components/ProtectedItems/OnboardingRoute";
 import RequireOnboard from "./components/ProtectedItems/RequireOnboard";
+
+import { useUser } from "./contexts/UserProvider"; 
 
 // Lazy imports for pages/features
 const LandingPage = lazy(() => import("@/pages/Home"));
@@ -130,6 +134,7 @@ const routeConfig: RouteObject[] = [
         ),
         children: [
           { path: "/:username", element: <UserProfile /> },
+          { path: "/edit-user", element: <EditUser /> },
           { path: "/post/:postId/edit", element: <EditPost /> },
           { path: "/posts/new", element: <UploadPost /> },
           { path: "/collections", element: <Collection /> },

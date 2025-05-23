@@ -2,11 +2,11 @@ import api from "@/api/baseApi";
 
 export interface UserProfile {
   id: string;
-  username: string;
-  email: string;
-  full_name: string;
+  username?: string;
+  email?: string;
+  full_name?: string;
   profile_picture_url: string | null;
-  bio: string | null;
+  bio?: string | null;
   followings_count: number;
   followers_count: number;
   isFollowing: boolean;
@@ -18,7 +18,7 @@ export const getUserProfile = async (userId?: string): Promise<UserProfile> => {
     ? `/users/profile/${encodeURIComponent(userId)}`
     : "/users/profile";
 
-  console.log('url for userProfile: ', url)
+  console.log("url for userProfile: ", url);
 
   try {
     const { data } = await api.get<UserProfile>(url);
@@ -29,9 +29,10 @@ export const getUserProfile = async (userId?: string): Promise<UserProfile> => {
   }
 };
 
-export const getUserProfileByUsername = async (username?: string): Promise<UserProfile> => {
-
-  console.log('url for userProfile by username: ', username);
+export const getUserProfileByUsername = async (
+  username?: string,
+): Promise<UserProfile> => {
+  console.log("url for userProfile by username: ", username);
 
   const url = `/users/profile/username/${username}`;
 

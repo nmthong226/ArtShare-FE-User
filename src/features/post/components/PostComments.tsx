@@ -38,7 +38,7 @@ import { User } from "@/types";
 /* ------------------------------------------------------------------ */
 /* Constants & helpers                                                */
 /* ------------------------------------------------------------------ */
-const INDENT = 40;
+const INDENT = 44;
 
 const addReplyRecursive = (
   list: CommentUI[],
@@ -150,40 +150,49 @@ const CommentRow = ({
     const prev = prevReplyCountRef.current;
     const curr = comment.replies?.length ?? 0;
     // if we went from 0 → >0, open the thread
-    if (prev === 0 && curr > 0) {
+    if (prev === 0 && curr > 0 && !showReplies) {
+      // Only if not already shown
       setShowReplies(true);
     }
     prevReplyCountRef.current = curr;
-  }, [comment.replies]);
+  }, [comment.replies, showReplies]);
 
   const toggleReplies = async () => {
-    if (!showReplies && comment.replies === undefined) {
+    const needsToFetch =
+      !showReplies &&
+      (comment.replies === undefined ||
+        (comment.replies.length === 0 && (comment.reply_count ?? 0) > 0));
+
+    if (needsToFetch) {
       try {
         setLoading(true);
-        const replies = await fetchComments(postId, comment.id);
-
-        onRepliesFetched(comment.id, replies as CommentUI[]);
+        const fetchedReplies = await fetchComments(postId, comment.id);
+        onRepliesFetched(comment.id, fetchedReplies as CommentUI[]);
+        // setShowReplies(true) will be handled by the toggle at the end
       } catch (err) {
-        console.error(err);
-        Snackbar({
-          open: true,
-          message: "Failed to load replies.",
-          autoHideDuration: 3000,
-        });
+        console.error(
+          "Failed to load replies for comment " + comment.id + ":",
+          err,
+        );
+        // Consider your Snackbar here:
+        // Snackbar({ open: true, message: "Failed to load replies.", autoHideDuration: 3000 });
       } finally {
         setLoading(false);
       }
     }
-    setShowReplies((s) => !s);
+    setShowReplies((s) => !s); // Toggle visibility
+  };
+
+  // Helper to get button text
+  const getReplyButtonTextContent = () => {
+    const count = comment.reply_count ?? 0; // Always base on reply_count from server
+    return `${count} ${count === 1 ? "reply" : "replies"}`;
   };
 
   return (
     <div className="w-full">
       {/* Row */}
-      <div
-        className="flex gap-3 py-3 w-full"
-        style={{ marginLeft: depth * INDENT }}
-      >
+      <div className="flex gap-3 py-3 w-full">
         {comment.user.profile_picture_url ? (
           <img
             src={comment.user.profile_picture_url}
@@ -298,33 +307,39 @@ const CommentRow = ({
       </div>
 
       {/* Replies */}
-      {(comment.replies === undefined || comment.replies.length > 0) && (
-        <div className="ml-[32px] flex flex-col gap-1">
+      {(comment.reply_count ?? 0) > 0 && (
+        <div className="flex flex-col gap-1" style={{ marginLeft: INDENT }}>
           <button
             onClick={toggleReplies}
-            className="flex items-center gap-1 text-xs text-blue-600"
+            disabled={loading && !showReplies}
+            className="flex items-center gap-1 text-xs text-blue-600 disabled:text-neutral-400"
           >
-            {showReplies ? <ChevronUp size={14} /> : <ChevronDown size={14} />}{" "}
-            {showReplies ? "Hide" : "View"}{" "}
-            {(() => {
-              // how many replies do we know about?
-              const count =
-                comment.replies !== undefined
-                  ? comment.replies.length
-                  : (comment.reply_count ?? 0);
-
-              return count
-                ? `${count} ${count === 1 ? "reply" : "replies"}`
-                : "replies";
-            })()}
+            {loading && !showReplies ? ( // Spinner when fetching to expand
+              <CircularProgress
+                size={14}
+                color="inherit"
+                sx={{ marginRight: "4px" }}
+              />
+            ) : showReplies ? (
+              <ChevronUp size={14} />
+            ) : (
+              <ChevronDown size={14} />
+            )}
+            {showReplies ? "Hide" : "View"} {getReplyButtonTextContent()}{" "}
+            {/* Use helper for consistent count */}
           </button>
-          {loading && (
+
+          {/* Optional: More prominent loading indicator when fetching to show */}
+          {loading && !showReplies && (
             <div className="flex items-center gap-1 text-xs text-neutral-500 p-2">
               <CircularProgress size={12} /> Loading replies…
             </div>
           )}
+          {/* Render actual replies IF they are meant to be shown AND data exists */}
           {showReplies &&
-            comment.replies?.map((r: CommentUI) => (
+            comment.replies && // Check if replies array exists
+            comment.replies.length > 0 && // Check if it has content
+            comment.replies.map((r: CommentUI) => (
               <CommentRow
                 postId={postId}
                 key={r.id}

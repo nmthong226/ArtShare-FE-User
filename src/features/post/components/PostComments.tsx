@@ -45,13 +45,18 @@ const addReplyRecursive = (
   parentId: number,
   reply: CommentUI,
 ): CommentUI[] =>
-  list.map((c) =>
-    c.id === parentId
-      ? { ...c, replies: c.replies ? [...c.replies, reply] : [reply] }
-      : c.replies?.length
-        ? { ...c, replies: addReplyRecursive(c.replies, parentId, reply) }
-        : c,
-  );
+  list.map((c) => {
+    if (c.id === parentId) {
+      return {
+        ...c,
+        replies: c.replies ? [...c.replies, reply] : [reply],
+        reply_count: (c.reply_count ?? 0) + 1, // ← bump the count
+      };
+    }
+    return c.replies?.length
+      ? { ...c, replies: addReplyRecursive(c.replies, parentId, reply) }
+      : c;
+  });
 
 const toggleLikeRecursive = (list: CommentUI[], id: number): CommentUI[] =>
   list.map((c) =>
@@ -190,7 +195,7 @@ const CommentRow = ({
   };
 
   return (
-    <div className="w-full">
+    <div id={`comment-${comment.id}`} className="w-full">
       {/* Row */}
       <div className="flex gap-3 py-3 w-full">
         {comment.user.profile_picture_url ? (
@@ -307,7 +312,8 @@ const CommentRow = ({
       </div>
 
       {/* Replies */}
-      {(comment.reply_count ?? 0) > 0 && (
+      {((comment.reply_count ?? 0) > 0 ||
+        (comment.replies?.length ?? 0) > 0) && (
         <div className="flex flex-col gap-1" style={{ marginLeft: INDENT }}>
           <button
             onClick={toggleReplies}
@@ -424,6 +430,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
 
       const tmpId = Date.now();
       const now = new Date();
+      const parentId = replyParentId;
 
       // Create optimistic comment
       const optimistic: CommentUI = {
@@ -446,10 +453,10 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         reply_count: 0,
       };
 
-      // Optimistically update UI to show the new comment
+      // Optimistically update UI to show the new reply (and bump reply_count)
       setComments((prev) =>
-        replyParentId
-          ? addReplyRecursive(prev, replyParentId, optimistic)
+        parentId
+          ? addReplyRecursive(prev, parentId, optimistic)
           : [optimistic, ...prev],
       );
 
@@ -465,13 +472,13 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           content,
           target_id: postId,
           target_type: "POST",
-          parent_comment_id: replyParentId ?? undefined,
+          parent_comment_id: parentId ?? undefined,
         };
 
         const { data } = await createComment(payload);
 
         // Replace the optimistic comment while preserving hierarchy
-        if (replyParentId) {
+        if (parentId) {
           // For replies, update within the nested structure
           setComments((prev) =>
             prev.map((comment) => {
@@ -519,6 +526,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
             listRef.current?.scrollTo({ top: 0, behavior: "smooth" });
           }
         }, 100);
+        setReplyParentId(null);
       } catch (err) {
         console.error(err);
         setComments((prev) => removeRecursive(prev, tmpId));

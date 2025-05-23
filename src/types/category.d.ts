@@ -1,8 +1,5 @@
 // Your existing enum for category types (ensure it matches what your backend uses/expects)
-export enum CategoryTypeValues {
-  MEDIUM = "MEDIUM", // From your previous examples
-  ATTRIBUTE = "ATTRIBUTE", // From your previous examples
-}
+import { CategoryTypeValues } from "@/constants";
 
 export interface Category {
   id: number;

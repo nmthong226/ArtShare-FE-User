@@ -90,6 +90,7 @@ const updateContentRecursive = (
 /* Single comment row                                                 */
 /* ------------------------------------------------------------------ */
 interface RowProps {
+  postId: number;
   depth?: number;
   comment: CommentUI;
   onLike: (id: number) => void;
@@ -104,6 +105,7 @@ interface RowProps {
 }
 
 const CommentRow = ({
+  postId,
   depth = 0,
   comment,
   onLike,
@@ -158,7 +160,7 @@ const CommentRow = ({
     if (!showReplies && comment.replies === undefined) {
       try {
         setLoading(true);
-        const replies = await fetchComments(comment.id);
+        const replies = await fetchComments(postId, comment.id);
 
         onRepliesFetched(comment.id, replies as CommentUI[]);
       } catch (err) {
@@ -296,7 +298,7 @@ const CommentRow = ({
       </div>
 
       {/* Replies */}
-      {comment.replies !== undefined && comment.replies.length === 0 ? null : (
+      {(comment.replies === undefined || comment.replies.length > 0) && (
         <div className="ml-[32px] flex flex-col gap-1">
           <button
             onClick={toggleReplies}
@@ -304,9 +306,17 @@ const CommentRow = ({
           >
             {showReplies ? <ChevronUp size={14} /> : <ChevronDown size={14} />}{" "}
             {showReplies ? "Hide" : "View"}{" "}
-            {comment.replies
-              ? `${comment.replies.length} ${comment.replies.length === 1 ? "reply" : "replies"}`
-              : "replies"}
+            {(() => {
+              // how many replies do we know about?
+              const count =
+                comment.replies !== undefined
+                  ? comment.replies.length
+                  : (comment.reply_count ?? 0);
+
+              return count
+                ? `${count} ${count === 1 ? "reply" : "replies"}`
+                : "replies";
+            })()}
           </button>
           {loading && (
             <div className="flex items-center gap-1 text-xs text-neutral-500 p-2">
@@ -316,6 +326,7 @@ const CommentRow = ({
           {showReplies &&
             comment.replies?.map((r: CommentUI) => (
               <CommentRow
+                postId={postId}
                 key={r.id}
                 depth={depth + 1}
                 comment={r}
@@ -417,6 +428,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         replies: [],
         like_count: 0,
         likedByCurrentUser: false,
+        reply_count: 0,
       };
 
       // Optimistically update UI to show the new comment
@@ -629,6 +641,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           ) : (
             comments.map((c) => (
               <CommentRow
+                postId={postId}
                 key={c.id}
                 comment={c}
                 onLike={handleLike}

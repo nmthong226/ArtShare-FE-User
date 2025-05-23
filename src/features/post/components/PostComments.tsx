@@ -14,6 +14,7 @@ import {
   TextareaAutosize,
   CircularProgress,
   Snackbar,
+  Typography,
 } from "@mui/material";
 import {
   ChevronDown,
@@ -34,7 +35,8 @@ import {
 import { CommentUI, CreateCommentDto } from "@/types/comment";
 import { useUser } from "@/contexts/UserProvider";
 import { User } from "@/types";
-import { Link } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import MuiLink from "@mui/material/Link";
 
 /* ------------------------------------------------------------------ */
 /* Constants & helpers                                                */
@@ -203,13 +205,15 @@ const CommentRow = ({
       if (m) {
         const username = m[1];
         return (
-          <Link
+          <MuiLink
             key={i}
+            component={RouterLink}
             to={`/${username}`}
-            className="text-blue-600 hover:underline"
+            color="primary"
+            underline="hover"
           >
             @{username}
-          </Link>
+          </MuiLink>
         );
       }
       return <span key={i}>{part}</span>;
@@ -289,22 +293,25 @@ const CommentRow = ({
             </div>
           )}
 
-          <div className="flex items-center gap-4 mt-1 text-xs text-neutral-600">
-            <button
+          <div className="flex items-center gap-1 mt-1">
+            <IconButton
+              size="small"
+              color={comment.likedByCurrentUser ? "primary" : "default"}
               onClick={() => onLike(comment.id)}
-              className={`flex items-center gap-1 hover:text-black ${
-                comment.likedByCurrentUser ? "text-blue-600 font-semibold" : ""
-              }`}
             >
               <Heart size={16} />
-              <span>{comment.like_count ?? 0}</span>
-            </button>
-            <button
+            </IconButton>
+            <Typography variant="caption" sx={{ mr: 2 }}>
+              {comment.like_count ?? 0}
+            </Typography>
+
+            <Button
+              size="small"
+              color="primary"
               onClick={() => onReply(comment.id, comment.user.username)}
-              className="hover:text-black"
             >
               Reply
-            </button>
+            </Button>
           </div>
         </div>
 

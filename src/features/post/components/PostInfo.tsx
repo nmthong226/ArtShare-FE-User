@@ -28,9 +28,15 @@ type PostInfoProps = {
   postData: Post & {
     isLikedByCurrentUser?: boolean;
   };
+  commentCount: number; // Accept the comment count as prop
+  setCommentCount: React.Dispatch<React.SetStateAction<number>>; // Accept setState function for comment count
 };
 
-const PostInfo = ({ postData }: PostInfoProps) => {
+const PostInfo = ({
+  postData,
+  commentCount,
+  setCommentCount,
+}: PostInfoProps) => {
   const { postCommentsRef } = useFocusContext();
   const { showSnackbar } = useSnackbar();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -41,7 +47,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
   >([]);
   const [isLoadingCollections, setIsLoadingCollections] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
-
+  const user = useUser();
   // Like-state & API integration
   const [userLike, setUserLike] = useState<boolean>(
     postData.isLikedByCurrentUser ?? false,
@@ -67,7 +73,11 @@ const PostInfo = ({ postData }: PostInfoProps) => {
     };
     loadCollectionNames();
   }, [postData.id]);
-
+  const handleCommentAdded = () => {
+    console.log("Comment added. Previous count:", commentCount);
+    setCommentCount((prev) => prev + 1); // Increment comment count when a comment is added
+    console.log("Updated comment count:", commentCount + 1);
+  };
   const handleOpenSaveDialog = () => {
     setIsCreateDialogOpen(false);
     setIsSaveDialogOpen(true);
@@ -96,11 +106,11 @@ const PostInfo = ({ postData }: PostInfoProps) => {
 
   // Like / Unlike handler (optimistic update)
   const handleLikeClick = async () => {
-    const user = useUser();
     if (!user) {
       showSnackbar("Please log in to like", "error");
       return;
     }
+    console.log("HELLO");
     if (isLiking || isFetchingLike) return;
     const willLike = !userLike;
     setUserLike(willLike);
@@ -139,7 +149,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
   return (
     <>
       <div className="bg-white rounded-2xl overflow-none">
-        <CardContent className="flex flex-col gap-4 p-0">
+        <CardContent className="flex flex-col gap-2 p-0">
           {/* Title, description, date */}
           <div className="flex flex-col gap-2">
             <div className="font-bold text-xl">{postData.title}</div>

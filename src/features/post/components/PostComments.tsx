@@ -34,6 +34,7 @@ import {
 import { CommentUI, CreateCommentDto } from "@/types/comment";
 import { useUser } from "@/contexts/UserProvider";
 import { User } from "@/types";
+import { Link } from "react-router-dom";
 
 /* ------------------------------------------------------------------ */
 /* Constants & helpers                                                */
@@ -194,6 +195,27 @@ const CommentRow = ({
     return `${count} ${count === 1 ? "reply" : "replies"}`;
   };
 
+  const renderContent = (text: string) => {
+    // split out any @word, preserving the separators
+    const parts = text.split(/(@\w+)/g);
+    return parts.map((part, i) => {
+      const m = part.match(/^@(\w+)$/);
+      if (m) {
+        const username = m[1];
+        return (
+          <Link
+            key={i}
+            to={`/${username}`}
+            className="text-blue-600 hover:underline"
+          >
+            @{username}
+          </Link>
+        );
+      }
+      return <span key={i}>{part}</span>;
+    });
+  };
+
   return (
     <div id={`comment-${comment.id}`} className="w-full">
       {/* Row */}
@@ -262,7 +284,9 @@ const CommentRow = ({
               </div>
             </div>
           ) : (
-            <div className="text-sm whitespace-pre-wrap">{comment.content}</div>
+            <div className="text-sm whitespace-pre-wrap">
+              {renderContent(comment.content)}
+            </div>
           )}
 
           <div className="flex items-center gap-4 mt-1 text-xs text-neutral-600">

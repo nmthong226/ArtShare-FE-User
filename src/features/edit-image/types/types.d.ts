@@ -7,15 +7,16 @@ type ImageLayer = {
     flipV: boolean;
     width?: number;
     height?: number;
+    zoom?: number;
     x?: number;
     y?: number;
+    rotation: number;
     saturation: number;
     hue: number;
     brightness: number;
     contrast: number;
     sepia: number;
     backgroundColor?: string;
-    //More
 };
 
 type TextItem = {

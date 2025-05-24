@@ -74,6 +74,35 @@ interface HorizontalSliderProps<T> {
   variant?: "default" | "overlay"; // new
 }
 
+const OverlayLeftArrow: React.FC = () => {
+  const visibility = useContext<publicApiType>(VisibilityContext);
+  const isFirstItemVisible = visibility.useIsVisible("first", true);
+  if (isFirstItemVisible) return null;
+
+  return (
+    <>
+      <div className="-left-4 z-10 absolute flex bg-gradient-to-r from-black/60 to-transparent opacity-0 group-hover:opacity-100 w-20 h-full transition duration-300 ease-in-out pointer-events-none" />
+      <div className="top-1/2 left-2 z-20 absolute opacity-0 group-hover:opacity-100 transition-opacity -translate-y-1/2">
+        <DefaultLeftArrow />
+      </div>
+    </>
+  );
+};
+
+const OverlayRightArrow: React.FC = () => {
+  const visibility = useContext<publicApiType>(VisibilityContext);
+  const isLastItemVisible = visibility.useIsVisible("last", false);
+  if (isLastItemVisible) return null;
+  return (
+    <>
+      <div className="-right-4 z-10 absolute flex bg-gradient-to-l from-black/60 to-transparent opacity-0 group-hover:opacity-100 w-20 h-full transition duration-300 ease-in-out pointer-events-none" />
+      <div className="top-1/2 right-2 z-20 absolute opacity-0 group-hover:opacity-100 transition-opacity -translate-y-1/2">
+        <DefaultRightArrow />
+      </div>
+    </>
+  );
+};
+
 export const HorizontalSlider = <T extends object>({
   data,
   renderItem,
@@ -90,45 +119,11 @@ export const HorizontalSlider = <T extends object>({
 
   return (
     <div
-      className={`horizontal-slider-wrapper relative group ${wrapperClassName}`}
+      className={`horizontal-slider-wrapper overflow-x-hidden relative group ${wrapperClassName}`}
     >
       <ScrollMenu
-        LeftArrow={
-          isOverlay
-            ? () => {
-              const visibility = useContext<publicApiType>(VisibilityContext);
-              const isFirstItemVisible = visibility.useIsVisible("first", true);
-              if (isFirstItemVisible) return null;
-              return (
-                <>
-                  <div className="-left-4 z-10 absolute flex bg-gradient-to-r from-black/60 to-transparent opacity-0 group-hover:opacity-100 w-20 h-full transition duration-300 ease-in-out pointer-events-none" />
-                  <div className="top-1/2 left-2 z-20 absolute opacity-0 group-hover:opacity-100 transition-opacity -translate-y-1/2">
-                    <DefaultLeftArrow />
-                  </div>
-                </>
-              );
-            }
-            : LeftArrowComponent
-        }
-        RightArrow={
-          isOverlay
-            ? () => {
-              const visibility = useContext<publicApiType>(VisibilityContext);
-              const isLastItemVisible = visibility.useIsVisible("last", false);
-
-              if (isLastItemVisible) return null;
-
-              return (
-                <>
-                  <div className="-right-4 z-10 absolute flex bg-gradient-to-l from-black/60 to-transparent opacity-0 group-hover:opacity-100 w-20 h-full transition duration-300 ease-in-out pointer-events-none" />
-                  <div className="top-1/2 right-2 z-20 absolute opacity-0 group-hover:opacity-100 transition-opacity -translate-y-1/2">
-                    <DefaultRightArrow />
-                  </div>
-                </>
-              );
-            }
-            : RightArrowComponent
-        }
+        LeftArrow={isOverlay ? OverlayLeftArrow : LeftArrowComponent}
+        RightArrow={isOverlay ? OverlayRightArrow : RightArrowComponent}
         itemClassName={itemClassName}>
         {
           data.map((item, index) => {

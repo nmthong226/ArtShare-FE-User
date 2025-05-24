@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 //Components
-import { Button, IconButton, Tooltip } from "@mui/material";
+import { Button, CircularProgress, IconButton, Tooltip } from "@mui/material";
 import BlogComments from "./components/BlogComments";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import type { Blog } from "@/types/blog";
@@ -28,6 +28,7 @@ import {
 import { AxiosError } from "axios";
 import { createLike, removeLike } from "./api/like-blog";
 import { TargetType } from "@/types/likes";
+import parse from 'html-react-parser';
 
 const BlogDetails = () => {
   const { blogId } = useParams<{ blogId: string }>(); // get blogId from URL
@@ -42,7 +43,7 @@ const BlogDetails = () => {
     data: blog,
     isLoading,
     error,
-    refetch, // we’ll call this after follow/unfollow
+    refetch,
   } = useQuery<Blog, Error>({
     queryKey: ["blogDetails", blogId],
     queryFn: () => fetchBlogDetails(Number(blogId)),
@@ -202,34 +203,34 @@ const BlogDetails = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center space-x-4 h-screen">
+        <CircularProgress size={36} />
         <p>Loading…</p>
       </div>
     );
   }
 
   if (error) {
-    return <div className="p-4 text-red-500">{error.message}</div>;
+    return <div className="flex justify-center items-center p-4 h-screen text-red-500">{error.message}</div>;
   }
   if (!blog) return null;
 
-  // 5) Compute reading time:
   const readingTime = Math.ceil(blog.content.split(/\s+/).length / 200);
 
   console.log("@@ Current user:", user);
 
   return (
-    <div className="flex flex-col items-center w-full h-full">
+    <div className="flex flex-col items-center py-12 w-full h-screen sidebar">
       <div className="flex w-full h-full">
         <div className="relative flex flex-col w-[20%]">
-          <div className="top-110 z-10 sticky flex justify-center items-center bg-white shadow-md mr-4 ml-auto rounded-full w-12 h-12">
+          <div className="top-100 z-10 sticky flex justify-center items-center bg-white shadow-md mr-4 ml-auto rounded-full w-12 h-12">
             <LuTableOfContents className="size-5" />
           </div>
           <div className="right-4 bottom-4 z-50 fixed flex justify-center items-center bg-blue-400 shadow-md rounded-full w-12 h-12">
             <IoIosArrowUp className="mb-1 size-5 text-white" />
           </div>
         </div>
-        <div className="group flex flex-col space-y-4 bg-white/50 shadow p-4 w-[60%]">
+        <div className="group flex flex-col space-y-4 p-4 w-[60%]">
           <div className="flex space-x-2 w-full">
             <Link to="/blogs" className="underline">
               Blogs
@@ -237,7 +238,7 @@ const BlogDetails = () => {
             <span>/</span>
             <span className="text-mountain-600 line-clamp-1">{blog.title}</span>
           </div>
-          <h1 className="font-medium text-3xl">{blog.title}</h1>{" "}
+          <h1 className="font-medium text-2xl">{blog.title}</h1>{" "}
           <div className="flex items-center space-x-2 text-mountain-600 text-sm">
             <p>
               Posted{" "}
@@ -248,9 +249,8 @@ const BlogDetails = () => {
             <span>•</span>
             <p>{readingTime}m reading</p>
           </div>
-          <div
-            className="flex justify-between items-center bg-gradient-to-r from-indigo-100 to-purple-100 shadow-sm p-4 rounded-lg"
-          >
+          {/* Author Section */}
+          <div className="flex justify-between items-center bg-gradient-to-r from-indigo-100 to-purple-100 shadow-sm p-4 rounded-lg">
             <div className="flex items-center space-x-4">
               <Avatar className="w-12 h-12">
                 <AvatarImage src={blog.user.profile_picture_url ?? undefined} />
@@ -273,32 +273,31 @@ const BlogDetails = () => {
                 </div>
               </div>
             </div>
-
             {!isOwnProfile && (
               <Button
                 onClick={toggleFollow}
                 disabled={followBtnLoading}
-                variant="outlined" // ← same style both ways
-                color="primary"
-                className="flex items-center shadow w-32 h-10 font-medium text-sm"
+                className="flex items-center bg-white shadow w-32 h-10 font-medium text-sm"
               >
                 <IoPersonAddOutline className="mr-2 text-blue-500" />
                 {isFollowing ? "Unfollow" : "Follow"}
               </Button>
             )}
           </div>
-          <div
-            className="p-2 rounded-md max-w-none prose lg:prose-xl" // Added prose classes for styling
-            dangerouslySetInnerHTML={{ __html: blog.content }}
-          />
+          {/* Blog Content */}
+          <div className="p-2 rounded-md max-w-none prose lg:prose-xl">
+            {parse(blog.content)}
+          </div>
+          <hr className="flex border-mountain-200 border-t-1 w-full" />
+          <BlogComments />
+          <hr className="flex border-mountain-200 border-t-1 w-full" />
+          <RelatedBlogs />
         </div>
         <div className="relative flex flex-col w-[20%]">
-          <div
-            className={`${!showAuthorBadge ? "opacity-0 pointer-events-none" : "opacity-100"} space-y-2 flex-col transition ease-in-out duration-300 top-64 z-10 sticky flex justify-center items-center mr-auto ml-4 rounded-full w-14 h-76`}
-          >
+          <div className={`${showAuthorBadge ? "opacity-0 pointer-events-none" : "opacity-100"} space-y-2 flex-col transition ease-in-out duration-300 top-64 z-10 sticky flex justify-center items-center mr-auto ml-4 rounded-full w-14 h-76`}>
             <div className="relative flex justify-center items-center w-12 h-12">
               <Avatar>
-                <AvatarImage src="https://i.pravatar.cc/150?img=68" />
+                <AvatarImage src="https://i.pravatar.cc/150?img=68" className="object-cover" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <Tooltip title="Follow" placement="right" arrow>
@@ -330,7 +329,7 @@ const BlogDetails = () => {
                   <p
                     className="ml-1 hover:underline"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent event bubbling
+                      e.stopPropagation();
                       handleOpenLikesDialog();
                     }}
                   >
@@ -365,10 +364,8 @@ const BlogDetails = () => {
           </div>
         </div>
       </div>
-      <BlogComments />
-      <RelatedBlogs />
       <LikesDialog
-        contentId={Number(blogId)} // pass contentId from URL
+        contentId={Number(blogId)}
         open={likesDialogOpen}
         onClose={handleCloseLikesDialog}
         variant="blog"

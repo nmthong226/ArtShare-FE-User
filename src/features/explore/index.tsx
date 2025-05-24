@@ -221,9 +221,9 @@ const Explore: React.FC = () => {
   const isAllChannelsSelected = selectedCategories === null;
 
   return (
-    <div className="relative flex flex-col h-full">
-      <div className="sticky z-10 flex flex-col gap-4 p-4 top-16 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950">
-        <div className="flex items-center w-full gap-6 categories-bar">
+    <div className="relative flex flex-col h-screen overflow-hidden">
+      <div className="z-10 sticky flex flex-col gap-4 bg-gradient-to-t dark:bg-gradient-to-t from-white dark:from-mountain-1000 to-mountain-50 dark:to-mountain-950 p-4 rounded-t-3xl">
+        <div className="flex items-center gap-6 w-full overflow-x-hidden categories-bar">
           <Button
             className="flex flex-shrink-0 gap-2 dark:bg-mountain-900 shadow-none p-2 rounded-lg min-w-auto aspect-[1/1] font-normal dark:text-mountain-50 normal-case all-channels-btn"
             variant="contained"
@@ -273,8 +273,7 @@ const Explore: React.FC = () => {
             </div>
             <span className="flex-shrink-0">All Channels</span>
           </Button>
-
-          <div className="flex-grow overflow-x-auto scrollbar-hide">
+          <div className="flex-grow overflow-x-auto">
             <Categories
               onSelectCategory={handleCategoriesChange}
               selectedCategory={selectedCategories}
@@ -283,7 +282,6 @@ const Explore: React.FC = () => {
               isError={isErrorAllCategories}
             />
           </div>
-
           <Button
             className="flex-shrink-0 dark:bg-mountain-900 p-2 rounded-lg min-w-auto aspect-[1/1] dark:text-mountain-50 spread-btn"
             variant="contained"
@@ -313,7 +311,7 @@ const Explore: React.FC = () => {
       </div>
       <div
         ref={galleryAreaRef}
-        className="flex-grow p-4 overflow-y-auto gallery-area"
+        className="flex-grow p-4 overflow-y-auto gallery-area sidebar"
       >
         <IGallery
           photos={galleryPhotos}
@@ -323,7 +321,7 @@ const Explore: React.FC = () => {
           error={postsError as Error | null}
         />
       </div>
-      <Paper className="fixed z-50 transform -translate-x-1/2 bg-white rounded-full shadow-lg bottom-4 left-1/2 dark:bg-mountain-800">
+      <Paper className="bottom-4 left-1/2 z-50 fixed bg-white dark:bg-mountain-800 shadow-lg rounded-full -translate-x-1/2 transform">
         <ToggleButtonGroup
           className="flex gap-2 m-1.5"
           size="small"

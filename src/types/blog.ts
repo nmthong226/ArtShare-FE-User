@@ -3,7 +3,7 @@ export interface Blog {
   user_id: string;
   title: string;
   content: string;
-  created_at: string; // ISO date string
+  created_at: string;
   is_published: boolean;
   like_count: number;
   comment_count: number;

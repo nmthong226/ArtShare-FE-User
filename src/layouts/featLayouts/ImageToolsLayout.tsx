@@ -1,20 +1,8 @@
 // Core Lib/Frameworks
-import React, {
-    createContext,
-    Dispatch,
-    SetStateAction,
-} from "react";
+import React from "react";
 
 // Components
 import AIHeader from "@/components/header/ai-app-header";
-
-export const SearchContext = createContext<{
-    query: string;
-    setQuery: Dispatch<SetStateAction<string>>;
-}>({
-    query: "",
-    setQuery: () => { },
-});
 
 const AILayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return (

@@ -5,7 +5,6 @@
 @import "@fontsource/roboto/700.css";
 
 @plugin "tailwindcss-animate";
-@import "./styles/scrollbar.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -155,19 +154,9 @@ body {
   width: 100%;
   font-family: "Roboto", sans-serif;
   scrollbar-gutter: "stable";
-
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    /* IE and Edge */
-    scrollbar-width: none;
-    /* Firefox */
-  }
-
   background-color: var(--background);
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .bounce-item {
@@ -176,35 +165,25 @@ body {
 
 .sidebar {
   overflow-y: scroll;
-
-  /* Scrollbar Styling (WebKit Browsers) */
+  overflow-x: hidden;
   scrollbar-width: thin;
-  /* Firefox */
-  scrollbar-color: #888 transparent;
+  background: transparent;
 
-  /* Scrollbar Styling (Chrome, Edge, Safari) */
+
   &::-webkit-scrollbar {
     width: 6px;
   }
 
-  &::-webkit-scrollbar-button {
-    display: none;
-    height: 0;
-  }
-
   &::-webkit-scrollbar-thumb {
-    background-color: #888;
-    border-radius: 4px;
+    background-color: transparent;
   }
 
   &::-webkit-scrollbar-track {
     background: transparent;
   }
 
-  /* Mask gradient for fade effect */
-  mask-image:
-    linear-gradient(to top, transparent, black),
-    linear-gradient(to left, transparent 17px, black 17px);
+  mask-image: linear-gradient(to top, transparent, black),
+  linear-gradient(to left, transparent 17px, black 17px);
   mask-size: 100% 20000px;
   mask-position: left bottom;
   -webkit-mask-image:
@@ -212,10 +191,8 @@ body {
     linear-gradient(to left, transparent 17px, black 17px);
   -webkit-mask-size: 100% 20000px;
   -webkit-mask-position: left bottom;
-
-  transition:
-    mask-position 0.3s,
-    -webkit-mask-position 0.3s;
+  transition: mask-position 0.3s,
+  -webkit-mask-position 0.3s;
 }
 
 .sidebar:hover {

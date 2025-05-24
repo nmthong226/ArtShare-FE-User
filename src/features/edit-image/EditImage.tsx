@@ -2,10 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 
 //Libs
 import Draggable from 'react-draggable';
-import { ChromePicker } from 'react-color';
 
 //Components
-import { Button, Tooltip } from '@mui/material';
 import Panels from './components/panels/Panels';
 
 //Icons
@@ -15,17 +13,16 @@ import { RiText } from "react-icons/ri";
 import { IoShapesOutline } from "react-icons/io5";
 import { PiDiamondsFourLight } from "react-icons/pi";
 import { HiDotsHorizontal } from "react-icons/hi";
-import { Plus } from 'lucide-react';
-import { MdOutlineSaveAlt } from "react-icons/md";
 import { MdFlipToFront } from "react-icons/md";
 import { IoIosColorFilter } from "react-icons/io";
-import { Rnd } from "react-rnd";
-import ZoomTool from './components/tools/Zoom';
+import Moveable from "react-moveable";
+import LayerToolsBar from './components/tools/LayerToolsBar';
 
 const EditImage: React.FC = () => {
     //Images
     const [zoomLevel, setZoomLevel] = useState(1);
-    const [activePanel, setActivePanel] = useState<"arrange" | "adjust" | "filter" | "text" | null>(null);
+    const [activePanel, setActivePanel] = useState<"arrange" | "crop" | "adjust" | "filter" | "text" | null>(null);
+    const [rotation, setRotation] = useState(0);
     const [opacity, setOpacity] = useState(1);
     const [flipHorizontal, setFlipHorizontal] = useState(false);
     const [flipVertical, setFlipVertical] = useState(false);
@@ -36,12 +33,13 @@ const EditImage: React.FC = () => {
     const [sepia, setSepia] = useState(0);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [canvasSize, setCanvasSize] = useState({ width: 540, height: 540 });
-    const [openColorSettings, setOpenColorSettings] = useState(false);
 
     //Texts
     const [texts, setTexts] = useState<TextItem[]>([]);
     const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
     const textContainerRef = useRef<HTMLDivElement>(null);
+    const layerRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+    const moveableRef = useRef<Moveable>(null);
 
     const [layers, setLayers] = useState<ImageLayer[]>([
         {
@@ -51,6 +49,9 @@ const EditImage: React.FC = () => {
             opacity: opacity,
             flipH: flipHorizontal,
             flipV: flipVertical,
+            x: 0,
+            y: 0,
+            rotation: rotation,
             brightness: brightness,
             contrast: contrast,
             saturation: saturation,
@@ -60,8 +61,7 @@ const EditImage: React.FC = () => {
         }
     ]);
 
-    const [selectedLayerId, setSelectedLayerId] = useState<string | null>();
-    const containerRef = useRef<HTMLDivElement | null>(null);
+    const [selectedLayerId, setSelectedLayerId] = useState<string | null>(null);
     const [imageContainerSize, setImageContainerSize] = useState({ width: 540, height: 540 });
 
     useEffect(() => {
@@ -117,6 +117,14 @@ const EditImage: React.FC = () => {
             if (selectedLayerId) updateSelectedLayer({ zoom: newZoom });
             return newZoom;
         });
+    };
+
+    const handleRotationChange = (newRotation: number) => {
+        setRotation(newRotation);
+        if (selectedLayerId) updateSelectedLayer({ rotation: newRotation });
+        setTimeout(() => {
+            moveableRef.current?.updateRect();
+        }, 0);
     };
 
     const handleOpacityChange = (newOpacity: number) => {
@@ -322,144 +330,19 @@ const EditImage: React.FC = () => {
         ]);
     };
 
-    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = () => {
-            const imageSrc = reader.result as string;
-
-            const img = new Image();
-            img.onload = () => {
-                const maxWidth = 540;
-                const maxHeight = 540;
-
-                let width = img.width;
-                let height = img.height;
-
-                const widthRatio = maxWidth / width;
-                const heightRatio = maxHeight / height;
-                const scale = Math.min(widthRatio, heightRatio);
-
-                const scaledWidth = width * scale;
-                const scaledHeight = height * scale;
-
-                setLayers(prev => [
-                    ...prev,
-                    {
-                        id: crypto.randomUUID(),
-                        type: 'image',
-                        zoom: zoomLevel,
-                        src: imageSrc,
-                        x: (maxWidth - scaledWidth) / 2,
-                        y: (maxHeight - scaledHeight) / 2,
-                        width: scaledWidth,
-                        height: scaledHeight,
-                        opacity: 1,
-                        flipH: false,
-                        flipV: false,
-                        brightness: 100,
-                        contrast: 100,
-                        saturation: 100,
-                        hue: 0,
-                        sepia: 0,
-                    },
-                ]);
-            };
-
-            img.src = imageSrc;
-        };
-        reader.readAsDataURL(file);
-    };
-
     return (
         <div className='flex p-4 w-full h-[calc(100vh-4rem)] overflow-hidden'>
             <div className='flex space-y-4 bg-mountain-100 border border-mountain-200 rounded-lg w-full h-full overflow-y-hidden'>
-                <div className='z-50 relative flex h-full'>
-                    <div className='flex flex-col justify-between bg-white border border-mountain-200 rounded-lg rounded-r-none w-28 h-full'>
-                        <div className='flex flex-col space-y-2'>
-                            {/* Layers Header */}
-                            <div className='flex justify-center items-center bg-gradient-to-r from-blue-200 via-indigo-200 to-purple-200 h-10 font-medium text-mountain-800'>
-                                Layers
-                            </div>
-                            <Tooltip title="Add Layer" arrow placement='right'>
-                                <div
-                                    className="flex justify-center items-center p-2 py-0 border-mountain-400 w-full h-10 hover:cursor-pointer"
-                                    onClick={() => document.getElementById('image-upload')?.click()}>
-                                    <div className="flex justify-center items-center border border-mountain-200 w-full h-full">
-                                        <Plus className="size-4" />
-                                    </div>
-                                    <input
-                                        id="image-upload"
-                                        type="file"
-                                        accept="image/*"
-                                        className="hidden"
-                                        onChange={handleImageUpload}
-                                    />
-                                </div>
-                            </Tooltip>
-                            {[...layers]
-                                .slice(1)
-                                .reverse()
-                                .map((layer) => (
-                                    <div
-                                        key={layer.id}
-                                        className='flex justify-center items-center px-2 rounded-sm w-full h-20 hover:cursor-pointer'
-                                        onClick={() => setSelectedLayerId(layer.id)}>
-                                        <img
-                                            src={layer.src}
-                                            className={`rounded-sm w-full h-full object-cover border-1 ${selectedLayerId === layer.id ? 'border-indigo-400' : 'border-mountain-200'}`} />
-                                    </div>
-                                ))}
-                            <Tooltip title="Background" arrow placement='right'>
-                                <div
-                                    ref={containerRef}
-                                    onClick={() => {
-                                        setSelectedLayerId(layers[0].id);
-                                        setOpenColorSettings(!openColorSettings);
-                                    }}
-                                    className='flex px-2'>
-                                    <div
-                                        className={`flex justify-center items-center border-2 w-full h-12 text-mountain-600 text-sm italic hover:cursor-pointer ${selectedLayerId === layers[0].id ? 'border-indigo-400' : 'border-mountain-200'}`}
-                                        style={{ backgroundColor: layers[0].backgroundColor }}
-                                    />
-                                </div>
-                            </Tooltip>
-                            {openColorSettings && selectedLayerId === layers[0].id && (
-                                <Draggable handle=".drag-handle">
-                                    <div className="z-50 absolute bg-white shadow-md border rounded">
-                                        <div className="bg-indigo-100 px-3 py-1 rounded-t font-semibold text-indigo-700 text-sm cursor-move drag-handle">
-                                            🎨 Background Color
-                                        </div>
-                                        <ChromePicker
-                                            color={layers[0].backgroundColor}
-                                            onChangeComplete={(color) => {
-                                                const updated = [...layers];
-                                                updated[0].backgroundColor = color.hex;
-                                                setLayers(updated);
-                                            }}
-                                        />
-                                    </div>
-                                </Draggable>
-                            )}
-                        </div>
-                        <div className='flex flex-col space-y-2 py-2 border-mountain-200 border-t-1'>
-                            <div className='flex justify-center items-center p-2 py-0 border-mountain-400 w-full h-10 hover:cursor-pointer'>
-                                <Button className='flex justify-center items-center bg-white hover:bg-mountain-50 border border-mountain-200 rounded-lg w-full h-full hover:cursor-pointer'>
-                                    <p className='font-normal'>Close</p>
-                                </Button>
-                            </div>
-                            <div onClick={handleDownload} className='flex justify-center items-center p-2 py-0 border-mountain-400 w-full h-10 hover:cursor-pointer'>
-                                <Button className='flex justify-center items-center bg-indigo-200 hover:bg-indigo-100 border border-mountain-200 rounded-lg w-full h-full hover:cursor-pointer'>
-                                    <MdOutlineSaveAlt className='mr-1' />
-                                    <p className='font-normal'>Export</p>
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                    <ZoomTool zoomLevel={zoomLevel} handleZoomIn={handleZoomIn} handleZoomOut={handleZoomOut} />
-                </div>
+                <LayerToolsBar
+                    layers={layers}
+                    zoomLevel={zoomLevel}
+                    selectedLayerId={selectedLayerId}
+                    setLayers={setLayers}
+                    setSelectedLayerId={setSelectedLayerId}
+                    handleZoomIn={handleZoomIn}
+                    handleZoomOut={handleZoomOut}
+                    handleDownload={handleDownload}
+                />
                 <div className="relative flex justify-center items-center bg-mountain-200 w-full h-full">
                     <div
                         ref={imageContainerRef}
@@ -479,40 +362,25 @@ const EditImage: React.FC = () => {
                                 border: '1px solid #ccc',
                             }}
                         >
-                            {layers && layers.length > 0 && layers.slice(1).map((layer) => {
-                                const isSelected = selectedLayerId === layer.id;
-                                return (
-                                    <Rnd
-                                        key={layer.id}
-                                        size={{ width: layer.width!, height: layer.height! }}
-                                        position={{ x: layer.x!, y: layer.y! }}
-                                        onDragStart={() => setSelectedLayerId(layer.id)}
-                                        onDragStop={(_, d) => {
-                                            setLayers((prev) =>
-                                                prev.map((l) =>
-                                                    l.id === layer.id ? { ...l, x: d.x, y: d.y } : l
-                                                )
-                                            );
-                                        }}
-                                        onResizeStop={(_, __, ref, _delta, position) => {
-                                            setLayers((prev) =>
-                                                prev.map((l) =>
-                                                    l.id === layer.id
-                                                        ? {
-                                                            ...l,
-                                                            width: parseInt(ref.style.width, 10),
-                                                            height: parseInt(ref.style.height, 10),
-                                                            ...position,
-                                                        }
-                                                        : l
-                                                )
-                                            );
+                            {layers.slice(1).map((layer) => (
+                                <div key={layer.id}>
+                                    <div
+                                        ref={(el) => {
+                                            layerRefs.current[layer.id] = el;
                                         }}
                                         style={{
+                                            width: layer.width,
+                                            height: layer.height,
+                                            transform: `
+                                                translate(${layer.x}px, ${layer.y}px)
+                                                rotate(${layer.rotation}deg)
+                                            `,
+                                            transformOrigin: "center",
+                                            position: "absolute",
                                             zIndex: layer.id,
-                                            border: isSelected ? '2px dashed #4f46e5' : 'none',
-                                            background: 'transparent',
+                                            background: "transparent",
                                         }}
+                                        onMouseDown={() => setSelectedLayerId(layer.id)}
                                     >
                                         <img
                                             src={layer.src}
@@ -521,26 +389,79 @@ const EditImage: React.FC = () => {
                                                 width: '100%',
                                                 height: '100%',
                                                 pointerEvents: 'none',
-                                                filter:
-                                                    `
-                                                    saturate(${layer.saturation}%)
-                                                    hue-rotate(${layer.hue}deg)
-                                                    brightness(${layer.brightness}%)
-                                                    contrast(${layer.contrast}%)
-                                                    opacity(${layer.opacity})
-                                                    sepia(${layer.sepia}%)
-                                                    `,
-                                                transform:
-                                                    `
-                                                        scaleX(${layer.flipH ? -1 : 1})
-                                                        scaleY(${layer.flipV ? -1 : 1})
-                                                    `,
+                                                filter: `
+                                                saturate(${layer.saturation}%)
+                                                hue-rotate(${layer.hue}deg)
+                                                brightness(${layer.brightness}%)
+                                                contrast(${layer.contrast}%)
+                                                opacity(${layer.opacity})
+                                                sepia(${layer.sepia}%)
+                                            `,
+                                                transform: `
+                                                scaleX(${layer.flipH ? -1 : 1})
+                                                scaleY(${layer.flipV ? -1 : 1})
+                                            `,
+                                                border: selectedLayerId ? '2px dashed #4f46e5' : 'none',
                                             }}
                                             draggable={false}
                                         />
-                                    </Rnd>
-                                );
-                            })}
+                                    </div>
+                                    {selectedLayerId === layer.id && (
+                                        <Moveable
+                                            ref={moveableRef}
+                                            target={layerRefs.current[layer.id]}
+                                            draggable
+                                            resizable
+                                            rotatable
+                                            rotationPosition="top"
+                                            throttleResize={1}
+                                            renderDirections={["nw", "ne", "sw", "se"]}
+                                            keepRatio={false}
+                                            onDrag={({ beforeTranslate }) => {
+                                                setLayers((prev) =>
+                                                    prev.map((l) =>
+                                                        l.id === layer.id
+                                                            ? { ...l, x: beforeTranslate[0], y: beforeTranslate[1] }
+                                                            : l
+                                                    )
+                                                );
+                                            }}
+                                            onResize={({ width, height, drag, target }) => {
+                                                target.style.width = `${width}px`;
+                                                target.style.height = `${height}px`;
+                                                target.style.transform = drag.transform; // includes translation
+                                            }}
+                                            onResizeEnd={(e) => {
+                                                const { lastEvent } = e;
+                                                if (!lastEvent) return;
+
+                                                const { width, height, drag } = lastEvent;
+
+                                                setLayers((prev) =>
+                                                    prev.map((l) =>
+                                                        l.id === layer.id
+                                                            ? {
+                                                                ...l,
+                                                                width,
+                                                                height,
+                                                                x: drag.beforeTranslate[0],
+                                                                y: drag.beforeTranslate[1],
+                                                            }
+                                                            : l
+                                                    )
+                                                );
+                                            }}
+                                            onRotate={({ rotation }) => {
+                                                setLayers((prev) =>
+                                                    prev.map((l) =>
+                                                        l.id === layer.id ? { ...l, rotation } : l
+                                                    )
+                                                );
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                            ))}
                         </div>
                         <div ref={textContainerRef}>
                             {texts.map((t) => (
@@ -591,6 +512,7 @@ const EditImage: React.FC = () => {
                     activePanel={activePanel!}
                     selectedLayerId={selectedLayerId!}
                     layers={layers}
+                    handleRotationChange={handleRotationChange}
                     handleOpacityChange={handleOpacityChange}
                     toggleFlipHorizontal={toggleFlipHorizontal}
                     toggleFlipVertical={toggleFlipVertical}
@@ -615,7 +537,11 @@ const EditImage: React.FC = () => {
                         <MdFlipToFront className='size-6 text-mountain-600' />
                         <p className='text-mountain-600 text-xs'>Arrange</p>
                     </div>
-                    <div className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
+                    <div
+                        onClick={() =>
+                            setActivePanel(prev => (prev === "crop" ? null : "crop"))
+                        }
+                        className='flex flex-col justify-center items-center space-y-1 hover:bg-mountain-50 rounded-lg w-full h-20 select-none'>
                         <IoCrop className='size-6 text-mountain-600' />
                         <p className='text-mountain-600 text-xs'>Crop</p>
                     </div>

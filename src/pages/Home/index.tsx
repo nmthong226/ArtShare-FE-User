@@ -127,7 +127,7 @@ export const TIERS: PricingTier[] = [
 
 const LandingPage = () => {
   return (
-    <div className="flex flex-col bg-white w-full h-screen">
+    <div className="flex flex-col bg-white w-full h-screen overflow-auto">
       {/* Header */}
       <div className="flex justify-between items-center bg-white px-4 md:px-8 lg:px-16 xl:px-24 py-5 w-full h-20">
         <div className="flex items-center space-x-2">

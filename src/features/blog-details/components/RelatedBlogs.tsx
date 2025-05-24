@@ -5,11 +5,11 @@ import { LuBookOpenText } from "react-icons/lu";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 //Mocks
-import { BlogList } from "../../browse-blogs/mocks";
+import { BlogList } from "@/utils/mocks";
 
 const RelatedBlogs = () => {
     return (
-        <div className="flex flex-col justify-center items-center space-y-8 shadow mt-8 pt-8 pb-20 w-full h-full">
+        <div className="flex flex-col justify-center items-center space-y-8 pt-8 pb-20 w-full h-full">
             <div className="flex justify-center items-center space-x-2 w-full font-medium">
                 <LuBookOpenText />
                 <p>Related Blogs</p>
@@ -23,7 +23,7 @@ const RelatedBlogs = () => {
                         blogId={blog.blogId}
                         thumbnail={blog.thumbnail}
                         title={blog.title}
-                        author={blog.author}
+                        author={blog.user}
                         timeReading={blog.timeReading}
                         dateCreated={blog.dateCreated}
                         category={blog.category}

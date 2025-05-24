@@ -64,7 +64,6 @@ const Share: React.FC<ShareDialogProp> = ({
           <Share2 className={cn("size-4", iconClassName)} />
         </div>
       </Tooltip>
-
       <Dialog
         onClick={(e) => e.stopPropagation()}
         open={open}

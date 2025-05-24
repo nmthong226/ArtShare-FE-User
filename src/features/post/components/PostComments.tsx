@@ -74,12 +74,32 @@ const toggleLikeRecursive = (list: CommentUI[], id: number): CommentUI[] =>
         : c,
   );
 
-const removeRecursive = (list: CommentUI[], id: number): CommentUI[] =>
-  list
+const removeRecursive = (list: CommentUI[], id: number): CommentUI[] => {
+  return list
     .filter((c) => c.id !== id)
-    .map((c) =>
-      c.replies?.length ? { ...c, replies: removeRecursive(c.replies, id) } : c,
-    );
+    .map((c) => {
+      if (c.replies?.length) {
+        const originalReplyCount = c.replies.length;
+        const updatedReplies = removeRecursive(c.replies, id);
+        const newReplyCount = updatedReplies.length;
+
+        // If we removed a reply, update the reply_count
+        if (originalReplyCount !== newReplyCount) {
+          return {
+            ...c,
+            replies: updatedReplies,
+            reply_count: Math.max(
+              0,
+              (c.reply_count ?? 0) - (originalReplyCount - newReplyCount),
+            ),
+          };
+        }
+
+        return { ...c, replies: updatedReplies };
+      }
+      return c;
+    });
+};
 
 const updateContentRecursive = (
   list: CommentUI[],

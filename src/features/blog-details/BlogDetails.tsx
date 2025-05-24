@@ -17,6 +17,7 @@ import { MdBookmarkBorder } from "react-icons/md";
 import { LuPlus } from "react-icons/lu";
 import { LikesDialog } from "@/components/like/LikesDialog";
 import { fetchBlogDetails } from "./api/blog";
+import { fetchBlogComments } from "../post/api/comment.api";
 import { formatDistanceToNow } from "date-fns";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useUser } from "@/contexts/UserProvider";
@@ -28,7 +29,7 @@ import {
 import { AxiosError } from "axios";
 import { createLike, removeLike } from "./api/like-blog";
 import { TargetType } from "@/types/likes";
-import parse from 'html-react-parser';
+// import parse from "html-react-parser";
 
 const BlogDetails = () => {
   const { blogId } = useParams<{ blogId: string }>(); // get blogId from URL
@@ -49,6 +50,20 @@ const BlogDetails = () => {
     queryFn: () => fetchBlogDetails(Number(blogId)),
     enabled: !!blogId,
   });
+  /* ───────── comments query ───────── */
+  const {
+    data: comments = [],
+    isLoading: commentsLoading,
+    error: commentsError,
+    refetch: refetchComments,
+  } = useQuery({
+    queryKey: ["blogComments", blogId],
+    queryFn: () => fetchBlogComments(Number(blogId)),
+    enabled: !!blogId,
+  });
+  /* comment count derived from list */
+  const [commentCount, setCommentCount] = useState(0);
+  useEffect(() => setCommentCount(comments.length), [comments]);
 
   const followMutation = useMutation({
     mutationFn: () => followUser(blog!.user.id),
@@ -200,7 +215,30 @@ const BlogDetails = () => {
   const handleCloseLikesDialog = () => {
     setLikesDialogOpen(false);
   };
+  const handleCommentAdded = () => {
+    setCommentCount((c) => c + 1);
+    refetchComments();
+  };
+  const handleCommentDeleted = () => {
+    setCommentCount((c) => Math.max(c - 1, 0));
+    refetchComments();
+  };
 
+  /* ───────── loading / error ───────── */
+  if (isLoading || commentsLoading)
+    return (
+      <div className="flex justify-center items-center h-full">
+        <CircularProgress />
+      </div>
+    );
+  if (error || commentsError)
+    return (
+      <div className="p-4 text-red-500">
+        {(error || commentsError)?.message}
+      </div>
+    );
+
+  if (!blog) return null;
   if (isLoading) {
     return (
       <div className="flex justify-center items-center space-x-4 h-screen">
@@ -211,7 +249,11 @@ const BlogDetails = () => {
   }
 
   if (error) {
-    return <div className="flex justify-center items-center p-4 h-screen text-red-500">{error.message}</div>;
+    return (
+      <div className="flex justify-center items-center p-4 h-screen text-red-500">
+        {(error as Error)?.message}
+      </div>
+    );
   }
   if (!blog) return null;
 
@@ -286,18 +328,28 @@ const BlogDetails = () => {
           </div>
           {/* Blog Content */}
           <div className="p-2 rounded-md max-w-none prose lg:prose-xl">
-            {parse(blog.content)}
+            {blog.content}
           </div>
           <hr className="flex border-mountain-200 border-t-1 w-full" />
-          <BlogComments />
+          <BlogComments
+            blogId={Number(blogId)}
+            comments={comments}
+            onCommentAdded={handleCommentAdded}
+            onCommentDeleted={handleCommentDeleted}
+          />
           <hr className="flex border-mountain-200 border-t-1 w-full" />
           <RelatedBlogs />
         </div>
         <div className="relative flex flex-col w-[20%]">
-          <div className={`${showAuthorBadge ? "opacity-0 pointer-events-none" : "opacity-100"} space-y-2 flex-col transition ease-in-out duration-300 top-64 z-10 sticky flex justify-center items-center mr-auto ml-4 rounded-full w-14 h-76`}>
+          <div
+            className={`${showAuthorBadge ? "opacity-0 pointer-events-none" : "opacity-100"} space-y-2 flex-col transition ease-in-out duration-300 top-64 z-10 sticky flex justify-center items-center mr-auto ml-4 rounded-full w-14 h-76`}
+          >
             <div className="relative flex justify-center items-center w-12 h-12">
               <Avatar>
-                <AvatarImage src="https://i.pravatar.cc/150?img=68" className="object-cover" />
+                <AvatarImage
+                  src="https://i.pravatar.cc/150?img=68"
+                  className="object-cover"
+                />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <Tooltip title="Follow" placement="right" arrow>
@@ -340,7 +392,7 @@ const BlogDetails = () => {
               <Tooltip title="Comment" placement="right" arrow>
                 <div className="flex justify-center items-center bg-green-50 hover:bg-green-100 shadow p-1 rounded-full w-12 h-12 font-normal text-mountain-600 hover:text-mountain-950 hover:cursor-pointer">
                   <BiComment className="mr-1 size-4" />
-                  <p>5</p>
+                  <span>{commentCount}</span>
                 </div>
               </Tooltip>
               <Tooltip title="Save" placement="right" arrow>

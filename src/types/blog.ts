@@ -1,4 +1,5 @@
 export interface Blog {
+  categories: any;
   id: number;
   user_id: string;
   title: string;

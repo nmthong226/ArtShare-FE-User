@@ -1,9 +1,9 @@
 import { MEDIA_TYPE } from "@/utils/constants";
-import { Media,  } from "../types/media";
 import { Box } from "@mui/material";
+import { PostMedia } from "../types/post-media";
 
 interface MediaPreviewProps {
-  media: Media;
+  media: PostMedia;
 }
 
 const MediaPreview: React.FC<MediaPreviewProps> = ({ media }) => {

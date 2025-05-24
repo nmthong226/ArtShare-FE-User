@@ -10,10 +10,13 @@ import AILayout from "@/layouts/featLayouts/ImageToolsLayout";
 import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
 import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute";
 import GuestRoute from "@/components/routes/guest-route";
+import EditUser from "./features/edit-user/EditUserPage";
 import OnboardingProfile from "./pages/Onboarding";
-import { useUser } from "./contexts/UserProvider"; import Dashboard from "./features/dashboard/Dashboard";
-import TextEditorLayout from "./layouts/featLayouts/TextEditorLayout";
 
+import Dashboard from "./features/app-dashboard/Dashboard";
+import OnboardingRoute from "./components/ProtectedItems/OnboardingRoute";
+import RequireOnboard from "./components/ProtectedItems/RequireOnboard";
+import TextEditorLayout from "./layouts/featLayouts/TextEditorLayout";
 
 // Lazy imports for pages/features
 const LandingPage = lazy(() => import("@/pages/Home"));
@@ -39,25 +42,6 @@ const DocumentDashboard = lazy(() => import("@/features/user-writing/DocumentDas
 const MyWriting = lazy(() => import("@/features/user-writing/MyWriting"));
 const ArtGeneration = lazy(() => import("@/features/gen-art/ArtGenAI"));
 const ImageEditor = lazy(() => import("@/features/edit-image/EditImage"));
-
-// OnboardingRoute: Restrict users who are onboarded from accessing the onboarding page
-const OnboardingRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, loading, isOnboard } = useUser();
-
-  if (loading) return <div>Checking authentication...</div>;
-  console.log("@@ isauthenticated", isAuthenticated);
-  // 👇 block guests first
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // 👇 block users who already finished onboarding
-  if (isOnboard) {
-    return <Navigate to="/explore" replace />;
-  }
-
-  return <>{children}</>;
-};
 
 /**
  * Flat route tree using useRoutes
@@ -121,9 +105,11 @@ const routeConfig: RouteObject[] = [
       // In-App Public
       {
         element: (
-          <InAppLayout>
-            <Outlet />
-          </InAppLayout>
+          <RequireOnboard>
+            <InAppLayout>
+              <Outlet />
+            </InAppLayout>
+          </RequireOnboard>
         ),
         children: [
           { path: "/dashboard", element: <Dashboard /> },
@@ -137,14 +123,19 @@ const routeConfig: RouteObject[] = [
       // In-App Private
       {
         element: (
-          <ProtectedInAppRoute>
-            <InAppLayout>
-              <Outlet />
-            </InAppLayout>
-          </ProtectedInAppRoute>
+          <RequireOnboard>
+            {" "}
+            {/* ⬅️ block until onboarding done */}
+            <ProtectedInAppRoute>
+              <InAppLayout>
+                <Outlet />
+              </InAppLayout>
+            </ProtectedInAppRoute>
+          </RequireOnboard>
         ),
         children: [
           { path: "/:username", element: <UserProfile /> },
+          { path: "/edit-user", element: <EditUser /> },
           { path: "/post/:postId/edit", element: <EditPost /> },
           { path: "/posts/new", element: <UploadPost /> },
           { path: "/collections", element: <Collection /> },
@@ -163,6 +154,19 @@ const routeConfig: RouteObject[] = [
         children: [
           { path: "/image/tool/editor", element: <ImageEditor /> },
           { path: "/image/tool/text-to-image", element: <ArtGeneration /> },
+        ],
+      },
+      // In-App Text Editor Private
+      {
+        element: (
+          <ProtectedInAppRoute>
+            <TextEditorLayout>
+              <Outlet />
+            </TextEditorLayout>
+          </ProtectedInAppRoute>
+        ),
+        children: [
+          { path: "/docs/new", element: <MyWriting /> },
         ]
       },
       // In-App Text Editor Private

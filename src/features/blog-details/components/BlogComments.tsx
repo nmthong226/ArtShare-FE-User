@@ -34,7 +34,7 @@ const BlogComments = () => {
 
   const commentInputRef = useRef<HTMLTextAreaElement>(null);
   return (
-    <div className="flex flex-col justify-center items-center space-y-8 bg-white shadow mt-8 px-4 py-8 w-[60%] h-full">
+    <div className="flex flex-col justify-center items-center space-y-8 bg-white mt-8 py-8 w-full h-full">
       <div className="flex flex-col justify-center space-y-2 w-full">
         <div className="flex items-center space-x-2">
           <span className="font-medium text-lg">2 Comments</span>
@@ -76,10 +76,10 @@ const BlogComments = () => {
             </div>
           </div>
         ) : (
-          <p className="text-sm text-mountain-500 italic ml-4">
+          <p className="ml-4 text-mountain-500 text-sm italic">
             <Link
               to="/login"
-              className="underline text-blue-500 hover:text-blue-700"
+              className="text-blue-500 hover:text-blue-700 underline"
             >
               Login
             </Link>{" "}

@@ -1,32 +1,32 @@
-import { useEffect, useRef, useState } from 'react'
-import { matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from "react";
+import { matchPath, useLocation, useNavigate } from "react-router-dom";
 
 //Icons
-import { TiDeleteOutline } from 'react-icons/ti';
-import { FiSearch } from 'react-icons/fi';
-import { InfoIcon } from 'lucide-react';
+import { TiDeleteOutline } from "react-icons/ti";
+import { FiSearch } from "react-icons/fi";
+import { InfoIcon } from "lucide-react";
 
 //Components
-import Tooltip from '@mui/material/Tooltip';
-import UserInAppConfigs from '../popovers/UserInAppConfigs';
-import { Input } from '../ui/input';
-import UserButton from './user-button';
+import Tooltip from "@mui/material/Tooltip";
+import UserInAppConfigs from "../popovers/UserInAppConfigs";
+import { Input } from "../ui/input";
+import UserButton from "./user-button";
 
 //Context
 import { useSearch } from "@/contexts/SearchProvider";
-import { useUser } from '@/contexts/UserProvider';
+import { useUser } from "@/contexts/UserProvider";
 
 const Header: React.FC = () => {
-    const { user, loading } = useUser();
-    const [isFocused, setIsFocused] = useState(false);
-    const [inputValue, setInputValue] = useState("");
-    const inputRef = useRef<HTMLInputElement>(null);
-    const { query, setQuery } = useSearch();
-    const navigate = useNavigate();
-    const location = useLocation();
-    useEffect(() => {
-        console.log("Query updated:", query);
-    }, [query]);
+  const { user, loading } = useUser();
+  const [isFocused, setIsFocused] = useState(false);
+  const [inputValue, setInputValue] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const { query, setQuery } = useSearch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    console.log("Query updated:", query);
+  }, [query]);
 
     const routes = [
         {
@@ -78,13 +78,17 @@ const Header: React.FC = () => {
             path: "/collections",
             label: "My Collections",
             description: "",
+        }, 
+        {
+            path: "/edit-user",
+            label: "Profile",
+            description: "Update your user profile information if needed",
         }
     ];
 
-
-    const matchedRoute = routes.find(route =>
-        matchPath({ path: route.path, end: true }, location.pathname)
-    );
+  const matchedRoute = routes.find((route) =>
+    matchPath({ path: route.path, end: true }, location.pathname),
+  );
 
     return (
         <nav className={`top-0 z-50 sticky px-4 flex justify-between items-center dark:bg-mountain-950 dark:border-b-mountain-700 w-full h-16`}>
@@ -147,4 +151,4 @@ const Header: React.FC = () => {
     )
 }
 
-export default Header
+export default Header;

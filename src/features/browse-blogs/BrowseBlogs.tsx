@@ -18,38 +18,11 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 
 //Mocks
-import { BlogList, categoriesData } from "./mocks";
+import { BlogList, categoriesData } from "@/utils/mocks";
 
 //Style
 import './BrowseBlogs.css'
-import BlogItem from "./components/BlogItem";
-
-// import IGallery, { GalleryPhoto } from "@/components/gallery/Gallery";
-
-// import { Post } from "@/types";
-// import { fetchPosts } from "./api/get-post";
-
-//Contexts
-// import { useSearch } from "@/contexts/SearchProvider";
-
-// const getMediaDimensions = (
-//   url: string,
-// ): Promise<{ width: number; height: number }> => {
-//   return new Promise((resolve) => {
-//     if (!url) {
-//       resolve({ width: 500, height: 500 });
-//       return;
-//     }
-//     const img = new Image();
-//     img.onload = () => resolve({ width: img.width, height: img.height });
-//     img.onerror = (err) => {
-//       console.error("Error loading image for dimensions:", url, err);
-
-//       resolve({ width: 500, height: 500 });
-//     };
-//     img.src = url;
-//   });
-// };
+import BlogItem from "../../components/lists/BlogItem";
 
 const BrowseBlogs: React.FC = () => {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);

@@ -24,8 +24,17 @@ export const lightTheme = createTheme({
       secondary: "#6b7280", // Grey
     },
     divider: "#d1d5db", // Soft grey for borders
+    success: {
+      main: "#2EB67D",
+    },
     error: {
-      main: "#d32f2f", // Standard MUI red
+      main: "#E01E5A",
+    },
+    warning: {
+      main: "#ECB22E",
+    },
+    info: {
+      main: "#36C5F0",
     },
   },
   components: {

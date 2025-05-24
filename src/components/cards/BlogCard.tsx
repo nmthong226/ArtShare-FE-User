@@ -23,9 +23,14 @@ import { IoPersonRemoveOutline } from "react-icons/io5";
 import { formatDate } from "@/lib/utils";
 import Share from "../dialogs/Share";
 
+type Author = {
+  username: string,
+  avatar: string
+}
+
 type BlogCardProps = {
   blogId: string,
-  author: string,
+  author: Author,
   title: string,
   dateCreated: string,
   timeReading: string,
@@ -77,8 +82,8 @@ const BlogCard: React.FC<BlogCardProps> = ({
     <div key={blogId} onClick={handleCardClick} className="group bg-white shadow-md border border-mountain-200 hover:border-indigo-400 rounded-lg w-full hover:cursor-pointer">
       <div className="relative flex justify-between items-center p-2 w-full">
         <div className="flex items-center space-x-2">
-          <img src='https://i.pravatar.cc/150?img=68' className="rounded-full w-10 h-10" />
-          <p className="text-sm">{author}</p>
+          <img src={author.avatar} className="rounded-full w-10 h-10" />
+          <p className="text-sm">{author.username}</p>
         </div>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger

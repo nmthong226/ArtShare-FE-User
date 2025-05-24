@@ -28,9 +28,15 @@ type PostInfoProps = {
   postData: Post & {
     isLikedByCurrentUser?: boolean;
   };
+  commentCount: number; // Accept the comment count as prop
+  setCommentCount: React.Dispatch<React.SetStateAction<number>>; // Accept setState function for comment count
 };
 
-const PostInfo = ({ postData }: PostInfoProps) => {
+const PostInfo = ({
+  postData,
+  commentCount,
+  setCommentCount,
+}: PostInfoProps) => {
   const { postCommentsRef } = useFocusContext();
   const { showSnackbar } = useSnackbar();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
@@ -41,7 +47,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
   >([]);
   const [isLoadingCollections, setIsLoadingCollections] = useState(false);
   const [collectionError, setCollectionError] = useState<string | null>(null);
-
+  const user = useUser();
   // Like-state & API integration
   const [userLike, setUserLike] = useState<boolean>(
     postData.isLikedByCurrentUser ?? false,
@@ -67,7 +73,11 @@ const PostInfo = ({ postData }: PostInfoProps) => {
     };
     loadCollectionNames();
   }, [postData.id]);
-
+  const handleCommentAdded = () => {
+    console.log("Comment added. Previous count:", commentCount);
+    setCommentCount((prev) => prev + 1); // Increment comment count when a comment is added
+    console.log("Updated comment count:", commentCount + 1);
+  };
   const handleOpenSaveDialog = () => {
     setIsCreateDialogOpen(false);
     setIsSaveDialogOpen(true);
@@ -96,11 +106,11 @@ const PostInfo = ({ postData }: PostInfoProps) => {
 
   // Like / Unlike handler (optimistic update)
   const handleLikeClick = async () => {
-    const user = useUser();
     if (!user) {
       showSnackbar("Please log in to like", "error");
       return;
     }
+    console.log("HELLO");
     if (isLiking || isFetchingLike) return;
     const willLike = !userLike;
     setUserLike(willLike);
@@ -109,6 +119,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
     try {
       willLike ? await likePost(postData.id) : await unlikePost(postData.id);
     } catch (error) {
+      console.error(error)
       setUserLike(!willLike);
       setLikeCount((prev) => (willLike ? Math.max(prev - 1, 0) : prev + 1));
     } finally {
@@ -138,7 +149,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
   return (
     <>
       <div className="bg-white rounded-2xl overflow-none">
-        <CardContent className="flex flex-col gap-4 p-0">
+        <CardContent className="flex flex-col gap-2 p-0">
           {/* Title, description, date */}
           <div className="flex flex-col gap-2">
             <div className="font-bold text-xl">{postData.title}</div>
@@ -185,7 +196,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
             <div className="flex items-center gap-1 text-sm">
               <p className="font-semibold">{postData.comment_count}</p>
               <span className="text-mountain-600">
-                {postData.comment_count !== 1 ? " Comments" : " Comment"}
+                {postData.comment_count > 1 ? " Comments" : " Comment"}
               </span>
             </div>
           </div>
@@ -248,6 +259,7 @@ const PostInfo = ({ postData }: PostInfoProps) => {
         contentId={postData.id}
         open={isLikesDialogOpen}
         onClose={handleCloseLikesDialog}
+        variant="post"
       />
     </>
   );

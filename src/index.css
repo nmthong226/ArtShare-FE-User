@@ -186,8 +186,9 @@ body {
   linear-gradient(to left, transparent 17px, black 17px);
   mask-size: 100% 20000px;
   mask-position: left bottom;
-  -webkit-mask-image: linear-gradient(to top, transparent, black),
-  linear-gradient(to left, transparent 17px, black 17px);
+  -webkit-mask-image:
+    linear-gradient(to top, transparent, black),
+    linear-gradient(to left, transparent 17px, black 17px);
   -webkit-mask-size: 100% 20000px;
   -webkit-mask-position: left bottom;
   transition: mask-position 0.3s,
@@ -199,9 +200,21 @@ body {
   mask-position: left top;
 }
 
-
 @layer base {
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* only in dark mode: invert the built-in calendar icon */
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) brightness(0.8);
+    cursor: pointer;
+  }
+  /* Firefox uses a different pseudo */
+  .dark input[type="date"]::-moz-calendar-picker-indicator {
+    filter: invert(1) brightness(0.8);
+    cursor: pointer;
   }
 }

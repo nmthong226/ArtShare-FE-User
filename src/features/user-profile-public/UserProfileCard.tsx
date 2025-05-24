@@ -2,19 +2,30 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MoreHorizontal } from "lucide-react";
 import ProfileHeader from "./components/ProfileHeader";
 import ProfileInfo from "./components/ProfileInfo";
-import { Box, Button, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { getUserProfileByUsername, UserProfile } from "./api/user-profile.api";
 import { useUser } from "@/contexts/UserProvider";
 import { followUser, unfollowUser } from "./api/follow.api";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSnackbar } from "@/contexts/SnackbarProvider";
 import { AxiosError } from "axios";
+import { MouseEvent, useEffect, useState } from "react";
 
 export const UserProfileCard = () => {
   const { username } = useParams();
   const { user } = useUser();
   const queryClient = useQueryClient();
   const { showSnackbar } = useSnackbar();
+  const [isHoveringFollowBtn, setIsHoveringFollowBtn] = useState(false);
+  const [unfollowInFlight, setUnfollowInFlight] = useState(false);
 
   const {
     data: profileData,
@@ -27,8 +38,12 @@ export const UserProfileCard = () => {
     enabled: !!username,
   });
 
-  console.log("profile: ", profileData);
-
+  useEffect(() => {
+    // Once the profile refetch shows isFollowing === false, drop the flag
+    if (!profileData?.isFollowing) {
+      setUnfollowInFlight(false);
+    }
+  }, [profileData?.isFollowing]);
   /* ─────────────────── follow / unfollow ────────────── */
   const followMutation = useMutation({
     mutationFn: () => {
@@ -78,6 +93,27 @@ export const UserProfileCard = () => {
     },
   });
 
+  // Dropdown menu state
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
+  const menuOpen = Boolean(anchorEl);
+
+  const handleMenuOpen = (e: MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleReport = () => {
+    handleMenuClose();
+  };
+
+  const handleEdit = () => {
+    handleMenuClose();
+    navigate("/edit-user");
+  };
+
   // Conditional rendering based on loading, error, or data state
   if (isLoading) {
     return (
@@ -122,13 +158,16 @@ export const UserProfileCard = () => {
     );
   }
 
-  const toggleFollow = () =>
-    profileData?.isFollowing
-      ? unfollowMutation.mutate()
-      : followMutation.mutate();
+  const toggleFollow = () => {
+    if (isFollowing) {
+      setUnfollowInFlight(true);
+      unfollowMutation.mutate();
+    } else {
+      followMutation.mutate();
+    }
+  };
 
-  const followBtnLoading =
-    followMutation.isPending || unfollowMutation.isPending;
+  const isProcessing = followMutation.isPending || unfollowMutation.isPending;
 
   const isOwnProfile = user?.id === profileData?.id;
   const isFollowing = profileData?.isFollowing;
@@ -139,7 +178,7 @@ export const UserProfileCard = () => {
         <div className="flex">
           {profileData.profile_picture_url ? (
             <ProfileHeader
-              name={profileData.full_name}
+              name={profileData?.full_name ?? ""}
               username={profileData.username || ""}
               avatarUrl={profileData.profile_picture_url}
               isFollowing={false}
@@ -147,15 +186,15 @@ export const UserProfileCard = () => {
           ) : (
             <Box display="flex" alignItems="center" gap={2}>
               <ProfileHeader
-                name={profileData.full_name}
-                username={profileData.username}
+                name={profileData?.full_name ?? ""}
+                username={profileData?.username ?? ""}
                 isFollowing={false}
               />
             </Box>
           )}
           <ProfileInfo
-            name={profileData.full_name}
-            username={profileData.username}
+            name={profileData?.full_name ?? ""}
+            username={profileData.username ?? ""}
             bio={profileData.bio || ""}
             followings_count={profileData.followings_count}
             followers_count={profileData.followers_count}
@@ -164,29 +203,68 @@ export const UserProfileCard = () => {
         </div>
         <Box className="self-start">
           <Box className="flex gap-2">
-            {!isOwnProfile && (
-              <Tooltip title={isFollowing ? "Unfollow" : "Follow"} arrow>
+            {!isOwnProfile &&
+              (isFollowing ? (
                 <Button
                   onClick={toggleFollow}
-                  disabled={followBtnLoading}
-                  variant={isFollowing ? "outlined" : "contained"}
+                  disabled={isProcessing || unfollowInFlight}
+                  /* Show red + filled whenever (a) hovering OR (b) waiting for unfollow */
+                  variant={
+                    isHoveringFollowBtn || unfollowInFlight
+                      ? "contained"
+                      : "outlined"
+                  }
+                  color={
+                    isHoveringFollowBtn || unfollowInFlight
+                      ? "error"
+                      : "primary"
+                  }
+                  sx={{ borderRadius: "9999px", textTransform: "none" }}
+                  onMouseEnter={() => setIsHoveringFollowBtn(true)}
+                  onMouseLeave={() => setIsHoveringFollowBtn(false)}
+                >
+                  {unfollowInFlight || isHoveringFollowBtn
+                    ? "Unfollow"
+                    : "Following"}
+                </Button>
+              ) : (
+                <Button
+                  onClick={toggleFollow}
+                  disabled={isProcessing}
+                  variant="contained"
                   color="primary"
                   sx={{ borderRadius: "9999px", textTransform: "none" }}
                 >
-                  {isFollowing ? "Following" : "Follow"}
+                  Follow
                 </Button>
-              </Tooltip>
-            )}
+              ))}
             <Tooltip title="More options" arrow>
               <IconButton
                 aria-label="More options"
                 color="primary"
                 size="medium"
                 sx={{ borderRadius: "50%", bgcolor: "transparent" }}
+                onClick={handleMenuOpen}
               >
                 <MoreHorizontal />
               </IconButton>
             </Tooltip>
+
+            <Menu
+              anchorEl={anchorEl}
+              open={menuOpen}
+              onClose={handleMenuClose}
+              anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+              transformOrigin={{ vertical: "top", horizontal: "right" }}
+              className="m-2"
+            >
+              {isOwnProfile && (
+                <MenuItem onClick={handleEdit}>Edit Profile</MenuItem>
+              )}
+              {!isOwnProfile && (
+                <MenuItem onClick={handleReport}>Report User</MenuItem>
+              )}
+            </Menu>
           </Box>
         </Box>
       </div>

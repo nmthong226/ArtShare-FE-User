@@ -11,10 +11,9 @@ import { BiComment } from "react-icons/bi";
 import { MdBookmarkBorder } from "react-icons/md";
 
 //Components
-import Share from "../../../components/dialogs/Share";
+import Share from "../dialogs/Share";
 
 //Style
-
 type Author = {
     username: string,
     avatar: string,
@@ -51,7 +50,7 @@ const BlogItem: React.FC<BlogItemProps> = ({
         navigate(`/blogs/${blogId}`);
     };
     const [open, setOpen] = useState(false);
-    
+
     // const handleClickMoreButton = (e: React.MouseEvent<HTMLElement>) => {
     //     e.stopPropagation();
     //     setOpen(true);

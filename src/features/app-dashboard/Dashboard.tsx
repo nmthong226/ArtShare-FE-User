@@ -7,10 +7,11 @@ import { MdOutlineExplore } from 'react-icons/md';
 // import RecentBlog from './components/RecentBlog';
 
 import { dashboardBG, featuresShowcase } from '@/utils/constants';
+import RecentBlog from './components/RecentBlog';
 
 const Dashboard = () => {
   return (
-    <div className='flex flex-col space-y-4 p-4 h-screen overflow-x-hidden sidebar'>
+    <div className='flex flex-col space-y-4 p-4 pb-48 h-screen overflow-x-hidden sidebar'>
       {/* Hero section */}
       <div className="relative flex items-center p-4 rounded-xl w-full h-96">
         {/* Gradient background */}
@@ -94,35 +95,35 @@ const Dashboard = () => {
             </div>
           ))}
         </div>
-        <hr className='my-6 border-mountain-200 border-t-1 w-full' />
-        {/* Explore Posts */}
-        <div className='flex flex-col space-y-8 mt-6 mb-20'>
-          <div className='flex justify-between items-end'>
-            <div className='flex flex-col space-y-2'>
-              <p className='font-sans font-semibold text-mountain-950 text-2xl'>Explore Recent Posts</p>
-              <p className='text-mountain-600'>Browse engaging image and video content created by users in the app.</p>
-            </div>
-            <Link to="/explore" className='flex items-center space-x-2 bg-mountain-100 shadow-sm hover:brightness-90 px-8 py-3 rounded-full duration-300 ease-in-out transform'>
-              <MdOutlineExplore />
-              <p>View All</p>
-            </Link>
+      </div>
+      <hr className='my-6 border-mountain-200 border-t-1 w-full' />
+      {/* Explore Posts */}
+      <div className='flex flex-col space-y-8 mt-6 mb-20'>
+        <div className='flex justify-between items-end'>
+          <div className='flex flex-col space-y-2'>
+            <p className='font-sans font-semibold text-mountain-950 text-2xl'>Explore Recent Posts</p>
+            <p className='text-mountain-600'>Browse engaging image and video content created by users in the app.</p>
           </div>
-          <RecentPost />
+          <Link to="/explore" className='flex items-center space-x-2 bg-mountain-100 shadow-sm hover:brightness-90 px-8 py-3 rounded-full duration-300 ease-in-out transform'>
+            <MdOutlineExplore />
+            <p>View All</p>
+          </Link>
         </div>
-        {/* Explore Blogs
-        <div className='flex flex-col space-y-8 mt-2'>
-          <div className='flex justify-between items-end'>
-            <div className='flex flex-col space-y-2'>
-              <p className='font-sans font-semibold text-mountain-950 text-2xl'>Read Recent Blogs</p>
-              <p className='text-mountain-600'>Browse engaging image and video content created by users in the app.</p>
-            </div>
-            <Link to="/blogs" className='flex items-center space-x-2 bg-mountain-100 shadow-sm hover:brightness-90 px-8 py-3 rounded-full duration-300 ease-in-out transform'>
-              <MdOutlineExplore />
-              <p>View All</p>
-            </Link>
+        <RecentPost />
+      </div>
+      {/* Explore Blogs */}
+      <div className='flex flex-col space-y-8 mt-2'>
+        <div className='flex justify-between items-end'>
+          <div className='flex flex-col space-y-2'>
+            <p className='font-sans font-semibold text-mountain-950 text-2xl'>Read Recent Blogs</p>
+            <p className='text-mountain-600'>Browse engaging image and video content created by users in the app.</p>
           </div>
-          <RecentBlog />
-        </div> */}
+          <Link to="/blogs" className='flex items-center space-x-2 bg-mountain-100 shadow-sm hover:brightness-90 px-8 py-3 rounded-full duration-300 ease-in-out transform'>
+            <MdOutlineExplore />
+            <p>View All</p>
+          </Link>
+        </div>
+        <RecentBlog />
       </div>
     </div >
   )

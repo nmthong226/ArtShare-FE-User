@@ -1,19 +1,19 @@
 import { Link } from 'react-router-dom';
 
 //Icons
-import { InfoIcon } from 'lucide-react';
+import { InfoIcon } from "lucide-react";
 import { LuImageUpscale } from "react-icons/lu";
 import { BiEdit } from "react-icons/bi";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { RiImageAiLine } from 'react-icons/ri';
+import { RiImageAiLine } from "react-icons/ri";
 
 //Components
-import Tooltip from '@mui/material/Tooltip';
-import UserInAppConfigs from '../popovers/UserInAppConfigs';
+import Tooltip from "@mui/material/Tooltip";
+import UserInAppConfigs from "../popovers/UserInAppConfigs";
 
 //Context
-import { useUser } from '@/contexts/UserProvider';
-import UserButton from './user-button';
+import { useUser } from "@/contexts/UserProvider";
+import UserButton from "./user-button";
 
 const AIHeader = () => {
     const { user, loading } = useUser();
@@ -58,4 +58,4 @@ const AIHeader = () => {
     )
 }
 
-export default AIHeader
+export default AIHeader;

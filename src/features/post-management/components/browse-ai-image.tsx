@@ -21,7 +21,7 @@ interface BrowseAiImagesProps {
   handleImageFilesChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const BrowseAiImages: React.FC<BrowseAiImagesProps> = ({}) => {
+const BrowseAiImages: React.FC<BrowseAiImagesProps> = () => {
   const PAGE_SIZE = 5;
   const [promptResultList, setPromptResultList] = useState<PromptResult[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);

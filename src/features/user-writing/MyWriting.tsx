@@ -41,7 +41,7 @@ const WriteBlog = () => {
               <Editor ref={editorRef} />
             </div> */}
           </div>
-        </div>
+``        </div>
       </div>
     </div>
   )

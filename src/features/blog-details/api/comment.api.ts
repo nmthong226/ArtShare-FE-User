@@ -12,7 +12,13 @@ export const fetchComments = async (postId: number): Promise<Comment[]> => {
 export const createComment = async (payload: CreateCommentDto) => {
   return await api.post<Comment>("/comments/create", payload);
 };
+export const deleteComment = async (commentId: number) => {
+  return await api.delete(`/comments/${commentId}`);
+};
 /** Like a comment */
 export const likeComment = async (commentId: number) => {
   return await api.post(`/comments/${commentId}/like`);
+};
+export const unlikeComment = async (commentId: number) => {
+  return await api.post(`/comments/${commentId}/unlike`);
 };

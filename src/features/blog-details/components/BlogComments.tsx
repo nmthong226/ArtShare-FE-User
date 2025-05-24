@@ -1,23 +1,17 @@
-import React, { useEffect, useRef, useState, forwardRef } from "react";
+import { useRef, useState, forwardRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Popover,
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import {
-  Button,
-  CircularProgress,
-  TextareaAutosize,
-  Tooltip,
-} from "@mui/material";
+import { Button, TextareaAutosize } from "@mui/material";
 import { BiDotsVertical } from "react-icons/bi";
 import { AiOutlineLike } from "react-icons/ai";
 import { SendHorizontal } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 import {
-  fetchComments,
   createComment,
   likeComment,
   unlikeComment,
@@ -41,7 +35,7 @@ const BlogComments = forwardRef<HTMLDivElement, Props>(
     const { user } = useUser();
     const { showSnackbar } = useSnackbar();
     const [comments, setComments] = useState<CommentUI[]>(initial);
-    const [loading, setLoading] = useState(true);
+
     const [newComment, setNewComment] = useState("");
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 

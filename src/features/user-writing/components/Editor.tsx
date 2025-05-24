@@ -34,8 +34,13 @@ import { EditorContent, useEditor } from '@tiptap/react'
 import '../styles/editor.css'
 
 import { useEditorStore } from '../stores/use-editor-store'
+import { forwardRef, useImperativeHandle } from 'react'
 
-const Editor = () => {
+export type EditorHandle = {
+    getContent: () => string | undefined
+}
+
+const Editor = forwardRef<EditorHandle>((_, ref) => {
     const { setEditor } = useEditorStore();
     const editor = useEditor({
         onCreate({ editor }) {
@@ -177,16 +182,16 @@ const Editor = () => {
                 },
             }),
         ],
-        content: `
-        <p>This is a basic example of implementing images. Drag to re-order.</p>
-        <img src="https://placehold.co/800x400" />
-        <img src="https://placehold.co/800x400/6A00F5/white" />
-      `,
+        content: ``,
     })
 
+    useImperativeHandle(ref, () => ({
+        getContent: () => editor?.getHTML(),
+    }))
+
     return (
-        <EditorContent editor={editor} />
+        <EditorContent editor={editor} className="max-w-full prose" />
     )
-}
+})
 
 export default Editor

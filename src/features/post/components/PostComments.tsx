@@ -354,15 +354,21 @@ const CommentRow = ({
           <>
             <IconButton
               size="small"
-              onClick={handleMenu}
+              edge="end"
               disableRipple
+              onClick={handleMenu}
               sx={{
+                // -- keep it compact
+                width: 28,
+                height: 28,
+                p: 0.5,
+                borderRadius: "50%",
                 "&:hover": {
-                  backgroundColor: "rgba(0,0,0,0.04)",
+                  backgroundColor: "action.hover", // subtle, uses theme value
                 },
               }}
             >
-              <MoreVertical size={20} />
+              <MoreVertical size={18} />
             </IconButton>
 
             <Menu anchorEl={anchorEl} open={openMenu} onClose={closeMenu}>
@@ -724,7 +730,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       if (postId) {
         loadComments();
       }
-    }, [postId]);
+    }, [postId, showSnackbar]);
 
     return (
       <div

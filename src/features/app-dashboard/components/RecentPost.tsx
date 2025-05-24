@@ -5,7 +5,6 @@ import { HorizontalSlider } from "@/components/sliders/HorizontalSlider";
 
 const RecentPost = () => {
     const [posts, setPosts] = useState<Post[] | null>([]);
-
     const getCurentPosts = async () => {
         const posts: Post[] = await fetchPosts(
             1,
@@ -15,15 +14,12 @@ const RecentPost = () => {
         );
         setPosts(posts);
     }
-
     useEffect(() => {
         getCurentPosts();
-    }, [])
-
+    }, []);
     const getPostId = (post: Post) => {
         return post.id;
     };
-
     const renderPostItem = (post: Post) => {
         return (
             <div
@@ -44,9 +40,8 @@ const RecentPost = () => {
             </div>
         );
     };
-
     return (
-        <HorizontalSlider   
+        <HorizontalSlider
             data={posts!}
             renderItem={renderPostItem}
             getItemId={getPostId}

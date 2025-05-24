@@ -1,41 +1,22 @@
-import { matchPath, Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 //Icons
-import { InfoIcon } from 'lucide-react';
+import { InfoIcon } from "lucide-react";
 import { LuImageUpscale } from "react-icons/lu";
 import { BiEdit } from "react-icons/bi";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import { RiImageAiLine } from 'react-icons/ri';
+import { RiImageAiLine } from "react-icons/ri";
 
 //Components
-import Tooltip from '@mui/material/Tooltip';
-import UserInAppConfigs from '../popovers/UserInAppConfigs';
+import Tooltip from "@mui/material/Tooltip";
+import UserInAppConfigs from "../popovers/UserInAppConfigs";
 
 //Context
-import { useUser } from '@/contexts/UserProvider';
-import UserButton from './user-button';
+import { useUser } from "@/contexts/UserProvider";
+import UserButton from "./user-button";
 
 const AIHeader = () => {
     const { user, loading } = useUser();
-    const location = useLocation();
-
-    const routes = [
-        {
-            path: "/image/tool/text-to-image",
-            label: "Image Generation",
-            description: "Use AI tools to bring your creative ideas to life"
-        },
-        {
-            path: "/image/tool/editor",
-            label: "Image Editor",
-            description: "Edit and enhance your images with powerful built-in tools"
-        },
-    ];
-
-
-    const matchedRoute = routes.find(route =>
-        matchPath({ path: route.path, end: true }, location.pathname)
-    );
 
     return (
         <nav className={`z-50 flex relative justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16`}>
@@ -45,9 +26,9 @@ const AIHeader = () => {
                 </Link>
                 <div className='flex items-center space-x-2'>
                     <span className='flex font-medium text-lg'>
-                        {matchedRoute?.label || ""}
+                        Dashboard
                     </span>
-                    <Tooltip title={matchedRoute?.description || ""}>
+                    <Tooltip title={"Return Home"}>
                         <InfoIcon className='size-4' />
                     </Tooltip>
                 </div>
@@ -77,4 +58,4 @@ const AIHeader = () => {
     )
 }
 
-export default AIHeader
+export default AIHeader;

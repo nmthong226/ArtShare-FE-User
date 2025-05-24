@@ -1,3 +1,4 @@
+// This file can be deleted as it is not used in the current codebase.
 import React from "react";
 
 interface Comment {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { categoriesData } from "../mocks";
+import { categoriesData } from "@/utils/mocks"; 
 import {
     Button,
     Fade,

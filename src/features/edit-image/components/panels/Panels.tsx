@@ -10,12 +10,13 @@ import { RiResetRightLine } from "react-icons/ri";
 import { MdOutlineFlip } from "react-icons/md";
 import ArrangePanel from './ArrangePanel';
 import FilterPanel from './FilterPanel';
+import CropPanel from './CropPanel';
 
 type PanelsProp = {
     selectedLayerId: string,
     activePanel: string,
     layers: ImageLayer[],
-    setActivePanel: Dispatch<SetStateAction<"arrange" | "adjust" | "filter" | "text" | null>>;
+    setActivePanel: Dispatch<SetStateAction<"arrange" | "crop" | "adjust" | "filter" | "text" | null>>;
     handleOpacityChange: (newOpacity: number) => void;
     toggleFlipHorizontal: () => void;
     toggleFlipVertical: () => void;
@@ -26,7 +27,7 @@ type PanelsProp = {
     handleBrightness: (newBrightness: number) => void;
     handleContrast: (newContrast: number) => void;
     handleSepia: (newSepia: number) => void;
-
+    handleRotationChange: (newRotation: number) => void;
     addText: () => void;
 }
 
@@ -34,6 +35,7 @@ const Panels: React.FC<PanelsProp> = ({
     selectedLayerId,
     activePanel,
     layers,
+    handleRotationChange,
     handleOpacityChange,
     toggleFlipHorizontal,
     toggleFlipVertical,
@@ -55,7 +57,7 @@ const Panels: React.FC<PanelsProp> = ({
                         <p className='capitalize'>{activePanel}</p>
                     </div>
                     <div className='custom-scrollbar-left flex flex-col space-y-4 px-6 py-4 max-h-[82%] overflow-y-auto'>
-                        {activePanel == "arrange" && (
+                        {activePanel == "crop" && (
                             <ArrangePanel
                                 layers={layers}
                                 selectedLayerId={selectedLayerId}
@@ -63,6 +65,13 @@ const Panels: React.FC<PanelsProp> = ({
                                 toggleFlipHorizontal={toggleFlipHorizontal}
                                 toggleFlipVertical={toggleFlipVertical}
                                 handleDuplicate={handleDuplicate}
+                                handleRotationChange={handleRotationChange}
+                            />
+                        )}
+                        {activePanel == "arrange" && (
+                            <CropPanel
+                                layers={layers}
+                                selectedLayerId={selectedLayerId}
                             />
                         )}
                         {activePanel === "adjust" && (
@@ -123,7 +132,7 @@ const Panels: React.FC<PanelsProp> = ({
                             <>
                                 <div onClick={addText} className='flex justify-center items-center w-full h-10'>
                                     <Button className='flex justify-center items-center bg-white border border-mountain-200 rounded-lg w-full h-full font-normal text-sm'>
-                                        <IoText className='mr-2 size-5'/>
+                                        <IoText className='mr-2 size-5' />
                                         <p>Add Text</p>
                                     </Button>
                                 </div>
@@ -146,7 +155,7 @@ const Panels: React.FC<PanelsProp> = ({
                                 </div>
                             </div>
                         </>
-                    ) : (activePanel === "arrange" || activePanel === "adjust") && (
+                    ) : (activePanel !== "arrange") && (
                         <>
                             <hr className='flex mb-4 border-mountain-200 border-t-1 w-full' />
                             <div className='flex justify-center items-center px-6 w-full h-10'>

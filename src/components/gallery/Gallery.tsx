@@ -43,7 +43,7 @@ const IGallery: React.FC<IGalleryProps> = ({
   if (isLoading) {
     return (
       <div className="flex justify-center items-center space-x-4 h-64">
-        <CircularProgress size={36}/>
+        <CircularProgress size={36} />
         <p>Loading...</p>
       </div>
     );
@@ -73,16 +73,16 @@ const IGallery: React.FC<IGalleryProps> = ({
   return (
     <div className="relative pb-20">
       <RowsPhotoAlbum
+        rowConstraints={{ singleRowMaxHeight: 256 }}
         spacing={8}
         targetRowHeight={256}
-        rowConstraints={{ singleRowMaxHeight: 256 }}
         photos={photos}
         render={{ image: effectiveRenderPhoto }}
       />
       {/* --- Loading More Spinner --- */}
       {isFetchingNextPage && (
         <div className="flex my-4 text-center">
-          <CircularProgress size={48}/>
+          <CircularProgress size={36} />
           <p>Loading...</p>
         </div>
       )}

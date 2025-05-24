@@ -10,9 +10,9 @@ import { dashboardBG, featuresShowcase } from '@/utils/constants';
 
 const Dashboard = () => {
   return (
-    <div className='flex flex-col space-y-4 mb-20 p-4'>
+    <div className='flex flex-col space-y-4 p-4 h-screen overflow-x-hidden sidebar'>
       {/* Hero section */}
-      <div className="relative flex items-center p-4 rounded-xl w-full h-96 overflow-hidden">
+      <div className="relative flex items-center p-4 rounded-xl w-full h-96">
         {/* Gradient background */}
         <div className="absolute inset-0 bg-[length:100%_100%] bg-gradient-to-br from-blue-800/60 via-indigo-800/60 to-purple-800/60 rounded-xl animate-gradient" />
         {/* Blurred lighting effects */}
@@ -96,7 +96,7 @@ const Dashboard = () => {
         </div>
         <hr className='my-6 border-mountain-200 border-t-1 w-full' />
         {/* Explore Posts */}
-        <div className='flex flex-col space-y-8 mt-6'>
+        <div className='flex flex-col space-y-8 mt-6 mb-20'>
           <div className='flex justify-between items-end'>
             <div className='flex flex-col space-y-2'>
               <p className='font-sans font-semibold text-mountain-950 text-2xl'>Explore Recent Posts</p>

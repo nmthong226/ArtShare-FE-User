@@ -717,7 +717,7 @@ const Toolbar = () => {
         ];
 
     return (
-        <div className='top-16 z-50 sticky flex justify-center items-center gap-x-0.5 bg-white shadow-md px-2.5 py-0.5 min-h-[48px] overflow-x-auto'>
+        <div className='top-16 z-20 sticky flex justify-center items-center gap-x-0.5 bg-white shadow-md px-2.5 py-0.5 border-1 border-mountain-200 border-r-1 min-h-[48px] overflow-x-auto'>
             {sections[0].map((item) => (
                 <ToolbarButton key={item.label} {...item} />
             ))}

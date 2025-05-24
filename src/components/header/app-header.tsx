@@ -50,14 +50,19 @@ const Header: React.FC = () => {
             description: "Get inspired by stories, tutorials, and creative journeys"
         },
         {
-            path: "/blogs/new",
-            label: "Write Blog",
-            description: "Share your latest artwork or visual content with the community"
-        },
-        {
             path: "/blogs/:id",
             label: "Read Blogs",
             description: "Dive into creative experiences shared by artists"
+        },
+        {
+            path: "/docs",
+            label: "My Documents",
+            description: "Your space to write and manage your knowledge, sharings"
+        },
+        {
+            path: "/docs/new",
+            label: "Write Blog",
+            description: "Share your latest artwork or visual content with the community"
         },
         {
             path: "/posts/new",
@@ -82,18 +87,18 @@ const Header: React.FC = () => {
     );
 
     return (
-        <nav className={`top-0 z-50 sticky flex justify-between items-center bg-white dark:bg-mountain-950 pr-2 lg:pr-4 border-b-1 border-b-mountain-100 dark:border-b-mountain-700 w-full h-16`}>
+        <nav className={`top-0 z-50 sticky px-4 flex justify-between items-center dark:bg-mountain-950 dark:border-b-mountain-700 w-full h-16`}>
             <div className="flex items-center h-full">
-                <div className="flex items-center space-x-1 lg:space-x-2 xl:space-x-4 px-4 h-full">
+                <div className="flex items-center h-full">
                     <div className='flex items-center space-x-2'>
-                        <span className='flex font-medium text-lg'>
+                        <span className='flex font-medium text-lg select-none'>
                             {matchedRoute?.label || ""}
                         </span>
                         <Tooltip title={matchedRoute?.description || ""}>
                             <InfoIcon className='size-4' />
                         </Tooltip>
                     </div>
-                    <div className={`hidden top-1/2 left-1/2 absolute lg:flex items-center bg-mountain-50 dark:bg-mountain-1000 
+                    <div className={`hidden top-1/2 left-1/2 absolute lg:flex items-center dark:bg-mountain-1000 
                             rounded-2xl h-10 text-neutral-700 focus-within:text-mountain-950 dark:focus-within:text-mountain-50 
                             dark:text-neutral-300 -translate-x-1/2 -translate-y-1/2 
                             transition-all duration-300 ease-in-out 
@@ -103,7 +108,7 @@ const Header: React.FC = () => {
                             ref={inputRef}
                             onFocus={() => setIsFocused(true)}
                             onBlur={() => setIsFocused(false)}
-                            className="shadow-inner pr-8 pl-8 rounded-2xl"
+                            className="bg-white shadow-inner pr-8 pl-8 rounded-2xl w-full"
                             placeholder="Search"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}

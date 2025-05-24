@@ -213,7 +213,6 @@ const BlogDetails = () => {
   }
   if (!blog) return null;
 
-  // 5) Compute reading time:
   const readingTime = Math.ceil(blog.content.split(/\s+/).length / 200);
 
   return (
@@ -328,7 +327,7 @@ const BlogDetails = () => {
                   <p
                     className="ml-1 hover:underline"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent event bubbling
+                      e.stopPropagation();
                       handleOpenLikesDialog();
                     }}
                   >
@@ -366,7 +365,7 @@ const BlogDetails = () => {
       <BlogComments />
       <RelatedBlogs />
       <LikesDialog
-        contentId={Number(blogId)} // pass contentId from URL
+        contentId={Number(blogId)}
         open={likesDialogOpen}
         onClose={handleCloseLikesDialog}
       />

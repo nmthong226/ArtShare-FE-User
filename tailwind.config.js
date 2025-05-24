@@ -83,6 +83,10 @@ export default {
             }
         }
     },
-    plugins: [tailwindcssAnimate, require('@tailwindcss/line-clamp'), require('tailwind-scrollbar')],
+    plugins: [
+        tailwindcssAnimate, 
+        require('@tailwindcss/line-clamp'), 
+        require('tailwind-scrollbar'),
+    ],
 }
 

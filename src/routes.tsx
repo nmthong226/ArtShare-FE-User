@@ -4,14 +4,15 @@ import { Navigate, RouteObject, useRoutes, Outlet } from "react-router-dom";
 
 // Layouts & Wrappers
 import RootLayout from "@/layouts";
-import AuthenLayout from "@/layouts/AuthenLayout";
+import AuthenLayout from "@/layouts/featLayouts/AuthenLayout";
 import InAppLayout from "@/layouts/InAppLayout";
-import AILayout from "@/layouts/AILayout";
+import AILayout from "@/layouts/featLayouts/ImageToolsLayout";
 import ProtectedAuthRoute from "@/components/ProtectedItems/ProtectedAuthRoute";
 import ProtectedInAppRoute from "@/components/ProtectedItems/ProtectedInAppRoute";
 import GuestRoute from "@/components/routes/guest-route";
 import OnboardingProfile from "./pages/Onboarding";
 import { useUser } from "./contexts/UserProvider"; import Dashboard from "./features/dashboard/Dashboard";
+import TextEditorLayout from "./layouts/featLayouts/TextEditorLayout";
 
 
 // Lazy imports for pages/features
@@ -33,10 +34,9 @@ const Post = lazy(() => import("@/features/post"));
 const EditPost = lazy(() => import("@/features/post-management/EditPost"));
 const UploadPost = lazy(() => import("@/features/post-management/UploadPost"));
 const Collection = lazy(() => import("@/features/collection"));
-const UserProfile = lazy(
-  () => import("@/features/user-profile-private/UserProfile"),
-);
-const WriteBlog = lazy(() => import("@/features/write-blog/WriteBlog"));
+const UserProfile = lazy(() => import("@/features/user-profile-private/UserProfile"));
+const DocumentDashboard = lazy(() => import("@/features/user-writing/DocumentDashboard"));
+const MyWriting = lazy(() => import("@/features/user-writing/MyWriting"));
 const ArtGeneration = lazy(() => import("@/features/gen-art/ArtGenAI"));
 const ImageEditor = lazy(() => import("@/features/edit-image/EditImage"));
 
@@ -93,6 +93,7 @@ const routeConfig: RouteObject[] = [
           { path: "/auth", element: <AuthAction /> },
         ],
       },
+      // Private Auth
       {
         element: (
           <ProtectedAuthRoute>
@@ -117,6 +118,7 @@ const routeConfig: RouteObject[] = [
           </ProtectedAuthRoute>
         ),
       },
+      // In-App Public
       {
         element: (
           <InAppLayout>
@@ -132,6 +134,7 @@ const routeConfig: RouteObject[] = [
           { path: "/search", element: <Search /> },
         ],
       },
+      // In-App Private
       {
         element: (
           <ProtectedInAppRoute>
@@ -145,9 +148,10 @@ const routeConfig: RouteObject[] = [
           { path: "/post/:postId/edit", element: <EditPost /> },
           { path: "/posts/new", element: <UploadPost /> },
           { path: "/collections", element: <Collection /> },
-          { path: "/blogs/new", element: <WriteBlog /> },
+          { path: "/docs", element: <DocumentDashboard /> }
         ]
       },
+      // In-App AI Private
       {
         element: (
           <ProtectedInAppRoute>
@@ -159,6 +163,19 @@ const routeConfig: RouteObject[] = [
         children: [
           { path: "/image/tool/editor", element: <ImageEditor /> },
           { path: "/image/tool/text-to-image", element: <ArtGeneration /> },
+        ]
+      },
+      // In-App Text Editor Private
+      {
+        element: (
+          <ProtectedInAppRoute>
+            <TextEditorLayout>
+              <Outlet />
+            </TextEditorLayout>
+          </ProtectedInAppRoute>
+        ),
+        children: [
+          { path: "/docs/new", element: <MyWriting /> },
         ]
       },
       // Catch-all -> redirect

@@ -78,6 +78,7 @@ const BlogComments = forwardRef<HTMLDivElement, Props>(
           is_onboard: user.is_onboard,
         },
         replies: [],
+        reply_count: 0,
       };
 
       setComments((prev) => [optimistic, ...prev]);
@@ -151,7 +152,7 @@ const BlogComments = forwardRef<HTMLDivElement, Props>(
 
     /* ───────── UI ───────── */
     return (
-      <div className="flex flex-col items-center bg-white shadow px-4 py-8 w-[60%] mt-8 space-y-6">
+      <div className="flex flex-col items-center bg-white px-4 py-8  mt-8 space-y-6 w-full">
         {/* header */}
         <div className="flex items-center space-x-2 w-full">
           <span className="font-medium text-lg">

@@ -23,7 +23,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import DevNews from "./dev-news";
+import UserPlan from "./subscription";
 import { Popover, Tooltip } from "@mui/material";
 
 
@@ -69,7 +69,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
     <aside className={`${expand ? 'w-60' : 'w-16'} h-screen transition-all ease-in-out duration-500  top-0 z-20 sticky xs:flex flex-col border-r-1 border-indigo-200 flex-shrink-0 flex-none justify-between space-y-4 dark:bg-mountain-950 py-4 dark:border-r-mountain-700 overflow-hidden`}>
       <div className="flex flex-col space-y-6">
         {/* Sidebar Header */}
-        <div className="flex justify-between items-center px-5">
+        <div className="flex justify-between items-center px-4">
           <div className={`flex items-center overflow-hidden ease-in-out transition-all duration-500 ${expand ? 'w-auto opacity-100' : 'opacity-0'}`}>
             <img src={app_logo} className="flex mr-2 rounded-sm w-6 h-6" />
             <p className="font-medium">ArtShare</p>
@@ -86,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
           </div>
         </div>
         {/* Sidebar Body */}
-        <div className={`flex flex-col ${expand ? 'space-y-6 sidebar' : 'space-y-2 '}  px-2 h-[calc(100vh-10rem)] overflow-x-hidden text-mountain-800 `}>
+        <div className={`flex flex-col ${expand ? 'sidebar' : ''} space-y-6  px-2 h-[calc(100vh-10rem)] overflow-x-hidden text-mountain-800 `}>
           <div className="flex flex-col justify-between items-center space-y-1 w-full">
             {[
               { icon: Home, label: 'Dashboard', href: '/dashboard' },
@@ -148,14 +148,13 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
             })}
           </div>
           <div className="flex flex-col">
-            <span className={`px-4 w-full text-violet-900/60 text-sm ${!expand ? 'hidden' : 'line-clamp-1'} ease-in-out duration-500`}>My Workspace</span>
             <Collapsible
               open={expand ? openAI : false}
               onOpenChange={(value) => expand && setOpenAI(value)}
               className="flex flex-col w-full"
             >
               <CollapsibleTrigger asChild onClick={handleClick('ai')}>
-                <button className={`group flex pl-4 pr-2 text-violet-800 justify-between items-center  hover: py-2 rounded-md w-full transition`}>
+                <button className={`group flex pl-4 pr-2 text-violet-800 justify-between items-center  hover: py-2 rounded-md w-full transition hover:text-mountain-950 hover:cursor-pointer`}>
                   <div className="flex items-center space-x-2">
                     <RiImageAiLine className="size-5" />
                     <p className={`text-nowrap transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-thin`}>
@@ -238,7 +237,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
               className="flex flex-col w-full"
             >
               <CollapsibleTrigger asChild onClick={handleClick('auto')}>
-                <button className={`group flex pl-4 pr-2 text-violet-800 justify-between items-center  hover: py-2 rounded-md w-full transition`}>
+                <button className={`group flex pl-4 pr-2 text-violet-800 justify-between items-center  hover: py-2 rounded-md w-full transition hover:text-mountain-950 hover:cursor-pointer`}>
                   <div className="flex items-center space-x-2">
                     <MdAutoMode className="size-5" />
                     <p className={`text-nowrap transition-opacity duration-500 ${expand ? 'opacity-100' : 'opacity-0'} font-thin`}>
@@ -320,8 +319,8 @@ const Sidebar: React.FC<SidebarProps> = ({ expand, setExpand }) => {
         </div>
       </div>
       {/* Sidebar Footer */}
-      <div className="bottom-4 absolute flex px-2 border-purple-800 border-t-1 w-full">
-        <DevNews expand={expand} />
+      <div className="bottom-4 absolute flex pl-2 w-full">
+        <UserPlan expand={expand} />
       </div>
     </aside >
   )

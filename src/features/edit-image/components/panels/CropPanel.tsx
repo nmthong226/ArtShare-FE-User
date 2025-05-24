@@ -10,8 +10,7 @@ type PanelsProp = {
     layers: ImageLayer[],
 }
 
-const ArrangePanel: React.FC<PanelsProp> = ({
-}) => {
+const ArrangePanel: React.FC<PanelsProp> = () => {
     return (
         <>
             <div className='flex flex-col space-y-2'>

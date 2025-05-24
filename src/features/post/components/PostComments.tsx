@@ -13,7 +13,6 @@ import {
   MenuItem,
   TextareaAutosize,
   CircularProgress,
-  Snackbar,
   Typography,
 } from "@mui/material";
 import {
@@ -37,6 +36,8 @@ import { useUser } from "@/contexts/UserProvider";
 import { User } from "@/types";
 import { Link as RouterLink } from "react-router-dom";
 import MuiLink from "@mui/material/Link";
+import { useSnackbar } from "@/contexts/SnackbarProvider"; // Add this import
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 
 /* ------------------------------------------------------------------ */
 /* Constants & helpers                                                */
@@ -53,7 +54,7 @@ const addReplyRecursive = (
       return {
         ...c,
         replies: c.replies ? [...c.replies, reply] : [reply],
-        reply_count: (c.reply_count ?? 0) + 1, // ← bump the count
+        reply_count: (c.reply_count ?? 0) + 1,
       };
     }
     return c.replies?.length
@@ -125,7 +126,6 @@ interface RowProps {
   onReply: (id: number, username: string) => void;
   onDelete: (id: number) => void;
   onRepliesFetched: (id: number, replies: CommentUI[]) => void;
-  /* edit handlers */
   editingId: number | null;
   onStartEdit: (id: number) => void;
   onAbortEdit: () => void;
@@ -146,11 +146,12 @@ const CommentRow = ({
   onCommitEdit,
 }: RowProps) => {
   const { user } = useUser();
+  const { showSnackbar } = useSnackbar();
   const CURRENT_USER_ID = user?.id;
   const isMine = comment.user_id === CURRENT_USER_ID;
   const isEditing = editingId === comment.id;
   const editRef = useRef<HTMLTextAreaElement>(null);
-  const prevReplyCountRef = useRef(comment.replies?.length || 0); //// keep track of how many replies we *had* last render
+  const prevReplyCountRef = useRef(comment.replies?.length || 0);
   const [showReplies, setShowReplies] = useState(false);
   const [loading, setLoading] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -158,7 +159,7 @@ const CommentRow = ({
   const handleMenu = (e: MouseEvent<HTMLButtonElement>) =>
     setAnchorEl(e.currentTarget);
   const closeMenu = () => setAnchorEl(null);
-
+  const requireAuth = useRequireAuth();
   const DATETIME_FORMAT_OPTIONS_FOR_TITLE: Intl.DateTimeFormatOptions = {
     month: "short",
     day: "numeric",
@@ -189,9 +190,7 @@ const CommentRow = ({
   useEffect(() => {
     const prev = prevReplyCountRef.current;
     const curr = comment.replies?.length ?? 0;
-    // if we went from 0 → >0, open the thread
     if (prev === 0 && curr > 0 && !showReplies) {
-      // Only if not already shown
       setShowReplies(true);
     }
     prevReplyCountRef.current = curr;
@@ -208,29 +207,25 @@ const CommentRow = ({
         setLoading(true);
         const fetchedReplies = await fetchComments(postId, comment.id);
         onRepliesFetched(comment.id, fetchedReplies as CommentUI[]);
-        // setShowReplies(true) will be handled by the toggle at the end
       } catch (err) {
         console.error(
           "Failed to load replies for comment " + comment.id + ":",
           err,
         );
-        // Consider your Snackbar here:
-        // Snackbar({ open: true, message: "Failed to load replies.", autoHideDuration: 3000 });
+        showSnackbar("Failed to load replies", "error");
       } finally {
         setLoading(false);
       }
     }
-    setShowReplies((s) => !s); // Toggle visibility
+    setShowReplies((s) => !s);
   };
 
-  // Helper to get button text
   const getReplyButtonTextContent = () => {
-    const count = comment.reply_count ?? 0; // Always base on reply_count from server
+    const count = comment.reply_count ?? 0;
     return `${count} ${count === 1 ? "reply" : "replies"}`;
   };
 
   const renderContent = (text: string) => {
-    // split out any @word, preserving the separators
     const parts = text.split(/(@\w+)/g);
     return parts.map((part, i) => {
       const m = part.match(/^@(\w+)$/);
@@ -254,7 +249,6 @@ const CommentRow = ({
 
   return (
     <div id={`comment-${comment.id}`} className="w-full">
-      {/* Row */}
       <div className="flex gap-3 py-3 w-full">
         {comment.user.profile_picture_url ? (
           <img
@@ -327,7 +321,9 @@ const CommentRow = ({
               <IconButton
                 size="small"
                 color={comment.likedByCurrentUser ? "primary" : "default"}
-                onClick={() => onLike(comment.id)}
+                onClick={() =>
+                  requireAuth("like comments", () => onLike(comment.id))
+                }
               >
                 <Heart
                   size={16}
@@ -342,7 +338,11 @@ const CommentRow = ({
               <Button
                 size="small"
                 color="primary"
-                onClick={() => onReply(comment.id, comment.user.username)}
+                onClick={() =>
+                  requireAuth("reply to comments", () =>
+                    onReply(comment.id, comment.user.username),
+                  )
+                }
               >
                 Reply
               </Button>
@@ -411,14 +411,12 @@ const CommentRow = ({
             ) : (
               <ChevronDown size={14} />
             )}
-            {showReplies ? "Hide" : "View"} {getReplyButtonTextContent()}{" "}
-            {/* Use helper for consistent count */}
+            {showReplies ? "Hide" : "View"} {getReplyButtonTextContent()}
           </button>
 
-          {/* Render actual replies IF they are meant to be shown AND data exists */}
           {showReplies &&
-            comment.replies && // Check if replies array exists
-            comment.replies.length > 0 && // Check if it has content
+            comment.replies &&
+            comment.replies.length > 0 &&
             comment.replies.map((r: CommentUI) => (
               <CommentRow
                 postId={postId}
@@ -454,23 +452,41 @@ interface Props {
 const PostComments = forwardRef<HTMLDivElement, Props>(
   ({ comments: initial, postId, onCommentAdded, onCommentDeleted }, _ref) => {
     const { user } = useUser();
+    const { showSnackbar } = useSnackbar(); // Add this
     const CURRENT_USER_ID = user?.id;
     const { postCommentsRef } = useFocusContext();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const listRef = useRef<HTMLDivElement>(null); // scroll target
+    const listRef = useRef<HTMLDivElement>(null);
     const [comments, setComments] = useState<CommentUI[]>(initial);
     const [newComment, setNewComment] = useState("");
     const [replyParentId, setReplyParentId] = useState<number | null>(null);
     const [isPosting, setIsPosting] = useState(false);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [editingId, setEditingId] = useState<number | null>(null);
+    const requireAuth = useRequireAuth();
 
     useEffect(() => {
       setComments(initial);
     }, [initial]);
 
     useImperativeHandle(postCommentsRef, () => ({
-      focusInput: () => textareaRef.current?.focus(),
+      focusInput: () => {
+        if (!user) {
+          showSnackbar(
+            "Please login to comment",
+            "warning",
+            <Button
+              size="small"
+              color="inherit"
+              onClick={() => (window.location.href = "/login")}
+            >
+              Login
+            </Button>,
+          );
+          return;
+        }
+        textareaRef.current?.focus();
+      },
     }));
 
     const attachReplies = (id: number, replies: CommentUI[]) => {
@@ -484,6 +500,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         ),
       );
     };
+
     const attachRepliesTo = (
       list: CommentUI[],
       id: number,
@@ -506,7 +523,6 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       const now = new Date();
       const parentId = replyParentId;
 
-      // Create optimistic comment
       const optimistic: CommentUI = {
         id: tmpId,
         user_id: CURRENT_USER_ID || "",
@@ -585,10 +601,8 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           setComments((prev) => prev.map((c) => (c.id === tmpId ? data : c)));
         }
 
-        // Scroll the list to see the new comment
         setTimeout(() => {
           if (replyParentId) {
-            // Find the parent comment element and scroll to it
             const parentEl = document.getElementById(
               `comment-${replyParentId}`,
             );
@@ -596,7 +610,6 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
               parentEl.scrollIntoView({ behavior: "smooth", block: "center" });
             }
           } else {
-            // For top-level comments, scroll to top
             listRef.current?.scrollTo({ top: 0, behavior: "smooth" });
           }
         }, 100);
@@ -604,13 +617,12 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       } catch (err) {
         console.error(err);
         setComments((prev) => removeRecursive(prev, tmpId));
-        alert("Failed to post comment.");
+        showSnackbar("Failed to post comment", "error");
       } finally {
         setIsPosting(false);
       }
     };
 
-    // Helper function to update a reply in a nested comment structure
     const updateReplyInNestedStructure = (
       replies: CommentUI[],
       parentId: number,
@@ -619,14 +631,12 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
     ): CommentUI[] => {
       return replies.map((reply) => {
         if (reply.id === parentId) {
-          // This is the parent, replace the temp reply
           return {
             ...reply,
             replies:
               reply.replies?.map((r) => (r.id === tmpId ? newData : r)) || [],
           };
         } else if (reply.replies?.length) {
-          // Continue searching
           return {
             ...reply,
             replies: updateReplyInNestedStructure(
@@ -640,6 +650,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         return reply;
       });
     };
+
     /* -------------------- DELETE ---------------------------------- */
     const handleDelete = async (id: number) => {
       const prev = comments;
@@ -651,7 +662,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       } catch (err) {
         console.error(err);
         setComments(prev);
-        alert("Could not delete comment.");
+        showSnackbar("Could not delete comment", "error");
       } finally {
         setDeletingId(null);
       }
@@ -671,13 +682,12 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
       } catch (err) {
         console.error(err);
         setComments(prev);
-        alert("Could not update comment.");
+        showSnackbar("Could not update comment", "error");
       }
     };
 
     /* -------------------- LIKE ------------------------------------ */
     const handleLike = async (id: number) => {
-      // Find the comment to check if it's already liked
       const comment = comments
         .flatMap(function findAll(c): CommentUI[] {
           return [c, ...(c.replies ? c.replies.flatMap(findAll) : [])];
@@ -685,7 +695,6 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         .find((c) => c.id === id);
 
       const alreadyLiked = comment?.likedByCurrentUser;
-      console.log(alreadyLiked);
 
       setComments((prev) => toggleLikeRecursive(prev, id));
       try {
@@ -694,13 +703,10 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
         } else {
           await likeComment(id);
         }
-      } catch (_err) {
-        console.error(_err);
-        Snackbar({
-          open: true,
-          message: "Failed to load replies.",
-          autoHideDuration: 3000,
-        });
+      } catch (err) {
+        console.error(err);
+        setComments((prev) => toggleLikeRecursive(prev, id)); // Revert on error
+        showSnackbar("Failed to update like", "error");
       }
     };
 
@@ -708,14 +714,14 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
     useEffect(() => {
       const loadComments = async () => {
         try {
-          const data = await fetchComments(postId); // already nested
+          const data = await fetchComments(postId);
           setComments(data as CommentUI[]);
         } catch (err) {
           console.error("Failed to load comments:", err);
+          showSnackbar("Failed to load comments", "error");
         }
       };
       if (postId) {
-        // Ensure postId is available
         loadComments();
       }
     }, [postId]);
@@ -766,9 +772,16 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
               alt={user.username}
               className="w-8 h-8 rounded-full object-cover"
             />
+          ) : user ? (
+            <Avatar
+              name={user.username || ""}
+              size={32}
+              variant="beam"
+              colors={["#84bfc3", "#ff9b62", "#d96153"]}
+            />
           ) : (
             <Avatar
-              name={user?.username || ""}
+              name="Guest"
               size={32}
               variant="beam"
               colors={["#84bfc3", "#ff9b62", "#d96153"]}
@@ -777,16 +790,39 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
           <div className="flex flex-grow gap-2">
             <TextareaAutosize
               ref={textareaRef}
-              placeholder={replyParentId ? `Replying to...` : "Add a comment"}
-              className="border border-neutral-300 rounded-lg p-3 w-full resize-none focus:outline-none focus:ring-1 focus:ring-blue-500 "
+              placeholder={
+                user
+                  ? replyParentId
+                    ? `Replying to...`
+                    : "Add a comment"
+                  : "Login to add a comment"
+              }
+              className="border border-neutral-300 rounded-lg p-3 w-full resize-none focus:outline-none focus:ring-1 focus:ring-blue-500"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              disabled={isPosting}
+              disabled={isPosting || !user}
+              onFocus={() => {
+                if (!user) {
+                  showSnackbar(
+                    "Please login to comment",
+                    "warning",
+                    <Button
+                      size="small"
+                      color="inherit"
+                      onClick={() => (window.location.href = "/login")}
+                    >
+                      Login
+                    </Button>,
+                  );
+                  textareaRef.current?.blur();
+                }
+              }}
               onKeyDown={(e) => {
-                // submit on Enter, new line on Shift+Enter
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
-                  if (newComment.trim()) handleAdd();
+                  if (newComment.trim()) {
+                    requireAuth("comment", handleAdd);
+                  }
                 }
               }}
             />
@@ -794,8 +830,8 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
             <Button
               variant="contained"
               className="p-0.5 min-w-auto h-12 aspect-[1/1]"
-              onClick={handleAdd}
-              disabled={!newComment.trim() || isPosting}
+              onClick={() => requireAuth("comment", handleAdd)}
+              disabled={!newComment.trim() || isPosting || !user}
             >
               {isPosting ? (
                 <CircularProgress size={24} color="inherit" />
@@ -808,7 +844,7 @@ const PostComments = forwardRef<HTMLDivElement, Props>(
 
         {deletingId && (
           <div className="absolute inset-0 bg-white/70 flex items-center justify-center text-sm">
-            <CircularProgress size={20} />{" "}
+            <CircularProgress size={20} />
             <span className="ml-2">Deleting…</span>
           </div>
         )}

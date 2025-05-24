@@ -43,8 +43,8 @@ const LayerToolsBar: React.FC<LayerToolsBarProp> = ({
                 const maxWidth = 540;
                 const maxHeight = 540;
 
-                let width = img.width;
-                let height = img.height;
+                const width = img.width;
+                const height = img.height;
 
                 const widthRatio = maxWidth / width;
                 const heightRatio = maxHeight / height;

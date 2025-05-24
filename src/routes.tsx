@@ -16,7 +16,6 @@ import OnboardingProfile from "./pages/Onboarding";
 import Dashboard from "./features/app-dashboard/Dashboard";
 import OnboardingRoute from "./components/ProtectedItems/OnboardingRoute";
 import RequireOnboard from "./components/ProtectedItems/RequireOnboard";
-import TextEditorLayout from "./layouts/featLayouts/TextEditorLayout";
 
 // Lazy imports for pages/features
 const LandingPage = lazy(() => import("@/pages/Home"));
@@ -160,9 +159,7 @@ const routeConfig: RouteObject[] = [
       {
         element: (
           <ProtectedInAppRoute>
-            <TextEditorLayout>
-              <Outlet />
-            </TextEditorLayout>
+            <Outlet />
           </ProtectedInAppRoute>
         ),
         children: [
@@ -173,9 +170,7 @@ const routeConfig: RouteObject[] = [
       {
         element: (
           <ProtectedInAppRoute>
-            <TextEditorLayout>
-              <Outlet />
-            </TextEditorLayout>
+            <Outlet />
           </ProtectedInAppRoute>
         ),
         children: [

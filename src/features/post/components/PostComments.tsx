@@ -139,19 +139,31 @@ const CommentRow = ({
     setAnchorEl(e.currentTarget);
   const closeMenu = () => setAnchorEl(null);
 
-  // Date formatting options
-  const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  };
-
   const DATETIME_FORMAT_OPTIONS_FOR_TITLE: Intl.DateTimeFormatOptions = {
     month: "short",
     day: "numeric",
     year: "numeric",
     hour: "numeric",
     minute: "2-digit",
+  };
+
+  const getTimeAgo = (date: string | Date): string => {
+    const now = new Date().getTime();
+    const then = new Date(date).getTime();
+    const seconds = Math.floor((now - then) / 1000);
+    if (seconds < 60) {
+      return `${seconds} second${seconds !== 1 ? "s" : ""} ago`;
+    }
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) {
+      return `${minutes} minute${minutes !== 1 ? "s" : ""} ago`;
+    }
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) {
+      return `${hours} hour${hours !== 1 ? "s" : ""} ago`;
+    }
+    const days = Math.floor(hours / 24);
+    return `${days} day${days !== 1 ? "s" : ""} ago`;
   };
 
   useEffect(() => {
@@ -253,10 +265,7 @@ const CommentRow = ({
                   : undefined
               }
             >
-              {new Date(comment.created_at).toLocaleDateString(
-                undefined,
-                DATE_FORMAT_OPTIONS,
-              )}
+              {getTimeAgo(comment.created_at)}
               {new Date(comment.updated_at).getTime() !==
                 new Date(comment.created_at).getTime() && " (edited)"}
             </span>

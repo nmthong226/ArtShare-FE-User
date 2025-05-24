@@ -329,6 +329,15 @@ export const lightTheme = createTheme({
         }),
       },
     },
+    MuiIconButton: {
+      styleOverrides: {
+        sizeSmall: {
+          width: 28,
+          height: 28,
+          padding: 4,
+        },
+      },
+    },
   },
 });
 
@@ -553,6 +562,15 @@ export const darkTheme = createTheme({
             color: theme.palette.primary.main,
           },
         }),
+      },
+    },
+    MuiIconButton: {
+      styleOverrides: {
+        sizeSmall: {
+          width: 28,
+          height: 28,
+          padding: 4,
+        },
       },
     },
   },

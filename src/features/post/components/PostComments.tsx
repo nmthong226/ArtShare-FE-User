@@ -293,33 +293,49 @@ const CommentRow = ({
             </div>
           )}
 
-          <div className="flex items-center gap-1 mt-1">
-            <IconButton
-              size="small"
-              color={comment.likedByCurrentUser ? "primary" : "default"}
-              onClick={() => onLike(comment.id)}
-            >
-              <Heart size={16} />
-            </IconButton>
-            <Typography variant="caption" sx={{ mr: 2 }}>
-              {comment.like_count ?? 0}
-            </Typography>
+          {!isEditing && (
+            <div className="flex items-center gap-1 mt-1">
+              <IconButton
+                size="small"
+                color={comment.likedByCurrentUser ? "primary" : "default"}
+                onClick={() => onLike(comment.id)}
+              >
+                <Heart
+                  size={16}
+                  fill={comment.likedByCurrentUser ? "currentColor" : "none"}
+                  stroke="currentColor"
+                />
+              </IconButton>
+              <Typography variant="caption" sx={{ mr: 2 }}>
+                {comment.like_count ?? 0}
+              </Typography>
 
-            <Button
-              size="small"
-              color="primary"
-              onClick={() => onReply(comment.id, comment.user.username)}
-            >
-              Reply
-            </Button>
-          </div>
+              <Button
+                size="small"
+                color="primary"
+                onClick={() => onReply(comment.id, comment.user.username)}
+              >
+                Reply
+              </Button>
+            </div>
+          )}
         </div>
 
         {isMine && !isEditing && (
           <>
-            <IconButton onClick={handleMenu} className="!p-1">
+            <IconButton
+              size="small"
+              onClick={handleMenu}
+              disableRipple
+              sx={{
+                "&:hover": {
+                  backgroundColor: "rgba(0,0,0,0.04)",
+                },
+              }}
+            >
               <MoreVertical size={20} />
             </IconButton>
+
             <Menu anchorEl={anchorEl} open={openMenu} onClose={closeMenu}>
               <MenuItem
                 onClick={() => {
@@ -330,9 +346,13 @@ const CommentRow = ({
                 Edit
               </MenuItem>
               <MenuItem
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
                   closeMenu();
-                  onDelete(comment.id);
+                  setTimeout(() => {
+                    onDelete(comment.id);
+                  }, 0);
                 }}
               >
                 Delete
@@ -366,12 +386,6 @@ const CommentRow = ({
             {/* Use helper for consistent count */}
           </button>
 
-          {/* Optional: More prominent loading indicator when fetching to show */}
-          {loading && !showReplies && (
-            <div className="flex items-center gap-1 text-xs text-neutral-500 p-2">
-              <CircularProgress size={12} /> Loading replies…
-            </div>
-          )}
           {/* Render actual replies IF they are meant to be shown AND data exists */}
           {showReplies &&
             comment.replies && // Check if replies array exists
